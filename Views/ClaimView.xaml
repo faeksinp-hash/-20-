@@ -10,6 +10,7 @@
               Background="#F4F7FA">
 
     <UserControl.Resources>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
 
         <!-- ══════════════════════════════════════════════════════════ -->
         <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
@@ -790,7 +791,7 @@
                     <!-- Add Claim Button -->
                     <Button Grid.Column="8"
                             Content="➕ บันทึกเคลม"
-                            Command="{Binding OpenAddModalCommand}"
+                            Command="{Binding OpenAddModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                             Style="{StaticResource RoseBtnStyle}"
                             Background="#00A6E6"
                             Foreground="White"
@@ -1105,19 +1106,19 @@
                         <!-- Approve (อนุมัติเคลม) -->
                         <Button Grid.Column="0"
                                 Content="อนุมัติเคลม"
-                                Command="{Binding ApproveClaimActionCommand}"
+                                Command="{Binding ApproveClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
                                 Style="{StaticResource ApproveModalBtnStyle}"/>
 
                         <!-- Replace Product (เปลี่ยนสินค้า) -->
                         <Button Grid.Column="2"
                                 Content="เปลี่ยนสินค้า"
-                                Command="{Binding ReplaceProductClaimActionCommand}"
+                                Command="{Binding ReplaceProductClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
                                 Style="{StaticResource ReplaceModalBtnStyle}"/>
 
                         <!-- Reject (ปฏิเสธเคลม) -->
                         <Button Grid.Column="4"
                                 Content="ปฏิเสธเคลม"
-                                Command="{Binding RejectClaimActionCommand}"
+                                Command="{Binding RejectClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
                                 Style="{StaticResource RejectModalBtnStyle}"/>
 
                         <!-- Close (ปิดหน้าต่าง) -->
@@ -1194,7 +1195,7 @@
                     </Border>
 
                     <!-- Form Fields Card -->
-                    <ScrollViewer Grid.Row="2" MaxHeight="450" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer Grid.Row="2" IsEnabled="{Binding CanEditClaim}" MaxHeight="450" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Margin="2,0">
                             <!-- Row 1: RefNo Lookup + Date + Product Code + Qty -->
                             <Grid Margin="0,0,0,12">
@@ -1393,7 +1394,7 @@
                                 Height="42"/>
 
                         <Button Grid.Column="2"
-                                IsEnabled="{Binding ClaimValidationOk}"
+                                IsEnabled="{Binding CanEditClaim}"
                                 Height="42">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource RoseBtnStyle}">

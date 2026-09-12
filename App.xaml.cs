@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Data;
 using System.Windows;
 using Porjai20.Views;       // เรียกใช้โฟลเดอร์เก็บหน้าต่าง UI
@@ -29,6 +29,9 @@ namespace Porjai20
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
         }
 
+        // กำหนด Flag สำหรับ Debug (ต้องเป็น false เสมอเมื่อ commit)
+        private const bool DEBUG_SKIP_LOGIN = false;
+
         /// <summary>
         /// จุดเริ่มต้นของโปรแกรม (Entry Point) ทำหน้าที่เหมือน Program.cs ของ WinForms
         /// </summary>
@@ -39,13 +42,18 @@ namespace Porjai20
             // 1. สร้างตัวควบคุมข้อมูลหลัก (ViewModel) 
             var vm = new ProductViewModel();
 
-            // 2. จำลองสิทธิ์ล็อกอินอัตโนมัติ (Bypass Login Stage)
-            vm.CurrentUser = new Models.User { Name = "Developer Mode", Role = "Admin" };
+            // 2. ข้ามการล็อกอินเฉพาะกรณีเปิด DEBUG_SKIP_LOGIN สำหรับ Debug ชั่วคราวเท่านั้น
+            if (DEBUG_SKIP_LOGIN)
+            {
+                vm.CurrentUser = new Models.User { Name = "Developer Mode", Role = Services.RolePermissions.RoleOwner };
+                vm.SwitchToPosCommand.Execute(null);
+            }
+            else
+            {
+                vm.IsLoginDialogVisible = true;
+            }
 
-            // 3. บังคับให้ระบบเปิดมาแล้วเด้งไปที่หน้าจอระบบ "ขายหน้าร้าน (POS)" ทันที
-            vm.SwitchToPosCommand.Execute(null);
-
-            // 4. สั่งบิลด์หน้าต่างหลัก ผูกข้อมูลหลังบ้าน แล้วสั่งแสดงผลขึ้นจอภาพ
+            // 3. สั่งบิลด์หน้าต่างหลัก ผูกข้อมูลหลังบ้าน แล้วสั่งแสดงผลขึ้นจอภาพ
             var mainWindow = new MainWindow();
             mainWindow.DataContext = vm;
             mainWindow.Show();

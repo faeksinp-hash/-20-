@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using Porjai20.Models;
+using Porjai20.Services;
 
 namespace Porjai20.ViewModels
 {
@@ -122,6 +123,12 @@ namespace Porjai20.ViewModels
 
         private void ExecuteChangeClaimStatus(string status, string action = null)
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedClaim == null || SelectedClaim.Id == 0) return;
             SelectedClaim.Status = status;
             ClaimStatus = status;

@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.IO;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -246,10 +246,83 @@ namespace Porjai20.Services
                 int employeeCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblEmployee;");
                 if (employeeCount == 0)
                 {
+                    string adminHash = BCrypt.Net.BCrypt.HashPassword("password");
                     connection.Execute(@"
                         INSERT INTO tblEmployee (Emp_Name, Emp_Username, Emp_Password, Emp_Role) 
-                        VALUES ('Administrator', 'admin', 'password', 'Admin');");
+                        VALUES ('Administrator', 'admin', @Password, @Role);",
+                        new { Password = adminHash, Role = RolePermissions.RoleOwner });
                 }
+
+                // Migrate existing plain-text passwords in tblEmployee to BCrypt hashes
+                MigrateEmployeePasswords(connection);
+
+                // Migrate existing employee roles from legacy values ('Admin', 'User', null/empty) to standard roles
+                MigrateEmployeeRoles(connection);
+            }
+        }
+
+        /// <summary>
+        /// ตรวจสอบว่าข้อความเป็น BCrypt Hash หรือไม่ (ความยาว 60 ตัวอักษร และขึ้นต้นด้วย $2a$, $2b$, $2y$, $2x$)
+        /// </summary>
+        public static bool IsBCryptHash(string? password)
+        {
+            if (string.IsNullOrEmpty(password) || password.Length != 60)
+                return false;
+
+            return password.StartsWith("$2a$") || password.StartsWith("$2b$") || password.StartsWith("$2y$") || password.StartsWith("$2x$");
+        }
+
+        /// <summary>
+        /// Migration สำหรับแปลงรหัสผ่านเดิมที่เป็น plain text ในตาราง tblEmployee ให้เป็น BCrypt hash อัตโนมัติ
+        /// </summary>
+        private void MigrateEmployeePasswords(IDbConnection connection)
+        {
+            try
+            {
+                var employees = connection.Query<(int Emp_ID, string? Emp_Password)>(
+                    "SELECT Emp_ID, Emp_Password FROM tblEmployee WHERE Emp_Password IS NOT NULL AND Emp_Password != '';"
+                );
+
+                foreach (var emp in employees)
+                {
+                    if (!string.IsNullOrEmpty(emp.Emp_Password) && !IsBCryptHash(emp.Emp_Password))
+                    {
+                        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(emp.Emp_Password);
+                        connection.Execute(
+                            "UPDATE tblEmployee SET Emp_Password = @HashedPassword WHERE Emp_ID = @Emp_ID;",
+                            new { HashedPassword = hashedPassword, Emp_ID = emp.Emp_ID }
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating employee passwords: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Migration สำหรับแปลง Role พนักงานเดิมที่เป็นค่าเก่า ('Admin', 'User', หรือค่าว่าง) ให้เป็น 3 สิทธิ์มาตรฐาน
+        /// </summary>
+        private void MigrateEmployeeRoles(IDbConnection connection)
+        {
+            try
+            {
+                // แปลงสิทธิ์เก่า 'Admin' -> 'เจ้าของร้าน'
+                connection.Execute(
+                    "UPDATE tblEmployee SET Emp_Role = @OwnerRole WHERE Emp_Role = 'Admin';",
+                    new { OwnerRole = RolePermissions.RoleOwner }
+                );
+
+                // แปลงสิทธิ์เก่า 'User' หรือค่าว่าง/NULL -> 'พนักงานทั่วไป'
+                connection.Execute(
+                    "UPDATE tblEmployee SET Emp_Role = @EmployeeRole WHERE Emp_Role = 'User' OR Emp_Role IS NULL OR TRIM(Emp_Role) = '';",
+                    new { EmployeeRole = RolePermissions.RoleEmployee }
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating employee roles: {ex.Message}");
             }
         }
 

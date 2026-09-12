@@ -27,7 +27,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Sales,
                     IconBgColorKey = "MenuSalesBg",
                     IconFgColorKey = "MenuSalesFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = null,
                     NavigateCommand = vm.OpenDeliveryCommand,
                     SortOrder = 1
                 },
@@ -39,7 +39,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Sales,
                     IconBgColorKey = "MenuSalesBg",
                     IconFgColorKey = "MenuSalesFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = null,
                     NavigateCommand = vm.OpenClaimCommand,
                     SortOrder = 2
                 },
@@ -77,7 +77,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Inventory,
                     IconBgColorKey = "MenuInventoryBg",
                     IconFgColorKey = "MenuInventoryFg",
-                    RequiredRole = null,
+                    RequiredRole = RolePermissions.RoleAdmin,
                     NavigateCommand = vm.OpenPurchaseOrderCommand,
                     SortOrder = 2
                 },
@@ -94,7 +94,7 @@ namespace Porjai20.Services
                     SortOrder = 3
                 },
 
-                // ─── กลุ่ม: ธุรกิจและบุคคล (โทนสีส้ม - Admin Only) ───────────────────────────
+                // ─── กลุ่ม: ธุรกิจและบุคคล (โทนสีส้ม) ───────────────────────────────────────
                 new MenuItemModel
                 {
                     Id = "customer",
@@ -103,7 +103,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Business,
                     IconBgColorKey = "MenuBusinessBg",
                     IconFgColorKey = "MenuBusinessFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = null,
                     NavigateCommand = vm.OpenCustomerCommand,
                     SortOrder = 1
                 },
@@ -115,7 +115,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Business,
                     IconBgColorKey = "MenuBusinessBg",
                     IconFgColorKey = "MenuBusinessFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = RolePermissions.RoleAdmin,
                     NavigateCommand = vm.SwitchToStaffCommand,
                     SortOrder = 2
                 },
@@ -127,7 +127,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Business,
                     IconBgColorKey = "MenuBusinessBg",
                     IconFgColorKey = "MenuBusinessFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = RolePermissions.RoleAdmin,
                     NavigateCommand = vm.OpenPartnerCommand,
                     SortOrder = 3
                 },
@@ -139,7 +139,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Business,
                     IconBgColorKey = "MenuBusinessBg",
                     IconFgColorKey = "MenuBusinessFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = RolePermissions.RoleAdmin,
                     NavigateCommand = vm.OpenExpenseCommand,
                     SortOrder = 4
                 },
@@ -151,7 +151,7 @@ namespace Porjai20.Services
                     Category = MenuCategory.Business,
                     IconBgColorKey = "MenuBusinessBg",
                     IconFgColorKey = "MenuBusinessFg",
-                    RequiredRole = "Admin",
+                    RequiredRole = RolePermissions.RoleAdmin,
                     NavigateCommand = vm.SwitchToReportsCommand,
                     SortOrder = 5
                 },

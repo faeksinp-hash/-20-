@@ -10,6 +10,7 @@
              Background="#F4F7FA">
 
     <UserControl.Resources>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
@@ -713,7 +714,7 @@
                     <!-- Add Customer Action Button (➕ เพิ่มข้อมูลลูกค้า) -->
                     <Button Grid.Column="6"
                             Content="➕ เพิ่มข้อมูลลูกค้า"
-                            Command="{Binding OpenAddCustomerModalCommand}"
+                            Command="{Binding OpenAddCustomerModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                             Style="{StaticResource PrimaryBtnStyle}"
                             Padding="18,0"
                             Height="40"/>
@@ -721,7 +722,7 @@
                     <!-- Manage Customer Action Button (⚙️ จัดการข้อมูล) -->
                     <Button Grid.Column="8"
                             Content="⚙️ จัดการข้อมูล"
-                            Command="{Binding OpenManageModalCommand}"
+                            Command="{Binding OpenManageModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                             Style="{StaticResource PrimaryBtnStyle}"
                             Padding="18,0"
                             Height="40"/>

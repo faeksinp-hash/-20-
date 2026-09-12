@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -120,6 +120,12 @@ namespace Porjai20.ViewModels
         /// </summary>
         public void ExecuteSaveCustomer()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "customer"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(CustomerName))
             {
                 CustomerValidationMessage = "กรุณากรอกชื่อ-นามสกุลของลูกค้า";
@@ -189,6 +195,12 @@ namespace Porjai20.ViewModels
         /// </summary>
         public void ExecuteDeleteCustomer()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "customer"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedCustomer == null || SelectedCustomer.Id <= 0)
             {
                 CustomerValidationMessage = "กรุณาคลิกเลือกรายการลูกค้าในตารางก่อนดำเนินการ";

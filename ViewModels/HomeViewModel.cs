@@ -68,10 +68,9 @@ namespace Porjai20.ViewModels
             var allItems = MenuConfigService.BuildMenuItems(_root);
             var userRole = _root.CurrentUser?.Role; // null = ยังไม่ล็อกอิน
 
-            // filter: แสดงรายการที่ RequiredRole == null (ทุกคนเห็น)
-            //         หรือ RequiredRole ตรงกับ role ของผู้ใช้ปัจจุบัน
+            // filter: ใช้ RolePermissions.CanAccessMenu เป็น Single Source of Truth
             var filtered = allItems
-                .Where(m => m.RequiredRole == null || m.RequiredRole == userRole)
+                .Where(m => RolePermissions.CanAccessMenu(userRole, m.Id))
                 .ToList();
 
             FilteredMenuItems = new ObservableCollection<MenuItemModel>(filtered);

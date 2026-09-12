@@ -16,6 +16,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis"/>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
 
         <Style x:Key="PrimaryRedButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryBtnStyle}"/>
         <Style x:Key="SecondaryLightButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryBtnStyle}"/>
@@ -701,10 +702,12 @@
                         <Button x:Name="BtnOpenAddProduct"
                                 Content="➕ เพิ่มข้อมูลสินค้า" 
                                 Command="{Binding OpenAddProductCommand}"
+                                IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                                 Style="{StaticResource PrimaryRedButtonStyle}"
                                 Height="40" Padding="18,0" Margin="0,0,8,0"/>
                         <Button Content="⚙️ จัดการ"
                                 Command="{Binding StockEditProductCommand}"
+                                IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                                 Style="{StaticResource PrimaryRedButtonStyle}"
                                 Height="40" Padding="18,0"/>
                     </StackPanel>
@@ -714,10 +717,12 @@
                                 Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}">
                         <Button Content="➕ เพิ่มประเภทสินค้า"
                                 Command="{Binding OpenAddCategoryModalCommand}"
+                                IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 Height="40" Padding="18,0" Margin="0,0,8,0"/>
                         <Button Content="⚙️ จัดการ"
                                 Command="{Binding OpenManageCategoryModalCommand}"
+                                IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 Height="40" Padding="18,0"/>
                     </StackPanel>

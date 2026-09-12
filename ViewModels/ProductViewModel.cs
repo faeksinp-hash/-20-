@@ -1,4 +1,4 @@
-﻿using LiveCharts;
+using LiveCharts;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
@@ -102,10 +102,41 @@ namespace Porjai20.ViewModels
             set
             {
                 SetProperty(ref _currentUser, value);
-                IsAdmin = (_currentUser?.Role == "Admin");
+                IsAdmin = RolePermissions.IsAdminOrOwner(_currentUser?.Role);
                 OnPropertyChanged(nameof(IsLoggedIn));
                 RefreshHomeMenu();
+                NotifyReadOnlyProperties();
             }
+        }
+
+        // --- Role-Based Read-Only Mode (RBAC) ---
+        public bool IsReadOnlyMode => RolePermissions.IsReadOnly(CurrentUser?.Role, CurrentView);
+        public bool CanEditCurrentView => !IsReadOnlyMode;
+
+        public bool IsStockManageReadOnly => RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage");
+        public bool CanEditStockManage => !IsStockManageReadOnly;
+
+        public bool IsStockInReadOnly => RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_in");
+        public bool CanEditStockIn => !IsStockInReadOnly;
+
+        public bool IsClaimReadOnly => RolePermissions.IsReadOnly(CurrentUser?.Role, "claim");
+        public bool CanEditClaim => !IsClaimReadOnly;
+
+        public bool IsCustomerReadOnly => RolePermissions.IsReadOnly(CurrentUser?.Role, "customer");
+        public bool CanEditCustomer => !IsCustomerReadOnly;
+
+        public void NotifyReadOnlyProperties()
+        {
+            OnPropertyChanged(nameof(IsReadOnlyMode));
+            OnPropertyChanged(nameof(CanEditCurrentView));
+            OnPropertyChanged(nameof(IsStockManageReadOnly));
+            OnPropertyChanged(nameof(CanEditStockManage));
+            OnPropertyChanged(nameof(IsStockInReadOnly));
+            OnPropertyChanged(nameof(CanEditStockIn));
+            OnPropertyChanged(nameof(IsClaimReadOnly));
+            OnPropertyChanged(nameof(CanEditClaim));
+            OnPropertyChanged(nameof(IsCustomerReadOnly));
+            OnPropertyChanged(nameof(CanEditCustomer));
         }
 
         private bool _isNavigating = false;
@@ -143,6 +174,7 @@ namespace Porjai20.ViewModels
                     IsPurchaseOrderMode = (value == "purchase_order");
                     IsExpenseMode = (value == "expense");
                     IsStaffMode = (value == "staff");
+                    NotifyReadOnlyProperties();
                 }
             }
         }
@@ -906,7 +938,7 @@ namespace Porjai20.ViewModels
 
         public int TotalStaffCount => UsersList?.Count ?? 0;
         public int ActiveStaffCount => UsersList?.Count(u => u != null) ?? 0;
-        public int AdminStaffCount => UsersList?.Count(u => u.Role == "Admin" || u.Role == "ผู้ดูแลระบบ" || u.Role == "เจ้าของร้าน") ?? 0;
+        public int AdminStaffCount => UsersList?.Count(u => RolePermissions.IsAdminOrOwner(u.Role)) ?? 0;
 
         public ICommand OpenStaffManageModalCommand { get; set; }
         public ICommand CloseStaffModalCommand { get; set; }
@@ -1289,6 +1321,14 @@ namespace Porjai20.ViewModels
             IsConfirmDialogOpen = false;
             IsCategoryModalOpen = false;
 
+            PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(CurrentView) || e.PropertyName == nameof(CurrentUser))
+                {
+                    NotifyReadOnlyProperties();
+                }
+            };
+
             CloseMainAlertCommand = new RelayCommand(_ => IsMainAlertOpen = false);
             ConfirmMainActionCommand = new RelayCommand(_ =>
             {
@@ -1543,7 +1583,20 @@ namespace Porjai20.ViewModels
             UpdateClaimCommand = new RelayCommand(_ => UpdateClaimRecord(), _ => SelectedClaim != null && SelectedClaim.Id > 0);
             DeleteClaimCommand = new RelayCommand(_ => DeleteClaimRecord(), _ => SelectedClaim != null && SelectedClaim.Id > 0);
             ClearClaimCommand = new RelayCommand(_ => ClearClaimForm());
-            UpdateClaimStatusCommand = new RelayCommand(param => { if (SelectedClaim != null && SelectedClaim.Id > 0) { _databaseService.UpdateClaimStatus(SelectedClaim.Id, ClaimStatus); _ = LoadClaims(); ShowAlert("อัปเดตสถานะสำเร็จ", "สำเร็จ", "🎉"); } }, _ => SelectedClaim != null && SelectedClaim.Id > 0);
+            UpdateClaimStatusCommand = new RelayCommand(param => 
+            { 
+                if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+                {
+                    ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                    return;
+                }
+                if (SelectedClaim != null && SelectedClaim.Id > 0) 
+                { 
+                    _databaseService.UpdateClaimStatus(SelectedClaim.Id, ClaimStatus); 
+                    _ = LoadClaims(); 
+                    ShowAlert("อัปเดตสถานะสำเร็จ", "สำเร็จ", "🎉"); 
+                } 
+            }, _ => SelectedClaim != null && SelectedClaim.Id > 0);
             FilterClaimStatusCommand = new RelayCommand(param =>
             {
                 _claimStatusFilter = param?.ToString() ?? "ทั้งหมด";
@@ -1651,7 +1704,7 @@ namespace Porjai20.ViewModels
             var userRole = CurrentUser?.Role;
 
             var filtered = allItems
-                .Where(m => m.RequiredRole == null || m.RequiredRole == userRole)
+                .Where(m => RolePermissions.CanAccessMenu(userRole, m.Id))
                 .ToList();
 
             HomeMenuItems = new ObservableCollection<MenuItemModel>(filtered);
@@ -2106,6 +2159,12 @@ namespace Porjai20.ViewModels
 
         public void ExecuteSaveCategory()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(CategoryName))
             {
                 CategoryValidationMessage = "กรุณากรอกชื่อประเภทสินค้า";
@@ -2153,6 +2212,12 @@ namespace Porjai20.ViewModels
 
         public void ExecuteDeleteCategory()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedCategory == null || SelectedCategory.Id <= 0)
             {
                 CategoryValidationMessage = "กรุณาคลิกเลือกรายการประเภทสินค้าในตารางก่อนดำเนินการ";
@@ -2348,6 +2413,12 @@ namespace Porjai20.ViewModels
 
         public async Task ExecuteSaveProduct()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(Name))
             {
                 ProductValidationMessage = "กรุณากรอกชื่อสินค้า";
@@ -2376,6 +2447,12 @@ namespace Porjai20.ViewModels
 
         public async Task ExecuteDeleteProduct()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedProduct == null || SelectedProduct.Id <= 0)
             {
                 ProductValidationMessage = "กรุณาคลิกเลือกรายการสินค้าในตารางก่อนดำเนินการ";
@@ -3620,6 +3697,12 @@ namespace Porjai20.ViewModels
 
         private async Task ConfirmStockIn()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_in"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedProduct == null) return;
 
             var transaction = new StockTransaction
@@ -4028,6 +4111,12 @@ namespace Porjai20.ViewModels
 
         private void AddClaim()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             // Validate based on type
             if (ClaimType == "ลูกค้า")
             {
@@ -4114,6 +4203,12 @@ namespace Porjai20.ViewModels
 
         private void UpdateClaimRecord()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedClaim == null || SelectedClaim.Id == 0) return;
 
             int salesId = ClaimSalesId > 0 ? ClaimSalesId : SelectedClaim.Sales_ID;
@@ -4166,6 +4261,12 @@ namespace Porjai20.ViewModels
 
         private void DeleteClaimRecord()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedClaim == null || SelectedClaim.Id == 0) return;
 
             ShowConfirm($"คุณต้องการลบการเคลม '{SelectedClaim.ClaimNo}' ใช่หรือไม่?", () =>
@@ -5443,10 +5544,37 @@ namespace Porjai20.ViewModels
             {
                 using (var conn = _databaseService.GetConnection())
                 {
-                    string sql = "SELECT Emp_ID AS Emp_ID, Emp_ID AS Id, Emp_Name AS Emp_Name, Emp_Name AS Name, Emp_Username AS Username, Emp_Password AS Password, Emp_Role AS Role, Emp_Tel AS Tel, Emp_Tel AS Phone FROM tblEmployee WHERE Emp_Username = @Username AND Emp_Password = @Password LIMIT 1";
-                    var user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Username = LoginUsername, Password = LoginPassword });
+                    string sql = "SELECT Emp_ID AS Emp_ID, Emp_ID AS Id, Emp_Name AS Emp_Name, Emp_Name AS Name, Emp_Username AS Username, Emp_Password AS Password, Emp_Role AS Role, Emp_Tel AS Tel, Emp_Tel AS Phone FROM tblEmployee WHERE Emp_Username = @Username LIMIT 1";
+                    var user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Username = LoginUsername });
 
-                    if (user != null)
+                    bool isPasswordValid = false;
+                    if (user != null && !string.IsNullOrEmpty(user.Password))
+                    {
+                        if (DatabaseService.IsBCryptHash(user.Password))
+                        {
+                            try
+                            {
+                                isPasswordValid = BCrypt.Net.BCrypt.Verify(LoginPassword, user.Password);
+                            }
+                            catch
+                            {
+                                isPasswordValid = false;
+                            }
+                        }
+                        else if (user.Password == LoginPassword) // Fallback รองรับกรณีรหัสผ่านยังไม่ได้ migrate
+                        {
+                            isPasswordValid = true;
+                            try
+                            {
+                                string upgradedHash = BCrypt.Net.BCrypt.HashPassword(LoginPassword);
+                                await conn.ExecuteAsync("UPDATE tblEmployee SET Emp_Password = @Hash WHERE Emp_ID = @Id", new { Hash = upgradedHash, Id = user.Id });
+                                user.Password = upgradedHash;
+                            }
+                            catch { }
+                        }
+                    }
+
+                    if (user != null && isPasswordValid)
                     {
                         CurrentUser = user;
                         IsLoginDialogVisible = false;
@@ -5537,10 +5665,22 @@ namespace Porjai20.ViewModels
                     return;
                 }
 
+                string rawPassword = SelectedUser.Password ?? string.Empty;
+                string hashedPassword = DatabaseService.IsBCryptHash(rawPassword)
+                    ? rawPassword
+                    : BCrypt.Net.BCrypt.HashPassword(rawPassword);
+
                 using (var conn = _databaseService.GetConnection())
                 {
                     string sql = "INSERT INTO tblEmployee (Emp_Name, Emp_Tel, Emp_Username, Emp_Password, Emp_Role) VALUES (@Name, @Phone, @Username, @Password, @Role)";
-                    await conn.ExecuteAsync(sql, SelectedUser);
+                    await conn.ExecuteAsync(sql, new
+                    {
+                        Name = SelectedUser.Name,
+                        Phone = SelectedUser.Phone,
+                        Username = SelectedUser.Username,
+                        Password = hashedPassword,
+                        Role = SelectedUser.Role
+                    });
                     IsStaffModalOpen = false;
                     await LoadUsers();
                     SelectedUser = new User();
@@ -5559,10 +5699,23 @@ namespace Porjai20.ViewModels
             {
                 if (SelectedUser == null || SelectedUser.Id == 0) return;
 
+                string rawPassword = SelectedUser.Password ?? string.Empty;
+                string hashedPassword = DatabaseService.IsBCryptHash(rawPassword)
+                    ? rawPassword
+                    : BCrypt.Net.BCrypt.HashPassword(rawPassword);
+
                 using (var conn = _databaseService.GetConnection())
                 {
                     string sql = "UPDATE tblEmployee SET Emp_Name = @Name, Emp_Tel = @Phone, Emp_Username = @Username, Emp_Password = @Password, Emp_Role = @Role WHERE Emp_ID = @Id";
-                    await conn.ExecuteAsync(sql, SelectedUser);
+                    await conn.ExecuteAsync(sql, new
+                    {
+                        Id = SelectedUser.Id,
+                        Name = SelectedUser.Name,
+                        Phone = SelectedUser.Phone,
+                        Username = SelectedUser.Username,
+                        Password = hashedPassword,
+                        Role = SelectedUser.Role
+                    });
                     IsStaffModalOpen = false;
                     await LoadUsers();
                     ShowAlert("อัปเดตข้อมูลพนักงานสำเร็จ", "สำเร็จ", "🎉");
@@ -5843,6 +5996,12 @@ namespace Porjai20.ViewModels
 
         private void ConfirmGoodsReceipt()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_in"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             if (SelectedReceiptPO == null || SelectedReceiptPO.Id == 0)
             {
                 ShowAlert("ไม่พบข้อมูลใบสั่งซื้อ", "ข้อผิดพลาด", "❌");

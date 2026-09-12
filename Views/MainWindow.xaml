@@ -1203,6 +1203,7 @@
                                 <TextBlock Text="ชื่อ-นามสกุล *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="40" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -1213,6 +1214,7 @@
                                 <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="40" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -1223,6 +1225,7 @@
                                 <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource MultiLineTextBoxStyle}"
                                              Height="70" Padding="12,8" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True"/>
                                 </Border>
@@ -1250,6 +1253,7 @@
                         <!-- Save Button -->
                         <Button Grid.Column="0"
                                 Command="{Binding SaveCustomerCommand}"
+                                IsEnabled="{Binding CanEditCustomer}"
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
@@ -1258,6 +1262,7 @@
                         <!-- Clear Button -->
                         <Button Grid.Column="2"
                                 Command="{Binding ClearCustomerCommand}"
+                                IsEnabled="{Binding CanEditCustomer}"
                                 Content="🧹 ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#38BDF8" BorderThickness="1.5" Foreground="#0284C7"
@@ -1267,6 +1272,7 @@
                         <!-- Delete Button -->
                         <Button Grid.Column="4"
                                 Command="{Binding DeleteCustomerCommand}"
+                                IsEnabled="{Binding CanEditCustomer}"
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
@@ -2021,6 +2027,7 @@
                                 <TextBlock Text="ชื่อสินค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -2033,6 +2040,7 @@
                                     <ComboBox ItemsSource="{Binding CategoriesList}"
                                               SelectedItem="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Text="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              IsEnabled="{Binding CanEditStockManage}"
                                               IsEditable="True"
                                               IsTextSearchEnabled="True"
                                               StaysOpenOnEdit="True"
@@ -2046,6 +2054,7 @@
                                 <TextBlock Text="หน่วยนับ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -2056,6 +2065,7 @@
                                 <TextBlock Text="ราคาทุน (บาท)" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -2066,6 +2076,7 @@
                                 <TextBlock Text="ราคาขาย (บาท) *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14" FontWeight="Bold" Foreground="#0284C7"/>
                                 </Border>
@@ -2076,6 +2087,7 @@
                                 <TextBlock Text="จำนวนคงเหลือ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Stock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -2086,6 +2098,7 @@
                                 <TextBlock Text="จุดสั่งซื้อขั้นต่ำ (Reorder Point)" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding ReorderPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -2125,6 +2138,7 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <!-- Select / Upload Image Button -->
                                                 <Button Command="{Binding BrowseImageCommand}"
+                                                        IsEnabled="{Binding CanEditStockManage}"
                                                         Content="🖼️ เลือกรูปภาพ"
                                                         Style="{StaticResource SecondaryBtnStyle}"
                                                         Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
@@ -2132,6 +2146,7 @@
 
                                                 <!-- Remove Image Button -->
                                                 <Button Command="{Binding RemoveImageCommand}"
+                                                        IsEnabled="{Binding CanEditStockManage}"
                                                         Content="🗑️ ลบรูปภาพ"
                                                         Style="{StaticResource DangerBtnStyle}"
                                                         BorderBrush="#FCA5A5" BorderThickness="1.5"
@@ -2170,6 +2185,7 @@
                         <!-- Save Button -->
                         <Button Grid.Column="0"
                                 Command="{Binding SaveProductFormCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
                                 Content="💾 บันทึกข้อมูลสินค้า"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
@@ -2178,6 +2194,7 @@
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
                                 Command="{Binding ClearFormCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
@@ -2187,6 +2204,7 @@
                         <!-- Delete Button (Visible in Edit Mode) -->
                         <Button Grid.Column="4"
                                 Command="{Binding StockDeleteProductCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
@@ -2272,6 +2290,7 @@
                                 <TextBlock Text="ชื่อประเภทสินค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CategoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>
                                 </Border>
@@ -2282,6 +2301,7 @@
                                 <TextBlock Text="รายละเอียดหมวดหมู่" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CategoryDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource MultiLineTextBoxStyle}"
                                              Height="60" Padding="12,8" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True"/>
                                 </Border>
@@ -2309,6 +2329,7 @@
                         <!-- Save Button -->
                         <Button Grid.Column="0"
                                 Command="{Binding SaveCategoryCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
@@ -2317,6 +2338,7 @@
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
                                 Command="{Binding ClearCategoryCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
@@ -2326,6 +2348,7 @@
                         <!-- Delete Button (Visible in Edit Mode) -->
                         <Button Grid.Column="4"
                                 Command="{Binding DeleteCategoryCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"

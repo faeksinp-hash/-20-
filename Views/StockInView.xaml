@@ -10,6 +10,7 @@
               Background="#F4F7FA">
 
     <UserControl.Resources>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
 
         <!-- ══════════════════════════════════════════════════════════ -->
         <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
@@ -637,6 +638,7 @@
                             Content="📥 ตรวจรับสินค้า"
                             Command="{Binding OpenGoodsReceiptModalCommand}"
                             CommandParameter="{Binding SelectedReceiptPO}"
+                            IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                             Style="{StaticResource RoseBtnStyle}"
                             Background="#00A3E0"
                             Foreground="White"
@@ -828,7 +830,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="13" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
                             <Border Grid.Column="2" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8">
-                                <TextBox Text="{Binding ReceiptDeliveryNoteNo, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox Text="{Binding ReceiptDeliveryNoteNo, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                          Style="{StaticResource LightTextBoxStyle}"
                                          Padding="10,6" Height="36" FontSize="13" VerticalContentAlignment="Center"/>
                             </Border>
@@ -862,7 +864,7 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="1.5" CornerRadius="6" Padding="4,2" HorizontalAlignment="Center" Width="90">
-                                                    <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                    <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding DataContext.CanEditStockIn, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                              Style="{StaticResource LightTextBoxStyle}"
                                                              FontWeight="Bold" FontSize="14" Foreground="#0B2545"
                                                              TextAlignment="Center" VerticalContentAlignment="Center"/>
@@ -912,7 +914,7 @@
 
                         <Button Grid.Column="4"
                                 Content="📥 ยืนยันการรับสินค้าเข้าคลัง"
-                                Command="{Binding ConfirmGoodsReceiptCommand}"
+                                Command="{Binding ConfirmGoodsReceiptCommand}" IsEnabled="{Binding CanEditStockIn}"
                                 Style="{StaticResource RoseBtnStyle}"
                                 Background="#00A3E0"
                                 Foreground="White"
@@ -979,7 +981,7 @@
                             <TextBlock Text="เลือกสินค้าที่ต้องการรับเข้า *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
                             <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Margin="0,0,0,10">
                                 <ComboBox ItemsSource="{Binding Products}"
-                                          SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                                          SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" IsEnabled="{Binding CanEditStockIn}"
                                           Style="{StaticResource LightComboBoxStyle}"
                                           Height="38" BorderThickness="0">
                                     <ComboBox.ItemTemplate>
@@ -1035,7 +1037,7 @@
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="เลขที่ใบส่งของ หรือ ใบกำกับภาษี *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                 <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
-                                    <TextBox Text="{Binding StockInRefNo, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding StockInRefNo, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Padding="10,8"/>
                                 </Border>
@@ -1045,7 +1047,7 @@
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="ผู้จัดจำหน่าย หรือ ซัพพลายเออร์ *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                 <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
-                                    <TextBox Text="{Binding StockInSupplier, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding StockInSupplier, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Padding="10,8"/>
                                 </Border>
@@ -1064,7 +1066,7 @@
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="จำนวนที่รับเข้า *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                 <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
-                                    <TextBox Text="{Binding StockInQuantity, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding StockInQuantity, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Padding="10,8" TextAlignment="Center"/>
                                 </Border>
@@ -1074,7 +1076,7 @@
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="ต้นทุนต่อหน่วย (บาท) *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                 <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
-                                    <TextBox Text="{Binding StockInCost, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding StockInCost, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Padding="10,8"/>
                                 </Border>
@@ -1107,7 +1109,7 @@
                         <!-- Confirm -->
                         <Button Grid.Column="2"
                                 Content="📥 ยืนยันการรับสินค้าเข้าคลัง"
-                                Command="{Binding ConfirmStockInCommand}"
+                                Command="{Binding ConfirmStockInCommand}" IsEnabled="{Binding CanEditStockIn}"
                                 Style="{StaticResource RoseBtnStyle}"
                                 Background="#00A3E0"
                                 Foreground="White"

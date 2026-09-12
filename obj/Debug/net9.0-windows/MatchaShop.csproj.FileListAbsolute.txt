@@ -1010,3 +1010,4 @@ D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\refint\Matcha
 D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
 D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
 D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\BCrypt-Net-Next.dll
