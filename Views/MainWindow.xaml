@@ -401,7 +401,7 @@
                 <StackPanel>
                     <!-- Brand Logo -->
                     <Border Width="70" Height="70" CornerRadius="14" Background="#00A3E0" HorizontalAlignment="Center" Margin="0,0,0,15">
-                        <Path Data="{StaticResource IconShop}" Fill="White" Stretch="Uniform" Width="34" Height="34"/>
+                        <Image Source="/Resources/logo2.png" Stretch="Uniform" Width="70" Height="70"/>
                     </Border>
                     
                     <TextBlock Text="ยินดีต้อนรับ" FontSize="30" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Center"/>
@@ -506,12 +506,14 @@
                             <!-- Logo Container (Height: 40px, Width: Auto, Maintain Aspect Ratio, 16px Left Offset, High-Res) -->
                             <Border Grid.Column="0"
                                     Height="40"
-                                    Background="Transparent"
+                                    Width="Auto"
+                                    Background="#00A3E0"
+                                    CornerRadius="8"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                <Image Source="/Resources/logo.png"
+                                <Image Source="/Resources/logo2.png"
                                        Height="40"
-                                       Width="Auto"
+                                       Width="40"
                                        Stretch="Uniform"
                                        RenderOptions.BitmapScalingMode="HighQuality"
                                        RenderOptions.EdgeMode="Aliased"
