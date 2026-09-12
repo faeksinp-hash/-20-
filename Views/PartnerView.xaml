@@ -634,7 +634,7 @@
             <!--  ROW 3 — Main Full-Width DataGrid Table                    -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <Border Grid.Row="3"
-                    Background="#F8FAFC"
+                    Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1"
                     CornerRadius="12"
@@ -656,7 +656,7 @@
                           RowHeight="48"
                           GridLinesVisibility="None"
                           BorderThickness="0"
-                          Background="#F8FAFC"
+                          Background="#FFFFFF"
                           ColumnHeaderStyle="{StaticResource PartnerColumnHeaderStyle}"
                           RowStyle="{StaticResource PartnerRowStyle}"
                           CellStyle="{StaticResource PartnerCellStyle}">

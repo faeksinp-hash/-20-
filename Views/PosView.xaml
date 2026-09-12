@@ -84,7 +84,7 @@
                 <!-- Column 0: Product Catalog (Flexible width) -->
                 <ColumnDefinition Width="*"/>
                 <!-- Column 1: Shopping Cart (380px) -->
-                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="500"/>
             </Grid.ColumnDefinitions>
 
             <!-- Column 0: Left Panel (Product Catalog & Header) -->
@@ -248,7 +248,7 @@
             </Grid>
 
             <!-- Column 1: Right Panel (Shopping Cart) -->
-            <Border Grid.Column="1" Background="#FFFFFF" BorderThickness="1,0,0,0" BorderBrush="#BAE6FD" Padding="18">
+            <Border Grid.Column="1" Background="#FFFFFF" BorderThickness="1,0,0,0" BorderBrush="#BAE6FD" Padding="10">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
