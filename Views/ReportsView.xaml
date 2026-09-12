@@ -1,0 +1,1219 @@
+<UserControl x:Class="Porjai20.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Porjai20"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200"
+             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+             Background="#F4F7FA"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             ScrollViewer.VerticalScrollBarVisibility="Disabled"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             HorizontalContentAlignment="Stretch"
+             VerticalContentAlignment="Stretch">
+
+    <UserControl.Resources>
+
+        <!-- 1. ปุ่มประมวลผล (Primary Blue) -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background" Value="#00A3E0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="15,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#33B5E5"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 2. ปุ่มล้าง (Outline / Light) -->
+        <Style x:Key="OutlineButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background" Value="#E3F2FD"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Padding" Value="15,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#BBDEFB"/>
+                                <Setter Property="Foreground" Value="#0D47A1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="OutlineBtnStyle" TargetType="Button" BasedOn="{StaticResource OutlineButtonStyle}"/>
+
+        <!-- 3. ปุ่มส่งออก Excel (Success Green) -->
+        <Style x:Key="SuccessButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background" Value="#D1F2D9"/>
+            <Setter Property="Foreground" Value="#155724"/>
+            <Setter Property="Padding" Value="15,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#A3E6B7"/>
+                                <Setter Property="Foreground" Value="#054719"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 4. ปุ่มพิมพ์รายงาน (Info Cyan) -->
+        <Style x:Key="InfoButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background" Value="#00A8E8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="15,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  GLOBAL SCROLLVIEWER & DATAGRID SCROLLBAR OVERRIDES        -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style TargetType="ScrollViewer">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="PosBorderLight" Color="#CBD5E1"/>
+
+        <SolidColorBrush x:Key="RosePrimary"    Color="#00A3E0"/>
+        <SolidColorBrush x:Key="RoseHover"      Color="#0B2545"/>
+        <SolidColorBrush x:Key="RosePressed"    Color="#0082B3"/>
+        <SolidColorBrush x:Key="RoseSubtle"     Color="#E0F2FE"/>
+
+        <SolidColorBrush x:Key="TextPrimary"    Color="#0F172A"/>
+        <SolidColorBrush x:Key="TextSecondary"  Color="#475569"/>
+        <SolidColorBrush x:Key="TextMuted"      Color="#64748B"/>
+
+        <!-- Soft Shadow Effect -->
+        <DropShadowEffect x:Key="SoftShadow" BlurRadius="12" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.08"/>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  KPI CARD STYLE                                            -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="KpiCardStyle" TargetType="Border">
+            <Setter Property="Background"      Value="#FFFFFF"/>
+            <Setter Property="BorderBrush"     Value="#BAE6FD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="12"/>
+            <Setter Property="Padding"         Value="16"/>
+            <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  COMBOBOX & DATEPICKER STYLES                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="LightComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Foreground"             Value="#2D3748"/>
+            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="Height"                  Value="38"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding"                 Value="10,0"/>
+        </Style>
+
+        <Style x:Key="LightDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="Height"                  Value="38"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Circular Modal Close Button Style -->
+        <Style x:Key="ModalCloseButtonStyle" TargetType="Button">
+            <Setter Property="Width"               Value="32"/>
+            <Setter Property="Height"              Value="32"/>
+            <Setter Property="Background"          Value="#E0F2FE"/>
+            <Setter Property="Foreground"          Value="#0B2545"/>
+            <Setter Property="BorderThickness"     Value="0"/>
+            <Setter Property="Cursor"              Value="Hand"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="16">
+                            <TextBlock x:Name="Txt"
+                                       Text="✕"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#00A3E0"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#0082B3"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  DATAGRID STYLES                                           -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="ReportColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background"              Value="#F1F5F9"/>
+            <Setter Property="Foreground"              Value="#000000"/>
+            <Setter Property="FontWeight"              Value="Bold"/>
+            <Setter Property="FontSize"                Value="16"/>
+            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Padding"                 Value="12,0"/>
+            <Setter Property="BorderBrush"             Value="#E2E8F0"/>
+            <Setter Property="BorderThickness"         Value="0,0,0,1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       Foreground="#000000"
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ReportRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridRow">
+                        <Border x:Name="RowBorder"
+                                CornerRadius="8" Margin="4,2" Padding="4,0"
+                                Background="Transparent">
+                            <DataGridCellsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#00A3E0"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ReportCellStyle" TargetType="DataGridCell">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="8,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ColCenter" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource ColCenter}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ColLeftBold" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="Foreground"          Value="#2D3748"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+
+            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <!--  SEAMLESS BORDERLESS COMBOBOX STYLE                        -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <ControlTemplate x:Key="SeamlessComboBoxToggleButton" TargetType="ToggleButton">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.ColumnSpan="2" Background="Transparent" BorderThickness="0"/>
+                <Path Grid.Column="1" 
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Center" 
+                      Data="M 0 0 L 4 4 L 8 0 Z" 
+                      Fill="#64748B" 
+                      Margin="0,0,4,0"/>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="SeamlessComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="4,0,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid SnapsToDevicePixels="True">
+                            <ToggleButton Template="{StaticResource SeamlessComboBoxToggleButton}"
+                                          Focusable="False"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press"/>
+                            <ContentPresenter IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              HorizontalAlignment="Left"/>
+                            <Popup x:Name="PART_Popup"
+                                   AllowsTransparency="True"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   PopupAnimation="Slide"
+                                   Focusable="False">
+                                <Border Background="#FFFFFF"
+                                        BorderBrush="#BAE6FD"
+                                        BorderThickness="1.5"
+                                        CornerRadius="10"
+                                        Margin="0,4,0,4"
+                                        MinWidth="{TemplateBinding ActualWidth}">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="#0B2545" Opacity="0.15"/>
+                                    </Border.Effect>
+                                    <ScrollViewer MaxHeight="200" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" Margin="4"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+</UserControl.Resources>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  OUTER ROOT GRID (ScrollViewers Disabled in Both Dimensions)      -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <Grid Visibility="{Binding IsReportsMode, Converter={StaticResource BoolToVis}}"
+          Background="#E0F2FE"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+
+        <Grid Margin="16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+              ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Row 0: Page Header Grid -->
+                <RowDefinition Height="Auto"/>  <!-- Row 1: KPI Cards Grid -->
+                <RowDefinition Height="Auto"/>  <!-- Row 2: Search & Filter Bar Grid -->
+                <RowDefinition Height="*"/>     <!-- Row 3: DataGrid Table (Fills Height="*") -->
+            </Grid.RowDefinitions>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 0 — Page Header Grid                                  -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="0" Margin="0,0,0,16" HorizontalAlignment="Stretch">
+                <!-- Left Title Area -->
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" CornerRadius="3" VerticalAlignment="Stretch">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00A3E0" Offset="0"/>
+                                <GradientStop Color="#F4A2B8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="📊 รายงานสรุปผล"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#2D3748" Margin="0,0,0,2"/>
+                        <TextBlock Grid.Row="1" Text="รายงานสรุปผลและวิเคราะห์ข้อมูล — ระบบจัดการร้าน พอใจ"
+                                   FontSize="13" Foreground="#718096" Margin="0"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 1 — KPI Summary Cards (3 Cards Grid)                  -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="1" Margin="0,0,0,16" HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- KPI Card 1: Total Sales Revenue -->
+                <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#E0F2FE" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Row 0: Icon + Title Grid -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Height="36" CornerRadius="10" Background="#E0F2FE">
+                                <TextBlock Text="💰" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Grid.Column="2" Text="ยอดขายรวม" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        </Grid>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding ReportTotalRevenue, StringFormat=฿{0:N2}}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#0B2545"
+                                   Margin="0,0,0,6"
+                                   TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="ยอดรวมรายรับจากการขายในช่วงเวลาที่เลือก"
+                                   FontSize="11"
+                                   Foreground="#A0AEC0"
+                                   Margin="0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </Border>
+
+                <!-- KPI Card 2: Net Profit -->
+                <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#E6FFFA" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#B2F5EA"/>
+                    </Border.BorderBrush>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Row 0: Icon + Title Grid -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Height="36" CornerRadius="10" Background="#E6FFFA">
+                                <TextBlock Text="📈" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Grid.Column="2" Text="กำไรสุทธิ" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        </Grid>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding ReportNetProfit, StringFormat=฿{0:N2}}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#2C7A7B"
+                                   Margin="0,0,0,6"
+                                   TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="กำไรสุทธิคำนวณจากรายรับหักรายจ่ายรวม"
+                                   FontSize="11"
+                                   Foreground="#A0AEC0"
+                                   Margin="0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </Border>
+
+                <!-- KPI Card 3: Total Expenses -->
+                <Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#FEF3C7" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#FDE68A"/>
+                    </Border.BorderBrush>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Row 0: Icon + Title Grid -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Height="36" CornerRadius="10" Background="#FEF3C7">
+                                <TextBlock Text="💸" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Grid.Column="2" Text="รายจ่ายรวม" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        </Grid>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding ReportTotalExpenses, StringFormat=฿{0:N2}}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#D69E2E"
+                                   Margin="0,0,0,6"
+                                   TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="ยอดรวมค่าใช้จ่ายและรายจ่ายของร้าน"
+                                   FontSize="11"
+                                   Foreground="#A0AEC0"
+                                   Margin="0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+            <!--  ROW 2 — Filter & Controls Bar (Single Unified Row)        -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="2"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1.5"
+                    CornerRadius="14"
+                    Padding="18,14"
+                    Margin="0,0,0,16"
+                    Effect="{StaticResource SoftShadow}"
+                    HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <!-- Column 0: ประเภทรายงาน -->
+                        <ColumnDefinition Width="280"/>
+                        <!-- Column 1: ช่วงเวลา -->
+                        <ColumnDefinition Width="280"/>
+                        <!-- Column 2: Spacer -->
+                        <ColumnDefinition Width="*"/>
+                        <!-- Column 3: Action Buttons (ประมวลผล, ล้าง) -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 1. ประเภทรายงาน (Label on Top, Dropdown Below) -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center">
+                        <TextBlock Text="ประเภทรายงาน" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="2,0,0,6"/>
+                        <Border Background="#F8FAFC" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Height="40" Padding="6,0">
+                            <ComboBox x:Name="cmbReportType" 
+                                      ItemsSource="{Binding ReportTypes}" 
+                                      SelectedItem="{Binding SelectedReportType}" 
+                                      Style="{StaticResource SeamlessComboBoxStyle}" 
+                                      Height="36" 
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 2. ช่วงเวลา (Label on Top, Dropdown Below) -->
+                    <StackPanel Grid.Column="1" Margin="0,0,16,0" VerticalAlignment="Center">
+                        <TextBlock Text="ช่วงเวลา" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="2,0,0,6"/>
+                        <Border Background="#F8FAFC" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Height="40" Padding="6,0">
+                            <ComboBox x:Name="cmbTimeframe" 
+                                      ItemsSource="{Binding ReportPeriods}" 
+                                      SelectedItem="{Binding SelectedReportPeriod}" 
+                                      Style="{StaticResource SeamlessComboBoxStyle}" 
+                                      Height="36" 
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 3. Action Buttons (ประมวลผล & ล้าง) -->
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,2">
+                        <!-- ปุ่มสีฟ้า ประมวลผล -->
+                        <Button Command="{Binding GenerateReportCommand}" 
+                                Background="#1E88E5"
+                                Cursor="Hand"
+                                Padding="22,0" 
+                                Margin="0,0,10,0" 
+                                Height="40">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bd"
+                                                        Background="{TemplateBinding Background}"
+                                                        CornerRadius="8"
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <TextBlock Text="ประมวลผล"
+                                                               Foreground="#FFFFFF"
+                                                               FontWeight="Bold"
+                                                               FontSize="14"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bd" Property="Background" Value="#42A5F5"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="Bd" Property="Background" Value="#1565C0"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                            <Button.Effect>
+                                <DropShadowEffect Color="#1E88E5" BlurRadius="10" ShadowDepth="2" Direction="270" Opacity="0.35"/>
+                            </Button.Effect>
+                        </Button>
+
+                        <!-- ปุ่มขอบฟ้าอ่อน ล้าง -->
+                        <Button Command="{Binding ClearReportFilterCommand}" 
+                                Height="40" 
+                                Padding="20,0" 
+                                Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#E0F2FE"/>
+                                    <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                    <Setter Property="Foreground" Value="#0B2545"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="FontSize" Value="13.5"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                    <TextBlock Text="ล้าง" FontWeight="SemiBold" FontSize="13.5" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#7DD3FC"/>
+                                                        <Setter Property="Foreground" Value="#0B2545"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#7DD3FC"/>
+                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#38BDF8"/>
+                                                        <Setter Property="Foreground" Value="#0B2545"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!--  ROW 3 — Split Layout: Dynamic Chart (Left) + Summary List (Right) -->
+            <!-- ═══════════════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="3" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <!-- Left: Dynamic Chart Visualization Box (60%) -->
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="16"/>
+                    <!-- Right: Summary Ranking & Key Metrics Box (40%) -->
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!--  LEFT CARD: Dynamic Chart Visualization                   -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <Border Grid.Column="0"
+                        Background="#FFFFFF"
+                        BorderBrush="#BAE6FD"
+                        BorderThickness="1.5"
+                        CornerRadius="14"
+                        Padding="18"
+                        Effect="{StaticResource SoftShadow}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Chart Header & Action Buttons -->
+                            <RowDefinition Height="*"/>    <!-- Dynamic Chart Canvas Area -->
+                        </Grid.RowDefinitions>
+
+                        <!-- 1. Chart Header & Top-Right Actions (Excel / Print) -->
+                        <Grid Grid.Row="0" Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Chart Title -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="32" Height="32" CornerRadius="8" Background="#E0F2FE" Margin="0,0,10,0">
+                                    <TextBlock Text="📈" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{Binding ReportChartTitle}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Foreground="#0F172A"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Top-Right Action Buttons (Excel & Print) -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- ปุ่ม Excel -->
+                                <Button Command="{Binding ExportReportCommand}"
+                                        Height="34"
+                                        Padding="12,0"
+                                        Margin="0,0,8,0"
+                                        Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="#DCFCE7"/>
+                                            <Setter Property="BorderBrush" Value="#86EFAC"/>
+                                            <Setter Property="BorderThickness" Value="1.5"/>
+                                            <Setter Property="Foreground" Value="#15803D"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="FontSize" Value="12.5"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                <TextBlock Text="📊" FontSize="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="Excel" FontWeight="Bold" FontSize="12.5" Foreground="#15803D" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="bd" Property="Background" Value="#BBF7D0"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <!-- ปุ่ม พิมพ์ -->
+                                <Button Command="{Binding PrintReportCommand}"
+                                        Height="34"
+                                        Padding="12,0"
+                                        Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="#E0F2FE"/>
+                                            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                            <Setter Property="BorderThickness" Value="1.5"/>
+                                            <Setter Property="Foreground" Value="#0284C7"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="FontSize" Value="12.5"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                <TextBlock Text="🖨️" FontSize="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="พิมพ์" FontWeight="Bold" FontSize="12.5" Foreground="#0284C7" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 2. Dynamic Chart Render Area -->
+                        <Grid Grid.Row="1">
+                            <!-- Cartesian Chart (Bar / Column / Line / Grouped) -->
+                            <lvc:CartesianChart Series="{Binding ReportCartesianSeries}"
+                                                LegendLocation="Top"
+                                                AnimationsSpeed="0:0:0.4">
+                                <lvc:CartesianChart.Style>
+                                    <Style TargetType="lvc:CartesianChart">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ReportChartDisplayMode}" Value="1">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </lvc:CartesianChart.Style>
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Labels="{Binding ReportChartLabels}" LabelsRotation="15">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator Step="1" IsEnabled="False"/>
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisX>
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis LabelFormatter="{Binding ReportChartFormatter}"/>
+                                </lvc:CartesianChart.AxisY>
+                            </lvc:CartesianChart>
+
+                            <!-- Pie / Doughnut Chart -->
+                            <lvc:PieChart Series="{Binding ReportPieSeries}"
+                                          LegendLocation="Right"
+                                          InnerRadius="60"
+                                          AnimationsSpeed="0:0:0.4">
+                                <lvc:PieChart.Style>
+                                    <Style TargetType="lvc:PieChart">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ReportChartDisplayMode}" Value="1">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </lvc:PieChart.Style>
+                            </lvc:PieChart>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!--  RIGHT CARD: Summary Ranking & Key Metrics Box            -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <Border Grid.Column="2"
+                        Background="#FFFFFF"
+                        BorderBrush="#BAE6FD"
+                        BorderThickness="1.5"
+                        CornerRadius="14"
+                        Padding="16"
+                        Effect="{StaticResource SoftShadow}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Header -->
+                            <RowDefinition Height="*"/>    <!-- Scrollable Ranking / Summary List -->
+                            <RowDefinition Height="Auto"/> <!-- Bottom Total Count Footer -->
+                        </Grid.RowDefinitions>
+
+                        <!-- Header -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="30" Height="30" CornerRadius="8" Background="#FEF3C7" Margin="0,0,8,0">
+                                    <TextBlock Text="🏆" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{Binding ReportSummaryHeaderTitle}"
+                                           FontSize="15"
+                                           FontWeight="Bold"
+                                           Foreground="#0F172A"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Scrollable Summary Item Cards -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,8">
+                            <ItemsControl ItemsSource="{Binding ReportSummaryList}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#F8FAFC"
+                                                BorderBrush="#E2E8F0"
+                                                BorderThickness="1.5"
+                                                CornerRadius="10"
+                                                Padding="12,9"
+                                                Margin="0,0,0,8">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#F0F9FF"/>
+                                                            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Rank Badge -->
+                                                <Border Grid.Column="0" Width="24" Height="24" CornerRadius="12" Background="#E0F2FE" Margin="0,0,10,0">
+                                                    <TextBlock Text="{Binding Rank}" FontSize="12" FontWeight="Bold" Foreground="#0284C7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+
+                                                <!-- Title & Subtitle -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="Bold" Foreground="#1E293B" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Subtitle}" FontSize="11.5" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+
+                                                <!-- Value -->
+                                                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                    <TextBlock Text="{Binding ValueText}" FontSize="13.5" FontWeight="ExtraBold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                                    <Border Background="#E0F2FE" CornerRadius="4" Padding="5,1" Margin="0,2,0,0" HorizontalAlignment="Right">
+                                                        <TextBlock Text="{Binding Tag}" FontSize="10.5" FontWeight="Bold" Foreground="#0284C7"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <!-- Bottom Summary Footer -->
+                        <Border Grid.Row="2" Background="#F1F5F9" CornerRadius="8" Padding="10,6">
+                            <TextBlock Text="{Binding ReportSummaryTotalCountText}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="#64748B"
+                                       HorizontalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+
+
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  FULL-SCREEN INLINE MODAL OVERLAY: REPORT ITEM DETAILS     -->
+        <!--  (Positioned as LAST child element, Panel.ZIndex=99)       -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Grid Background="#80000000"
+              Visibility="{Binding IsReportModalOpen, Converter={StaticResource BoolToVis}}"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Panel.ZIndex="99">
+            <Border Width="680"
+                    MaxHeight="680"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1.5"
+                    CornerRadius="16"
+                    Padding="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Effect="{StaticResource SoftShadow}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>   <!-- Header -->
+                        <RowDefinition Height="Auto"/>   <!-- Selected Row Summary Inset Box -->
+                        <RowDefinition Height="*"/>      <!-- Detail Body Card -->
+                        <RowDefinition Height="Auto"/>   <!-- Divider Line -->
+                        <RowDefinition Height="Auto"/>   <!-- Footer Actions Bar -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Header with Title and Prominent Circular Close Button -->
+                    <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
+                        <Grid DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="📜 " FontSize="20"/>
+                            <Grid Grid.Column="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="รายละเอียดข้อมูลรายงาน"
+                                           FontSize="18" FontWeight="Bold"
+                                           Foreground="#2D3748" Margin="0"/>
+                                <TextBlock Grid.Row="1" Text="ข้อมูลสรุปเชิงลึกของรายการที่เลือกในรายงาน"
+                                           FontSize="12.5" Foreground="#718096" Margin="0,2,0,0"/>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Circular Close Button -->
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding CloseReportModalCommand}"
+                                Style="{StaticResource ModalCloseButtonStyle}"/>
+                    </DockPanel>
+
+                    <!-- Row 1: Selected Row Summary Inset Box -->
+                    <Border Grid.Row="1"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="16,12"
+                            Margin="0,0,0,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="📌 รหัส/รายการ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding SelectedReportRow.Col1}"
+                                       FontSize="14" FontWeight="Bold" Foreground="#2D3748"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                            <TextBlock Grid.Column="2" Text="📅 วันที่:" FontSize="13" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="16,0,8,0"/>
+                            <TextBlock Grid.Column="3"
+                                       Text="{Binding SelectedReportRow.Col5}"
+                                       FontSize="14" FontWeight="Bold" Foreground="#2D3748"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Row 2: Detail Body Card -->
+                    <Border Grid.Row="2"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="20"
+                            Margin="0,0,0,16">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="12"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="12"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="12"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="รายละเอียดสินค้า/รายการ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col2}" FontSize="14" FontWeight="Bold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="จำนวนเงิน/ปริมาณ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col3}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <Grid Grid.Row="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="หมวดหมู่/วิธีการชำระ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col4}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <Grid Grid.Row="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="สถานะ/หมายเหตุ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="ประมวลผลสำเร็จ เรียบร้อย" FontSize="13" Foreground="#718096" FontStyle="Italic"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Row 3: Divider Line -->
+                    <Border Grid.Row="3" Height="1" Background="#BAE6FD" Margin="0,0,0,16"/>
+
+                    <!-- Row 4: Footer Actions Bar -->
+                    <Grid Grid.Row="4" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Content="🖨️ พิมพ์รายการนี้"
+                                Command="{Binding PrintReportCommand}"
+                                Height="38" Padding="20,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#00A3E0"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#33B5E5"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Grid.Column="2"
+                                Content="ปิดหน้าต่าง"
+                                Command="{Binding CloseReportModalCommand}"
+                                Height="38" Padding="20,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#E0F2FE"/>
+                                    <Setter Property="Foreground" Value="#718096"/>
+                                    <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#BAE6FD"/>
+                                                        <Setter Property="Foreground" Value="#0B2545"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+    </Grid>
+</UserControl>

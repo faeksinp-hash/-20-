@@ -1,0 +1,101 @@
+<Window x:Class="Porjai20.Views.POReceiptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ใบสั่งซื้อ (Purchase Order Receipt)" Height="800" Width="600"
+        WindowStartupLocation="CenterOwner" Background="White">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Button x:Name="PrintBtn" Content="พิมพ์ใบสั่งซื้อ" Click="PrintBtn_Click" 
+                Background="#00A3E0" Foreground="White" FontWeight="Bold" 
+                Padding="20,10" Margin="20,20,20,0" HorizontalAlignment="Right"
+                BorderThickness="0" Cursor="Hand"/>
+
+        <Grid x:Name="PrintArea" Grid.Row="1" Margin="40">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" BorderBrush="Black" BorderThickness="0,0,0,2" Padding="0,0,0,20" Margin="0,0,0,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="ใบสั่งซื้อ" FontSize="28" FontWeight="Bold"/>
+                        <TextBlock Text="ร้านทุกอย่าง 20 บาท" FontSize="18" Margin="0,5,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding PONumber, StringFormat='เลขที่: {0}'}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding OrderDate, StringFormat='วันที่สั่ง: {0:dd/MM/yyyy}'}" FontSize="14" HorizontalAlignment="Right" Margin="0,5,0,0"/>
+                        <TextBlock Text="{Binding ExpectedDate, StringFormat='ถึงกำหนดรับ: {0:dd/MM/yyyy}'}" FontSize="14" HorizontalAlignment="Right" Margin="0,5,0,0" Foreground="DarkRed"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Supplier Info -->
+            <Border Grid.Row="1" Background="#F9F9F9" Padding="20" CornerRadius="8" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="สั่งซื้อจากซัพพลายเออร์" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="ชื่อซัพพลายเออร์:" Foreground="#666" Margin="0,0,0,5"/>
+                        <TextBlock Grid.Column="1" Text="{Binding SupplierName}" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Items -->
+            <DataGrid Grid.Row="2" x:Name="ItemsGrid" AutoGenerateColumns="False" IsReadOnly="True" 
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderThickness="0" Background="Transparent"
+                      RowHeight="40">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" Width="100"/>
+                    <DataGridTextColumn Header="รายการสินค้า" Binding="{Binding ProductName}" Width="*"/>
+                    <DataGridTextColumn Header="จำนวน" Binding="{Binding Quantity}" Width="80"/>
+                    <DataGridTextColumn Header="ราคา/หน่วย" Binding="{Binding CostPrice, StringFormat=N2}" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Totals -->
+            <StackPanel Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <TextBlock Text="รวมสุทธิ:" Width="100" TextAlignment="Right" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="{Binding TotalAmount, StringFormat=N2}" Width="150" TextAlignment="Right" FontWeight="Bold" FontSize="18"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Signatures -->
+            <Grid Grid.Row="4" Margin="0,60,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Width="200" Height="30" Margin="0,0,0,10"/>
+                    <TextBlock Text="ผู้สั่งซื้อ" HorizontalAlignment="Center"/>
+                    <TextBlock Text="วันที่ _____/_____/_____" HorizontalAlignment="Center" Margin="0,5,0,0" Foreground="#666"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Width="200" Height="30" Margin="0,0,0,10"/>
+                    <TextBlock Text="ผู้รับคำสั่งซื้อ" HorizontalAlignment="Center"/>
+                    <TextBlock Text="วันที่ _____/_____/_____" HorizontalAlignment="Center" Margin="0,5,0,0" Foreground="#666"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

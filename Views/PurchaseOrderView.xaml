@@ -1,0 +1,1494 @@
+<UserControl x:Class="Porjai20.Views.PurchaseOrderView"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:local="clr-namespace:Porjai20"
+mc:Ignorable="d"
+d:DesignHeight="800" d:DesignWidth="1200"
+FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+Background="#F4F7FA">
+<UserControl.Resources>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<SolidColorBrush x:Key="PosBg"          Color="#F4F7FA"/>
+<SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
+<SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
+<SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
+<SolidColorBrush x:Key="PosBorderLight" Color="#CBD5E1"/>
+<SolidColorBrush x:Key="RosePrimary"    Color="#00A3E0"/>
+<SolidColorBrush x:Key="RoseHover"      Color="#0B2545"/>
+<SolidColorBrush x:Key="RosePressed"    Color="#0082B3"/>
+<SolidColorBrush x:Key="RoseSubtle"     Color="#E0F2FE"/>
+<SolidColorBrush x:Key="TextPrimary"    Color="#0F172A"/>
+<SolidColorBrush x:Key="TextSecondary"  Color="#475569"/>
+<SolidColorBrush x:Key="TextMuted"      Color="#64748B"/>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  MODAL CLOSE BUTTON STYLE (Circular Soft Pink Badge)       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="ModalCloseButtonStyle" TargetType="Button">
+<Setter Property="Width"               Value="36"/>
+<Setter Property="Height"              Value="36"/>
+<Setter Property="Background"          Value="#FCE4EC"/>
+<Setter Property="Foreground"          Value="#D81B60"/>
+<Setter Property="BorderThickness"     Value="0"/>
+<Setter Property="Cursor"              Value="Hand"/>
+<Setter Property="FontSize"            Value="16"/>
+<Setter Property="FontWeight"          Value="Bold"/>
+<Setter Property="HorizontalAlignment" Value="Right"/>
+<Setter Property="VerticalAlignment"   Value="Center"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="Button">
+<Border x:Name="Bd"
+Background="{TemplateBinding Background}"
+CornerRadius="18">
+<TextBlock x:Name="Txt"
+Text="✕"
+Foreground="{TemplateBinding Foreground}"
+FontSize="{TemplateBinding FontSize}"
+FontWeight="{TemplateBinding FontWeight}"
+HorizontalAlignment="Center"
+VerticalAlignment="Center"/>
+</Border>
+<ControlTemplate.Triggers>
+<Trigger Property="IsMouseOver" Value="True">
+<Setter TargetName="Bd" Property="Background" Value="#00A3E0"/>
+<Setter TargetName="Txt" Property="Foreground" Value="White"/>
+</Trigger>
+<Trigger Property="IsPressed" Value="True">
+<Setter TargetName="Bd" Property="Background" Value="#0082B3"/>
+<Setter TargetName="Txt" Property="Foreground" Value="White"/>
+</Trigger>
+</ControlTemplate.Triggers>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+</Style>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  KPI CARD STYLE                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="KpiCardStyle" TargetType="Border">
+<Setter Property="Background"      Value="#FFFFFF"/>
+<Setter Property="CornerRadius"    Value="16"/>
+<Setter Property="Padding"         Value="16"/>
+<Setter Property="BorderBrush"     Value="#BAE6FD"/>
+<Setter Property="BorderThickness" Value="1"/>
+<Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
+</Style>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  TEXTBOX STYLE                                             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="LightTextBoxStyle" TargetType="TextBox">
+<Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="Background"             Value="Transparent"/>
+<Setter Property="Foreground"             Value="#2D3748"/>
+<Setter Property="CaretBrush"             Value="#2D3748"/>
+<Setter Property="BorderThickness"        Value="0"/>
+<Setter Property="FontSize"               Value="14"/>
+<Setter Property="VerticalContentAlignment" Value="Center"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="TextBox">
+<ScrollViewer x:Name="PART_ContentHost"
+BorderThickness="0" IsTabStop="False"
+VerticalAlignment="Center"/>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+</Style>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  DATEPICKER STYLE                                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="LightDatePickerStyle" TargetType="DatePicker">
+<Setter Property="Background"   Value="#FFFFFF"/>
+<Setter Property="Foreground"   Value="#2D3748"/>
+<Setter Property="BorderBrush"  Value="#BAE6FD"/>
+<Setter Property="BorderThickness" Value="1"/>
+<Setter Property="Height"       Value="40"/>
+<Setter Property="FontFamily"   Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="FontSize"     Value="13"/>
+<Setter Property="Padding"      Value="8,0"/>
+</Style>
+<Style TargetType="DatePickerTextBox">
+<Setter Property="Background"           Value="Transparent"/>
+<Setter Property="BorderThickness"      Value="0"/>
+<Setter Property="Foreground"           Value="#2D3748"/>
+<Setter Property="VerticalContentAlignment" Value="Center"/>
+<Setter Property="FontFamily"           Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+</Style>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  SEAMLESS BORDERLESS COMBOBOX STYLE                        -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<ControlTemplate x:Key="SeamlessComboBoxToggleButton" TargetType="ToggleButton">
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.ColumnSpan="2" Background="Transparent" BorderThickness="0"/>
+        <Path Grid.Column="1" 
+              HorizontalAlignment="Center" 
+              VerticalAlignment="Center" 
+              Data="M 0 0 L 4 4 L 8 0 Z" 
+              Fill="#64748B" 
+              Margin="0,0,4,0"/>
+    </Grid>
+</ControlTemplate>
+
+<Style x:Key="SeamlessComboBoxStyle" TargetType="ComboBox">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Foreground" Value="#0F172A"/>
+    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Padding" Value="4,0,0,0"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="ComboBox">
+                <Grid SnapsToDevicePixels="True">
+                    <ToggleButton Template="{StaticResource SeamlessComboBoxToggleButton}"
+                                  Focusable="False"
+                                  IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ClickMode="Press"/>
+                    <ContentPresenter IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalAlignment="Left"/>
+                    <Popup x:Name="PART_Popup"
+                           AllowsTransparency="True"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           Placement="Bottom"
+                           PopupAnimation="Slide"
+                           Focusable="False">
+                        <Border Background="#FFFFFF"
+                                BorderBrush="#BAE6FD"
+                                BorderThickness="1.5"
+                                CornerRadius="10"
+                                Margin="0,4,0,4"
+                                MinWidth="{TemplateBinding ActualWidth}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="#0B2545" Opacity="0.15"/>
+                            </Border.Effect>
+                            <ScrollViewer MaxHeight="200" SnapsToDevicePixels="True">
+                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" Margin="4"/>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+
+<Style TargetType="ComboBoxItem">
+    <Setter Property="Background" Value="#FFFFFF"/>
+    <Setter Property="Foreground" Value="#2D3748"/>
+    <Setter Property="Padding"    Value="10,8"/>
+    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="ComboBoxItem">
+                <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Margin="2,1" Padding="{TemplateBinding Padding}">
+                    <ContentPresenter x:Name="Txt" VerticalAlignment="Center"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsHighlighted" Value="True">
+                        <Setter TargetName="Bd" Property="Background" Value="#E0F2FE"/>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter TargetName="Bd" Property="Background" Value="#BAE6FD"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  CUSTOM PRODUCT SEARCH COMBOBOX STYLE WITH POPUP CARD      -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="ProductSearchComboBoxStyle" TargetType="ComboBox">
+    <Setter Property="Background" Value="#FFFFFF"/>
+    <Setter Property="BorderBrush" Value="#38BDF8"/>
+    <Setter Property="BorderThickness" Value="1.5"/>
+    <Setter Property="Foreground" Value="#1E293B"/>
+    <Setter Property="Padding" Value="10,0"/>
+    <Setter Property="Height" Value="36"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="ComboBox">
+                <Grid x:Name="MainGrid" SnapsToDevicePixels="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Popup x:Name="PART_Popup"
+                           AllowsTransparency="True"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                           Placement="Bottom"
+                           HorizontalOffset="0"
+                           VerticalOffset="2"
+                           PopupAnimation="Slide"
+                           Focusable="False"
+                           StaysOpen="False">
+                        <Border x:Name="DropDownBorder"
+                                Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                Margin="0,2,0,0"
+                                Background="#FFFFFF"
+                                BorderBrush="#38BDF8"
+                                BorderThickness="1.5"
+                                CornerRadius="10"
+                                Padding="8">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16" Opacity="0.18" ShadowDepth="3" Direction="270" Color="#000000"/>
+                            </Border.Effect>
+
+                            <StackPanel>
+                                <!-- Header Bar ภายใน Popup -->
+                                <DockPanel LastChildFill="False" Margin="2,1,2,6">
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="🔍 รายการสินค้าที่พบ " FontSize="11.5" FontWeight="Bold" Foreground="#0F172A"/>
+                                        <Border Background="#E0F2FE" CornerRadius="4" Padding="5,1" Margin="3,0,0,0">
+                                            <TextBlock Text="{Binding ItemsSource.Count, RelativeSource={RelativeSource AncestorType=ComboBox}, StringFormat={}{0} รายการ}" FontSize="10.5" FontWeight="Bold" Foreground="#0284C7"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock Text="↑ ↓ เลือก | Enter ตกลง" FontSize="10" Foreground="#94A3B8" TextTrimming="CharacterEllipsis" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                                </DockPanel>
+
+                                <!-- เส้นแบ่ง Header -->
+                                <Border Height="1" Background="#F1F5F9" Margin="0,0,0,4"/>
+
+                                <!-- รายการสินค้า -->
+                                <ScrollViewer MaxHeight="220" SnapsToDevicePixels="True">
+                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                </ScrollViewer>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+
+                    <TextBox x:Name="PART_EditableTextBox"
+                             Style="{StaticResource LightTextBoxStyle}"
+                             Height="{TemplateBinding Height}"
+                             Padding="{TemplateBinding Padding}"
+                             FontSize="{TemplateBinding FontSize}"
+                             Foreground="{TemplateBinding Foreground}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             VerticalAlignment="Center"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+<!-- Primary Rose Button Style -->
+<Style x:Key="RoseBtnStyle" TargetType="Button">
+<Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="Background"      Value="#00A3E0"/>
+<Setter Property="Foreground"      Value="White"/>
+<Setter Property="FontSize"        Value="14"/>
+<Setter Property="FontWeight"      Value="SemiBold"/>
+<Setter Property="BorderThickness" Value="0"/>
+<Setter Property="Cursor"          Value="Hand"/>
+<Setter Property="Height"          Value="40"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="Button">
+<Border x:Name="BtnBorder"
+Background="{TemplateBinding Background}"
+CornerRadius="10"
+Padding="{TemplateBinding Padding}">
+<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+</Border>
+<ControlTemplate.Triggers>
+<Trigger Property="IsMouseOver" Value="True">
+<Setter TargetName="BtnBorder" Property="Background" Value="#38BDF8"/>
+</Trigger>
+<Trigger Property="IsPressed" Value="True">
+<Setter TargetName="BtnBorder" Property="Background" Value="#0082B3"/>
+</Trigger>
+<Trigger Property="IsEnabled" Value="False">
+<Setter TargetName="BtnBorder" Property="Background" Value="#BAE6FD"/>
+<Setter Property="Foreground" Value="#A0AEC0"/>
+</Trigger>
+</ControlTemplate.Triggers>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+</Style>
+<!-- View Details Outline Button Style -->
+<Style x:Key="ViewDetailsButtonStyle" TargetType="Button">
+<Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="Background"      Value="#E0F2FE"/>
+<Setter Property="Foreground"      Value="#0B2545"/>
+<Setter Property="BorderBrush"     Value="#00A3E0"/>
+<Setter Property="BorderThickness" Value="1"/>
+<Setter Property="FontSize"        Value="12"/>
+<Setter Property="FontWeight"      Value="SemiBold"/>
+<Setter Property="Cursor"          Value="Hand"/>
+<Setter Property="Height"          Value="28"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="Button">
+<Border x:Name="BtnBorder"
+Background="{TemplateBinding Background}"
+BorderBrush="{TemplateBinding BorderBrush}"
+BorderThickness="{TemplateBinding BorderThickness}"
+CornerRadius="6"
+Padding="{TemplateBinding Padding}">
+<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+</Border>
+<ControlTemplate.Triggers>
+<Trigger Property="IsMouseOver" Value="True">
+<Setter TargetName="BtnBorder" Property="Background" Value="#00A3E0"/>
+<Setter Property="Foreground" Value="White"/>
+</Trigger>
+<Trigger Property="IsPressed" Value="True">
+<Setter TargetName="BtnBorder" Property="Background" Value="#0B2545"/>
+<Setter Property="Foreground" Value="White"/>
+</Trigger>
+</ControlTemplate.Triggers>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+</Style>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  DATAGRID STYLES                                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="POColumnHeaderStyle" TargetType="DataGridColumnHeader">
+<Setter Property="Background"              Value="#F1F5F9"/>
+<Setter Property="Foreground"              Value="#000000"/>
+<Setter Property="FontWeight"              Value="Bold"/>
+<Setter Property="FontSize"                Value="16"/>
+<Setter Property="Height"                  Value="46"/>
+<Setter Property="Padding"                 Value="12,0"/>
+<Setter Property="BorderBrush"             Value="#E2E8F0"/>
+<Setter Property="BorderThickness"         Value="0,0,0,1"/>
+<Setter Property="VerticalContentAlignment" Value="Center"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="DataGridColumnHeader">
+<Border Background="{TemplateBinding Background}"
+BorderBrush="{TemplateBinding BorderBrush}"
+BorderThickness="{TemplateBinding BorderThickness}"
+Padding="{TemplateBinding Padding}">
+<TextBlock Text="{TemplateBinding Content}"
+Foreground="#000000"
+FontWeight="Bold"
+FontSize="16"
+HorizontalAlignment="Center"
+VerticalAlignment="Center"/>
+</Border>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+</Style>
+<Style x:Key="PORowStyle" TargetType="DataGridRow">
+<Setter Property="Background" Value="Transparent"/>
+<Setter Property="Foreground" Value="#000000"/>
+<Setter Property="FontSize"   Value="13"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="DataGridRow">
+<Border x:Name="RowBorder"
+CornerRadius="10" Margin="4,2" Padding="6,0"
+Background="Transparent">
+<DataGridCellsPresenter
+ItemsPanel="{TemplateBinding ItemsPanel}"
+SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+</Border>
+<ControlTemplate.Triggers>
+<Trigger Property="IsMouseOver" Value="True">
+<Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+</Trigger>
+<Trigger Property="IsSelected" Value="True">
+<Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
+<Setter Property="Foreground"  Value="#000000"/>
+<Setter Property="FontWeight"  Value="Bold"/>
+</Trigger>
+</ControlTemplate.Triggers>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+<Style.Resources>
+<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                     Color="Transparent"/>
+<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                 Color="#000000"/>
+<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"    Color="Transparent"/>
+<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#000000"/>
+</Style.Resources>
+</Style>
+<Style x:Key="POCellStyle" TargetType="DataGridCell">
+<Setter Property="Background"      Value="Transparent"/>
+<Setter Property="BorderThickness" Value="0"/>
+<Setter Property="Padding"         Value="12,0"/>
+<Setter Property="VerticalAlignment" Value="Center"/>
+<Setter Property="Template">
+<Setter.Value>
+<ControlTemplate TargetType="DataGridCell">
+<Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+<ContentPresenter VerticalAlignment="Center"/>
+</Border>
+</ControlTemplate>
+</Setter.Value>
+</Setter>
+</Style>
+<Style x:Key="StockColumnHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource POColumnHeaderStyle}"/>
+<Style x:Key="StockRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource PORowStyle}"/>
+<Style x:Key="StockCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource POCellStyle}"/>
+<!-- Column Alignment Helpers -->
+<Style x:Key="ColCenter" TargetType="TextBlock">
+<Setter Property="HorizontalAlignment" Value="Center"/>
+<Setter Property="VerticalAlignment"   Value="Center"/>
+<Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="Foreground"          Value="#000000"/>
+</Style>
+<Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource ColCenter}">
+<Setter Property="FontWeight" Value="Bold"/>
+<Setter Property="Foreground" Value="#000000"/>
+</Style>
+<Style x:Key="ColLeftBold" TargetType="TextBlock">
+<Setter Property="HorizontalAlignment" Value="Left"/>
+<Setter Property="VerticalAlignment"   Value="Center"/>
+<Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="FontWeight"          Value="Bold"/>
+<Setter Property="Foreground"          Value="#000000"/>
+</Style>
+<Style x:Key="ColRightBold" TargetType="TextBlock">
+<Setter Property="HorizontalAlignment" Value="Right"/>
+<Setter Property="VerticalAlignment"   Value="Center"/>
+<Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+<Setter Property="FontWeight"          Value="Bold"/>
+<Setter Property="Foreground"          Value="#000000"/>
+</Style>
+</UserControl.Resources>
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!--  OUTER ROOT GRID: Full 100% canvas for main page and modals     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<Grid Visibility="{Binding IsPurchaseOrderMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<Grid Margin="16">
+<Grid.RowDefinitions>
+<RowDefinition Height="Auto"/>  <!-- Page Header -->
+<RowDefinition Height="Auto"/>  <!-- KPI Cards  -->
+<RowDefinition Height="Auto"/>  <!-- Filter Bar  -->
+<RowDefinition Height="*"/>     <!-- DataGrid Table -->
+</Grid.RowDefinitions>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  ROW 0 — Page Header                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
+<StackPanel Orientation="Horizontal">
+<!-- Rose Accent Vertical Bar -->
+<Border Width="5" CornerRadius="3" Margin="0,0,12,0" VerticalAlignment="Stretch">
+<Border.Background>
+<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+<GradientStop Color="#00A3E0" Offset="0"/>
+<GradientStop Color="#F4A2B8" Offset="1"/>
+</LinearGradientBrush>
+</Border.Background>
+</Border>
+<StackPanel>
+<TextBlock Text="📦 สั่งซื้อสินค้า"
+FontSize="24" FontWeight="Bold"
+Foreground="#2D3748"
+Margin="0,0,0,2"/>
+<TextBlock Text="จัดการสั่งซื้อสินค้าและเติมสต็อก — ระบบจัดการร้าน พอใจ"
+FontSize="13"
+Foreground="#718096"
+Margin="0"/>
+</StackPanel>
+</StackPanel>
+</DockPanel>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  ROW 1 — KPI Summary Cards (4 cards)                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Grid Grid.Row="1" Margin="0,0,0,16">
+<Grid.ColumnDefinitions>
+<ColumnDefinition Width="*"/>
+<ColumnDefinition Width="14"/>
+<ColumnDefinition Width="*"/>
+<ColumnDefinition Width="14"/>
+<ColumnDefinition Width="*"/>
+<ColumnDefinition Width="14"/>
+<ColumnDefinition Width="*"/>
+</Grid.ColumnDefinitions>
+<!-- KPI Card 1: Total POs -->
+<Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
+<Border.Background>
+<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+<GradientStop Color="#FFFFFF" Offset="0"/>
+<GradientStop Color="#E0F2FE" Offset="1"/>
+</LinearGradientBrush>
+</Border.Background>
+<Grid>
+<Grid.RowDefinitions>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+</Grid.RowDefinitions>
+<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+<Border Width="34" Height="34" CornerRadius="8" Background="#E0F2FE" Margin="0,0,8,0">
+<TextBlock Text="📦" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+</Border>
+<TextBlock Text="ใบสั่งซื้อทั้งหมด" FontSize="12.5" FontWeight="SemiBold"
+Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+</StackPanel>
+<TextBlock Grid.Row="1"
+Text="{Binding TotalPOCount}"
+FontSize="26" FontWeight="Bold"
+Foreground="#0B2545"
+Margin="0,0,0,4"/>
+<TextBlock Grid.Row="2"
+Text="จำนวนใบสั่งซื้อที่ทำรายการ"
+FontSize="11"
+Foreground="#A0AEC0"
+Margin="0"/>
+</Grid>
+</Border>
+<!-- KPI Card 2: Pending Delivery -->
+<Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
+<Border.Background>
+<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+<GradientStop Color="#FFFFFF" Offset="0"/>
+<GradientStop Color="#FEF3C7" Offset="1"/>
+</LinearGradientBrush>
+</Border.Background>
+<Border.BorderBrush>
+<SolidColorBrush Color="#FDE68A"/>
+</Border.BorderBrush>
+<Grid>
+<Grid.RowDefinitions>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+</Grid.RowDefinitions>
+<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+<Border Width="34" Height="34" CornerRadius="8" Background="#FEF3C7" Margin="0,0,8,0">
+<TextBlock Text="⏳" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+</Border>
+<TextBlock Text="รอดำเนินการ / ส่งมอบ" FontSize="12.5" FontWeight="SemiBold"
+Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+</StackPanel>
+<TextBlock Grid.Row="1"
+Text="{Binding PendingPOCount}"
+FontSize="26" FontWeight="Bold"
+Foreground="#D69E2E"
+Margin="0,0,0,4"/>
+<TextBlock Grid.Row="2"
+Text="อยู่ระหว่างรอซัพพลายเออร์ส่งของ"
+FontSize="11"
+Foreground="#A0AEC0"
+Margin="0"/>
+</Grid>
+</Border>
+<!-- KPI Card 3: Received / Completed -->
+<Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
+<Border.Background>
+<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+<GradientStop Color="#FFFFFF" Offset="0"/>
+<GradientStop Color="#D1FAE5" Offset="1"/>
+</LinearGradientBrush>
+</Border.Background>
+<Border.BorderBrush>
+<SolidColorBrush Color="#A7F3D0"/>
+</Border.BorderBrush>
+<Grid>
+<Grid.RowDefinitions>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+</Grid.RowDefinitions>
+<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+<Border Width="34" Height="34" CornerRadius="8" Background="#D1FAE5" Margin="0,0,8,0">
+<TextBlock Text="✅" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+</Border>
+<TextBlock Text="ได้รับสินค้าแล้ว" FontSize="12.5" FontWeight="SemiBold"
+Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+</StackPanel>
+<TextBlock Grid.Row="1"
+Text="{Binding CompletedPOCount}"
+FontSize="26" FontWeight="Bold"
+Foreground="#059669"
+Margin="0,0,0,4"/>
+<TextBlock Grid.Row="2"
+Text="ตรวจรับและเข้าสต็อกสำเร็จ"
+FontSize="11"
+Foreground="#A0AEC0"
+Margin="0"/>
+</Grid>
+</Border>
+<!-- KPI Card 4: Total PO Amount -->
+<Border Grid.Column="6" Style="{StaticResource KpiCardStyle}">
+<Border.Background>
+<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+<GradientStop Color="#FFFFFF" Offset="0"/>
+<GradientStop Color="#F3E8FF" Offset="1"/>
+</LinearGradientBrush>
+</Border.Background>
+<Border.BorderBrush>
+<SolidColorBrush Color="#DDD6FE"/>
+</Border.BorderBrush>
+<Grid>
+<Grid.RowDefinitions>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+<RowDefinition Height="Auto"/>
+</Grid.RowDefinitions>
+<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+<Border Width="34" Height="34" CornerRadius="8" Background="#F3E8FF" Margin="0,0,8,0">
+<TextBlock Text="💵" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+</Border>
+<TextBlock Text="ยอดสั่งซื้อรวม" FontSize="12.5" FontWeight="SemiBold"
+Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+</StackPanel>
+<TextBlock Grid.Row="1"
+Text="{Binding TotalPOAmount, StringFormat=฿{0:N2}}"
+FontSize="22" FontWeight="Bold"
+Foreground="#6B21A8"
+Margin="0,0,0,4"/>
+<TextBlock Grid.Row="2"
+Text="มูลค่าคำสั่งซื้อสินค้าทั้งหมด"
+FontSize="11"
+Foreground="#A0AEC0"
+Margin="0"/>
+</Grid>
+</Border>
+</Grid>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  ROW 2 — 50:50 Split Layout (Left: POs | Right: Low Stock) -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Grid Grid.Row="2" Grid.RowSpan="2">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>   <!-- Left: Purchase Orders -->
+        <ColumnDefinition Width="16"/>  <!-- Space -->
+        <ColumnDefinition Width="*"/>   <!-- Right: Low Stock Items -->
+    </Grid.ColumnDefinitions>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--  LEFT CARD: กล่อง "ใบสั่งซื้อ" (Purchase Orders Card)     -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <Border Grid.Column="0"
+            Background="#FFFFFF"
+            BorderBrush="#BAE6FD"
+            BorderThickness="1.5"
+            CornerRadius="16"
+            Padding="18"
+            Effect="{StaticResource SoftShadow}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header (Title + Search + Status Dropdown) -->
+                <RowDefinition Height="*"/>    <!-- PO Card List (Scrollable) -->
+                <RowDefinition Height="Auto"/> <!-- Bottom Count Summary -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. Header Row (Title, Autocomplete Search Box, Status Filter Dropdown) -->
+            <Grid Grid.Row="0" Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/> <!-- Title -->
+                    <ColumnDefinition Width="*"/>    <!-- Search Box with Autocomplete -->
+                    <ColumnDefinition Width="Auto"/> <!-- Status Filter Dropdown -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Title & Icon -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                    <Border Width="34" Height="34" CornerRadius="10" Background="#E0F2FE" Margin="0,0,8,0">
+                        <TextBlock Text="📦" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="ใบสั่งซื้อ" FontSize="18" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Search Input with Blue Search Button & Autocomplete Suggestions -->
+                <Grid Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Rounded Input Container -->
+                    <Border x:Name="bdPOSearchInput"
+                            Grid.Column="0"
+                            Background="#FFFFFF"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1.5"
+                            CornerRadius="13"
+                            Height="40"
+                            Padding="14,0">
+                        <Grid VerticalAlignment="Center">
+                            <!-- TextBox -->
+                            <TextBox x:Name="txtPOSearch"
+                                     Text="{Binding POSearchKeyword, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource LightTextBoxStyle}"
+                                     FontSize="13.5"
+                                     FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"
+                                     Foreground="#0F172A"
+                                     VerticalContentAlignment="Center"
+                                     Padding="0,2"/>
+
+                            <!-- Placeholder -->
+                            <TextBlock Text="ค้นหาเลขที่ PO / ซัพพลายเออร์..."
+                                       Foreground="#94A3B8"
+                                       FontSize="13.5"
+                                       FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"
+                                       VerticalAlignment="Center"
+                                       Margin="2,0,0,0"
+                                       IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=txtPOSearch}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- Autocomplete Dropdown Popup -->
+                            <Popup Placement="Bottom"
+                                   PlacementTarget="{Binding ElementName=bdPOSearchInput}"
+                                   Width="{Binding ElementName=bdPOSearchInput, Path=ActualWidth}"
+                                   IsOpen="{Binding IsPOSuggestionsDropdownOpen, Mode=TwoWay}"
+                                   StaysOpen="False"
+                                   AllowsTransparency="True"
+                                   PopupAnimation="Slide">
+                                <Border Background="#FFFFFF"
+                                        BorderBrush="#BAE6FD"
+                                        BorderThickness="1.5"
+                                        CornerRadius="12"
+                                        Margin="0,4,0,4">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#0B2545" Opacity="0.15"/>
+                                    </Border.Effect>
+                                    <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" SnapsToDevicePixels="True">
+                                        <StackPanel Margin="4,4">
+                                            <ListBox ItemsSource="{Binding FilteredPOSuggestions}"
+                                                     SelectedItem="{Binding SelectedPurchaseOrder, Mode=TwoWay}"
+                                                     BorderThickness="0"
+                                                     Background="Transparent"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Padding="10,7" Cursor="Hand" Background="Transparent">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <StackPanel Grid.Column="0">
+                                                                    <TextBlock Text="{Binding PONumber}" FontWeight="Bold" Foreground="#0284C7" FontSize="13"/>
+                                                                    <TextBlock Text="{Binding SupplierName}" Foreground="#475569" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                                                </StackPanel>
+                                                                <TextBlock Grid.Column="1" Text="{Binding Status}" Foreground="#D97706" FontWeight="Bold" FontSize="11.5" VerticalAlignment="Center"/>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ListBoxItem">
+                                                                    <Border x:Name="bd" Background="Transparent" CornerRadius="8" Margin="2,1">
+                                                                        <ContentPresenter />
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsSelected" Value="True">
+                                                                            <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+
+                    <!-- Search Button -->
+                    <Button Grid.Column="1"
+                            Command="{Binding SearchPOCommand}"
+                            Margin="6,0,0,0"
+                            Height="38"
+                            Padding="16,0"
+                            Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#1E88E5"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="ExtraBold"/>
+                                <Setter Property="FontSize" Value="13.5"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="border" 
+                                                    Background="{TemplateBinding Background}" 
+                                                    CornerRadius="13" 
+                                                    Padding="{TemplateBinding Padding}">
+                                                <Border.Effect>
+                                                    <DropShadowEffect BlurRadius="8" ShadowDepth="2" Direction="270" Color="#1E88E5" Opacity="0.3"/>
+                                                </Border.Effect>
+                                                <TextBlock Text="ค้นหา" 
+                                                           FontWeight="ExtraBold" 
+                                                           Foreground="White" 
+                                                           FontSize="13.5" 
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="#42A5F5"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="#1565C0"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+
+                <!-- Status Filter Dropdown (Unified Seamless Container) -->
+                <Border Grid.Column="2" 
+                        Background="#FFFFFF" 
+                        BorderBrush="#BAE6FD" 
+                        BorderThickness="1.5" 
+                        CornerRadius="13" 
+                        Padding="10,0,6,0" 
+                        Height="40" 
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="สถานะ:" 
+                                   FontSize="13" 
+                                   Foreground="#64748B" 
+                                   FontWeight="SemiBold" 
+                                   FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"
+                                   VerticalAlignment="Center" 
+                                   Margin="0,0,4,0"/>
+                        <ComboBox ItemsSource="{Binding POStatusFilterOptions}"
+                                  SelectedItem="{Binding POStatusFilter}"
+                                  Style="{StaticResource SeamlessComboBoxStyle}"
+                                  Height="36"
+                                  MinWidth="90"
+                                  VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 2. PO Card List (Scrollable) -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,8">
+                <ItemsControl ItemsSource="{Binding PurchaseOrders}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#F8FAFC"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1.5"
+                                    CornerRadius="12"
+                                    Padding="14,12"
+                                    Margin="0,0,0,10">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F0F9FF"/>
+                                                <Setter Property="BorderBrush" Value="#38BDF8"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Row 1: PO Number + Status Badge -->
+                                    <Grid Grid.Row="0" Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding PONumber}" FontSize="15" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
+                                        
+                                        <!-- Status Badge -->
+                                        <Border Grid.Column="1" CornerRadius="8" Padding="10,4">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#FEF3C7"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="ได้รับสินค้าแล้ว">
+                                                            <Setter Property="Background" Value="#DCFCE7"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="รับของแล้ว">
+                                                            <Setter Property="Background" Value="#DCFCE7"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
+                                                            <Setter Property="Background" Value="#FEE2E2"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Status}" FontSize="12" FontWeight="Bold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#D97706"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="ได้รับสินค้าแล้ว">
+                                                                <Setter Property="Foreground" Value="#15803D"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="รับของแล้ว">
+                                                                <Setter Property="Foreground" Value="#15803D"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
+                                                                <Setter Property="Foreground" Value="#DC2626"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Row 2: Supplier Name -->
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6">
+                                        <TextBlock Text="🏢 " FontSize="12.5"/>
+                                        <TextBlock Text="{Binding SupplierName}" FontSize="13.5" FontWeight="SemiBold" Foreground="#334155" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+
+                                    <!-- Row 3: Order Date + Expected Delivery Date + Total Amount -->
+                                    <Grid Grid.Row="2" Margin="0,4,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- Dates Stack (Order Date & Expected Date) -->
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                                <TextBlock Text="📝 วันที่ทำรายการ: " FontSize="12" Foreground="#64748B"/>
+                                                <TextBlock Text="{Binding OrderDate, StringFormat=dd/MM/yyyy HH:mm}" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="📅 กำหนดส่งมอบ: " FontSize="12" Foreground="#64748B"/>
+                                                <TextBlock Text="{Binding ExpectedDate, StringFormat=dd/MM/yyyy}" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <!-- Total Amount -->
+                                        <TextBlock Grid.Column="1" Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" FontSize="16" FontWeight="ExtraBold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- 3. Bottom Count Summary -->
+            <Border Grid.Row="2" Background="#F1F5F9" CornerRadius="8" Padding="12,8" Margin="0,4,0,0">
+                <TextBlock Text="{Binding PurchaseOrders.Count, StringFormat='แสดงทั้งหมด {0} รายการใบสั่งซื้อ'}"
+                           FontSize="12.5"
+                           FontWeight="SemiBold"
+                           Foreground="#64748B"
+                           HorizontalAlignment="Center"/>
+            </Border>
+        </Grid>
+    </Border>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--  RIGHT CARD: กล่อง "สินค้าใกล้หมด" (Low Stock Items Card) -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <Border Grid.Column="2"
+            Background="#FFFFFF"
+            BorderBrush="#BAE6FD"
+            BorderThickness="1.5"
+            CornerRadius="16"
+            Padding="18"
+            Effect="{StaticResource SoftShadow}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header + Selected Count -->
+                <RowDefinition Height="*"/>    <!-- Scrollable Checkbox Product List -->
+                <RowDefinition Height="Auto"/> <!-- Bottom Action Button -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. Header Row -->
+            <Grid Grid.Row="0" Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Title & Warning Icon -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="34" Height="34" CornerRadius="10" Background="#FEF3C7" Margin="0,0,10,0">
+                        <TextBlock Text="⚠️" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="สินค้าใกล้หมด" FontSize="18" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Selected Count Badge -->
+                <Border Grid.Column="1" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="10" Padding="10,4" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding SelectedLowStockCount, StringFormat='เลือกแล้ว {0}'}" FontSize="12.5" FontWeight="Bold" Foreground="#0284C7"/>
+                </Border>
+            </Grid>
+
+            <!-- 2. Scrollable Checkbox Product List -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,12">
+                <ItemsControl ItemsSource="{Binding LowStockProducts}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#F8FAFC"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1.5"
+                                    CornerRadius="12"
+                                    Padding="14,12"
+                                    Margin="0,0,0,8">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="Background" Value="#EFF6FF"/>
+                                                <Setter Property="BorderBrush" Value="#00A3E0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Checkbox -->
+                                    <CheckBox Grid.Column="0"
+                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,12,0"
+                                              Cursor="Hand">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+
+                                    <!-- Product Name & Code -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="14.5" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Code, StringFormat='รหัส: {0}'}" FontSize="12" Foreground="#64748B" Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Stock Quantity Badge -->
+                                    <Border Grid.Column="2" Background="#FEE2E2" BorderBrush="#FECACA" BorderThickness="1" CornerRadius="8" Padding="10,5" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Stock, StringFormat='เหลือ {0} ชิ้น'}" FontSize="12.5" FontWeight="Bold" Foreground="#DC2626"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- 3. Bottom Action Button (Pinned to Bottom) -->
+            <Button Grid.Row="2"
+                    Content="➕ สร้างใบสั่งซื้อจากรายการที่เลือก"
+                    Command="{Binding CreatePOFromSelectedLowStockCommand}"
+                    Height="46"
+                    FontSize="14.5"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Background="#00A3E0"
+                    Cursor="Hand">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="12" Padding="14,0">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="#00A3E0" Opacity="0.3"/>
+                                        </Border.Effect>
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bd" Property="Background" Value="#38BDF8"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="bd" Property="Background" Value="#0284C7"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+    </Border>
+</Grid>
+</Grid>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  IN-PAGE OVERLAY MODAL DIALOG: ADD / EDIT PURCHASE ORDER   -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  IN-PAGE OVERLAY MODAL DIALOG: ADD / EDIT PURCHASE ORDER   -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Grid Background="#80000000"
+              Visibility="{Binding IsPOModalOpen, Converter={StaticResource BoolToVis}}"
+              Panel.ZIndex="9999"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+            <Border Width="740"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1.5"
+                    CornerRadius="20"
+                    Padding="24,20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="25" Opacity="0.35" ShadowDepth="4" Direction="270" Color="#000000"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <!-- Header Bar -->
+                    <DockPanel LastChildFill="False" Margin="0,0,0,16">
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <Border Background="#F1F5F9" CornerRadius="12" Width="42" Height="42" Margin="0,0,12,0">
+                                <TextBlock Text="📦" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding POModalTitle}" FontSize="19" FontWeight="Bold" Foreground="#0F172A"/>
+                                <TextBlock Text="กรอกรายละเอียดผู้จัดจำหน่ายและเพิ่มรายการสินค้าที่ต้องการสั่งซื้อ" FontSize="12" Foreground="#64748B" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Auto Fill Reorder Items Button moved to top right corner (replacing circular '✕' button) -->
+                        <Button DockPanel.Dock="Right"
+                                Command="{Binding AutoFillReorderItemsCommand}"
+                                Content="⚡ ดึงสินค้าถึงจุดสั่งซื้อ"
+                                Height="36" Padding="14,0" FontSize="13" FontWeight="Bold"
+                                Foreground="#854D0E" Background="#FEF9C3" BorderThickness="0"
+                                Cursor="Hand" VerticalAlignment="Center">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="18" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bd" Property="Background" Value="#FEF08A"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </DockPanel>
+
+                    <!-- Card 1: Purchase Order Info (ข้อมูลใบสั่งซื้อ - Light Blue Card) -->
+                    <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="14,12" Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="1.3*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="1.3*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Supplier Name (Searchable ComboBox) -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="ผู้จัดจำหน่าย / ซัพพลายเออร์ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
+                                <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
+                                    <ComboBox ItemsSource="{Binding SuppliersList}"
+                                              SelectedItem="{Binding POSupplierName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Text="{Binding POSupplierName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              IsEditable="True"
+                                              IsTextSearchEnabled="True"
+                                              StaysOpenOnEdit="True"
+                                              Style="{StaticResource LightComboBoxStyle}"
+                                              Height="36" Padding="10,0" Background="Transparent" BorderThickness="0"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Expected Delivery Date -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="วันที่คาดว่าจะได้รับ" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
+                                <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
+                                    <DatePicker SelectedDate="{Binding POExpectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Height="36" Padding="6,0" FontSize="13" VerticalAlignment="Center" Background="Transparent" BorderThickness="0"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Status (Editable for manage mode, locked when creating new) -->
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="สถานะใบสั่งซื้อ" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
+                                <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
+                                    <ComboBox SelectedValue="{Binding POStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              SelectedValuePath="Content"
+                                              IsEnabled="{Binding IsNewPOMode, Converter={StaticResource InverseBoolConverter}}"
+                                              Style="{StaticResource LightComboBoxStyle}"
+                                              Height="36" Padding="10,0" FontSize="13" FontWeight="SemiBold"
+                                              Foreground="#0369A1" Background="Transparent" BorderThickness="0">
+                                        <ComboBoxItem Content="รอดำเนินการ" FontWeight="SemiBold"/>
+                                        <ComboBoxItem Content="ยกเลิก" FontWeight="SemiBold"/>
+                                    </ComboBox>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Card 2: Quick Add Item Bar (แถบเพิ่มรายการสินค้าด่วน - Light Blue Card) -->
+                    <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="14,12" Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Barcode / Product Name Search (Auto-complete Search ComboBox with Card ItemTemplate) -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="สแกนบาร์โค้ด / รหัส / ค้นหาชื่อสินค้า 🔍" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
+                                <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
+                                    <ComboBox ItemsSource="{Binding Products}"
+                                              SelectedItem="{Binding SelectedPOProduct, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Text="{Binding POItemProductName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              IsEditable="True"
+                                              IsTextSearchEnabled="True"
+                                              StaysOpenOnEdit="True"
+                                              GotFocus="POProductComboBox_GotFocus"
+                                              PreviewKeyUp="POProductComboBox_PreviewKeyUp"
+                                              Style="{StaticResource ProductSearchComboBoxStyle}"
+                                              Height="36" Padding="10,0" FontSize="13" Background="Transparent" BorderThickness="0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="1,2" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Badge รหัสสินค้า -->
+                                                    <Border Grid.Column="0" Background="#00A3E0" CornerRadius="4" Padding="5,2" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Code}" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                                    </Border>
+
+                                                    <!-- ชื่อสินค้า -->
+                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                                    <!-- ราคาต้นทุน -->
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,8,0">
+                                                        <TextBlock Text=" ฿" FontSize="11" Foreground="#64748B"/>
+                                                        <TextBlock Text="{Binding Cost, StringFormat={}{0:N2}}" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
+                                                    </StackPanel>
+
+                                                    <!-- จำนวนคงเหลือ (ชิดขวา) -->
+                                                    <Border Grid.Column="3" Background="#F1F5F9" CornerRadius="4" Padding="5,2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Stock, StringFormat=เหลือ {0}}" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B"/>
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Quantity -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="จำนวน" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                                <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
+                                    <TextBox Text="{Binding POItemQuantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource LightTextBoxStyle}"
+                                             Height="36" Padding="6,0" FontSize="13" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Cost Price -->
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="ราคาต้นทุนต่อหน่วย" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                                <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
+                                    <TextBox Text="{Binding POItemCost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:G29}}"
+                                             Style="{StaticResource LightTextBoxStyle}"
+                                             Height="36" Padding="6,0" FontSize="13" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Add Item Button -->
+                            <StackPanel Grid.Column="6" VerticalAlignment="Bottom">
+                                <Button Command="{Binding AddPOItemCommand}"
+                                        Content="➕ เพิ่มรายการ"
+                                        Height="36" Padding="16,0" FontSize="13" FontWeight="Bold"
+                                        Foreground="White" Background="#0284C7" BorderThickness="0" Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="bd" Property="Background" Value="#0369A1"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Card 3: Items Table Container (ตารางรายการสินค้าที่เพิ่มแล้ว) -->
+                    <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="4" MinHeight="170" MaxHeight="230" Margin="0,0,0,16">
+                        <DataGrid ItemsSource="{Binding CurrentPOItems}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="False"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  RowHeight="40"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#F1F5F9"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  BorderThickness="0"
+                                  Background="Transparent"
+                                  ColumnHeaderStyle="{StaticResource POColumnHeaderStyle}"
+                                  RowStyle="{StaticResource PORowStyle}"
+                                  CellStyle="{StaticResource POCellStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" Width="*" IsReadOnly="True" ElementStyle="{StaticResource ColCenterBold}"/>
+                                <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding ProductName}" Width="2*" ElementStyle="{StaticResource ColLeftBold}"/>
+                                <DataGridTextColumn Header="จำนวน" Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColCenterBold}"/>
+                                <DataGridTextColumn Header="ต้นทุน/หน่วย" Binding="{Binding CostPrice, StringFormat={}{0:N2}, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColRight}"/>
+                                <DataGridTextColumn Header="ราคารวม" Binding="{Binding TotalPrice, StringFormat={}{0:N2}}" Width="*" IsReadOnly="True" ElementStyle="{StaticResource ColRightBold}"/>
+                                
+                                <!-- Delete Action Button (Circle Red Button '➖') -->
+                                <DataGridTemplateColumn Width="45" Header="" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.RemovePOItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Content="➖"
+                                                    Width="28" Height="28" Padding="0"
+                                                    FontSize="12" FontWeight="Bold"
+                                                    Foreground="#EF4444"
+                                                    Background="#FEE2E2"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="14">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="bd" Property="Background" Value="#FCA5A5"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+
+                    <!-- Validation Error Message -->
+                    <TextBlock Text="{Binding ProductValidationMessage}"
+                               Visibility="{Binding HasProductValidationMessage, Converter={StaticResource BoolToVis}}"
+                               Foreground="#DC2626" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10"/>
+
+                    <!-- Footer Bar -->
+                    <DockPanel LastChildFill="False" Margin="0,4,0,0">
+                        <!-- Total Amount -->
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <TextBlock Text="ยอดรวมค่าสั่งซื้อสุทธิ: " FontSize="15" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text="{Binding POTotalAmount, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
+                        </StackPanel>
+
+                        <!-- Footer Action Buttons (Cancel & Save) -->
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                            <!-- Cancel Button (Light Blue) -->
+                            <Button Command="{Binding ClosePOModalCommand}"
+                                    Content="ยกเลิก"
+                                    Height="40" Padding="20,0" FontSize="14" FontWeight="Bold"
+                                    Foreground="#0284C7" Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5"
+                                    Cursor="Hand" Margin="0,0,10,0">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <!-- Save Button (Vibrant Blue with Save Icon) -->
+                            <Button Command="{Binding SavePOCommand}"
+                                    Height="40" Padding="20,0" FontSize="14" FontWeight="Bold"
+                                    Foreground="White" Background="#00A3E0" BorderThickness="0" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="#00A3E0" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="💾 " FontSize="14" VerticalAlignment="Center"/>
+                                                <TextBlock Text="บันทึกใบสั่งซื้อ" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#0284C7"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

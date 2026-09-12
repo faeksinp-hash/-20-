@@ -1,0 +1,1012 @@
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+D:\ระบบการจัดการร้าน\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\App.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+D:\ระบบการจัดการร้าน\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ระบบการจัดการร้าน\Matchashop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+D:\ระบบการจัดการร้าน\Matchashop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+D:\ShopManagement\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\App.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+D:\ShopManagement\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+D:\ShopManagement - Copy\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\App.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+D:\ShopManagement - Copy\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+D:\ShopManagement-พัง\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\App.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+D:\ShopManagement-พัง\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+D:\ShopManagement-หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\App.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+C:\Users\Lenovo\Downloads\ShopManagement-หลัก7-ล่าสุด-20260817T054643Z-1-001\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+c:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy2\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\App.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+C:\Users\HP\Downloads\งานนรกไม่ได้หลับได้นอน - Copy5-20260911T164224Z-1-001\งานนรกไม่ได้หลับได้นอน - Copy5\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.exe
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.deps.json
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.runtimeconfig.json
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\Dapper.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\Microsoft.Data.Sqlite.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.batteries_v2.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.core.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm\native\e_sqlite3.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.AssemblyReference.cache
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerHistoryWindow.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomMessageBox.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliverySlipWindow.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\HistoryView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\POReceiptWindow.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReceiptWindow.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\App.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.cache
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop_MarkupCompile.lref
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\App.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ClaimView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\CustomerView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DashboardView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\DeliveryView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ExpenseView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\MainWindow.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ManagementView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PartnerView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PosView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PurchaseOrderView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\ReportsView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\SalesHistoryView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StaffView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\StockInView.baml
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.g.resources
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.GeneratedMSBuildEditorConfig.editorconfig
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfoInputs.cache
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.AssemblyInfo.cs
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.CoreCompileInputs.cache
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.csproj.Up2Date
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.dll
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\refint\MatchaShop.dll
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll

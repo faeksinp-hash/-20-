@@ -1,0 +1,2052 @@
+<UserControl x:Class="Porjai20.Views.PosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Porjai20"
+             xmlns:converters="clr-namespace:Porjai20.Converters"
+             xmlns:viewmodels="clr-namespace:Porjai20.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1024"
+             Background="#E0F2FE">
+
+    <UserControl.Resources>
+        <!-- SolidColorBrush palette for High-Contrast Crimson Red Theme -->
+        <SolidColorBrush x:Key="PosBg"     Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="PosCard"   Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosInput"  Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosBorder" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="PosText"   Color="#0F172A"/>
+        <SolidColorBrush x:Key="PosMuted"  Color="#475569"/>
+        <SolidColorBrush x:Key="PosPurple" Color="#00A3E0"/>
+        <SolidColorBrush x:Key="PosPink"   Color="#0B2545"/>
+
+        <!-- Global TextBlock style for this UserControl -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource PosText}"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <!-- Category Pill RadioButton Style (ToggleButtonStyle) -->
+        <Style x:Key="ToggleButtonStyle" TargetType="RadioButton">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="18" Padding="18,8">
+                            <ContentPresenter x:Name="contentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ContentPresenter.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" FontSize="15" FontWeight="SemiBold" Foreground="#0F172A"/>
+                                    </DataTemplate>
+                                </ContentPresenter.ContentTemplate>
+                            </ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#00A3E0"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#00A3E0"/>
+                                <Setter TargetName="contentPresenter" Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" FontSize="15" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#00A3E0"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#00A3E0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Global RadioButton Style to remove focus borders -->
+        <Style TargetType="RadioButton">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        </Style>
+
+        <Style x:Key="CategoryChipStyle" TargetType="RadioButton" BasedOn="{StaticResource ToggleButtonStyle}"/>
+        <converters:StringEqualsConverter x:Key="LocalStringEqualsConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- 1. MAIN POS SCREEN LAYOUT -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!-- Column 0: Product Catalog (Flexible width) -->
+                <ColumnDefinition Width="*"/>
+                <!-- Column 1: Shopping Cart (380px) -->
+                <ColumnDefinition Width="380"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Column 0: Left Panel (Product Catalog & Header) -->
+            <Grid Grid.Column="0" Margin="16,16,8,16">
+                <!-- Left Panel Rows: Header, Search Bar, Category Filter Bar, Product Scroll Grid -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- Row 0: Header Section -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 1: Search Bar -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 2: Category Filter Bar -->
+                    <RowDefinition Height="*"/>     <!-- Row 3: Product Scroll Grid -->
+                </Grid.RowDefinitions>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!--  ROW 0 — Header Section (Minimal Soft Pink Theme)          -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <Grid Grid.Row="0" Margin="0,0,0,18" HorizontalAlignment="Stretch">
+                    <!-- Left Accent Bar & Title/Subtitle -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="5" CornerRadius="3" Margin="0,0,12,0" VerticalAlignment="Stretch">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#00A3E0" Offset="0"/>
+                                    <GradientStop Color="#F4A2B8" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="🛒 ขายหน้าร้าน"
+                                       FontSize="24" FontWeight="Bold"
+                                       Foreground="#2D3748"
+                                       Margin="0,0,0,2"/>
+                            <TextBlock Text="ระบบขายหน้าร้าน — ระบบจัดการร้าน พอใจ"
+                                       FontSize="13"
+                                       Foreground="#718096"
+                                       Margin="0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 1. Search Bar (MaxWidth 600px, Align Left) -->
+                <Border Grid.Row="1" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="20" Height="44" Margin="0,0,0,12" MaxWidth="600" HorizontalAlignment="Left" Width="600">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="&#xE71E;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="#718096" Margin="14,0,10,0" VerticalAlignment="Center"/>
+
+                        <Grid Grid.Column="1">
+                            <!-- Watermark/Placeholder -->
+                            <TextBlock Text="ค้นหาสินค้า หรือ รหัส..." Foreground="#A0AEC0" FontSize="14" VerticalAlignment="Center" Margin="0,0,15,0" IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchInput}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- Search TextBox -->
+                            <TextBox x:Name="SearchInput" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" 
+                                     Foreground="#2D3748" FontSize="14" Background="Transparent" BorderThickness="0" 
+                                     VerticalContentAlignment="Center" Margin="0,0,15,0" CaretBrush="#2D3748"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- 1.5 Category Filter Bar (Pill Buttons) -->
+                <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,0,0,16">
+                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                        <RadioButton Content="ทั้งหมด" GroupName="CategoryFilter" Style="{StaticResource ToggleButtonStyle}" Margin="0,0,8,0"
+                                     IsChecked="{Binding SelectedCategory, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=ทั้งหมด, Mode=TwoWay}"
+                                     Command="{Binding FilterCategoryCommand}" CommandParameter="ทั้งหมด"/>
+                        <RadioButton Content="เครื่องเขียน" GroupName="CategoryFilter" Style="{StaticResource ToggleButtonStyle}" Margin="0,0,8,0"
+                                     IsChecked="{Binding SelectedCategory, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=เครื่องเขียน, Mode=TwoWay}"
+                                     Command="{Binding FilterCategoryCommand}" CommandParameter="เครื่องเขียน"/>
+                        <RadioButton Content="เครื่องครัว" GroupName="CategoryFilter" Style="{StaticResource ToggleButtonStyle}" Margin="0,0,8,0"
+                                     IsChecked="{Binding SelectedCategory, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=เครื่องครัว, Mode=TwoWay}"
+                                     Command="{Binding FilterCategoryCommand}" CommandParameter="เครื่องครัว"/>
+                        <RadioButton Content="ของเล่น" GroupName="CategoryFilter" Style="{StaticResource ToggleButtonStyle}" Margin="0,0,8,0"
+                                     IsChecked="{Binding SelectedCategory, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=ของเล่น, Mode=TwoWay}"
+                                     Command="{Binding FilterCategoryCommand}" CommandParameter="ของเล่น"/>
+                        <RadioButton Content="ของใช้ในบ้าน" GroupName="CategoryFilter" Style="{StaticResource ToggleButtonStyle}" Margin="0,0,8,0"
+                                     IsChecked="{Binding SelectedCategory, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=ของใช้ในบ้าน, Mode=TwoWay}"
+                                     Command="{Binding FilterCategoryCommand}" CommandParameter="ของใช้ในบ้าน"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- 2. Product Cards Catalog -->
+                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding FilteredProducts}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <!-- Clickable Card Border -->
+                                <Border Background="#FFFFFF" Width="175" Height="240" CornerRadius="12" BorderThickness="1" BorderBrush="#BAE6FD" Margin="6" ClipToBounds="True" Cursor="Hand">
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{Binding DataContext.AddToCartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                    </Border.InputBindings>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="125"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Image / Placeholder -->
+                                        <Border Grid.Row="0" Height="125" Background="#FFFFFF" CornerRadius="12,12,0,0" ClipToBounds="True">
+                                            <Grid>
+                                                <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="#BAE6FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <Image Source="{Binding ImagePath}" Width="125" Height="125" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Product Info details -->
+                                        <Grid Grid.Row="1" Margin="10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="14" FontWeight="Bold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Grid.Row="1" Text="{Binding Code}" FontSize="12" Foreground="#718096" Margin="0,2,0,0"/>
+
+                                            <!-- Price & Stock -->
+                                            <Grid Grid.Row="3">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Price, StringFormat=฿{0:N2}}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="คงเหลือ " FontSize="11" Foreground="#718096"/>
+                                                    <TextBlock x:Name="StockText" Text="{Binding Stock}" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Stock}" Value="0">
+                                        <Setter TargetName="StockText" Property="Foreground" Value="#EF4444"/>
+                                        <Setter TargetName="StockText" Property="Text" Value="หมด"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Column 1: Right Panel (Shopping Cart) -->
+            <Border Grid.Column="1" Background="#FFFFFF" BorderThickness="1,0,0,0" BorderBrush="#BAE6FD" Padding="18">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Cart Header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Scrollable Cart Items -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Summary & Next Button -->
+                    </Grid.RowDefinitions>
+
+                    <!-- 1. Cart Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#00A3E0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="ตะกร้าสินค้า" FontSize="18" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
+                            <Border Background="#00A3E0" CornerRadius="12" MinWidth="24" Height="24" Margin="10,0,0,0" VerticalAlignment="Center" Padding="8,0">
+                                <TextBlock Text="{Binding CartItems.Count}" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+
+                        <Button Grid.Column="1" Command="{Binding ClearCartCommand}" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="6,2">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#EF4444" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="ล้าง" FontSize="14" FontWeight="Bold" Foreground="#EF4444" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- 2. Cart Items List (ScrollViewer + ItemsControl) -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,-5,0" Padding="0,0,5,0">
+                        <ItemsControl ItemsSource="{Binding CartItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Margin="0,0,0,10" Padding="14,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <!-- Icon -->
+                                                <ColumnDefinition Width="*"/>
+                                                <!-- Name & Price -->
+                                                <ColumnDefinition Width="Auto"/>
+                                                <!-- Qty Selector -->
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Column 0: Circular Icon Container -->
+                                            <Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="#FFFFFF" Margin="0,0,12,0" ClipToBounds="True">
+                                                <Grid>
+                                                    <!-- Fallback icon -->
+                                                    <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#BAE6FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <!-- Actual Image -->
+                                                    <Image Source="{Binding Product.ImagePath}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+
+                                            <!-- Column 1: Details -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Product.Name}" FontWeight="Bold" FontSize="16" Foreground="#0B2545" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Product.Price, StringFormat=฿{0:N0} / ชิ้น}" FontSize="13" FontWeight="SemiBold" Foreground="#64748B" Margin="0,3,0,0"/>
+                                            </StackPanel>
+
+                                            <!-- Column 2: Qty Selector -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
+                                                <!-- Decrease Button -->
+                                                <Button Command="{Binding DataContext.DecreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                        CommandParameter="{Binding}"
+                                                        Background="#BAE6FD" BorderThickness="0" Width="34" Height="34" Cursor="Hand" Padding="0">
+                                                    <Button.Resources>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="CornerRadius" Value="17"/>
+                                                        </Style>
+                                                    </Button.Resources>
+                                                    <TextBlock Text="-" FontSize="18" FontWeight="ExtraBold" Foreground="#0B2545" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                                                </Button>
+
+                                                <!-- Qty Display (Enlarged to 22pt ExtraBold) -->
+                                                <TextBlock Text="{Binding Quantity}" Foreground="#002288" FontSize="22" FontWeight="ExtraBold" Width="38" TextAlignment="Center" VerticalAlignment="Center"/>
+
+                                                <!-- Increase Button -->
+                                                <Button Command="{Binding DataContext.IncreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                        CommandParameter="{Binding}"
+                                                        Background="#00A3E0" BorderThickness="0" Width="34" Height="34" Cursor="Hand" Padding="0">
+                                                    <Button.Resources>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="CornerRadius" Value="17"/>
+                                                        </Style>
+                                                    </Button.Resources>
+                                                    <TextBlock Text="+" FontSize="18" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- 3. Summary & Pinned Next Button -->
+                    <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="#BAE6FD" Padding="0,15,0,0" Margin="0,10,0,0">
+                        <StackPanel>
+                            <!-- Delivery CheckBox & Info -->
+                            <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="14,10" Margin="0,0,0,14">
+                                <StackPanel>
+                                    <Grid>
+                                        <CheckBox Content="🚚 จัดส่งสินค้า" 
+                                                  IsChecked="{Binding IsDeliverySelected, Mode=TwoWay}"
+                                                  FontSize="16" FontWeight="Bold" Foreground="#0B2545"
+                                                  VerticalContentAlignment="Center" Cursor="Hand"/>
+                                        <Button Command="{Binding OpenDeliveryModalCommand}"
+                                                Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVis}}"
+                                                HorizontalAlignment="Right" Background="#00A3E0" Foreground="White"
+                                                BorderThickness="0" Padding="8,4" Cursor="Hand" FontSize="12" FontWeight="SemiBold">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="6"/>
+                                                </Style>
+                                            </Button.Resources>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="11" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="จัดการที่อยู่" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                    
+                                    <!-- Brief Delivery Info Summary -->
+                                    <StackPanel Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVis}}" Margin="0,8,0,0">
+                                        <Border Height="1" Background="#BAE6FD" Margin="0,0,0,6"/>
+                                        <Grid>
+                                            <TextBlock Text="{Binding CustomerName, StringFormat='ผู้รับ: {0}'}" FontSize="12" FontWeight="SemiBold" Foreground="#0B2545" TextTrimming="CharacterEllipsis" MaxWidth="220" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="{Binding ShippingFee, StringFormat='ค่าส่ง ฿{0:N0}'}" FontSize="12" FontWeight="Bold" Foreground="#0082B3" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Quantity Summary -->
+                            <Grid Margin="0,0,0,10">
+                                <TextBlock Text="จำนวนรายการ" FontSize="15" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding CartTotalItems}" FontSize="17" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                                    <TextBlock Text=" ชิ้น" FontSize="15" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Total Amount Summary -->
+                            <Grid Margin="0,0,0,16">
+                                <TextBlock Text="ยอดรวมทั้งหมด" FontSize="17" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N0}}" FontSize="30" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <Button Command="{Binding CheckoutCommand}" Content="ถัดไป &gt;" 
+                                    Background="#00A3E0" Foreground="White" FontSize="18" FontWeight="Bold" Height="54" Cursor="Hand">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="27"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 2. IN-PAGE FULL OVERLAY (POS CASHIER PAYMENT WORKSTATION) -->
+        <Grid x:Name="CheckoutOverlay" 
+              Background="#F8FAFC" 
+              Visibility="{Binding IsCheckoutWizardOpen, Converter={StaticResource BoolToVis}}"
+              Panel.ZIndex="100">
+
+            <Border Padding="24,16">
+
+                <Border.Resources>
+                    <!-- Overlay TextBlock Style -->
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#0F172A"/>
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                    </Style>
+
+                    <!-- Custom Button Style for Checkout Modal -->
+                    <Style x:Key="CheckoutButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="#00A3E0"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="20,12"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#0B2545"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" Value="#CBD5E1"/>
+                                            <Setter Property="Foreground" Value="#64748B"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="StretchedCheckoutButtonStyle" TargetType="Button" BasedOn="{StaticResource CheckoutButtonStyle}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#0B2545"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" Value="#CBD5E1"/>
+                                            <Setter Property="Foreground" Value="#64748B"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Textbox Style for Shipping Details -->
+                    <Style TargetType="TextBox">
+                        <Setter Property="Background" Value="#E0F2FE"/>
+                        <Setter Property="Foreground" Value="#2D3748"/>
+                        <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="CaretBrush" Value="#2D3748"/>
+                        <Setter Property="Padding" Value="12,10"/>
+                        <Setter Property="Height" Value="42"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border Background="{TemplateBinding Background}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            CornerRadius="10">
+                                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Stretch" Margin="0"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#00A3E0"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Border.Resources>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Header -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Progress indicator -->
+                        <RowDefinition Height="*"/>
+                        <!-- Content area -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Title, Back button, and Close button -->
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Back button -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Title and Subtitle -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Close button -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Back Button (Returns directly to main product catalog) -->
+                        <Button Grid.Column="0" Command="{Binding PrevStepCommand}" Background="Transparent" BorderThickness="0" Cursor="Hand" Width="36" Height="36" Margin="0,0,10,0" Padding="0" VerticalAlignment="Center">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent" CornerRadius="18" x:Name="btnBorder">
+                                        <TextBlock Text="&#xE72B;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#718096" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="btnBorder" Property="Background" Value="#E0F2FE"/>
+                                            <Setter Property="Foreground" Value="#0B2545"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="วิธีชำระเงิน" FontSize="20" FontWeight="Bold" Foreground="#2D3748"/>
+                        </StackPanel>
+                    </Grid>
+
+
+
+                    <!-- Row 2: Content Area -->
+                    <Grid Grid.Row="2" MinHeight="380">
+
+                        <!-- STEP 1: RECEIVE METHOD & SHIPPING DETAILS MODAL -->
+                        <Grid x:Name="Step1Content">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentStep}" Value="1">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel Margin="0,0,5,0">
+                                    <TextBlock Text="เลือกรูปแบบการรับสินค้า" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,12"/>
+
+                                    <Grid Margin="0,0,0,15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Card 1: Pickup (รับที่ร้าน) -->
+                                        <RadioButton Grid.Column="0" IsChecked="{Binding IsPickupSelected}" GroupName="DeliveryMethodGroup">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="cardBorder" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Padding="16,12" Cursor="Hand">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <TextBlock Grid.Column="0" Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,12,0" x:Name="iconText"/>
+
+                                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                            <TextBlock Text="🛒 ขายหน้าร้าน" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,2"/>
+                                                                            <TextBlock Text="ลูกค้าเข้ามาซื้อสินค้าที่ร้าน" FontSize="11" Foreground="#718096"/>
+                                                                        </StackPanel>
+
+                                                                        <Border Grid.Column="2" Width="18" Height="18" CornerRadius="9" BorderThickness="2" BorderBrush="#BAE6FD" Background="Transparent" x:Name="radioCircle" VerticalAlignment="Center">
+                                                                            <Border Width="8" Height="8" CornerRadius="4" Background="Transparent" x:Name="radioInnerDot" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="cardBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="iconText" Property="Foreground" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioCircle" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioInnerDot" Property="Background" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="cardBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+
+                                        <!-- Card 2: Delivery (จัดส่งสินค้า) -->
+                                        <RadioButton Grid.Column="2" IsChecked="{Binding IsDeliverySelected}" GroupName="DeliveryMethodGroup">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="cardBorder" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Padding="16,12" Cursor="Hand">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <TextBlock Grid.Column="0" Text="&#xE748;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,12,0" x:Name="iconText"/>
+
+                                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                            <TextBlock Text="🛵 สั่งเดลิเวอรี่" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,2"/>
+                                                                            <TextBlock Text="จัดส่งสินค้าถึงที่อยู่ลูกค้า" FontSize="11" Foreground="#718096"/>
+                                                                        </StackPanel>
+
+                                                                        <Border Grid.Column="2" Width="18" Height="18" CornerRadius="9" BorderThickness="2" BorderBrush="#BAE6FD" Background="Transparent" x:Name="radioCircle" VerticalAlignment="Center">
+                                                                            <Border Width="8" Height="8" CornerRadius="4" Background="Transparent" x:Name="radioInnerDot" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="cardBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="iconText" Property="Foreground" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioCircle" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioInnerDot" Property="Background" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="cardBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+                                    </Grid>
+
+                                    <!-- Customer Shipping Details Form (Shown when Delivery is selected) -->
+                                    <StackPanel Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVis}}" Margin="0,0,0,10">
+                                        <Border Height="1" Background="#BAE6FD" Margin="0,0,0,15"/>
+
+                                        <TextBlock Text="รายละเอียดออเดอร์เดลิเวอรี่ (จำเป็นต้องกรอก)" FontSize="13.5" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,12"/>
+
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="12"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Name -->
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="ชื่อลูกค้า / ผู้สั่ง *" FontSize="12.5" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,6"/>
+                                                <TextBox Text="{Binding DeliveryCustomerName, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </StackPanel>
+
+                                            <!-- Phone -->
+                                            <StackPanel Grid.Column="2">
+                                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,6"/>
+                                                <TextBox Text="{Binding DeliveryCustomerPhone, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!-- Address -->
+                                        <TextBlock Text="ที่อยู่จัดส่ง *" FontSize="12.5" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,6"/>
+                                        <TextBox Text="{Binding DeliveryCustomerAddress, UpdateSourceTrigger=PropertyChanged}" 
+                                                 AcceptsReturn="True" 
+                                                 TextWrapping="Wrap" 
+                                                 Height="72" 
+                                                 VerticalContentAlignment="Top" 
+                                                 Padding="12,8"
+                                                 Margin="0,0,0,4"/>
+                                    </StackPanel>
+
+                                    <!-- Separator Line -->
+                                    <Border Height="1" Background="#BAE6FD" Margin="0,15,0,12"/>
+
+                                    <!-- Order Summary Container -->
+                                    <Grid Margin="5,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Row 1: ยอดรวมสินค้า -->
+                                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                                            <TextBlock Text="ยอดรวมสินค้า" FontSize="13" Foreground="#718096"/>
+                                            <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" FontSize="13" Foreground="#718096" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <!-- Row 2: ยอดสุทธิ -->
+                                        <Grid Grid.Row="1">
+                                            <TextBlock Text="ยอดสุทธิ" FontSize="14" FontWeight="Bold" Foreground="#2D3748"/>
+                                            <TextBlock Text="{Binding CheckoutGrandTotal, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#0B2545" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </Grid>
+
+                                    <!-- Footer button for Step 1 -->
+                                    <Button Command="{Binding NextStepCommand}" 
+                                            Content="ถัดไป: ไปหน้าชำระเงิน  &gt;"
+                                            Style="{StaticResource StretchedCheckoutButtonStyle}"
+                                            Height="48" 
+                                            Margin="0,18,0,0"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+
+                        <!-- STEP 2: REDESIGNED POS CASHIER PAYMENT WORKSTATION -->
+                        <Grid x:Name="Step2Content">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentStep}" Value="2">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+                            <Grid Margin="0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>   <!-- Left Focus: Summary, Cash/Change, Quick Cash & Numpad -->
+                                    <ColumnDefinition Width="20"/>  <!-- Spacing -->
+                                    <ColumnDefinition Width="380"/> <!-- Right Focus: Payment Methods & Submit Button -->
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ══════════════════════════════════════════════════════════════ -->
+                                <!-- LEFT COLUMN — Focused Workstation (Summary, Cash/Change & Numpad) -->
+                                <!-- ══════════════════════════════════════════════════════════════ -->
+                                <Grid Grid.Column="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/> <!-- 1. Summary & Amount Due -->
+                                        <RowDefinition Height="Auto"/> <!-- 2. Redesigned Cash Received & Change Box -->
+                                        <RowDefinition Height="*"/>    <!-- 3. Quick Cash Buttons & 4x4 Numpad Container -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 1. SUMMARY & PROMINENT GRAND TOTAL BOX -->
+                                    <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="16" Padding="18,14" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,6">
+                                                <TextBlock Text="ยอดรวมสินค้า" FontSize="15" FontWeight="SemiBold" Foreground="#64748B"/>
+                                                <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Right"/>
+                                            </Grid>
+
+                                            <Grid Margin="0,0,0,8" Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="ส่วนลด / คูปอง" FontSize="15" FontWeight="SemiBold" Foreground="#EF4444"/>
+                                                <TextBlock Text="{Binding DiscountAmount, StringFormat=-฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Right"/>
+                                            </Grid>
+
+                                            <Border Height="1" Background="#CBD5E1" Margin="0,2,0,10"/>
+
+                                            <!-- Prominent Grand Total Display -->
+                                            <Border Background="#F1F5F9" BorderBrush="#00A3E0" BorderThickness="2" CornerRadius="12" Padding="18,12">
+                                                <Grid>
+                                                    <TextBlock Text="ยอดที่ต้องชำระ" FontSize="18" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding CheckoutGrandTotal, StringFormat={}{0:N2}}" FontSize="38" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- 2. REDESIGNED CASH RECEIVED & CHANGE DISPLAY BOXES (Only for Cash) -->
+                                    <Grid Grid.Row="1" Margin="0,0,0,12" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Received Cash Box -->
+                                        <Border Grid.Column="0" Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="2" CornerRadius="14" Padding="16,12">
+                                            <StackPanel>
+                                                <TextBlock Text="รับเงินสดมา" FontSize="16" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,0,4"/>
+                                                <TextBlock Text="{Binding CashReceived, StringFormat=฿{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#0B2545" HorizontalAlignment="Right"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Change Box -->
+                                        <Border Grid.Column="2" Background="#DCFCE7" BorderBrush="#22C55E" BorderThickness="2" CornerRadius="14" Padding="16,12">
+                                            <StackPanel>
+                                                <TextBlock Text="เงินทอนลูกค้า" FontSize="16" FontWeight="Bold" Foreground="#15803D" Margin="0,0,0,4"/>
+                                                <TextBlock Text="{Binding Change, StringFormat=฿{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#166534" HorizontalAlignment="Right"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- 3. QUICK CASH BUTTONS & 4x4 NUMPAD (Only for Cash) -->
+                                    <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="16" Padding="14" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/> <!-- Quick Cash Buttons -->
+                                                <RowDefinition Height="*"/>    <!-- Numpad Grid -->
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Quick Cash Buttons Row (Enlarged Height 48px & Font 15pt) -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="4"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="4"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="4"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="4"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="4"/>
+                                                    <ColumnDefinition Width="1.2*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid.Resources>
+                                                    <Style x:Key="QuickCashStyle" TargetType="Button">
+                                                        <Setter Property="Background" Value="#E0F2FE"/>
+                                                        <Setter Property="Foreground" Value="#0B2545"/>
+                                                        <Setter Property="FontSize" Value="15"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Setter Property="Height" Value="48"/>
+                                                        <Setter Property="Cursor" Value="Hand"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="#BAE6FD" BorderThickness="1.5">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Background" Value="#00A3E0"/>
+                                                                            <Setter Property="Foreground" Value="White"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Grid.Resources>
+
+                                                <Button Grid.Column="0" Command="{Binding NumpadCommand}" CommandParameter="20" Content="฿20" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="2" Command="{Binding NumpadCommand}" CommandParameter="50" Content="฿50" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="4" Command="{Binding NumpadCommand}" CommandParameter="100" Content="฿100" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="6" Command="{Binding NumpadCommand}" CommandParameter="500" Content="฿500" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="8" Command="{Binding NumpadCommand}" CommandParameter="1000" Content="฿1,000" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="10" Command="{Binding NumpadCommand}" CommandParameter="Exact" Content="รับพอดี" Style="{StaticResource QuickCashStyle}" Background="#00A3E0" Foreground="White"/>
+                                            </Grid>
+
+                                            <!-- Interactive Numpad (Without Enter Button) -->
+                                            <Grid Grid.Row="1" MinHeight="175">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid.Resources>
+                                                    <Style x:Key="NumBtnStyle" TargetType="Button">
+                                                        <Setter Property="Background" Value="#F8FAFC"/>
+                                                        <Setter Property="Foreground" Value="#0F172A"/>
+                                                        <Setter Property="FontSize" Value="18"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Setter Property="Margin" Value="2"/>
+                                                        <Setter Property="Cursor" Value="Hand"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="#CBD5E1" BorderThickness="1.5">
+                                                                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Background" Value="#E0F2FE"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsPressed" Value="True">
+                                                                            <Setter Property="Background" Value="#00A3E0"/>
+                                                                            <Setter Property="Foreground" Value="White"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Grid.Resources>
+
+                                                <!-- Row 0: 7, 8, 9, ⌫ -->
+                                                <Button Grid.Row="0" Grid.Column="0" Command="{Binding NumpadCommand}" CommandParameter="7" Content="7" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="0" Grid.Column="1" Command="{Binding NumpadCommand}" CommandParameter="8" Content="8" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="0" Grid.Column="2" Command="{Binding NumpadCommand}" CommandParameter="9" Content="9" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="0" Grid.Column="3" Command="{Binding NumpadCommand}" CommandParameter="BACK" Content="⌫" Style="{StaticResource NumBtnStyle}" Background="#FEE2E2" Foreground="#EF4444"/>
+
+                                                <!-- Row 1: 4, 5, 6, CLEAR -->
+                                                <Button Grid.Row="1" Grid.Column="0" Command="{Binding NumpadCommand}" CommandParameter="4" Content="4" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="1" Grid.Column="1" Command="{Binding NumpadCommand}" CommandParameter="5" Content="5" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="1" Grid.Column="2" Command="{Binding NumpadCommand}" CommandParameter="6" Content="6" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="1" Grid.Column="3" Command="{Binding NumpadCommand}" CommandParameter="CLEAR" Content="C" Style="{StaticResource NumBtnStyle}" Background="#FEF3C7" Foreground="#D97706"/>
+
+                                                <!-- Row 2: 1, 2, 3, 00 -->
+                                                <Button Grid.Row="2" Grid.Column="0" Command="{Binding NumpadCommand}" CommandParameter="1" Content="1" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="2" Grid.Column="1" Command="{Binding NumpadCommand}" CommandParameter="2" Content="2" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="2" Grid.Column="2" Command="{Binding NumpadCommand}" CommandParameter="3" Content="3" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="2" Grid.Column="3" Command="{Binding NumpadCommand}" CommandParameter="00" Content="00" Style="{StaticResource NumBtnStyle}"/>
+
+                                                <!-- Row 3: 0 (Spans 3 columns), . -->
+                                                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Command="{Binding NumpadCommand}" CommandParameter="0" Content="0" Style="{StaticResource NumBtnStyle}"/>
+                                                <Button Grid.Row="3" Grid.Column="3" Command="{Binding NumpadCommand}" CommandParameter="." Content="." Style="{StaticResource NumBtnStyle}"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- 4. BANK BUTTONS (When QR/Transfer is selected - 5 Banks) -->
+                                    <Grid Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" Margin="0,16,0,0" Visibility="{Binding IsTransferSelected, Converter={StaticResource BoolToVis}}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="12"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Button 1: กสิกร (KBANK) -->
+                                        <RadioButton Grid.Row="0" Grid.Column="0" GroupName="BankSelectRow"
+                                                     IsChecked="{Binding SelectedBank, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=KBANK, Mode=TwoWay}"
+                                                     Command="{Binding SelectBankCommand}" CommandParameter="KBANK">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="16" Height="86" Padding="10,8" Cursor="Hand">
+                                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                        <TextBlock Text="กสิกร" FontSize="19" FontWeight="ExtraBold" Foreground="#138F2D" HorizontalAlignment="Center"/>
+                                                                        <TextBlock Text="KBANK" FontSize="12.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#F0FDF4"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#138F2D"/>
+                                                                        <Setter TargetName="bd" Property="BorderThickness" Value="3"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#138F2D"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+
+                                        <!-- Button 2: ออมสิน (GSB) -->
+                                        <RadioButton Grid.Row="0" Grid.Column="2" GroupName="BankSelectRow"
+                                                     IsChecked="{Binding SelectedBank, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=GSB, Mode=TwoWay}"
+                                                     Command="{Binding SelectBankCommand}" CommandParameter="GSB">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="16" Height="86" Padding="10,8" Cursor="Hand">
+                                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                        <TextBlock Text="ออมสิน" FontSize="19" FontWeight="ExtraBold" Foreground="#EB198B" HorizontalAlignment="Center"/>
+                                                                        <TextBlock Text="GSB" FontSize="12.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#FDF2F8"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#EB198B"/>
+                                                                        <Setter TargetName="bd" Property="BorderThickness" Value="3"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#EB198B"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+
+                                        <!-- Button 3: ไทยพาณิชย์ (SCB) -->
+                                        <RadioButton Grid.Row="0" Grid.Column="4" GroupName="BankSelectRow"
+                                                     IsChecked="{Binding SelectedBank, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=SCB, Mode=TwoWay}"
+                                                     Command="{Binding SelectBankCommand}" CommandParameter="SCB">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="16" Height="86" Padding="10,8" Cursor="Hand">
+                                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                        <TextBlock Text="ไทยพาณิชย์" FontSize="18" FontWeight="ExtraBold" Foreground="#4E2E7F" HorizontalAlignment="Center"/>
+                                                                        <TextBlock Text="SCB" FontSize="12.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#FAF5FF"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#4E2E7F"/>
+                                                                        <Setter TargetName="bd" Property="BorderThickness" Value="3"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#4E2E7F"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+
+                                        <!-- Button 4: กรุงไทย (KTB) -->
+                                        <RadioButton Grid.Row="2" Grid.Column="0" GroupName="BankSelectRow"
+                                                     IsChecked="{Binding SelectedBank, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=KTB, Mode=TwoWay}"
+                                                     Command="{Binding SelectBankCommand}" CommandParameter="KTB">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="16" Height="86" Padding="10,8" Cursor="Hand">
+                                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                        <TextBlock Text="กรุงไทย" FontSize="19" FontWeight="ExtraBold" Foreground="#00A6E6" HorizontalAlignment="Center"/>
+                                                                        <TextBlock Text="KTB" FontSize="12.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#F0F9FF"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#00A6E6"/>
+                                                                        <Setter TargetName="bd" Property="BorderThickness" Value="3"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#00A6E6"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+
+                                        <!-- Button 5: กรุงเทพ (BBL) -->
+                                        <RadioButton Grid.Row="2" Grid.Column="2" GroupName="BankSelectRow"
+                                                     IsChecked="{Binding SelectedBank, Converter={StaticResource LocalStringEqualsConverter}, ConverterParameter=BBL, Mode=TwoWay}"
+                                                     Command="{Binding SelectBankCommand}" CommandParameter="BBL">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="16" Height="86" Padding="10,8" Cursor="Hand">
+                                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                        <TextBlock Text="กรุงเทพ" FontSize="19" FontWeight="ExtraBold" Foreground="#1E3F8A" HorizontalAlignment="Center"/>
+                                                                        <TextBlock Text="BBL" FontSize="12.5" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#EFF6FF"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#1E3F8A"/>
+                                                                        <Setter TargetName="bd" Property="BorderThickness" Value="3"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#1E3F8A"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+                                    </Grid>
+                                </Grid>
+
+                                <!-- ══════════════════════════════════════════════════════════════ -->
+                                <!-- RIGHT COLUMN — Payment Methods Selection & Submit Button       -->
+                                <!-- ══════════════════════════════════════════════════════════════ -->
+                                <Grid Grid.Column="2">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/> <!-- Title -->
+                                        <RowDefinition Height="*"/>    <!-- Payment Methods Cards -->
+                                        <RowDefinition Height="Auto"/> <!-- Large Submit Button -->
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="ช่องทางการชำระเงิน" FontSize="15" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,12"/>
+
+                                    <!-- Payment Method Options Stack -->
+                                    <StackPanel Grid.Row="1">
+                                        <!-- Card 0: สมาชิก (Member Lookup Card) -->
+                                        <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="14" Padding="14,12" Margin="0,0,0,12">
+                                            <StackPanel>
+                                                <CheckBox x:Name="chkEnableMember" IsChecked="{Binding IsMemberSelected}" Unchecked="ChkEnableMember_Unchecked" Cursor="Hand">
+                                                    <CheckBox.Template>
+                                                        <ControlTemplate TargetType="CheckBox">
+                                                            <Grid Background="Transparent">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <TextBlock Grid.Column="0" Text="👤" FontSize="24" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                    <TextBlock Text="สมาชิก (Member)" FontSize="15" FontWeight="Bold" Foreground="#0B2545"/>
+                                                                    <TextBlock Text="ค้นหาด้วยเบอร์โทรศัพท์เพื่อสะสมแต้ม" FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
+                                                                </StackPanel>
+
+                                                                <Border Grid.Column="2" Width="20" Height="20" CornerRadius="4" BorderThickness="2" BorderBrush="#BAE6FD" x:Name="chkBorder" VerticalAlignment="Center">
+                                                                    <TextBlock Text="✓" Foreground="White" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" x:Name="chkMark"/>
+                                                                </Border>
+                                                            </Grid>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsChecked" Value="True">
+                                                                    <Setter TargetName="chkBorder" Property="Background" Value="#00A3E0"/>
+                                                                    <Setter TargetName="chkBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                    <Setter TargetName="chkMark" Property="Visibility" Value="Visible"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </CheckBox.Template>
+                                                </CheckBox>
+
+                                                <!-- Expandable Phone Search Area -->
+                                                <StackPanel Visibility="{Binding IsMemberInputVisible, Converter={StaticResource BoolToVis}}" Margin="0,10,0,0">
+                                                    
+                                                    <!-- Search Bar Row (Phone Icon + Placeholder + Search Button) -->
+                                                    <Grid Margin="0,2,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <!-- Phone Input Box with Icon, Placeholder, and Autocomplete Dropdown Popup -->
+                                                        <Border x:Name="bdPhoneInput" Grid.Column="0" Background="#F8FAFC" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Height="42" Padding="10,0">
+                                                            <Grid VerticalAlignment="Center">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <!-- Phone Icon -->
+                                                                <TextBlock Grid.Column="0" Text="📞" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#0284C7"/>
+
+                                                                <!-- Input Field -->
+                                                                <Grid Grid.Column="1">
+                                                                    <TextBox x:Name="txtMemberSearchPhone"
+                                                                             Text="{Binding CustomerSearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                             Background="Transparent"
+                                                                             BorderThickness="0"
+                                                                             FontSize="14"
+                                                                             FontWeight="SemiBold"
+                                                                             Foreground="#0F172A"
+                                                                             VerticalContentAlignment="Center"
+                                                                             Height="36"
+                                                                             Padding="0"
+                                                                             IsEnabled="{Binding ElementName=chkEnableMember, Path=IsChecked}"/>
+
+                                                                    <!-- Placeholder (08X-XXX-XXXX) -->
+                                                                    <TextBlock Text="08X-XXX-XXXX" 
+                                                                               IsHitTestVisible="False" 
+                                                                               FontSize="14" 
+                                                                               Foreground="#94A3B8" 
+                                                                               VerticalAlignment="Center">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding CustomerSearchText}" Value="">
+                                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding CustomerSearchText}" Value="{x:Null}">
+                                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+
+                                                                    <!-- Autocomplete Dropdown Suggestions Popup (Aligned directly with Phone Input Container) -->
+                                                                    <Popup Placement="Bottom"
+                                                                           PlacementTarget="{Binding ElementName=bdPhoneInput}"
+                                                                           Width="{Binding ElementName=bdPhoneInput, Path=ActualWidth}"
+                                                                           IsOpen="{Binding IsCustomerDropDownOpen, Mode=TwoWay}"
+                                                                           StaysOpen="False"
+                                                                           AllowsTransparency="True"
+                                                                           PopupAnimation="Slide">
+                                                                        <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Margin="0,4,0,4">
+                                                                            <Border.Effect>
+                                                                                <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#0B2545" Opacity="0.15"/>
+                                                                            </Border.Effect>
+                                                                            <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" SnapsToDevicePixels="True">
+                                                                                <StackPanel Margin="4,4">
+                                                                                    <!-- Results List -->
+                                                                                    <ListBox ItemsSource="{Binding FilteredCustomerList}"
+                                                                                             SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
+                                                                                             BorderThickness="0"
+                                                                                             Background="Transparent"
+                                                                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                                                        <ListBox.ItemTemplate>
+                                                                                            <DataTemplate>
+                                                                                                <Border Padding="10,7" Cursor="Hand" Background="Transparent">
+                                                                                                    <Grid>
+                                                                                                        <Grid.ColumnDefinitions>
+                                                                                                            <ColumnDefinition Width="*"/>
+                                                                                                            <ColumnDefinition Width="Auto"/>
+                                                                                                        </Grid.ColumnDefinitions>
+                                                                                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis" Margin="0,0,6,0"/>
+                                                                                                        <TextBlock Grid.Column="1" Text="{Binding Phone}" Foreground="#0284C7" FontWeight="SemiBold"/>
+                                                                                                    </Grid>
+                                                                                                </Border>
+                                                                                            </DataTemplate>
+                                                                                        </ListBox.ItemTemplate>
+                                                                                        <ListBox.ItemContainerStyle>
+                                                                                            <Style TargetType="ListBoxItem">
+                                                                                                <Setter Property="Template">
+                                                                                                    <Setter.Value>
+                                                                                                        <ControlTemplate TargetType="ListBoxItem">
+                                                                                                            <Border x:Name="bd" Background="Transparent" CornerRadius="6" Margin="2,1">
+                                                                                                                <ContentPresenter />
+                                                                                                            </Border>
+                                                                                                            <ControlTemplate.Triggers>
+                                                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                                                    <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
+                                                                                                                </Trigger>
+                                                                                                                <Trigger Property="IsSelected" Value="True">
+                                                                                                                    <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                                                                                                </Trigger>
+                                                                                                            </ControlTemplate.Triggers>
+                                                                                                        </ControlTemplate>
+                                                                                                    </Setter.Value>
+                                                                                                </Setter>
+                                                                                            </Style>
+                                                                                        </ListBox.ItemContainerStyle>
+                                                                                    </ListBox>
+
+                                                                                    <!-- No Results Notice -->
+                                                                                    <TextBlock Text="ไม่พบข้อมูลสมาชิก" 
+                                                                                               FontSize="12.5" 
+                                                                                               Foreground="#94A3B8" 
+                                                                                               Padding="12,10" 
+                                                                                               HorizontalAlignment="Center">
+                                                                                        <TextBlock.Style>
+                                                                                            <Style TargetType="TextBlock">
+                                                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                                <Style.Triggers>
+                                                                                                    <DataTrigger Binding="{Binding FilteredCustomerList.Count}" Value="0">
+                                                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                                                    </DataTrigger>
+                                                                                                </Style.Triggers>
+                                                                                            </Style>
+                                                                                        </TextBlock.Style>
+                                                                                    </TextBlock>
+                                                                                </StackPanel>
+                                                                            </ScrollViewer>
+                                                                        </Border>
+                                                                    </Popup>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Border>
+
+                                                        <!-- Search Button (Styled matching the reference image) -->
+                                                        <Button Grid.Column="1"
+                                                                x:Name="btnSearchCustomer"
+                                                                Click="BtnSearchCustomer_Click"
+                                                                Command="{Binding SearchCustomerCommand}"
+                                                                IsEnabled="{Binding ElementName=chkEnableMember, Path=IsChecked}"
+                                                                Margin="8,0,0,0"
+                                                                Height="42"
+                                                                Padding="18,0"
+                                                                Cursor="Hand">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button">
+                                                                    <Setter Property="Background" Value="#1E88E5"/>
+                                                                    <Setter Property="Foreground" Value="White"/>
+                                                                    <Setter Property="FontWeight" Value="ExtraBold"/>
+                                                                    <Setter Property="FontSize" Value="14"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border x:Name="border" 
+                                                                                        Background="{TemplateBinding Background}" 
+                                                                                        CornerRadius="13" 
+                                                                                        Padding="{TemplateBinding Padding}">
+                                                                                    <Border.Effect>
+                                                                                        <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Color="#1E88E5" Opacity="0.35"/>
+                                                                                    </Border.Effect>
+                                                                                    <TextBlock Text="ค้นหา" 
+                                                                                               FontWeight="ExtraBold" 
+                                                                                               Foreground="White" 
+                                                                                               FontSize="14.5" 
+                                                                                               HorizontalAlignment="Center" 
+                                                                                               VerticalAlignment="Center"/>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter TargetName="border" Property="Background" Value="#42A5F5"/>
+                                                                                    </Trigger>
+                                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                                        <Setter TargetName="border" Property="Background" Value="#1565C0"/>
+                                                                                    </Trigger>
+                                                                                    <Trigger Property="IsEnabled" Value="False">
+                                                                                        <Setter TargetName="border" Property="Background" Value="#CBD5E1"/>
+                                                                                        <Setter TargetName="border" Property="Effect" Value="{x:Null}"/>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Button.Style>
+                                                        </Button>
+                                                    </Grid>
+
+                                                    <!-- Member Profile Card (Shown when member is found) -->
+                                                    <Border Margin="0,10,0,0" Padding="12,10" Background="#EFF6FF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding HasSelectedCustomer}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <StackPanel>
+                                                            <!-- Row 1: Profile Icon + Name + Existing Points -->
+                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                                <TextBlock Text="👤" FontSize="15" Foreground="#0284C7" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="{Binding SelectedCustomer.Name, StringFormat='คุณ {0}'}" FontSize="13.5" FontWeight="Bold" Foreground="#0369A1" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="{Binding SelectedCustomer.Points, StringFormat=' (สะสมเดิม: {0} แต้ม)'}" FontSize="13" FontWeight="SemiBold" Foreground="#0284C7" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+
+                                                            <!-- Row 2: Earned Points Badge in this Bill -->
+                                                            <Border Margin="0,8,0,0" Padding="10,6" Background="#F0FDF4" BorderBrush="#86EFAC" BorderThickness="1" CornerRadius="6">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="🎁" FontSize="13" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                                    <TextBlock Grid.Column="1" Text="บิลนี้รับแต้มสะสม:" FontSize="12" FontWeight="SemiBold" Foreground="#166534" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="2" Text="{Binding EarnedPoints, StringFormat=+{0} แต้ม}" FontSize="13" FontWeight="ExtraBold" Foreground="#15803D" VerticalAlignment="Center"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Method 1: เงินสด (Cash) -->
+                                        <RadioButton IsChecked="{Binding IsCashPayment}" GroupName="PayMethodGroup" Margin="0,0,0,12">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="14" Padding="16,12" Cursor="Hand">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <TextBlock Grid.Column="0" Text="💵" FontSize="26" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                            <TextBlock Text="เงินสด (Cash)" FontSize="15" FontWeight="Bold" Foreground="#0B2545"/>
+                                                                            <TextBlock Text="ชำระด้วยเงินสดและคำนวณเงินทอน" FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
+                                                                        </StackPanel>
+
+                                                                        <Border Grid.Column="2" Width="20" Height="20" CornerRadius="10" BorderThickness="2" BorderBrush="#BAE6FD" x:Name="radioBorder" VerticalAlignment="Center">
+                                                                            <Border Width="10" Height="10" CornerRadius="5" Background="Transparent" x:Name="radioDot" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioDot" Property="Background" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+
+                                        <!-- Method 2: โอนเงิน / สแกน QR (PromptPay) -->
+                                        <RadioButton IsChecked="{Binding IsTransferPayment}" GroupName="PayMethodGroup">
+                                            <RadioButton.Style>
+                                                <Style TargetType="RadioButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RadioButton">
+                                                                <Border x:Name="bd" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="14" Padding="16,12" Cursor="Hand">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <TextBlock Grid.Column="0" Text="📱" FontSize="26" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                            <TextBlock Text="สแกน QR / โอนเงิน" FontSize="15" FontWeight="Bold" Foreground="#0B2545"/>
+                                                                            <TextBlock Text="พร้อมเพย์ PromptPay / Mobile Banking" FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
+                                                                        </StackPanel>
+
+                                                                        <Border Grid.Column="2" Width="20" Height="20" CornerRadius="10" BorderThickness="2" BorderBrush="#BAE6FD" x:Name="radioBorder" VerticalAlignment="Center">
+                                                                            <Border Width="10" Height="10" CornerRadius="5" Background="Transparent" x:Name="radioDot" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsChecked" Value="True">
+                                                                        <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioBorder" Property="BorderBrush" Value="#00A3E0"/>
+                                                                        <Setter TargetName="radioDot" Property="Background" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="BorderBrush" Value="#00A3E0"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RadioButton.Style>
+                                        </RadioButton>
+                                    </StackPanel>
+
+                                    <!-- LARGE PROMINENT SUBMIT BUTTON AT THE BOTTOM RIGHT (7-ELEVEN POS STYLE) -->
+                                    <Button Grid.Row="2" Command="{Binding NextStepCommand}"
+                                            Content="ยืนยันการชำระเงิน"
+                                            Background="#10B981"
+                                            Foreground="White"
+                                            FontSize="18"
+                                            FontWeight="Bold"
+                                            Height="54"
+                                            Cursor="Hand">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#059669"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="bd" Property="Background" Value="#CBD5E1"/>
+                                                        <Setter Property="Foreground" Value="#64748B"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        <!-- STEP 3 & 4: SUCCESS PAGE -->
+                        <Grid x:Name="Step3Content">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentStep}" Value="3">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding CurrentStep}" Value="4">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <!-- Circular Checkmark Icon -->
+                                <Border Width="84" Height="84" CornerRadius="42" Background="#10B981" HorizontalAlignment="Center" Margin="0,0,0,18">
+                                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="44" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                </Border>
+
+                                <TextBlock Text="ทำรายการชำระเงินเสร็จสิ้น!" FontSize="26" FontWeight="ExtraBold" Foreground="#0F172A" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock Text="ระบบได้ทำการบันทึกรายการขายเรียบร้อยแล้ว" FontSize="16" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+
+                                <!-- Success Receipt Card Box (Enlarged Width 500px & Font 16-28pt) -->
+                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="20" Width="500" Padding="28,22" HorizontalAlignment="Center">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,10">
+                                            <TextBlock Text="หมายเลขบิลขาย" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding LastRefNo}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,10">
+                                            <TextBlock Text="ช่องทางการชำระ" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding FinalPaymentMethod}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,10" Visibility="{Binding HasFinalBank, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="ธนาคารที่เลือกโอน" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding FinalBank}" FontSize="17" FontWeight="Bold" Foreground="#0284C7" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,10" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="รับเงินสดมา" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding FinalCashReceived, StringFormat=฿{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,10" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="เงินทอนลูกค้า" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding FinalChange, StringFormat=฿{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#166534" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <Border Height="1.5" Background="#BAE6FD" Margin="0,10"/>
+
+                                        <Grid>
+                                            <TextBlock Text="ยอดชำระสุทธิทั้งสิ้น" FontSize="18" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding FinalGrandTotal, StringFormat=฿{0:N2}}" FontSize="28" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Button 1: พิมพ์ใบเสร็จ (Placed above Finish button) -->
+                                <Button Command="{Binding PrintReceiptCommand}" 
+                                        Content="🖨️ พิมพ์ใบเสร็จ"
+                                        Height="50" 
+                                        Width="500"
+                                        FontSize="17"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Background="#00A3E0"
+                                        Cursor="Hand"
+                                        Margin="0,22,0,10">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="14">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="bd" Property="Background" Value="#38BDF8"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
+                                <!-- Button 2: เสร็จสิ้น (Vibrant Sky Blue with Brighter Blue Hover) -->
+                                <Button Command="{Binding CloseCheckoutCommand}" 
+                                        Content="✓ เสร็จสิ้น"
+                                        Height="50" 
+                                        Width="500"
+                                        FontSize="17"
+                                        FontWeight="Bold"
+                                        Foreground="#FFFFFF"
+                                        Background="#00A3E0"
+                                        Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="14">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="bd" Property="Background" Value="#38BDF8"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+            </Border>
+            <!-- ══════════════════════════════════════════════ -->
+            <!-- Custom Error Modal Overlay                    -->
+            <!-- ══════════════════════════════════════════════ -->
+            <Grid Background="#802D3748" Visibility="{Binding IsErrorModalOpen, Converter={StaticResource BoolToVis}}">
+                <Border Width="420" Height="230" Background="#FFFFFF" CornerRadius="20" BorderBrush="#EF4444" BorderThickness="1.5" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                        <!-- 1. ไอคอนสามเหลี่ยมเตือนภัย -->
+                        <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="#EF4444" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                        <!-- 2. หัวข้อ "ข้อผิดพลาด" -->
+                        <TextBlock Text="ข้อผิดพลาด" FontSize="16" FontWeight="Bold" Foreground="#2D3748" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+
+                        <!-- 3. ข้อความแจ้งเตือน -->
+                        <TextBlock Text="{Binding ErrorModalMessage}" FontSize="13" Foreground="#4A5568" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Margin="20,0,20,15"/>
+
+                        <!-- 4. ปุ่ม "รับทราบ" -->
+                        <Button Command="{Binding CloseErrorModalCommand}" Background="#E0F2FE" BorderBrush="#EF4444" BorderThickness="1" Width="160" Height="38" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="19"/>
+                                </Style>
+                            </Button.Resources>
+                            <TextBlock Text="รับทราบ" Foreground="#0082B3" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  3. POP-UP MODAL: ระบบจัดการจัดส่งสินค้า (DELIVERY MODAL)     -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Grid Background="#800B2545" 
+              Visibility="{Binding IsDeliveryModalOpen, Converter={StaticResource BoolToVis}}"
+              Panel.ZIndex="300">
+            <Border Width="580" MaxHeight="720" Background="#FFFFFF" CornerRadius="24" BorderBrush="#BAE6FD" BorderThickness="2"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Padding="28,24" ClipToBounds="True">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="8" Direction="270" Color="#0B2545" Opacity="0.25"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Header -->
+                        <RowDefinition Height="*"/>    <!-- Content / Form -->
+                        <RowDefinition Height="Auto"/> <!-- Footer Actions -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="44" Height="44" CornerRadius="22" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" Margin="0,0,14,0">
+                                <TextBlock Text="🚚" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="ข้อมูลการจัดส่งสินค้า" FontSize="20" FontWeight="ExtraBold" Foreground="#0B2545"/>
+                                <TextBlock Text="เลือกที่อยู่ลูกค้าเดิม หรือ เพิ่มที่อยู่จัดส่งใหม่" FontSize="13" Foreground="#64748B" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Close (X) Button -->
+                        <Button Command="{Binding CancelDeliveryModalCommand}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Background="#F1F5F9" BorderThickness="0" Cursor="Hand" Width="36" Height="36">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="18"/>
+                                </Style>
+                            </Button.Resources>
+                            <TextBlock Text="✕" FontSize="15" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Body Content -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,20">
+                        <StackPanel>
+                            <!-- 1. ส่วนเลือกที่อยู่เดิม / เพิ่มที่อยู่ใหม่ -->
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1.5" CornerRadius="18" Padding="18" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,14">
+                                        <TextBlock Text="1. ที่อยู่สำหรับจัดส่ง" FontSize="15" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                        
+                                        <!-- Toggle Add New Address Button -->
+                                        <Button Command="{Binding ShowAddNewAddressFormCommand}" 
+                                                Visibility="{Binding IsAddNewAddressMode, Converter={StaticResource InverseBoolToVis}}"
+                                                HorizontalAlignment="Right" Background="#00A3E0" Foreground="White" BorderThickness="0" Padding="14,8" Cursor="Hand" FontSize="12.5" FontWeight="Bold">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="10"/>
+                                                </Style>
+                                            </Button.Resources>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="+" FontSize="14" FontWeight="Bold" Margin="0,0,6,0"/>
+                                                <TextBlock Text="เพิ่มที่อยู่จัดส่งใหม่"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- 1.1 Existing Customer Dropdown Mode (Default) -->
+                                    <StackPanel Visibility="{Binding IsAddNewAddressMode, Converter={StaticResource InverseBoolToVis}}">
+                                        <TextBlock Text="เลือกข้อมูลลูกค้า / ที่อยู่เดิม:" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,8"/>
+                                        
+                                        <!-- Custom Styled Dropdown with Placeholder -->
+                                        <Grid Margin="0,0,0,14">
+                                            <ComboBox ItemsSource="{Binding CustomerList}" 
+                                                      SelectedItem="{Binding SelectedDeliveryCustomer, Mode=TwoWay}"
+                                                      Height="44" FontSize="13.5" Margin="0" VerticalContentAlignment="Center">
+                                                <ComboBox.Style>
+                                                    <Style TargetType="ComboBox">
+                                                        <Setter Property="Foreground" Value="#0F172A"/>
+                                                        <Setter Property="Background" Value="#F8FAFC"/>
+                                                        <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="Padding" Value="12,0,32,0"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ComboBox">
+                                                                    <Grid>
+                                                                        <ToggleButton x:Name="ToggleButton" 
+                                                                                      Focusable="False" 
+                                                                                      IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                                                                      ClickMode="Press">
+                                                                            <ToggleButton.Template>
+                                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                                    <Border x:Name="border" 
+                                                                                            Background="{TemplateBinding Background}" 
+                                                                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                                            CornerRadius="12">
+                                                                                        <Grid>
+                                                                                            <Grid.ColumnDefinitions>
+                                                                                                <ColumnDefinition Width="*"/>
+                                                                                                <ColumnDefinition Width="38"/>
+                                                                                            </Grid.ColumnDefinitions>
+                                                                                            <!-- Dropdown Arrow Icon -->
+                                                                                            <Path Grid.Column="1" 
+                                                                                                  Data="M 0 0 L 5 5 L 10 0 Z" 
+                                                                                                  Fill="#64748B" 
+                                                                                                  HorizontalAlignment="Center" 
+                                                                                                  VerticalAlignment="Center"/>
+                                                                                        </Grid>
+                                                                                    </Border>
+                                                                                    <ControlTemplate.Triggers>
+                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                            <Setter TargetName="border" Property="BorderBrush" Value="#00A3E0"/>
+                                                                                            <Setter TargetName="border" Property="Background" Value="#F1F5F9"/>
+                                                                                        </Trigger>
+                                                                                    </ControlTemplate.Triggers>
+                                                                                </ControlTemplate>
+                                                                            </ToggleButton.Template>
+                                                                        </ToggleButton>
+
+                                                                        <ContentPresenter x:Name="ContentSite" 
+                                                                                          IsHitTestVisible="False" 
+                                                                                          Content="{TemplateBinding SelectionBoxItem}" 
+                                                                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                                                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" 
+                                                                                          Margin="{TemplateBinding Padding}" 
+                                                                                          VerticalAlignment="Center" 
+                                                                                          HorizontalAlignment="Left"/>
+
+                                                                        <!-- Popup Items -->
+                                                                        <Popup x:Name="Popup" 
+                                                                               Placement="Bottom" 
+                                                                               IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                                                               AllowsTransparency="True" 
+                                                                               Focusable="False" 
+                                                                               PopupAnimation="Slide">
+                                                                            <Grid x:Name="DropDown" 
+                                                                                  MinWidth="{TemplateBinding ActualWidth}" 
+                                                                                  MaxHeight="{TemplateBinding MaxDropDownHeight}" 
+                                                                                  SnapsToDevicePixels="True">
+                                                                                <Border x:Name="DropDownBorder" 
+                                                                                        Background="#FFFFFF" 
+                                                                                        BorderBrush="#BAE6FD" 
+                                                                                        BorderThickness="1.5" 
+                                                                                        CornerRadius="12" 
+                                                                                        Margin="0,4,0,4">
+                                                                                    <Border.Effect>
+                                                                                        <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#0B2545" Opacity="0.15"/>
+                                                                                    </Border.Effect>
+                                                                                    <ScrollViewer Margin="4,6" SnapsToDevicePixels="True">
+                                                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                                                    </ScrollViewer>
+                                                                                </Border>
+                                                                            </Grid>
+                                                                        </Popup>
+                                                                    </Grid>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="HasItems" Value="False">
+                                                                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ComboBox.Style>
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal" Margin="6,4">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#0F172A"/>
+                                                            <TextBlock Text=" — " Foreground="#94A3B8"/>
+                                                            <TextBlock Text="{Binding Phone}" Foreground="#0082B3" FontWeight="SemiBold"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <!-- Placeholder Text (Shown when SelectedDeliveryCustomer is null) -->
+                                            <TextBlock Text="-- เลือกลูกค้าเดิม หรือกรอกใหม่ด้านล่าง --" 
+                                                       IsHitTestVisible="False" 
+                                                       FontSize="13.5" 
+                                                       Foreground="#94A3B8" 
+                                                       VerticalAlignment="Center" 
+                                                       Margin="14,0,36,0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedDeliveryCustomer}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+
+                                        <!-- Selected Customer Details Preview & Edit -->
+                                        <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="14" Padding="16" Margin="0,0,0,4">
+                                            <StackPanel>
+                                                <Grid Margin="0,0,0,12">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="14"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="ชื่อผู้รับ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,6"/>
+                                                        <TextBox Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}" Height="40" FontSize="13.5" VerticalContentAlignment="Center" Padding="10,0" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1.5">
+                                                            <TextBox.Resources>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="CornerRadius" Value="8"/>
+                                                                </Style>
+                                                            </TextBox.Resources>
+                                                        </TextBox>
+                                                    </StackPanel>
+
+                                                    <StackPanel Grid.Column="2">
+                                                        <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,6"/>
+                                                        <TextBox Text="{Binding CustomerPhone, UpdateSourceTrigger=PropertyChanged}" Height="40" FontSize="13.5" VerticalContentAlignment="Center" Padding="10,0" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1.5">
+                                                            <TextBox.Resources>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="CornerRadius" Value="8"/>
+                                                                </Style>
+                                                            </TextBox.Resources>
+                                                        </TextBox>
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <TextBlock Text="ที่อยู่จัดส่ง *" FontSize="12.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,6"/>
+                                                <TextBox Text="{Binding CustomerAddress, UpdateSourceTrigger=PropertyChanged}" Height="68" TextWrapping="Wrap" AcceptsReturn="True" FontSize="13.5" Padding="10,8" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1.5">
+                                                    <TextBox.Resources>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="CornerRadius" Value="8"/>
+                                                        </Style>
+                                                    </TextBox.Resources>
+                                                </TextBox>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- 1.2 Add New Address Inline Form -->
+                                    <Border Visibility="{Binding IsAddNewAddressMode, Converter={StaticResource BoolToVis}}"
+                                            Background="#EFF6FF" BorderBrush="#93C5FD" BorderThickness="1.5" CornerRadius="14" Padding="16">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,12">
+                                                <TextBlock Text="✨ กรอกที่อยู่จัดส่งใหม่" FontSize="14.5" FontWeight="Bold" Foreground="#1E40AF"/>
+                                                <Button Command="{Binding CancelAddNewAddressCommand}" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                                    <TextBlock Text="ยกเลิก" FontSize="13" Foreground="#64748B" TextDecorations="Underline"/>
+                                                </Button>
+                                            </Grid>
+
+                                            <Grid Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="14"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="ชื่อผู้รับใหม่ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#1E3A8A" Margin="0,0,0,6"/>
+                                                    <TextBox Text="{Binding NewDeliveryName, UpdateSourceTrigger=PropertyChanged}" Height="40" FontSize="13.5" VerticalContentAlignment="Center" Padding="10,0" Background="#FFFFFF" BorderBrush="#93C5FD" BorderThickness="1.5">
+                                                        <TextBox.Resources>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="CornerRadius" Value="8"/>
+                                                            </Style>
+                                                        </TextBox.Resources>
+                                                    </TextBox>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#1E3A8A" Margin="0,0,0,6"/>
+                                                    <TextBox Text="{Binding NewDeliveryPhone, UpdateSourceTrigger=PropertyChanged}" Height="40" FontSize="13.5" VerticalContentAlignment="Center" Padding="10,0" Background="#FFFFFF" BorderBrush="#93C5FD" BorderThickness="1.5">
+                                                        <TextBox.Resources>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="CornerRadius" Value="8"/>
+                                                            </Style>
+                                                        </TextBox.Resources>
+                                                    </TextBox>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <TextBlock Text="ที่อยู่จัดส่ง *" FontSize="12.5" FontWeight="SemiBold" Foreground="#1E3A8A" Margin="0,0,0,6"/>
+                                            <TextBox Text="{Binding NewDeliveryAddress, UpdateSourceTrigger=PropertyChanged}" Height="68" TextWrapping="Wrap" AcceptsReturn="True" FontSize="13.5" Padding="10,8" Background="#FFFFFF" BorderBrush="#93C5FD" BorderThickness="1.5" Margin="0,0,0,14">
+                                                <TextBox.Resources>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="CornerRadius" Value="8"/>
+                                                    </Style>
+                                                </TextBox.Resources>
+                                            </TextBox>
+
+                                            <Button Command="{Binding SaveNewCustomerAddressCommand}" Content="💾 บันทึกที่อยู่ใหม่นี้" Height="42"
+                                                    Background="#2563EB" Foreground="White" FontSize="14" FontWeight="Bold" Cursor="Hand">
+                                                <Button.Resources>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="CornerRadius" Value="10"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 2. ส่วนคำนวณค่าจัดส่ง -->
+                            <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="18" Padding="18">
+                                <StackPanel>
+                                    <TextBlock Text="2. คำนวณค่าจัดส่ง" FontSize="15" FontWeight="Bold" Foreground="#0B2545" Margin="0,0,0,12"/>
+                                    
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="ค่าบริการจัดส่ง (บาท)" FontSize="13.5" FontWeight="SemiBold" Foreground="#334155"/>
+                                            <TextBlock Text="ค่าจัดส่งเริ่มต้นอัตโนมัติ ฿50 (สามารถแก้ไขตัวเลขได้)" FontSize="12" Foreground="#64748B" Margin="0,3,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="฿" FontSize="19" FontWeight="Bold" Foreground="#0082B3" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                            <TextBox Text="{Binding CustomShippingFee, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:N0}'}" 
+                                                     Width="120" Height="44" FontSize="17" FontWeight="Bold" Foreground="#002288"
+                                                     TextAlignment="Center" VerticalContentAlignment="Center" Background="#FFFFFF" BorderBrush="#00A3E0" BorderThickness="2">
+                                                <TextBox.Resources>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="CornerRadius" Value="10"/>
+                                                    </Style>
+                                                </TextBox.Resources>
+                                            </TextBox>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Footer Actions -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Command="{Binding CancelDeliveryModalCommand}" Content="ยกเลิก" Height="48"
+                                Background="#F1F5F9" Foreground="#475569" FontSize="15" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="12"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <Button Grid.Column="2" Command="{Binding SaveDeliveryDetailsCommand}" Content="✓ ยืนยันข้อมูลจัดส่ง" Height="48"
+                                Background="#00A3E0" Foreground="White" FontSize="15" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="12"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
