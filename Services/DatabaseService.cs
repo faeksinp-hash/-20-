@@ -258,6 +258,9 @@ namespace Porjai20.Services
 
                 // Migrate existing employee roles from legacy values ('Admin', 'User', null/empty) to standard roles
                 MigrateEmployeeRoles(connection);
+
+                // Migrate sales dates and payment methods to standard formats
+                MigrateSalesRecords(connection);
             }
         }
 
@@ -326,6 +329,31 @@ namespace Porjai20.Services
             }
         }
 
+        /// <summary>
+        /// Migration สำหรับแปลงฟิลด์วันที่ พ.ศ. (เช่น 2569) ให้เป็น ค.ศ. สากล (2026) และเติมค่าชำระเงินเริ่มต้น
+        /// </summary>
+        private void MigrateSalesRecords(IDbConnection connection)
+        {
+            try
+            {
+                connection.Execute(@"
+                    UPDATE tblSales_H
+                    SET Sales_Date = CAST(CAST(SUBSTR(Sales_Date, 1, 4) AS INTEGER) - 543 AS TEXT) || SUBSTR(Sales_Date, 5)
+                    WHERE LENGTH(Sales_Date) >= 10 AND CAST(SUBSTR(Sales_Date, 1, 4) AS INTEGER) > 2400;
+                ");
+
+                connection.Execute(@"
+                    UPDATE tblSales_H
+                    SET Sales_PaymentType = 'เงินสด'
+                    WHERE Sales_PaymentType IS NULL OR TRIM(Sales_PaymentType) = '';
+                ");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating sales records: {ex.Message}");
+            }
+        }
+
         public int SaveSalesOrder(Models.SalesOrder order)
         {
             using (var connection = GetConnection())
@@ -334,7 +362,19 @@ namespace Porjai20.Services
                     INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status) 
                     VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
                     SELECT last_insert_rowid();";
-                return connection.ExecuteScalar<int>(sql, order);
+                var param = new
+                {
+                    order.RefNo,
+                    Sales_Date = string.IsNullOrWhiteSpace(order.Sales_Date) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : order.Sales_Date,
+                    Cus_ID = order.Cus_ID > 0 ? (int?)order.Cus_ID : null,
+                    Emp_ID = order.Emp_ID > 0 ? (int?)order.Emp_ID : null,
+                    order.Sales_Total,
+                    order.Sales_Cash,
+                    order.Sales_Change,
+                    Sales_PaymentType = !string.IsNullOrWhiteSpace(order.Sales_PaymentType) ? order.Sales_PaymentType : "เงินสด",
+                    Sales_Status = !string.IsNullOrWhiteSpace(order.Sales_Status) ? order.Sales_Status : "ชำระเงินแล้ว"
+                };
+                return connection.ExecuteScalar<int>(sql, param);
             }
         }
 

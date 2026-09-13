@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -21,15 +21,16 @@ namespace Porjai20.Models
 
         public string RefNo { get; set; } = string.Empty;
 
-        public string Sales_Date { get; set; } = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        public string Sales_Date { get; set; } = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
         public DateTime Timestamp
         {
             get
             {
-                if (DateTime.TryParse(Sales_Date, out var dt)) return dt;
+                if (DateTime.TryParse(Sales_Date, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dt)) return dt;
+                if (DateTime.TryParse(Sales_Date, out var dt2)) return dt2;
                 return DateTime.Now;
             }
-            set => Sales_Date = value.ToString("yyyy-MM-dd HH:mm:ss");
+            set => Sales_Date = value.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public int Cus_ID { get; set; }
@@ -50,7 +51,7 @@ namespace Porjai20.Models
                     return _customerName;
                 if (Customer != null && !string.IsNullOrWhiteSpace(Customer.Name))
                     return Customer.Name;
-                return "-";
+                return "ลูกค้าทั่วไป";
             }
             set
             {
@@ -71,7 +72,7 @@ namespace Porjai20.Models
                     return _customerName;
                 if (Customer != null && !string.IsNullOrWhiteSpace(Customer.Name))
                     return Customer.Name;
-                return "-";
+                return "ลูกค้าทั่วไป";
             }
         }
 

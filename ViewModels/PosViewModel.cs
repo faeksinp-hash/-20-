@@ -775,7 +775,7 @@ namespace Porjai20.ViewModels
             {
                 var newCustomer = new Customer
                 {
-                    Code = "CUS-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    Code = "CUS-" + DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture),
                     Name = NewDeliveryName.Trim(),
                     Phone = NewDeliveryPhone.Trim(),
                     Address = NewDeliveryAddress.Trim(),
@@ -1208,15 +1208,16 @@ namespace Porjai20.ViewModels
                 {
                     try
                     {
-                        var orderRef = "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss");
+                        var orderRef = "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
                         LastRefNo = orderRef;
+                        var effectivePayment = !string.IsNullOrWhiteSpace(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด";
                         var salesOrder = new SalesOrder
                         {
                             RefNo = orderRef,
                             TotalAmount = CartTotal,
                             CashReceived = IsCashPayment ? CashAmountReceived : CartTotal,
                             Change = IsCashPayment ? ChangeAmount : 0,
-                            PaymentMethod = SelectedPaymentMethod,
+                            PaymentMethod = effectivePayment,
                             Timestamp = System.DateTime.Now,
                             IsDelivery = SelectedShippingMethod == "Delivery",
                             CustomerName = SelectedShippingMethod == "Delivery" ? CustomerName : null,
@@ -1229,13 +1230,13 @@ namespace Porjai20.ViewModels
                         var salesOrderParam = new
                         {
                             RefNo = orderRef,
-                            Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                             Cus_ID = SelectedCustomer != null && SelectedCustomer.Id > 0 ? (int?)SelectedCustomer.Id : null,
                             Emp_ID = (int?)null,
                             Sales_Total = CartTotal,
                             Sales_Cash = IsCashPayment ? CashAmountReceived : CartTotal,
                             Sales_Change = IsCashPayment ? ChangeAmount : 0,
-                            Sales_PaymentType = SelectedPaymentMethod,
+                            Sales_PaymentType = effectivePayment,
                             Sales_Status = "ชำระเงินแล้ว"
                         };
 
@@ -1356,12 +1357,12 @@ namespace Porjai20.ViewModels
             {
                 var order = new SalesOrder
                 {
-                    RefNo = string.IsNullOrWhiteSpace(LastRefNo) ? "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss") : LastRefNo,
-                    Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    RefNo = string.IsNullOrWhiteSpace(LastRefNo) ? "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture) : LastRefNo,
+                    Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                     TotalAmount = FinalGrandTotal,
                     CashReceived = FinalCashReceived,
                     Change = FinalChange,
-                    PaymentMethod = SelectedPaymentMethod,
+                    PaymentMethod = !string.IsNullOrWhiteSpace(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด",
                     Status = "ชำระเงินแล้ว"
                 };
 

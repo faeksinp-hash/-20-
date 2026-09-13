@@ -4508,8 +4508,26 @@ namespace Porjai20.ViewModels
             SalesOrders.Clear();
             using (var conn = _databaseService.GetConnection())
             {
-                string sql = "SELECT Sales_ID AS Sales_ID, Sales_ID AS Id, * FROM tblSales_H WHERE date(Sales_Date) = date(@Date) ORDER BY Sales_Date DESC";
-                var orders = await conn.QueryAsync<SalesOrder>(sql, new { Date = SelectedHistoryDate });
+                string sql = @"
+                    SELECT 
+                        s.Sales_ID AS Sales_ID, 
+                        s.Sales_ID AS Id, 
+                        s.RefNo, 
+                        s.Sales_Date, 
+                        s.Cus_ID, 
+                        s.Sales_Total AS TotalAmount, 
+                        s.Sales_Cash AS CashReceived, 
+                        s.Sales_Change AS Change, 
+                        COALESCE(s.Sales_PaymentType, 'เงินสด') AS PaymentMethod, 
+                        COALESCE(s.Sales_Status, 'ชำระเงินแล้ว') AS Status,
+                        c.Cus_Name AS CustomerName
+                    FROM tblSales_H s
+                    LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                    WHERE (date(s.Sales_Date) = date(@Date) OR date(s.Sales_Date) = date(@DateTh))
+                    ORDER BY s.Sales_Date DESC";
+                var dateStr = SelectedHistoryDate.Date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                var dateThStr = SelectedHistoryDate.Date.AddYears(543).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                var orders = await conn.QueryAsync<SalesOrder>(sql, new { Date = dateStr, DateTh = dateThStr });
                 foreach (var order in orders)
                 {
                     SalesOrders.Add(order);

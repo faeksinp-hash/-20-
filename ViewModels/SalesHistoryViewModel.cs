@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -286,6 +287,19 @@ namespace Porjai20.ViewModels
             QuickFilter(DateTime.Today, DateTime.Today);
         }
 
+        /// <summary>
+        /// Public method called on view loaded or navigation to refresh sales history.
+        /// </summary>
+        public void LoadSalesHistory()
+        {
+            ExecuteSearch();
+        }
+
+        public void RefreshData()
+        {
+            ExecuteSearch();
+        }
+
         // ── Data Loading ─────────────────────────────────────────────────
 
         /// <summary>
@@ -311,30 +325,36 @@ namespace Porjai20.ViewModels
                                 s.Sales_Total AS TotalAmount,
                                 s.Sales_Cash AS CashReceived,
                                 s.Sales_Change AS Change,
-                                s.Sales_PaymentType AS PaymentMethod,
-                                s.Sales_Status AS Status,
+                                COALESCE(s.Sales_PaymentType, 'เงินสด') AS PaymentMethod,
+                                COALESCE(s.Sales_Status, 'ชำระเงินแล้ว') AS Status,
                                 COUNT(i.Detail_ID) AS ItemCount,
+                                c.Cus_ID AS SplitCusId,
                                 c.Cus_ID AS Cus_ID,
                                 c.Cus_ID AS Id,
                                 c.Cus_Code AS Code,
-                                c.Cus_Name AS Cus_Name,
-                                c.Cus_Name AS Name,
+                                COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') AS Cus_Name,
+                                COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') AS Name,
                                 c.Cus_Address AS Address,
                                 c.Cus_Tel AS Phone,
-                                c.Cus_Points AS Points
+                                COALESCE(c.Cus_Points, 0) AS Points
                             FROM tblSales_H s
                             LEFT JOIN tblSalesDetail i ON i.Sales_ID = s.Sales_ID
                             LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
-                            WHERE date(s.Sales_Date) BETWEEN date(@Start) AND date(@End)";
+                            WHERE (
+                                date(s.Sales_Date) BETWEEN date(@Start) AND date(@End)
+                                OR date(s.Sales_Date) BETWEEN date(@StartTh) AND date(@EndTh)
+                            )";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("Start", StartDate.Date.ToString("yyyy-MM-dd"));
-                parameters.Add("End",   EndDate.Date.ToString("yyyy-MM-dd"));
+                parameters.Add("Start",   StartDate.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                parameters.Add("End",     EndDate.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                parameters.Add("StartTh", StartDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                parameters.Add("EndTh",   EndDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
 
                 // Keyword filter
                 if (!string.IsNullOrWhiteSpace(SearchKeyword))
                 {
-                    sql += " AND (s.RefNo LIKE @Kw OR c.Cus_Name LIKE @Kw OR c.Cus_Tel LIKE @Kw)";
+                    sql += " AND (s.RefNo LIKE @Kw OR COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') LIKE @Kw OR c.Cus_Tel LIKE @Kw)";
                     parameters.Add("Kw", $"%{SearchKeyword.Trim()}%");
                 }
 
@@ -342,7 +362,7 @@ namespace Porjai20.ViewModels
                 if (!string.IsNullOrWhiteSpace(SelectedPaymentMethod) &&
                     SelectedPaymentMethod != "ทั้งหมด")
                 {
-                    sql += " AND s.Sales_PaymentType = @PayMethod";
+                    sql += " AND (s.Sales_PaymentType = @PayMethod OR (@PayMethod = 'เงินสด' AND (s.Sales_PaymentType IS NULL OR s.Sales_PaymentType = '')))";
                     parameters.Add("PayMethod", SelectedPaymentMethod);
                 }
 
@@ -353,10 +373,18 @@ namespace Porjai20.ViewModels
                     (order, customer) =>
                     {
                         order.Customer = customer;
+                        if (customer != null && !string.IsNullOrWhiteSpace(customer.Name))
+                        {
+                            order.CustomerName = customer.Name;
+                        }
+                        else
+                        {
+                            order.CustomerName = "ลูกค้าทั่วไป";
+                        }
                         return order;
                     },
                     parameters,
-                    splitOn: "Cus_ID"
+                    splitOn: "SplitCusId"
                 );
 
                 foreach (var row in rows)
@@ -410,14 +438,14 @@ namespace Porjai20.ViewModels
         // ── KPI Calculations ─────────────────────────────────────────────
         private void RefreshKpis()
         {
-            TotalRevenue  = SalesOrders.Where(o => o.Status == "ชำระเงินแล้ว" || o.Status == "Completed").Sum(o => o.TotalAmount);
-            TotalOrders   = SalesOrders.Count(o => o.Status == "ชำระเงินแล้ว" || o.Status == "Completed");
+            TotalRevenue  = SalesOrders.Where(o => o.Status == "ชำระเงินแล้ว" || o.Status == "Completed" || string.IsNullOrWhiteSpace(o.Status)).Sum(o => o.TotalAmount);
+            TotalOrders   = SalesOrders.Count(o => o.Status == "ชำระเงินแล้ว" || o.Status == "Completed" || string.IsNullOrWhiteSpace(o.Status));
             AverageTicket = TotalOrders > 0 ? TotalRevenue / TotalOrders : 0m;
 
             // Sub-labels
-            var label = StartDate == EndDate
-                ? $"วันที่ {StartDate:dd/MM/yyyy}"
-                : $"{StartDate:dd/MM/yy} – {EndDate:dd/MM/yy}";
+            var label = StartDate.Date == EndDate.Date
+                ? $"วันที่ {StartDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}"
+                : $"{StartDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)} – {EndDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)}";
 
             RevenueSubLabel  = label;
             OrdersSubLabel   = label;
