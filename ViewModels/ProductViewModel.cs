@@ -1472,6 +1472,8 @@ namespace Porjai20.ViewModels
                     string statusToSave = SelectedDeliveryOrderStatus ?? SelectedDeliveryOrder.DeliveryStatus ?? "รอจัดส่ง";
                     string cleanStatus = statusToSave.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
                     UpdateDeliveryStatus(SelectedDeliveryOrder, cleanStatus);
+                    IsDeliveryDetailModalOpen = false;
+                    _ = LoadDeliveries();
                     ShowAlert("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", "🎉");
                 }
             });
@@ -1482,6 +1484,8 @@ namespace Porjai20.ViewModels
                     string statusToSave = SelectedDeliveryOrderStatus ?? SelectedDeliveryOrder.DeliveryStatus ?? "รอจัดส่ง";
                     string cleanStatus = statusToSave.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
                     UpdateDeliveryStatus(SelectedDeliveryOrder, cleanStatus);
+                    IsManageModalOpen = false;
+                    _ = LoadDeliveries();
                     ShowAlert("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", "🎉");
                 }
             });
