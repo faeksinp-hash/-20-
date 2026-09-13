@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
@@ -33,6 +34,17 @@ namespace Porjai20.ViewModels
             }
         }
 
+        // --- Dynamic Receipt Item Selector State ---
+        private bool _isReceiptProductSelectorOpen;
+        public bool IsReceiptProductSelectorOpen
+        {
+            get => _isReceiptProductSelectorOpen;
+            set => SetProperty(ref _isReceiptProductSelectorOpen, value);
+        }
+
+        public ObservableCollection<ClaimReceiptItemSelection> AvailableReceiptItems { get; } = new ObservableCollection<ClaimReceiptItemSelection>();
+        public ObservableCollection<ClaimItemLine> CurrentClaimItems { get; } = new ObservableCollection<ClaimItemLine>();
+
         public ICommand OpenAddClaimModalCommand { get; private set; }
         public ICommand OpenEditModalCommand { get; private set; }
         public ICommand CloseModalCommand { get; private set; }
@@ -41,6 +53,9 @@ namespace Porjai20.ViewModels
         public ICommand ApproveClaimActionCommand { get; private set; }
         public ICommand RejectClaimActionCommand { get; private set; }
         public ICommand ReplaceProductClaimActionCommand { get; private set; }
+        public ICommand ToggleReceiptProductSelectorCommand { get; private set; }
+        public ICommand AddSelectedReceiptItemsCommand { get; private set; }
+        public ICommand RemoveClaimItemLineCommand { get; private set; }
 
         private string _claimStatusFilter = "ทั้งหมด";
         public string ClaimStatusFilter
@@ -110,6 +125,77 @@ namespace Porjai20.ViewModels
             ApproveClaimActionCommand = new RelayCommand(_ => ExecuteChangeClaimStatus("ได้รับของใหม่"), _ => IsClaimSelected);
             RejectClaimActionCommand = new RelayCommand(_ => ExecuteChangeClaimStatus("ยกเลิก"), _ => IsClaimSelected);
             ReplaceProductClaimActionCommand = new RelayCommand(_ => ExecuteChangeClaimStatus("คืนเงิน"), _ => IsClaimSelected);
+
+            ToggleReceiptProductSelectorCommand = new RelayCommand(_ =>
+            {
+                IsReceiptProductSelectorOpen = !IsReceiptProductSelectorOpen;
+            });
+
+            AddSelectedReceiptItemsCommand = new RelayCommand(_ =>
+            {
+                var selected = AvailableReceiptItems.Where(x => x.IsSelected).ToList();
+                if (selected.Count == 0)
+                {
+                    ShowAlert("กรุณาทำเครื่องหมายเลือกสินค้าในรายการใบเสร็จอย่างน้อย 1 รายการ", "แจ้งเตือน", "⚠️");
+                    return;
+                }
+
+                foreach (var item in selected)
+                {
+                    var existing = CurrentClaimItems.FirstOrDefault(c => c.Pro_ID == item.Pro_ID);
+                    if (existing != null)
+                    {
+                        existing.ClaimQty = item.ClaimQty;
+                    }
+                    else
+                    {
+                        CurrentClaimItems.Add(new ClaimItemLine
+                        {
+                            Pro_ID = item.Pro_ID,
+                            ProductCode = item.ProductCode,
+                            ProductName = item.ProductName,
+                            ReceiptQty = item.ReceiptQty,
+                            ClaimQty = item.ClaimQty
+                        });
+                    }
+                }
+
+                // Sync main claim item fields with first item for backwards compatibility
+                if (CurrentClaimItems.Count > 0)
+                {
+                    var first = CurrentClaimItems[0];
+                    ClaimProId = first.Pro_ID;
+                    ClaimProductCode = first.ProductCode;
+                    ClaimProductName = first.ProductName;
+                    ClaimQuantity = first.ClaimQty;
+                }
+
+                // Collapse selector immediately as requested
+                IsReceiptProductSelectorOpen = false;
+            });
+
+            RemoveClaimItemLineCommand = new RelayCommand(param =>
+            {
+                if (param is ClaimItemLine line)
+                {
+                    CurrentClaimItems.Remove(line);
+                    if (CurrentClaimItems.Count > 0)
+                    {
+                        var first = CurrentClaimItems[0];
+                        ClaimProId = first.Pro_ID;
+                        ClaimProductCode = first.ProductCode;
+                        ClaimProductName = first.ProductName;
+                        ClaimQuantity = first.ClaimQty;
+                    }
+                    else
+                    {
+                        ClaimProId = 0;
+                        ClaimProductCode = string.Empty;
+                        ClaimProductName = string.Empty;
+                        ClaimQuantity = 1;
+                    }
+                }
+            });
 
             // Listen to SelectedClaim changes to notify UI of IsClaimSelected
             this.PropertyChanged += (sender, e) =>
@@ -181,3 +267,4 @@ namespace Porjai20.ViewModels
         }
     }
 }
+

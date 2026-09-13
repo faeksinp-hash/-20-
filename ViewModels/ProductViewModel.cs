@@ -1049,6 +1049,18 @@ namespace Porjai20.ViewModels
                     ClaimNote = value.Note;
                     ClaimStatus = value.Status;
                     ClaimAction = string.IsNullOrWhiteSpace(value.ClaimAction) ? "เปลี่ยนสินค้าใหม่" : value.ClaimAction;
+                    CurrentClaimItems.Clear();
+                    if (!string.IsNullOrWhiteSpace(value.ProductName) || value.Pro_ID > 0)
+                    {
+                        CurrentClaimItems.Add(new ClaimItemLine
+                        {
+                            Pro_ID = value.Pro_ID,
+                            ProductCode = value.ProductCode,
+                            ProductName = value.ProductName,
+                            ReceiptQty = value.Quantity,
+                            ClaimQty = value.Quantity
+                        });
+                    }
                     RefreshClaimValidation();
                     OnPropertyChanged(nameof(IsClaimSelected));
                 }
@@ -1598,7 +1610,7 @@ namespace Porjai20.ViewModels
 
             // Claim Commands
             SearchClaimCommand = new RelayCommand(_ => _ = LoadClaims());
-            AddClaimCommand = new RelayCommand(_ => AddClaim(), _ => !string.IsNullOrEmpty(ClaimProductName) && !string.IsNullOrEmpty(ClaimReason));
+            AddClaimCommand = new RelayCommand(_ => AddClaim(), _ => (!string.IsNullOrEmpty(ClaimProductName) || CurrentClaimItems.Count > 0) && !string.IsNullOrEmpty(ClaimReason));
             UpdateClaimCommand = new RelayCommand(_ => UpdateClaimRecord(), _ => SelectedClaim != null && SelectedClaim.Id > 0);
             DeleteClaimCommand = new RelayCommand(_ => DeleteClaimRecord(), _ => SelectedClaim != null && SelectedClaim.Id > 0);
             ClearClaimCommand = new RelayCommand(_ => ClearClaimForm());
@@ -4242,43 +4254,77 @@ namespace Porjai20.ViewModels
                 proId = _databaseService.GetProductIdByBarcodeOrName(ClaimProductCode, ClaimProductName);
             }
 
+            // If CurrentClaimItems has lines, ensure ClaimProductName/ClaimProductCode is set from first item
+            if (CurrentClaimItems.Count > 0)
+            {
+                var first = CurrentClaimItems[0];
+                if (proId <= 0) proId = first.Pro_ID;
+                if (string.IsNullOrWhiteSpace(ClaimProductCode)) ClaimProductCode = first.ProductCode;
+                if (string.IsNullOrWhiteSpace(ClaimProductName)) ClaimProductName = first.ProductName;
+                ClaimQuantity = first.ClaimQty;
+            }
+
             // Validation check before executing INSERT INTO tblClaim
-            if (salesId <= 0 || proId <= 0)
+            if (salesId <= 0 || (proId <= 0 && CurrentClaimItems.Count == 0))
             {
                 ShowAlert("กรุณาเลือกใบเสร็จและสินค้าที่ต้องการเคลมให้ถูกต้อง", "ข้อมูลไม่ถูกต้อง", "⚠️");
                 return;
             }
 
-            var claim = new Claim
+            // If multiple items were selected in CurrentClaimItems, save each item (or at least the first if only one)
+            var itemsToSave = CurrentClaimItems.Count > 0 ? CurrentClaimItems.ToList() : new System.Collections.Generic.List<ClaimItemLine>
             {
-                ClaimNo = "CLM-" + DateTime.Now.ToString("yyMMddHHmmss"),
-                ClaimType = ClaimType,
-                Sales_ID = salesId,
-                Pro_ID = proId,
-                SalesOrderRefNo = ClaimSalesOrderRefNo,
-                SaleDate = ClaimSaleDate,
-                CustomerName = ClaimCustomerName,
-                CustomerPhone = ClaimCustomerPhone,
-                StockInRefNo = ClaimStockInRefNo,
-                StockInDate = ClaimStockInDate,
-                ProductName = ClaimProductName,
-                ProductCode = ClaimProductCode,
-                Quantity = ClaimQuantity,
-                Reason = ClaimReason,
-                Note = ClaimNote,
-                Status = ClaimStatus,
-                ClaimAction = ClaimAction,
-                CreatedDate = DateTime.Now
+                new ClaimItemLine { Pro_ID = proId, ProductCode = ClaimProductCode, ProductName = ClaimProductName, ClaimQty = ClaimQuantity }
             };
 
-            bool success = _databaseService.SaveClaim(claim, out string errorMsg);
-            if (!success)
+            bool anySaved = false;
+            string lastError = string.Empty;
+
+            foreach (var item in itemsToSave)
             {
-                ShowAlert(errorMsg, "เกิดข้อผิดพลาดในการบันทึก", "❌");
+                int itemProId = item.Pro_ID > 0 ? item.Pro_ID : _databaseService.GetProductIdByBarcodeOrName(item.ProductCode, item.ProductName);
+                if (itemProId <= 0) continue;
+
+                var claim = new Claim
+                {
+                    ClaimNo = "CLM-" + DateTime.Now.ToString("yyMMddHHmmss") + (itemsToSave.Count > 1 ? $"-{itemProId}" : ""),
+                    ClaimType = ClaimType,
+                    Sales_ID = salesId,
+                    Pro_ID = itemProId,
+                    SalesOrderRefNo = ClaimSalesOrderRefNo,
+                    SaleDate = ClaimSaleDate,
+                    CustomerName = ClaimCustomerName,
+                    CustomerPhone = ClaimCustomerPhone,
+                    StockInRefNo = ClaimStockInRefNo,
+                    StockInDate = ClaimStockInDate,
+                    ProductName = item.ProductName,
+                    ProductCode = item.ProductCode,
+                    Quantity = item.ClaimQty,
+                    Reason = ClaimReason,
+                    Note = ClaimNote,
+                    Status = ClaimStatus,
+                    ClaimAction = ClaimAction,
+                    CreatedDate = DateTime.Now
+                };
+
+                if (_databaseService.SaveClaim(claim, out string errorMsg))
+                {
+                    anySaved = true;
+                }
+                else
+                {
+                    lastError = errorMsg;
+                }
+            }
+
+            if (!anySaved)
+            {
+                ShowAlert(string.IsNullOrWhiteSpace(lastError) ? "เกิดข้อผิดพลาดในการบันทึกข้อมูลเคลม" : lastError, "เกิดข้อผิดพลาดในการบันทึก", "❌");
                 return;
             }
 
             ClearClaimForm();
+            IsModalOpen = false;
             _ = LoadClaims();
             ShowAlert("บันทึกการเคลมสำเร็จ", "สำเร็จ", "🎉");
         }
@@ -4300,6 +4346,13 @@ namespace Porjai20.ViewModels
             }
 
             int proId = ClaimProId > 0 ? ClaimProId : SelectedClaim.Pro_ID;
+            if (CurrentClaimItems.Count > 0)
+            {
+                proId = CurrentClaimItems[0].Pro_ID;
+                ClaimProductName = CurrentClaimItems[0].ProductName;
+                ClaimProductCode = CurrentClaimItems[0].ProductCode;
+                ClaimQuantity = CurrentClaimItems[0].ClaimQty;
+            }
             if (proId <= 0)
             {
                 proId = _databaseService.GetProductIdByBarcodeOrName(ClaimProductCode, ClaimProductName);
@@ -4332,6 +4385,7 @@ namespace Porjai20.ViewModels
             {
                 _databaseService.UpdateClaim(SelectedClaim);
                 ClearClaimForm();
+                IsModalOpen = false;
                 _ = LoadClaims();
                 ShowAlert("อัปเดตข้อมูลการเคลมสำเร็จ", "สำเร็จ", "🎉");
             }
@@ -4381,6 +4435,9 @@ namespace Porjai20.ViewModels
             ClaimAction = "เปลี่ยนสินค้าใหม่";
             ClaimValidationMessage = string.Empty;
             ClaimValidationOk = true;
+            IsReceiptProductSelectorOpen = false;
+            AvailableReceiptItems.Clear();
+            CurrentClaimItems.Clear();
             IsModalOpen = false;
         }
 
@@ -4398,12 +4455,38 @@ namespace Porjai20.ViewModels
                 ClaimProductName = details.ProductName;
                 ClaimCustomerName = details.CustomerName ?? string.Empty;
                 ClaimCustomerPhone = details.CustomerPhone ?? string.Empty;
+
+                // Load all items in receipt for selection
+                AvailableReceiptItems.Clear();
+                CurrentClaimItems.Clear();
+                var items = _databaseService.GetReceiptProductSelections(ClaimSalesOrderRefNo);
+                foreach (var itm in items)
+                {
+                    AvailableReceiptItems.Add(itm);
+                }
+
+                // If items exist, add the first one into CurrentClaimItems by default
+                if (items.Count > 0)
+                {
+                    var f = items[0];
+                    CurrentClaimItems.Add(new ClaimItemLine
+                    {
+                        Pro_ID = f.Pro_ID,
+                        ProductCode = f.ProductCode,
+                        ProductName = f.ProductName,
+                        ReceiptQty = f.ReceiptQty,
+                        ClaimQty = 1
+                    });
+                }
+
                 RefreshClaimValidation();
             }
             else
             {
                 ClaimSalesId = 0;
                 ClaimProId = 0;
+                AvailableReceiptItems.Clear();
+                CurrentClaimItems.Clear();
                 ClaimValidationMessage = "⚠️ ไม่พบข้อมูลเลขที่ใบเสร็จในระบบ";
                 ClaimValidationOk = false;
             }
@@ -4420,11 +4503,36 @@ namespace Porjai20.ViewModels
                 ClaimProductCode = details.ProductCode;
                 ClaimQuantity = details.Quantity < 0 ? -details.Quantity : details.Quantity;
                 ClaimProductName = details.ProductName;
+
+                // Load all items in stock-in for selection
+                AvailableReceiptItems.Clear();
+                CurrentClaimItems.Clear();
+                var items = _databaseService.GetStockInProductSelections(ClaimStockInRefNo);
+                foreach (var itm in items)
+                {
+                    AvailableReceiptItems.Add(itm);
+                }
+
+                if (items.Count > 0)
+                {
+                    var f = items[0];
+                    CurrentClaimItems.Add(new ClaimItemLine
+                    {
+                        Pro_ID = f.Pro_ID,
+                        ProductCode = f.ProductCode,
+                        ProductName = f.ProductName,
+                        ReceiptQty = f.ReceiptQty,
+                        ClaimQty = 1
+                    });
+                }
+
                 RefreshClaimValidation();
             }
             else
             {
                 ClaimProId = 0;
+                AvailableReceiptItems.Clear();
+                CurrentClaimItems.Clear();
                 ClaimValidationMessage = "⚠️ ไม่พบข้อมูลเลขที่ใบรับสินค้าในระบบ";
                 ClaimValidationOk = false;
             }

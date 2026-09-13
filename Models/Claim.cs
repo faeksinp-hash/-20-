@@ -119,4 +119,75 @@ namespace Porjai20.Models
         public int Quantity { get; set; }
         public string ProductName { get; set; } = string.Empty;
     }
+
+    public class ClaimReceiptItemSelection : System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set { if (_isSelected != value) { _isSelected = value; OnPropertyChanged(); } }
+        }
+
+        public int Pro_ID { get; set; }
+        public string ProductCode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
+        public decimal UnitPrice { get; set; }
+        public int ReceiptQty { get; set; }
+
+        private int _claimQty = 1;
+        public int ClaimQty
+        {
+            get => _claimQty;
+            set
+            {
+                int val = value;
+                if (val < 1) val = 1;
+                if (ReceiptQty > 0 && val > ReceiptQty) val = ReceiptQty;
+                if (_claimQty != val)
+                {
+                    _claimQty = val;
+                    OnPropertyChanged();
+                }
+            }
+        }
+    }
+
+    public class ClaimItemLine : System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+
+        public int Pro_ID { get; set; }
+        public string ProductCode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
+        public int ReceiptQty { get; set; }
+
+        private int _claimQty = 1;
+        public int ClaimQty
+        {
+            get => _claimQty;
+            set
+            {
+                int val = value;
+                if (val < 1) val = 1;
+                if (ReceiptQty > 0 && val > ReceiptQty) val = ReceiptQty;
+                if (_claimQty != val)
+                {
+                    _claimQty = val;
+                    OnPropertyChanged();
+                }
+            }
+        }
+    }
 }
+

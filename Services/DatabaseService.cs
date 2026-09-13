@@ -591,6 +591,60 @@ namespace Porjai20.Services
             }
         }
 
+        public System.Collections.Generic.List<Models.ClaimReceiptItemSelection> GetReceiptProductSelections(string refNo)
+        {
+            var list = new System.Collections.Generic.List<Models.ClaimReceiptItemSelection>();
+            if (string.IsNullOrWhiteSpace(refNo)) return list;
+            using (var connection = GetConnection())
+            {
+                string sql = @"
+                    SELECT 
+                        soi.Pro_ID AS Pro_ID,
+                        p.Pro_Barcode AS ProductCode,
+                        p.Pro_Name AS ProductName,
+                        soi.Pro_Price AS UnitPrice,
+                        soi.Sales_Qty AS ReceiptQty,
+                        1 AS ClaimQty
+                    FROM tblSales_H so
+                    JOIN tblSalesDetail soi ON so.Sales_ID = soi.Sales_ID
+                    JOIN tblProduct p ON soi.Pro_ID = p.Pro_ID
+                    WHERE so.RefNo = @RefNo OR CAST(so.Sales_ID AS TEXT) = @RefNo";
+                var items = connection.Query<Models.ClaimReceiptItemSelection>(sql, new { RefNo = refNo.Trim() });
+                if (items != null)
+                {
+                    list.AddRange(items);
+                }
+            }
+            return list;
+        }
+
+        public System.Collections.Generic.List<Models.ClaimReceiptItemSelection> GetStockInProductSelections(string refNo)
+        {
+            var list = new System.Collections.Generic.List<Models.ClaimReceiptItemSelection>();
+            if (string.IsNullOrWhiteSpace(refNo)) return list;
+            using (var connection = GetConnection())
+            {
+                string sql = @"
+                    SELECT 
+                        d.Pro_ID AS Pro_ID,
+                        p.Pro_Barcode AS ProductCode,
+                        p.Pro_Name AS ProductName,
+                        0 AS UnitPrice,
+                        (CASE WHEN d.StockIn_Qty < 0 THEN -d.StockIn_Qty ELSE d.StockIn_Qty END) AS ReceiptQty,
+                        1 AS ClaimQty
+                    FROM tblStockInDetail d
+                    JOIN tblStockIn_H h ON d.StockIn_ID = h.StockIn_ID
+                    JOIN tblProduct p ON d.Pro_ID = p.Pro_ID
+                    WHERE h.StockIn_ID = @RefNo OR CAST(h.StockIn_ID AS TEXT) = @RefNo OR h.Note LIKE '%' || @RefNo || '%'";
+                var items = connection.Query<Models.ClaimReceiptItemSelection>(sql, new { RefNo = refNo.Trim() });
+                if (items != null)
+                {
+                    list.AddRange(items);
+                }
+            }
+            return list;
+        }
+
         public Models.StockTransaction? LookupStockTransaction(string refNo)
         {
             using (var connection = GetConnection())
