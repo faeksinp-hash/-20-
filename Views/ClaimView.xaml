@@ -1095,34 +1095,26 @@
                     <Grid Grid.Row="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="12"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="12"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Approve (อนุมัติเคลม) -->
+                        <!-- 1) Approve (อนุมัติเคลม) -->
                         <Button Grid.Column="0"
                                 Content="อนุมัติเคลม"
                                 Command="{Binding ApproveClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
                                 Style="{StaticResource ApproveModalBtnStyle}"/>
 
-                        <!-- Replace Product (เปลี่ยนสินค้า) -->
+                        <!-- 2) Reject (ปฏิเสธเคลม) -->
                         <Button Grid.Column="2"
-                                Content="เปลี่ยนสินค้า"
-                                Command="{Binding ReplaceProductClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
-                                Style="{StaticResource ReplaceModalBtnStyle}"/>
-
-                        <!-- Reject (ปฏิเสธเคลม) -->
-                        <Button Grid.Column="4"
                                 Content="ปฏิเสธเคลม"
                                 Command="{Binding RejectClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
                                 Style="{StaticResource RejectModalBtnStyle}"/>
 
-                        <!-- Close (ปิดหน้าต่าง) -->
-                        <Button Grid.Column="6"
+                        <!-- 3) Close (ปิดหน้าต่าง) -->
+                        <Button Grid.Column="4"
                                 Content="ปิดหน้าต่าง"
                                 Command="{Binding CloseClaimDetailModalCommand}"
                                 Style="{StaticResource CloseModalBtnStyle}"/>

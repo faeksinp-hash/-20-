@@ -441,10 +441,10 @@ namespace Porjai20.ViewModels
         public ObservableCollection<Customer> Customers { get; set; } = new ObservableCollection<Customer>();
         public ObservableCollection<Partner> Partners { get; set; } = new ObservableCollection<Partner>();
         public ObservableCollection<Claim> Claims { get; set; } = new ObservableCollection<Claim>();
-        public System.Collections.ObjectModel.ObservableCollection<string> ClaimStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "ทั้งหมด", "รอดำเนินการ", "เคลมสำเร็จ", "ยกเลิก" };
+        public System.Collections.ObjectModel.ObservableCollection<string> ClaimStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "ทั้งหมด", "รอดำเนินการ", "เคลมสำเร็จ", "ปฏิเสธ" };
         public System.Collections.ObjectModel.ObservableCollection<string> ClaimTypeOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "ลูกค้า", "บริษัทคู่ค้า" };
-        public System.Collections.ObjectModel.ObservableCollection<string> ClaimNewStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "รอดำเนินการ", "เคลมสำเร็จ", "ยกเลิก" };
-        public System.Collections.ObjectModel.ObservableCollection<string> ClaimFormStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "รอดำเนินการ", "เคลมสำเร็จ", "ยกเลิก" };
+        public System.Collections.ObjectModel.ObservableCollection<string> ClaimNewStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "รอดำเนินการ", "เคลมสำเร็จ", "ปฏิเสธ" };
+        public System.Collections.ObjectModel.ObservableCollection<string> ClaimFormStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "รอดำเนินการ", "เคลมสำเร็จ", "ปฏิเสธ" };
         public System.Collections.ObjectModel.ObservableCollection<string> ClaimActionOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "เปลี่ยนสินค้าใหม่", "คืนเงิน" };
         
         // Expenses handled in ExpenseViewModel.cs partial

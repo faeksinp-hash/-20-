@@ -90,23 +90,112 @@ namespace Porjai20.ViewModels
             set { if (SetProperty(ref _claimEndDate, value)) _ = LoadClaims(); }
         }
 
-        public int PendingClaimsCount => Claims.Count(c => c.Status == "รอดำเนินการ" || c.Status == "Pending");
-        public int ApprovedClaimsCount => Claims.Count(c => c.Status == "เคลมสำเร็จ" || c.Status == "อนุมัติแล้ว" || c.Status == "เปลี่ยนสินค้าใหม่" || c.Status == "ได้รับของใหม่" || c.Status == "อนุมัติเคลม" || c.Status == "คืนเงิน" || c.Status == "Approved");
-        public int CompletedClaimsCount => Claims.Count(c => c.Status == "ยกเลิก" || c.Status == "ปฏิเสธการเคลม" || c.Status == "จัดส่งสำเร็จ" || c.Status == "เสร็จสิ้น" || c.Status == "Completed");
+        private int _pendingClaimsCount;
+        public int PendingClaimsCount
+        {
+            get => _pendingClaimsCount;
+            private set => SetProperty(ref _pendingClaimsCount, value);
+        }
+
+        private int _approvedClaimsCount;
+        public int ApprovedClaimsCount
+        {
+            get => _approvedClaimsCount;
+            private set => SetProperty(ref _approvedClaimsCount, value);
+        }
+
+        private int _completedClaimsCount;
+        public int CompletedClaimsCount
+        {
+            get => _completedClaimsCount;
+            private set => SetProperty(ref _completedClaimsCount, value);
+        }
 
         private async Task LoadClaims()
         {
-            Claims.Clear();
-            var claims = await Task.Run(() => _databaseService.GetClaims(ClaimSearchKeyword, ClaimStatusFilter));
+            var rawClaims = await Task.Run(() => _databaseService.GetClaims());
+            var claimsList = (rawClaims ?? Enumerable.Empty<Claim>()).ToList();
 
             if (ClaimStartDate != default && ClaimEndDate != default)
             {
                 var start = ClaimStartDate.Date;
                 var end = ClaimEndDate.Date.AddDays(1).AddTicks(-1);
-                claims = claims.Where(c => c.CreatedDate >= start && c.CreatedDate <= end);
+                claimsList = claimsList.Where(c => c.CreatedDate >= start && c.CreatedDate <= end).ToList();
             }
 
-            foreach (var c in claims)
+            // Summary KPI Cards (calculated from all active records in the date range)
+            PendingClaimsCount = claimsList.Count(c => 
+                string.Equals(c.Status, "รอดำเนินการ", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "Pending", StringComparison.OrdinalIgnoreCase));
+
+            ApprovedClaimsCount = claimsList.Count(c => 
+                string.Equals(c.Status, "อนุมัติแล้ว", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "อนุมัติเคลม", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "เปลี่ยนสินค้าใหม่", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "ได้รับของใหม่", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "คืนเงิน", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "Approved", StringComparison.OrdinalIgnoreCase));
+
+            CompletedClaimsCount = claimsList.Count(c => 
+                string.Equals(c.Status, "เคลมสำเร็จ", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "อนุมัติแล้ว", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "เสร็จสิ้น", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "จัดส่งสำเร็จ", StringComparison.OrdinalIgnoreCase) || 
+                string.Equals(c.Status, "Completed", StringComparison.OrdinalIgnoreCase));
+
+            // Filtering for DataGrid display
+            IEnumerable<Claim> filtered = claimsList;
+
+            // Search Keyword Filter
+            if (!string.IsNullOrWhiteSpace(ClaimSearchKeyword))
+            {
+                var kw = ClaimSearchKeyword.Trim();
+                filtered = filtered.Where(c =>
+                    (!string.IsNullOrEmpty(c.SalesOrderRefNo) && c.SalesOrderRefNo.Contains(kw, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.CustomerName) && c.CustomerName.Contains(kw, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.CustomerPhone) && c.CustomerPhone.Contains(kw, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.ProductName) && c.ProductName.Contains(kw, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.ProductCode) && c.ProductCode.Contains(kw, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.ClaimNo) && c.ClaimNo.Contains(kw, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.StockInRefNo) && c.StockInRefNo.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            // Claim Status Filter Mapping
+            if (!string.IsNullOrWhiteSpace(ClaimStatusFilter) && ClaimStatusFilter != "ทั้งหมด")
+            {
+                if (ClaimStatusFilter == "เคลมสำเร็จ")
+                {
+                    filtered = filtered.Where(c =>
+                        string.Equals(c.Status, "เคลมสำเร็จ", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "อนุมัติแล้ว", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "เสร็จสิ้น", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "จัดส่งสำเร็จ", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "Completed", StringComparison.OrdinalIgnoreCase));
+                }
+                else if (ClaimStatusFilter == "ปฏิเสธ")
+                {
+                    filtered = filtered.Where(c =>
+                        string.Equals(c.Status, "ปฏิเสธการเคลม", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "ปฏิเสธ", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "ยกเลิก", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "Rejected", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "Voided", StringComparison.OrdinalIgnoreCase));
+                }
+                else if (ClaimStatusFilter == "รอดำเนินการ")
+                {
+                    filtered = filtered.Where(c =>
+                        string.Equals(c.Status, "รอดำเนินการ", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.Status, "Pending", StringComparison.OrdinalIgnoreCase));
+                }
+                else
+                {
+                    filtered = filtered.Where(c => string.Equals(c.Status, ClaimStatusFilter, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+
+            Claims.Clear();
+            foreach (var c in filtered)
                 Claims.Add(c);
 
             OnPropertyChanged(nameof(PendingClaimsCount));
