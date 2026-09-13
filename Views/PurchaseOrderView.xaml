@@ -293,6 +293,94 @@ VerticalAlignment="Center"/>
         </Setter.Value>
     </Setter>
 </Style>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  CUSTOM SUPPLIER SEARCH COMBOBOX STYLE WITH DROPDOWN ARROW  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="SupplierSearchComboBoxStyle" TargetType="ComboBox">
+    <Setter Property="Background" Value="#FFFFFF"/>
+    <Setter Property="BorderBrush" Value="#BAE6FD"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Foreground" Value="#1E293B"/>
+    <Setter Property="Padding" Value="10,0"/>
+    <Setter Property="Height" Value="36"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="ComboBox">
+                <Grid x:Name="MainGrid" SnapsToDevicePixels="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="32"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton Grid.ColumnSpan="2"
+                                  Focusable="False"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ClickMode="Press"
+                                  Cursor="Hand">
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Grid Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="32"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Path Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#64748B" Margin="0,0,4,0"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
+
+                    <TextBox x:Name="PART_EditableTextBox"
+                             Grid.Column="0"
+                             Style="{StaticResource LightTextBoxStyle}"
+                             Height="{TemplateBinding Height}"
+                             Padding="{TemplateBinding Padding}"
+                             FontSize="{TemplateBinding FontSize}"
+                             Foreground="{TemplateBinding Foreground}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Center"/>
+
+                    <Popup x:Name="PART_Popup"
+                           AllowsTransparency="True"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                           Placement="Bottom"
+                           HorizontalOffset="0"
+                           VerticalOffset="2"
+                           PopupAnimation="Slide"
+                           Focusable="False"
+                           StaysOpen="False">
+                        <Border x:Name="DropDownBorder"
+                                Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                Margin="0,2,0,0"
+                                Background="#FFFFFF"
+                                BorderBrush="#BAE6FD"
+                                BorderThickness="1.5"
+                                CornerRadius="10"
+                                Padding="4">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16" Opacity="0.18" ShadowDepth="3" Direction="270" Color="#000000"/>
+                            </Border.Effect>
+                            <ScrollViewer MaxHeight="220" SnapsToDevicePixels="True">
+                                <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
 <!-- Primary Rose Button Style -->
 <Style x:Key="RoseBtnStyle" TargetType="Button">
 <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
@@ -396,7 +484,10 @@ VerticalAlignment="Center"/>
 </Setter>
 </Style>
 <Style x:Key="PORowStyle" TargetType="DataGridRow">
+<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 <Setter Property="Background" Value="Transparent"/>
+<Setter Property="BorderBrush" Value="Transparent"/>
+<Setter Property="BorderThickness" Value="0"/>
 <Setter Property="Foreground" Value="#000000"/>
 <Setter Property="FontSize"   Value="13"/>
 <Setter Property="Template">
@@ -404,7 +495,7 @@ VerticalAlignment="Center"/>
 <ControlTemplate TargetType="DataGridRow">
 <Border x:Name="RowBorder"
 CornerRadius="10" Margin="4,2" Padding="6,0"
-Background="Transparent">
+Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
 <DataGridCellsPresenter
 ItemsPanel="{TemplateBinding ItemsPanel}"
 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -430,19 +521,28 @@ SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 </Style.Resources>
 </Style>
 <Style x:Key="POCellStyle" TargetType="DataGridCell">
+<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 <Setter Property="Background"      Value="Transparent"/>
+<Setter Property="BorderBrush"     Value="Transparent"/>
 <Setter Property="BorderThickness" Value="0"/>
 <Setter Property="Padding"         Value="12,0"/>
 <Setter Property="VerticalAlignment" Value="Center"/>
 <Setter Property="Template">
 <Setter.Value>
 <ControlTemplate TargetType="DataGridCell">
-<Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+<Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
 <ContentPresenter VerticalAlignment="Center"/>
 </Border>
 </ControlTemplate>
 </Setter.Value>
 </Setter>
+<Style.Triggers>
+<Trigger Property="IsSelected" Value="True">
+<Setter Property="Background" Value="Transparent"/>
+<Setter Property="BorderBrush" Value="Transparent"/>
+<Setter Property="BorderThickness" Value="0"/>
+</Trigger>
+</Style.Triggers>
 </Style>
 <Style x:Key="StockColumnHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource POColumnHeaderStyle}"/>
 <Style x:Key="StockRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource PORowStyle}"/>
@@ -1231,12 +1331,16 @@ Margin="0"/>
                                 <TextBlock Text="ผู้จัดจำหน่าย / ซัพพลายเออร์ *" FontSize="12.5" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
                                 <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
                                     <ComboBox ItemsSource="{Binding SuppliersList}"
-                                              SelectedItem="{Binding POSupplierName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              DisplayMemberPath="SupplierName"
+                                              SelectedValuePath="SupplierID"
+                                              TextSearch.TextPath="SupplierName"
+                                              SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              SelectedValue="{Binding POSupplierId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Text="{Binding POSupplierName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               IsEditable="True"
                                               IsTextSearchEnabled="True"
                                               StaysOpenOnEdit="True"
-                                              Style="{StaticResource LightComboBoxStyle}"
+                                              Style="{StaticResource SupplierSearchComboBoxStyle}"
                                               Height="36" Padding="10,0" Background="Transparent" BorderThickness="0"/>
                                 </Border>
                             </StackPanel>
@@ -1381,8 +1485,7 @@ Margin="0"/>
                                   CanUserAddRows="False"
                                   HeadersVisibility="Column"
                                   RowHeight="40"
-                                  GridLinesVisibility="Horizontal"
-                                  HorizontalGridLinesBrush="#F1F5F9"
+                                  GridLinesVisibility="None"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   BorderThickness="0"
                                   Background="Transparent"
@@ -1393,11 +1496,17 @@ Margin="0"/>
                                 <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" Width="*" IsReadOnly="True" ElementStyle="{StaticResource ColCenterBold}"/>
                                 <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding ProductName}" Width="2*" ElementStyle="{StaticResource ColLeftBold}"/>
                                 <DataGridTextColumn Header="จำนวน" Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColCenterBold}"/>
-                                <DataGridTextColumn Header="ต้นทุน/หน่วย" Binding="{Binding CostPrice, StringFormat={}{0:N2}, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColRight}"/>
+                                <DataGridTextColumn Header="ต้นทุน" Binding="{Binding CostPrice, StringFormat={}{0:N2}, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColRight}"/>
                                 <DataGridTextColumn Header="ราคารวม" Binding="{Binding TotalPrice, StringFormat={}{0:N2}}" Width="*" IsReadOnly="True" ElementStyle="{StaticResource ColRightBold}"/>
                                 
                                 <!-- Delete Action Button (Circle Red Button '➖') -->
-                                <DataGridTemplateColumn Width="45" Header="" CanUserResize="False">
+                                <DataGridTemplateColumn Width="60" Header="" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellStyle>
+                                        <Style TargetType="DataGridCell" BasedOn="{StaticResource POCellStyle}">
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTemplateColumn.CellStyle>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Command="{Binding DataContext.RemovePOItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"

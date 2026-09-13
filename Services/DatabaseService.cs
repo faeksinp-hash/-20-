@@ -78,7 +78,7 @@ namespace Porjai20.Services
                 try { connection.Execute("ALTER TABLE tblCustomer ADD COLUMN Cus_Code TEXT;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblCustomer ADD COLUMN Cus_RegDate TEXT;"); } catch { }
 
-                // 3) tblPartner
+                // 3) tblPartner & tblSupplier
                 connection.Execute(@"
                     CREATE TABLE IF NOT EXISTS tblPartner (
                         Partner_ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,6 +87,36 @@ namespace Porjai20.Services
                         Partner_Tel TEXT,
                         Partner_Contact TEXT
                     );");
+
+                connection.Execute(@"
+                    CREATE TABLE IF NOT EXISTS tblSupplier (
+                        SupplierID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        SupplierName TEXT NOT NULL,
+                        ContactPerson TEXT,
+                        PhoneNumber TEXT
+                    );");
+
+                // Sync/migrate from tblPartner to tblSupplier if tblSupplier is empty
+                int supplierCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblSupplier;");
+                if (supplierCount == 0)
+                {
+                    int partnerCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblPartner;");
+                    if (partnerCount > 0)
+                    {
+                        connection.Execute(@"
+                            INSERT INTO tblSupplier (SupplierID, SupplierName, ContactPerson, PhoneNumber)
+                            SELECT Partner_ID, Partner_Name, Partner_Contact, Partner_Tel 
+                            FROM tblPartner
+                            WHERE Partner_Name IS NOT NULL AND TRIM(Partner_Name) != '';");
+                    }
+                    else
+                    {
+                        connection.Execute(@"
+                            INSERT INTO tblSupplier (SupplierName, ContactPerson, PhoneNumber) VALUES
+                            ('บริษัท พอใจ ซัพพลาย จำกัด', 'ฝ่ายจัดซื้อ', '02-111-2222'),
+                            ('บริษัท ค้าส่งอุปกรณ์เบ็ดเตล็ด จำกัด', 'คุณสมชาย', '089-999-8888');");
+                    }
+                }
 
                 // 4) tblProduct
                 connection.Execute(@"
@@ -511,6 +541,15 @@ namespace Porjai20.Services
                     INSERT INTO tblPartner (Partner_Name, Partner_Address, Partner_Tel, Partner_Contact) 
                     VALUES (@Partner_Name, @Partner_Address, @Partner_Tel, @Partner_Contact)";
                 connection.Execute(sql, partner);
+
+                try
+                {
+                    connection.Execute(@"
+                        INSERT INTO tblSupplier (SupplierName, ContactPerson, PhoneNumber)
+                        SELECT @Partner_Name, @Partner_Contact, @Partner_Tel
+                        WHERE NOT EXISTS (SELECT 1 FROM tblSupplier WHERE SupplierName = @Partner_Name);", partner);
+                }
+                catch { }
             }
         }
 
@@ -524,6 +563,15 @@ namespace Porjai20.Services
                         Partner_Tel = @Partner_Tel, Partner_Contact = @Partner_Contact
                     WHERE Partner_ID = @Partner_ID";
                 connection.Execute(sql, partner);
+
+                try
+                {
+                    connection.Execute(@"
+                        UPDATE tblSupplier 
+                        SET SupplierName = @Partner_Name, ContactPerson = @Partner_Contact, PhoneNumber = @Partner_Tel
+                        WHERE SupplierID = @Partner_ID OR SupplierName = @Partner_Name;", partner);
+                }
+                catch { }
             }
         }
 
@@ -533,6 +581,36 @@ namespace Porjai20.Services
             {
                 string sql = "DELETE FROM tblPartner WHERE Partner_ID = @Id";
                 connection.Execute(sql, new { Id = partnerId });
+
+                try
+                {
+                    connection.Execute("DELETE FROM tblSupplier WHERE SupplierID = @Id;", new { Id = partnerId });
+                }
+                catch { }
+            }
+        }
+
+        // --- Supplier Management Methods ---
+        public System.Collections.Generic.IEnumerable<Models.Supplier> GetSuppliers()
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = "SELECT SupplierID, SupplierName, ContactPerson, PhoneNumber FROM tblSupplier ORDER BY SupplierName ASC";
+                try
+                {
+                    return connection.Query<Models.Supplier>(sql);
+                }
+                catch
+                {
+                    connection.Execute(@"
+                        CREATE TABLE IF NOT EXISTS tblSupplier (
+                            SupplierID INTEGER PRIMARY KEY AUTOINCREMENT,
+                            SupplierName TEXT NOT NULL,
+                            ContactPerson TEXT,
+                            PhoneNumber TEXT
+                        );");
+                    return connection.Query<Models.Supplier>(sql);
+                }
             }
         }
 

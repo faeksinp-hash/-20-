@@ -1444,6 +1444,7 @@ namespace Porjai20.ViewModels
                 IsNewPOMode = true;
                 POModalTitle = "สร้างใบสั่งซื้อสินค้าใหม่";
                 IsPOModalOpen = true;
+                _ = LoadSuppliersAsync();
                 _ = LoadProducts();
             });
             OpenEditPOModalCommand = new RelayCommand(param =>
@@ -1454,6 +1455,7 @@ namespace Porjai20.ViewModels
                     IsNewPOMode = false;
                     POModalTitle = "จัดการใบสั่งซื้อสินค้า";
                     IsPOModalOpen = true;
+                    _ = LoadSuppliersAsync();
                     _ = LoadProducts();
                 }
                 else
@@ -2806,6 +2808,14 @@ namespace Porjai20.ViewModels
                 {
                     PONumber = value.PONumber;
                     POSupplierName = value.SupplierName;
+                    if (!string.IsNullOrWhiteSpace(value.SupplierName))
+                    {
+                        SelectedSupplier = _suppliersList.FirstOrDefault(s => string.Equals(s.SupplierName, value.SupplierName, StringComparison.OrdinalIgnoreCase));
+                    }
+                    else
+                    {
+                        SelectedSupplier = null;
+                    }
                     POExpectedDate = value.ExpectedDate;
                     POTotalAmount = value.TotalAmount;
                     POStatus = string.IsNullOrWhiteSpace(value.Status) ? "รอดำเนินการ" : value.Status;
@@ -2827,18 +2837,104 @@ namespace Porjai20.ViewModels
         public string PONumber { get => _poNumber; set => SetProperty(ref _poNumber, value); }
 
         private string _poSupplierName = string.Empty;
-        public string POSupplierName { get => _poSupplierName; set { SetProperty(ref _poSupplierName, value); CommandManager.InvalidateRequerySuggested(); } }
-
-        public IEnumerable<string> SuppliersList
+        public string POSupplierName
         {
-            get
+            get => _poSupplierName;
+            set
             {
-                if (Partners != null && Partners.Any())
+                if (SetProperty(ref _poSupplierName, value))
                 {
-                    var list = Partners.Select(p => p.Name).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
-                    if (list.Any()) return list;
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        var match = _suppliersList.FirstOrDefault(s => string.Equals(s.SupplierName, value, StringComparison.OrdinalIgnoreCase));
+                        if (match != null && _selectedSupplier != match)
+                        {
+                            _selectedSupplier = match;
+                            _poSupplierId = match.SupplierID;
+                            OnPropertyChanged(nameof(SelectedSupplier));
+                            OnPropertyChanged(nameof(POSupplierId));
+                        }
+                    }
+                    CommandManager.InvalidateRequerySuggested();
                 }
-                return new List<string> { "บริษัท ชาไทย จำกัด", "บริษัท อุปกรณ์เบเกอรี่ จำกัด", "บริษัท วัตถุดิบบรรจุภัณฑ์ จำกัด", "ซัพพลายเออร์ทั่วไป" };
+            }
+        }
+
+        private Supplier? _selectedSupplier;
+        public Supplier? SelectedSupplier
+        {
+            get => _selectedSupplier;
+            set
+            {
+                if (SetProperty(ref _selectedSupplier, value))
+                {
+                    if (value != null)
+                    {
+                        _poSupplierName = value.SupplierName;
+                        _poSupplierId = value.SupplierID;
+                        OnPropertyChanged(nameof(POSupplierName));
+                        OnPropertyChanged(nameof(POSupplierId));
+                    }
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        private int? _poSupplierId;
+        public int? POSupplierId
+        {
+            get => _poSupplierId;
+            set
+            {
+                if (SetProperty(ref _poSupplierId, value))
+                {
+                    if (value.HasValue)
+                    {
+                        var match = _suppliersList.FirstOrDefault(s => s.SupplierID == value.Value);
+                        if (match != null && _selectedSupplier != match)
+                        {
+                            _selectedSupplier = match;
+                            _poSupplierName = match.SupplierName;
+                            OnPropertyChanged(nameof(SelectedSupplier));
+                            OnPropertyChanged(nameof(POSupplierName));
+                        }
+                    }
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        private ObservableCollection<Supplier> _suppliersList = new ObservableCollection<Supplier>();
+        public ObservableCollection<Supplier> SuppliersList => _suppliersList;
+
+        public async Task LoadSuppliersAsync()
+        {
+            try
+            {
+                var suppliers = await Task.Run(() => _databaseService.GetSuppliers());
+                _suppliersList.Clear();
+                foreach (var s in suppliers)
+                {
+                    _suppliersList.Add(s);
+                }
+                OnPropertyChanged(nameof(SuppliersList));
+
+                // Sync current POSupplierName if already set
+                if (!string.IsNullOrWhiteSpace(POSupplierName))
+                {
+                    var matched = _suppliersList.FirstOrDefault(s => string.Equals(s.SupplierName, POSupplierName, StringComparison.OrdinalIgnoreCase));
+                    if (matched != null)
+                    {
+                        _selectedSupplier = matched;
+                        _poSupplierId = matched.SupplierID;
+                        OnPropertyChanged(nameof(SelectedSupplier));
+                        OnPropertyChanged(nameof(POSupplierId));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ProductViewModel] LoadSuppliersAsync error: {ex.Message}");
             }
         }
 
@@ -6022,6 +6118,7 @@ namespace Porjai20.ViewModels
             
             await LoadPurchaseOrders();
             await LoadLowStockProducts();
+            await LoadSuppliersAsync();
         }
 
         private async Task LoadPurchaseOrders()
@@ -6093,6 +6190,7 @@ namespace Porjai20.ViewModels
 
             CalculatePOTotal();
             IsPOModalOpen = true;
+            await LoadSuppliersAsync();
             await LoadProducts();
         }
 
@@ -6287,6 +6385,8 @@ namespace Porjai20.ViewModels
         {
             SelectedPurchaseOrder = new PurchaseOrder();
             PONumber = string.Empty;
+            SelectedSupplier = null;
+            POSupplierId = null;
             POSupplierName = string.Empty;
             POExpectedDate = DateTime.Now.AddDays(3);
             POTotalAmount = 0;
