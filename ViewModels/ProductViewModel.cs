@@ -1472,7 +1472,7 @@ namespace Porjai20.ViewModels
                     string statusToSave = SelectedDeliveryOrderStatus ?? SelectedDeliveryOrder.DeliveryStatus ?? "รอจัดส่ง";
                     string cleanStatus = statusToSave.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
                     UpdateDeliveryStatus(SelectedDeliveryOrder, cleanStatus);
-                    System.Windows.MessageBox.Show("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                    ShowAlert("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", "🎉");
                 }
             });
             OpenManageModalCommand = new RelayCommand(_ =>
@@ -1482,7 +1482,7 @@ namespace Porjai20.ViewModels
                     string statusToSave = SelectedDeliveryOrderStatus ?? SelectedDeliveryOrder.DeliveryStatus ?? "รอจัดส่ง";
                     string cleanStatus = statusToSave.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
                     UpdateDeliveryStatus(SelectedDeliveryOrder, cleanStatus);
-                    System.Windows.MessageBox.Show("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                    ShowAlert("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", "🎉");
                 }
             });
             CloseManageModalCommand = new RelayCommand(_ => IsManageModalOpen = false);
@@ -3914,7 +3914,7 @@ namespace Porjai20.ViewModels
             var targetOrder = order ?? SelectedDeliveryOrder;
             if (targetOrder == null)
             {
-                System.Windows.MessageBox.Show("กรุณาเลือกรายการคำสั่งซื้อที่ต้องการพิมพ์", "แจ้งเตือน", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                ShowAlert("กรุณาเลือกรายการคำสั่งซื้อที่ต้องการพิมพ์", "แจ้งเตือน", "⚠️");
                 return;
             }
 
