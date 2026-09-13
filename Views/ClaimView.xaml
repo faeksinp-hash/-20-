@@ -101,6 +101,8 @@
                     <ControlTemplate TargetType="TextBox">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       BorderThickness="0" IsTabStop="False"
+                                      Margin="0"
+                                      Padding="{TemplateBinding Padding}"
                                       VerticalAlignment="Center"/>
                     </ControlTemplate>
                 </Setter.Value>
@@ -1244,28 +1246,46 @@
                                                     </Style>
                                                 </TextBlock.Style>
                                             </TextBlock>
-                                            <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="38">
+                                            <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Height="38">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="38"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <TextBox Background="Transparent" BorderThickness="0" Padding="10,0" Foreground="#1E293B" CaretBrush="#1E293B" VerticalContentAlignment="Center" FontSize="13.5">
-                                                        <TextBox.InputBindings>
-                                                            <KeyBinding Key="Enter" Command="{Binding LookupReceiptCommand}"/>
-                                                        </TextBox.InputBindings>
-                                                        <TextBox.Style>
-                                                            <Style TargetType="TextBox" BasedOn="{StaticResource LightTextBoxStyle}">
-                                                                <Setter Property="Text" Value="{Binding ClaimSalesOrderRefNo, UpdateSourceTrigger=PropertyChanged}"/>
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding ClaimType}" Value="บริษัทคู่ค้า">
-                                                                        <Setter Property="Text" Value="{Binding ClaimStockInRefNo, UpdateSourceTrigger=PropertyChanged}"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBox.Style>
-                                                    </TextBox>
+                                                    <Grid Grid.Column="0" VerticalAlignment="Center">
+                                                        <!-- Layer 1 (ด้านหลัง): Ghost Text ข้อความแนะนำสีเทาจาง -->
+                                                        <TextBlock x:Name="txtGhostText"
+                                                                   FontFamily="{Binding ElementName=txtReceiptNo, Path=FontFamily}"
+                                                                   FontSize="{Binding ElementName=txtReceiptNo, Path=FontSize}"
+                                                                   FontWeight="{Binding ElementName=txtReceiptNo, Path=FontWeight}"
+                                                                   Foreground="#94A3B8"
+                                                                   IsHitTestVisible="False"
+                                                                   Margin="{Binding ElementName=txtReceiptNo, Path=Margin}"
+                                                                   Opacity="0.5"
+                                                                   Padding="{Binding ElementName=txtReceiptNo, Path=Padding}"
+                                                                   Text="{Binding GhostTextSuggestion}"
+                                                                   VerticalAlignment="Center"/>
+
+                                                        <!-- Layer 2 (ด้านหน้า): TextBox รับค่าจริง พื้นหลังโปร่งใส -->
+                                                        <TextBox x:Name="txtReceiptNo"
+                                                                 Background="Transparent"
+                                                                 BorderThickness="0"
+                                                                 FontSize="14"
+                                                                 Padding="10,0"
+                                                                 Margin="0"
+                                                                 Foreground="#1E293B"
+                                                                 CaretBrush="#1E293B"
+                                                                 VerticalAlignment="Center"
+                                                                 VerticalContentAlignment="Center"
+                                                                 Style="{StaticResource LightTextBoxStyle}"
+                                                                 Text="{Binding SearchReceiptText, UpdateSourceTrigger=PropertyChanged}"
+                                                                 PreviewKeyDown="TxtReceiptNo_PreviewKeyDown">
+                                                            <TextBox.InputBindings>
+                                                                <KeyBinding Key="Enter" Command="{Binding LookupReceiptCommand}"/>
+                                                            </TextBox.InputBindings>
+                                                        </TextBox>
+                                                    </Grid>
 
                                                     <!-- Search Button (🔍) -->
                                                     <Button Grid.Column="1"
@@ -1276,7 +1296,7 @@
                                                             ToolTip="ค้นหาข้อมูลบิล">
                                                         <Button.Template>
                                                             <ControlTemplate TargetType="Button">
-                                                                <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="0,8,8,0">
+                                                                <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="0,6,6,0">
                                                                     <TextBlock Text="🔍" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
                                                                 <ControlTemplate.Triggers>
@@ -1365,21 +1385,31 @@
                             <!-- ────────────────────────────────────────────────── -->
                             <!-- ส่วนที่ 2: ข้อมูลผู้เคลม + ตารางสินค้า + Dynamic Selector -->
                             <!-- ────────────────────────────────────────────────── -->
-                            <!-- บรรทัดข้อมูล: ไอคอนผู้ใช้, ชื่อลูกค้า/บริษัทคู่ค้า, เบอร์โทรศัพท์ -->
+                            <!-- กล่องข้อมูลผู้เกี่ยวข้อง กรณีประเภทผู้เคลม = "ลูกค้า" -->
                             <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="12,8" Margin="0,0,0,12">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ClaimType}" Value="บริษัทคู่ค้า">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Customer / Partner Name -->
+                                    <!-- Customer Name -->
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                         <Border Width="28" Height="28" CornerRadius="6" Background="#E0F2FE" Margin="0,0,8,0">
                                             <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="ชื่อลูกค้า / บริษัทคู่ค้า" FontSize="10.5" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock Text="ชื่อลูกค้า" FontSize="10.5" Foreground="#64748B" FontWeight="SemiBold"/>
                                             <TextBlock FontSize="13" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
@@ -1405,6 +1435,105 @@
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="เบอร์โทรศัพท์" FontSize="10.5" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock FontSize="13" FontWeight="Bold" Foreground="#0284C7" TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{Binding ClaimCustomerPhone}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ClaimCustomerPhone}" Value="">
+                                                                <Setter Property="Text" Value="-"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ClaimCustomerPhone}" Value="{x:Null}">
+                                                                <Setter Property="Text" Value="-"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- กล่องข้อมูลผู้เกี่ยวข้อง กรณีประเภทผู้เคลม = "บริษัทคู่ค้า" (Supplier Claim Info 2 แถว 2 คอลัมน์) -->
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="14,10" Margin="0,0,0,12">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ClaimType}" Value="บริษัทคู่ค้า">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="250"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="8"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- บรรทัดที่ 1 (ฝั่งผู้ส่ง) -->
+                                    <!-- ซ้าย: ผู้ส่งเคลม -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="26" Height="26" CornerRadius="6" Background="#E0F2FE" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="🏪" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="ผู้ส่งเคลม: " FontSize="12.5" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding ClaimSenderName}" FontSize="13" FontWeight="Bold" Foreground="#0F172A"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- ขวา: เบอร์โทรศัพท์ของผู้ส่ง -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="26" Height="26" CornerRadius="6" Background="#E0F2FE" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="📞" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="เบอร์โทรศัพท์: " FontSize="12.5" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding ClaimSenderPhone}" FontSize="13" FontWeight="Bold" Foreground="#0284C7"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- บรรทัดที่ 2 (ฝั่งผู้รับ) -->
+                                    <!-- ซ้าย: ถึง บริษัทคู่ค้า / ซัพพลายเออร์ -->
+                                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="26" Height="26" CornerRadius="6" Background="#FEF3C7" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="🏢" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="ถึง: " FontSize="12.5" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock FontSize="13" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis" MaxWidth="320">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{Binding ClaimCustomerName}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ClaimCustomerName}" Value="">
+                                                                <Setter Property="Text" Value="บริษัทคู่ค้า / ซัพพลายเออร์"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ClaimCustomerName}" Value="{x:Null}">
+                                                                <Setter Property="Text" Value="บริษัทคู่ค้า / ซัพพลายเออร์"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- ขวา: เบอร์โทรศัพท์คู่ค้า -->
+                                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="26" Height="26" CornerRadius="6" Background="#FEF3C7" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="📞" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="เบอร์โทรศัพท์: " FontSize="12.5" Foreground="#64748B" FontWeight="SemiBold"/>
                                             <TextBlock FontSize="13" FontWeight="Bold" Foreground="#0284C7" TextTrimming="CharacterEllipsis">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">

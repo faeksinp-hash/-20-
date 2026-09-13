@@ -826,14 +826,101 @@ namespace Porjai20.Services
                         h.StockIn_Date AS StockInDate,
                         COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', p.Pro_ID)) AS ProductCode,
                         d.StockIn_Qty AS Quantity,
-                        p.Pro_Name AS ProductName
+                        p.Pro_Name AS ProductName,
+                        COALESCE(sup.SupplierName, pt.Partner_Name, '') AS SupplierName,
+                        COALESCE(sup.PhoneNumber, pt.Partner_Tel, '') AS SupplierPhone
                     FROM tblStockInDetail d
                     JOIN tblStockIn_H h ON d.StockIn_ID = h.StockIn_ID
                     JOIN tblProduct p ON d.Pro_ID = p.Pro_ID
+                    LEFT JOIN tblPO_H po ON h.PO_ID = po.PO_ID
+                    LEFT JOIN tblSupplier sup ON po.Partner_ID = sup.SupplierID
+                    LEFT JOIN tblPartner pt ON po.Partner_ID = pt.Partner_ID
                     WHERE h.StockIn_ID = @RefNo OR CAST(h.StockIn_ID AS TEXT) = @RefNo OR h.Note LIKE '%' || @RefNo || '%'
                     LIMIT 1";
                 return connection.QueryFirstOrDefault<Models.ClaimedStockInDetails>(sql, new { RefNo = refNo.Trim() });
             }
+        }
+
+        public System.Collections.Generic.List<string> GetCachedDocumentNumbers()
+        {
+            var docNumbers = new System.Collections.Generic.HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                using (var connection = GetConnection())
+                {
+                    // 1) tblSales_H (RefNo and formatted SALE-XXXXXX)
+                    try
+                    {
+                        var salesRefs = connection.Query<string>(@"
+                            SELECT DISTINCT RefNo FROM tblSales_H WHERE RefNo IS NOT NULL AND TRIM(RefNo) != ''
+                            UNION
+                            SELECT DISTINCT printf('SALE-%06d', Sales_ID) FROM tblSales_H;");
+                        foreach (var r in salesRefs)
+                        {
+                            if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                        }
+                    }
+                    catch { }
+
+                    // 2) tblStockIn_H (Note e.g. RC-XXXXX and formatted RC-XXXXX from ID)
+                    try
+                    {
+                        var stockRefs = connection.Query<string>(@"
+                            SELECT DISTINCT Note FROM tblStockIn_H WHERE Note IS NOT NULL AND TRIM(Note) != ''
+                            UNION
+                            SELECT DISTINCT printf('RC-%05d', StockIn_ID) FROM tblStockIn_H;");
+                        foreach (var r in stockRefs)
+                        {
+                            if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                        }
+                    }
+                    catch { }
+
+                    // 3) tblPO_H (Purchase Orders)
+                    try
+                    {
+                        var poRefs = connection.Query<string>(@"
+                            SELECT DISTINCT printf('PO-%05d', PO_ID) FROM tblPO_H WHERE PO_ID > 0;");
+                        foreach (var r in poRefs)
+                        {
+                            if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                        }
+                    }
+                    catch { }
+
+                    // 4) tblGoodsReceived_H if table exists
+                    try
+                    {
+                        int hasGr = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='tblGoodsReceived_H';");
+                        if (hasGr > 0)
+                        {
+                            var grRefs = connection.Query<string>("SELECT DISTINCT RefNo FROM tblGoodsReceived_H WHERE RefNo IS NOT NULL AND TRIM(RefNo) != '';");
+                            foreach (var r in grRefs)
+                            {
+                                if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                            }
+                        }
+                    }
+                    catch { }
+
+                    // 5) tblPurchaseOrder_H if table exists
+                    try
+                    {
+                        int hasPo = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='tblPurchaseOrder_H';");
+                        if (hasPo > 0)
+                        {
+                            var poRefs = connection.Query<string>("SELECT DISTINCT PONumber FROM tblPurchaseOrder_H WHERE PONumber IS NOT NULL AND TRIM(PONumber) != '';");
+                            foreach (var r in poRefs)
+                            {
+                                if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+            return docNumbers.OrderBy(x => x).ToList();
         }
 
         public int GetSalesIdByRefNo(string refNo)

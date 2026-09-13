@@ -408,6 +408,7 @@ namespace Porjai20.ViewModels
         private void OpenAddModal()
         {
             ClearClaimForm();
+            _ = RefreshDocumentNumbersCacheAsync();
             IsModalOpen = true;
         }
 
@@ -416,6 +417,7 @@ namespace Porjai20.ViewModels
             if (SelectedClaim != null && SelectedClaim.Id > 0)
             {
                 // Fields are already mapped by SelectedClaim's setter in ProductViewModel.cs
+                _ = RefreshDocumentNumbersCacheAsync();
                 IsModalOpen = true;
             }
         }

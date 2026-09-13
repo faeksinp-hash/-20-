@@ -104,6 +104,7 @@ namespace Porjai20.ViewModels
                 SetProperty(ref _currentUser, value);
                 IsAdmin = RolePermissions.IsAdminOrOwner(_currentUser?.Role);
                 OnPropertyChanged(nameof(IsLoggedIn));
+                OnPropertyChanged(nameof(ClaimSenderPhone));
                 RefreshHomeMenu();
                 NotifyReadOnlyProperties();
             }
@@ -1091,14 +1092,29 @@ namespace Porjai20.ViewModels
         public string ClaimType
         {
             get => _claimType;
-            set { if (SetProperty(ref _claimType, value)) RefreshClaimValidation(); }
+            set
+            {
+                if (SetProperty(ref _claimType, value))
+                {
+                    RefreshClaimValidation();
+                    OnPropertyChanged(nameof(SearchReceiptText));
+                    UpdateGhostTextSuggestion(SearchReceiptText);
+                }
+            }
         }
 
         private string _claimSalesOrderRefNo = string.Empty;
         public string ClaimSalesOrderRefNo
         {
             get => _claimSalesOrderRefNo;
-            set { if (SetProperty(ref _claimSalesOrderRefNo, value)) LookupSalesOrderForClaim(); }
+            set
+            {
+                if (SetProperty(ref _claimSalesOrderRefNo, value))
+                {
+                    OnPropertyChanged(nameof(SearchReceiptText));
+                    LookupSalesOrderForClaim();
+                }
+            }
         }
 
         private DateTime? _claimSaleDate;
@@ -1110,11 +1126,107 @@ namespace Porjai20.ViewModels
         private string _claimCustomerPhone = string.Empty;
         public string ClaimCustomerPhone { get => _claimCustomerPhone; set => SetProperty(ref _claimCustomerPhone, value); }
 
+        public string ClaimSenderName => "ร้านพอใจ ทุกอย่าง 20 บาท";
+        public string ClaimSenderPhone => !string.IsNullOrWhiteSpace(CurrentUser?.Phone) ? CurrentUser.Phone : "02-111-2222";
+
+        private string _ghostTextSuggestion = string.Empty;
+        public string GhostTextSuggestion
+        {
+            get => _ghostTextSuggestion;
+            set => SetProperty(ref _ghostTextSuggestion, value);
+        }
+
+        public string SearchReceiptText
+        {
+            get => ClaimType == "บริษัทคู่ค้า" ? ClaimStockInRefNo : ClaimSalesOrderRefNo;
+            set
+            {
+                string norm = value ?? string.Empty;
+                if (ClaimType == "บริษัทคู่ค้า")
+                {
+                    if (ClaimStockInRefNo != norm)
+                    {
+                        ClaimStockInRefNo = norm;
+                    }
+                }
+                else
+                {
+                    if (ClaimSalesOrderRefNo != norm)
+                    {
+                        ClaimSalesOrderRefNo = norm;
+                    }
+                }
+                OnPropertyChanged(nameof(SearchReceiptText));
+                UpdateGhostTextSuggestion(norm);
+            }
+        }
+
+        private System.Collections.Generic.List<string> _cachedDocumentNumbers = new System.Collections.Generic.List<string>();
+
+        public async System.Threading.Tasks.Task RefreshDocumentNumbersCacheAsync()
+        {
+            try
+            {
+                var list = await System.Threading.Tasks.Task.Run(() => _databaseService.GetCachedDocumentNumbers());
+                if (list != null)
+                {
+                    _cachedDocumentNumbers = list;
+                }
+            }
+            catch { }
+        }
+
+        public void UpdateGhostTextSuggestion(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                GhostTextSuggestion = string.Empty;
+                return;
+            }
+
+            if (_cachedDocumentNumbers.Count == 0)
+            {
+                try
+                {
+                    _cachedDocumentNumbers = _databaseService.GetCachedDocumentNumbers();
+                }
+                catch { }
+            }
+
+            var trimmed = input.Trim();
+            var match = _cachedDocumentNumbers.FirstOrDefault(doc =>
+                doc.StartsWith(trimmed, System.StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(match) && !string.Equals(match, trimmed, System.StringComparison.OrdinalIgnoreCase))
+            {
+                GhostTextSuggestion = trimmed + match.Substring(trimmed.Length);
+            }
+            else
+            {
+                GhostTextSuggestion = string.Empty;
+            }
+        }
+
+        public string? GetCanonicalDocumentNumber(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return null;
+            var trimmed = input.Trim();
+            return _cachedDocumentNumbers.FirstOrDefault(doc =>
+                doc.StartsWith(trimmed, System.StringComparison.OrdinalIgnoreCase));
+        }
+
         private string _claimStockInRefNo = string.Empty;
         public string ClaimStockInRefNo
         {
             get => _claimStockInRefNo;
-            set { if (SetProperty(ref _claimStockInRefNo, value)) LookupStockInForClaim(); }
+            set
+            {
+                if (SetProperty(ref _claimStockInRefNo, value))
+                {
+                    OnPropertyChanged(nameof(SearchReceiptText));
+                    LookupStockInForClaim();
+                }
+            }
         }
 
         private DateTime? _claimStockInDate;
@@ -4763,6 +4875,8 @@ namespace Porjai20.ViewModels
             IsReceiptProductSelectorOpen = false;
             AvailableReceiptItems.Clear();
             CurrentClaimItems.Clear();
+            GhostTextSuggestion = string.Empty;
+            OnPropertyChanged(nameof(SearchReceiptText));
             IsModalOpen = false;
         }
 
@@ -4828,6 +4942,8 @@ namespace Porjai20.ViewModels
                 ClaimProductCode = details.ProductCode;
                 ClaimQuantity = details.Quantity < 0 ? -details.Quantity : details.Quantity;
                 ClaimProductName = details.ProductName;
+                ClaimCustomerName = !string.IsNullOrWhiteSpace(details.SupplierName) ? details.SupplierName : "บริษัทคู่ค้า / ซัพพลายเออร์";
+                ClaimCustomerPhone = !string.IsNullOrWhiteSpace(details.SupplierPhone) ? details.SupplierPhone : "-";
 
                 // Load all items in stock-in for selection
                 AvailableReceiptItems.Clear();
@@ -4858,6 +4974,8 @@ namespace Porjai20.ViewModels
                 ClaimProId = 0;
                 AvailableReceiptItems.Clear();
                 CurrentClaimItems.Clear();
+                ClaimCustomerName = string.Empty;
+                ClaimCustomerPhone = string.Empty;
                 ClaimValidationMessage = "⚠️ ไม่พบข้อมูลเลขที่ใบรับสินค้าในระบบ";
                 ClaimValidationOk = false;
             }

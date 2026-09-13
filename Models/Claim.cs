@@ -163,6 +163,8 @@ namespace Porjai20.Models
         }
         public int Quantity { get; set; }
         public string ProductName { get; set; } = string.Empty;
+        public string SupplierName { get; set; } = string.Empty;
+        public string SupplierPhone { get; set; } = string.Empty;
     }
 
     public class ClaimReceiptItemSelection : System.ComponentModel.INotifyPropertyChanged
