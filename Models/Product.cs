@@ -1,9 +1,17 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Porjai20.Models
 {
-    public class Product
+    public class Product : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public int Pro_ID { get; set; }
         public int Id
         {
@@ -43,14 +51,40 @@ namespace Porjai20.Models
         public int Stock
         {
             get => Pro_Qty;
-            set => Pro_Qty = value;
+            set
+            {
+                if (Pro_Qty != value)
+                {
+                    Pro_Qty = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(StockStatus));
+                }
+            }
         }
 
         public int Pro_MinQty { get; set; } = 5;
         public int ReorderPoint
         {
             get => Pro_MinQty;
-            set => Pro_MinQty = value;
+            set
+            {
+                if (Pro_MinQty != value)
+                {
+                    Pro_MinQty = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(StockStatus));
+                }
+            }
+        }
+
+        public string StockStatus
+        {
+            get
+            {
+                if (Stock <= 0) return "หมดสต็อก";
+                if (Stock <= ReorderPoint) return "ใกล้หมด";
+                return "ปกติ";
+            }
         }
 
         public string Pro_Category { get; set; } = string.Empty;

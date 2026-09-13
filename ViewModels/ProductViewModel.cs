@@ -1459,8 +1459,11 @@ namespace Porjai20.ViewModels
             OpenGoodsReceiptModalCommand = new RelayCommand(param => OpenGoodsReceiptModal(param as PurchaseOrder));
             CloseGoodsReceiptModalCommand = new RelayCommand(_ => { IsGoodsReceiptModalOpen = false; });
             ConfirmGoodsReceiptCommand = new RelayCommand(_ => ConfirmGoodsReceipt(), _ => ReceiptItems.Count > 0 && ReceiptItems.Any(i => i.ReceivedQty > 0));
-            SearchPendingPOCommand = new RelayCommand(_ => _ = LoadPendingPurchaseOrders());
-            ClearStockSearchCommand = new RelayCommand(_ => { SearchText = string.Empty; });
+            ClearStockSearchCommand = new RelayCommand(_ => 
+            { 
+                SearchText = string.Empty; 
+                SelectedStockStatusFilter = "ทั้งหมด";
+            });
 
 
             SearchDeliveriesCommand = new RelayCommand(_ => LoadDeliveries());
@@ -1995,6 +1998,28 @@ namespace Porjai20.ViewModels
         public string StockViewSearchPlaceholder => IsProductViewActive
             ? "ค้นหารหัสสินค้า, ชื่อสินค้า..."
             : "ค้นหารหัสหมวดหมู่, ชื่อหมวดหมู่...";
+
+        // --- Stock Status Filter Options & Selection ---
+        public ObservableCollection<string> StockStatusFilterOptions { get; } = new ObservableCollection<string>
+        {
+            "ทั้งหมด",
+            "ปกติ",
+            "ใกล้หมด",
+            "หมดสต็อก"
+        };
+
+        private string _selectedStockStatusFilter = "ทั้งหมด";
+        public string SelectedStockStatusFilter
+        {
+            get => _selectedStockStatusFilter;
+            set
+            {
+                if (SetProperty(ref _selectedStockStatusFilter, value ?? "ทั้งหมด"))
+                {
+                    FilterStockView();
+                }
+            }
+        }
 
         private ProductCategory? _selectedCategory;
         public ProductCategory? SelectedCategory
@@ -3259,6 +3284,23 @@ namespace Porjai20.ViewModels
                     (p.Code?.ToLower().Contains(s) ?? false) ||
                     (p.Name?.ToLower().Contains(s) ?? false)
                 );
+            }
+
+            if (!string.IsNullOrWhiteSpace(SelectedStockStatusFilter) && SelectedStockStatusFilter != "ทั้งหมด")
+            {
+                switch (SelectedStockStatusFilter)
+                {
+                    case "ปกติ":
+                        query = query.Where(p => p.Stock > p.ReorderPoint);
+                        break;
+                    case "ใกล้หมด":
+                        query = query.Where(p => p.Stock <= p.ReorderPoint && p.Stock > 0);
+                        break;
+                    case "หมดสต็อก":
+                    case "สินค้าหมด":
+                        query = query.Where(p => p.Stock <= 0);
+                        break;
+                }
             }
 
             foreach (var p in query)

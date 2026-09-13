@@ -623,8 +623,8 @@
                         <ColumnDefinition Width="180"/>   <!-- ComboBox View Selector -->
                         <ColumnDefinition Width="14"/>
                         <ColumnDefinition Width="*"/>     <!-- Search Box -->
-                        <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="Auto"/>  <!-- Clear Search Button -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- ComboBox Stock Status Filter -->
                         <ColumnDefinition Width="14"/>
                         <ColumnDefinition Width="Auto"/>  <!-- Action Buttons Stack -->
                     </Grid.ColumnDefinitions>
@@ -688,15 +688,21 @@
                         </Grid>
                     </Border>
 
-                    <!-- Clear Search Button -->
-                    <Button Grid.Column="4"
-                            Content="ล้าง"
-                            Command="{Binding ClearStockSearchCommand}"
-                            Style="{StaticResource SecondaryBtnStyle}"
-                            Padding="14,0"
-                            Height="40"/>
+                    <!-- ComboBox Stock Status Filter -->
+                    <Border Grid.Column="4"
+                            Width="150"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1.5"
+                            CornerRadius="8"
+                            Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}">
+                        <ComboBox ItemsSource="{Binding StockStatusFilterOptions}"
+                                  SelectedItem="{Binding SelectedStockStatusFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Style="{StaticResource LightComboBoxStyle}"
+                                  Height="40" Padding="12,0" Background="Transparent" BorderThickness="0"/>
+                    </Border>
 
-                    <!-- Dynamic Action Buttons for Products View -->
+                    <!-- Dynamic Action Buttons for Products View: [+ เพิ่มข้อมูลสินค้า] -> [จัดการ] -> [ล้าง] -->
                     <StackPanel Grid.Column="6" Orientation="Horizontal"
                                 Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}">
                         <Button x:Name="BtnOpenAddProduct"
@@ -709,7 +715,12 @@
                                 Command="{Binding StockEditProductCommand}"
                                 IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                                 Style="{StaticResource PrimaryRedButtonStyle}"
-                                Height="40" Padding="18,0"/>
+                                Height="40" Padding="18,0" Margin="0,0,8,0"/>
+                        <Button Content="ล้าง"
+                                Command="{Binding ClearStockSearchCommand}"
+                                Style="{StaticResource SecondaryBtnStyle}"
+                                Padding="14,0"
+                                Height="40"/>
                     </StackPanel>
 
                     <!-- Dynamic Action Buttons for Categories View -->
@@ -724,7 +735,12 @@
                                 Command="{Binding OpenManageCategoryModalCommand}"
                                 IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                                 Style="{StaticResource PrimaryBtnStyle}"
-                                Height="40" Padding="18,0"/>
+                                Height="40" Padding="18,0" Margin="0,0,8,0"/>
+                        <Button Content="ล้าง"
+                                Command="{Binding ClearStockSearchCommand}"
+                                Style="{StaticResource SecondaryBtnStyle}"
+                                Padding="14,0"
+                                Height="40"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -862,7 +878,7 @@
                                 </DataGridTextColumn.HeaderStyle>
                             </DataGridTextColumn>
 
-                            <!-- #8: Stock Status (สถานะสต็อก) - NO BORDER FRAME -->
+                            <!-- #8: Stock Status (สถานะสต็อก) - Status Badges / Pill Tag -->
                             <DataGridTemplateColumn Header="สถานะสต็อก" Width="1.2*">
                                 <DataGridTemplateColumn.HeaderStyle>
                                     <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
@@ -871,27 +887,45 @@
                                 </DataGridTemplateColumn.HeaderStyle>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock x:Name="StatusText"
-                                                   Text="ปกติ"
-                                                   FontSize="13.5" FontWeight="Bold"
-                                                   Foreground="#000000"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border x:Name="StatusBadge"
+                                                CornerRadius="10"
+                                                Padding="10,3"
+                                                BorderThickness="1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="#DCFCE7"
+                                                BorderBrush="#86EFAC">
+                                            <TextBlock x:Name="StatusText"
+                                                       Text="{Binding StockStatus}"
+                                                       FontSize="12"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#15803D"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
                                         <DataTemplate.Triggers>
-                                            <!-- Out of stock (สินค้าหมด) -->
-                                            <DataTrigger Binding="{Binding Stock}" Value="0">
-                                                <Setter TargetName="StatusText" Property="Text" Value="สินค้าหมด"/>
-                                                <Setter TargetName="StatusText" Property="Foreground" Value="#DC2626"/>
+                                            <!-- สถานะ ปกติ: พื้นหลัง #DCFCE7, เส้นขอบ #86EFAC, ตัวหนังสือ #15803D -->
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="ปกติ">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#86EFAC"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#15803D"/>
                                             </DataTrigger>
-                                            <!-- Low stock (ใกล้หมด) -->
-                                            <DataTrigger Value="True">
-                                                <DataTrigger.Binding>
-                                                    <MultiBinding Converter="{StaticResource LowStockConverter}">
-                                                        <Binding Path="Stock"/>
-                                                        <Binding Path="ReorderPoint"/>
-                                                    </MultiBinding>
-                                                </DataTrigger.Binding>
-                                                <Setter TargetName="StatusText" Property="Text" Value="ใกล้หมด"/>
-                                                <Setter TargetName="StatusText" Property="Foreground" Value="#D97706"/>
+                                            <!-- สถานะ ใกล้หมด: พื้นหลัง #FEF3C7, เส้นขอบ #FDE68A, ตัวหนังสือ #B45309 -->
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="ใกล้หมด">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FDE68A"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B45309"/>
+                                            </DataTrigger>
+                                            <!-- สถานะ หมดสต็อก: พื้นหลัง #FEE2E2, เส้นขอบ #FECACA, ตัวหนังสือ #B91C1C -->
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="หมดสต็อก">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FECACA"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="สินค้าหมด">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FECACA"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
