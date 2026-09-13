@@ -56,7 +56,7 @@
             },
             "Dapper": {
               "target": "Package",
-              "version": "[2.1.66, )"
+              "version": "[2.1.86, )"
             },
             "LiveCharts.Wpf": {
               "target": "Package",
@@ -64,7 +64,7 @@
             },
             "Microsoft.Data.Sqlite": {
               "target": "Package",
-              "version": "[10.0.2, )"
+              "version": "[10.0.12, )"
             },
             "System.Xml.XDocument": {
               "target": "Package",

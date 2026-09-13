@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\obj\Release\net9.0-windows\
+D:\ShopManagement_หลัก\MatchaShop\obj\Release\net9.0-windows\
 MatchaShop
 none
 false
 TRACE;RELEASE;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\Lenovo\Downloads\งานนรกไม่ได้หลับได้นอน\ShopManagement-หลัก7-ล่าสุด\MatchaShop\App.xaml
+D:\ShopManagement_หลัก\MatchaShop\App.xaml
 20-1537321190
 
-63251536968
-207217447527
+641664426890
+2081425828782
 Views\ClaimView.xaml;Views\CustomerHistoryWindow.xaml;Views\CustomerView.xaml;Views\CustomMessageBox.xaml;Views\DashboardView.xaml;Views\DeliverySlipWindow.xaml;Views\DeliveryView.xaml;Views\ExpenseView.xaml;Views\HistoryView.xaml;Views\MainWindow.xaml;Views\ManagementView.xaml;Views\PartnerView.xaml;Views\POReceiptWindow.xaml;Views\PosView.xaml;Views\PurchaseOrderView.xaml;Views\ReceiptWindow.xaml;Views\ReportsView.xaml;Views\SalesHistoryView.xaml;Views\StaffView.xaml;Views\StockInView.xaml;
 
 True

@@ -512,9 +512,10 @@ namespace Porjai20.ViewModels
         public decimal Change => ChangeAmount;
 
         private string _numpadInput = "0";
+        private bool _isNewInput = true;
         public string NumpadInputString
         {
-            get => decimal.TryParse(_numpadInput, out decimal val) ? val.ToString("N0") : "0";
+            get => decimal.TryParse(_numpadInput, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal val) ? val.ToString("N0") : "0";
         }
 
         public decimal ShippingFee => SelectedShippingMethod == "Delivery" ? CustomShippingFee : 0;
@@ -689,6 +690,7 @@ namespace Porjai20.ViewModels
                     IsCheckoutModalVisible = true; 
                     CurrentStep = 2; // Direct Navigation: Go straight to Payment Workstation (Step 2)
                     _numpadInput = "0";
+                    _isNewInput = true;
                     CashAmountReceived = 0;
                     SelectedPaymentMethod = null;
                     IsMemberSelected = false;
@@ -699,7 +701,7 @@ namespace Porjai20.ViewModels
                     SelectedCustomer = null;
                 }
             });
-            NumpadCommand = new RelayCommand(param => NumpadInput(param?.ToString()));
+            NumpadCommand = new RelayCommand(param => NumpadInput(param?.ToString()), _ => true);
             NextStepCommand = new RelayCommand(async _ => await NextStep());
             PrevStepCommand = new RelayCommand(_ => PrevStep());
             ConfirmOrderCommand = new RelayCommand(async _ => await ConfirmOrder());
@@ -971,46 +973,173 @@ namespace Porjai20.ViewModels
         {
             if (string.IsNullOrEmpty(key)) return;
 
-            if (key == "Exact")
-            {
-                _numpadInput = ((int)CheckoutGrandTotal).ToString();
-            }
-            else if (key == "100" || key == "500" || key == "1000")
+            // 1. ปุ่มลัด Quick Cash: 20, 50, 100, 500, 1000, Exact (แทนที่ค่าโดยตรง ไม่บวกเพิ่มหรือต่อท้าย)
+            if (key == "20" || key == "50" || key == "100" || key == "500" || key == "1000")
             {
                 _numpadInput = key;
+                _isNewInput = true;
             }
-            else if (key == "<-")
+            else if (key == "Exact")
             {
-                if (_numpadInput.Length > 1)
-                {
-                    _numpadInput = _numpadInput.Substring(0, _numpadInput.Length - 1);
-                }
-                else
+                _numpadInput = CheckoutGrandTotal.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+                if (string.IsNullOrEmpty(_numpadInput) || _numpadInput == "0")
                 {
                     _numpadInput = "0";
                 }
+                _isNewInput = true;
             }
-            else if (key == "00")
+            // 2. ปุ่มล้าง (CLEAR / C) -> รีเซ็ตค่ายอดเงินที่รับมากลับเป็น "0" ทันที และพร้อมรับตัวเลขใหม่
+            else if (key == "CLEAR" || key == "C")
             {
-                if (_numpadInput != "0")
-                {
-                    _numpadInput += "00";
-                }
+                _numpadInput = "0";
+                _isNewInput = true;
             }
-            else
+            // 3. ปุ่มลบ (BACK / <- / ⌫) -> ลบตัวอักษรขวาสุดออกทีละ 1 ตัวอักษร หากเหลือตัวเดียวหรือว่างให้กลับเป็น "0"
+            else if (key == "BACK" || key == "<-" || key == "⌫")
             {
-                if (_numpadInput == "0")
+                if (_isNewInput || _numpadInput.Length <= 1)
                 {
-                    _numpadInput = key;
+                    _numpadInput = "0";
+                    _isNewInput = true;
                 }
                 else
                 {
-                    _numpadInput += key;
+                    _numpadInput = _numpadInput.Substring(0, _numpadInput.Length - 1);
+                    if (string.IsNullOrEmpty(_numpadInput) || _numpadInput == "-" || _numpadInput == "0")
+                    {
+                        _numpadInput = "0";
+                        _isNewInput = true;
+                    }
+                }
+            }
+            // 4. ปุ่มจุดทศนิยม (.) -> ตรวจสอบก่อนเสมอ หากมีจุดแล้วให้ return ข้าม (Ignore/No-op)
+            else if (key == ".")
+            {
+                if (_isNewInput)
+                {
+                    _numpadInput = "0.";
+                    _isNewInput = false;
+                }
+                else
+                {
+                    if (_numpadInput.Contains("."))
+                    {
+                        return; // มีจุดทศนิยมอยู่แล้ว ให้ข้ามทันที ไม่ล้างค่าและไม่เกิด Error
+                    }
+
+                    if (string.IsNullOrEmpty(_numpadInput) || _numpadInput == "0")
+                    {
+                        _numpadInput = "0.";
+                    }
+                    else
+                    {
+                        _numpadInput += ".";
+                    }
+                    _isNewInput = false;
+                }
+            }
+            // 5. ปุ่ม "00"
+            else if (key == "00")
+            {
+                if (_isNewInput)
+                {
+                    _numpadInput = "0";
+                    _isNewInput = true;
+                }
+                else if (_numpadInput == "0")
+                {
+                    _isNewInput = true;
+                }
+                else if (_numpadInput.Contains("."))
+                {
+                    int dotIndex = _numpadInput.IndexOf('.');
+                    int decimals = _numpadInput.Length - 1 - dotIndex;
+                    if (decimals == 0)
+                    {
+                        _numpadInput += "00";
+                    }
+                    else if (decimals == 1)
+                    {
+                        _numpadInput += "0";
+                    }
+                }
+                else
+                {
+                    if (_numpadInput.Length < 9)
+                    {
+                        _numpadInput += "00";
+                    }
+                }
+            }
+            // 6. ปุ่มตัวเลข 0 - 9
+            else
+            {
+                if (!char.IsDigit(key[0])) return;
+
+                if (_isNewInput)
+                {
+                    if (key == "0")
+                    {
+                        _numpadInput = "0";
+                        _isNewInput = true;
+                    }
+                    else
+                    {
+                        _numpadInput = key;
+                        _isNewInput = false;
+                    }
+                }
+                else
+                {
+                    if (_numpadInput == "0")
+                    {
+                        if (key == "0")
+                        {
+                            _numpadInput = "0";
+                            _isNewInput = true;
+                        }
+                        else
+                        {
+                            _numpadInput = key;
+                            _isNewInput = false;
+                        }
+                    }
+                    else
+                    {
+                        if (_numpadInput.Contains("."))
+                        {
+                            int dotIndex = _numpadInput.IndexOf('.');
+                            if (_numpadInput.Length - 1 - dotIndex < 2)
+                            {
+                                _numpadInput += key;
+                            }
+                        }
+                        else
+                        {
+                            if (_numpadInput.Length < 9)
+                            {
+                                _numpadInput += key;
+                            }
+                        }
+                    }
                 }
             }
 
+            // คำนวณและอัปเดตยอดเงินแบบ Real-time ด้วย decimal.TryParse เสมอ
+            decimal parsedVal = 0;
+            if (!string.IsNullOrEmpty(_numpadInput))
+            {
+                if (!decimal.TryParse(_numpadInput, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedVal))
+                {
+                    decimal.TryParse(_numpadInput, out parsedVal);
+                }
+            }
+
+            CashAmountReceived = parsedVal;
             OnPropertyChanged(nameof(NumpadInputString));
-            CashAmountReceived = decimal.TryParse(_numpadInput, out decimal val) ? val : 0;
+            OnPropertyChanged(nameof(CashReceived));
+            OnPropertyChanged(nameof(ChangeAmount));
+            OnPropertyChanged(nameof(Change));
         }
 
         private async Task NextStep()
@@ -1032,7 +1161,7 @@ namespace Porjai20.ViewModels
             }
             else if (CurrentStep == 2)
             {
-                if (IsCashSelected && CashAmountReceived < CartTotal)
+                if (IsCashPayment && CashAmountReceived < CartTotal)
                 {
                     ErrorModalMessage = "จำนวนเงินที่รับมาไม่เพียงพอ";
                     IsErrorModalOpen = true;
@@ -1267,6 +1396,7 @@ namespace Porjai20.ViewModels
             IsMemberSelected = false;
             CashAmountReceived = 0;
             _numpadInput = "0";
+            _isNewInput = true;
             SelectedPaymentMethod = null;
         }
 
