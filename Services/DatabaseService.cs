@@ -129,8 +129,13 @@ namespace Porjai20.Services
                         Pro_Qty INTEGER,
                         Pro_MinQty INTEGER,
                         Pro_Category TEXT,
-                        Pro_Image TEXT
+                        Pro_Image TEXT,
+                        Pro_Unit TEXT,
+                        CategoryId INTEGER
                     );");
+
+                try { connection.Execute("ALTER TABLE tblProduct ADD COLUMN Pro_Unit TEXT;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblProduct ADD COLUMN CategoryId INTEGER;"); } catch { }
 
                 // 5) tblPO_H
                 connection.Execute(@"

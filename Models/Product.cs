@@ -167,7 +167,25 @@ namespace Porjai20.Models
             }
         }
 
-        public string Unit { get; set; } = string.Empty;
+        public int CategoryId { get; set; }
+        public int CategoryID
+        {
+            get => CategoryId;
+            set => CategoryId = value;
+        }
+
+        private string _unit = string.Empty;
+        public string Pro_Unit
+        {
+            get => _unit;
+            set => _unit = value ?? string.Empty;
+        }
+
+        public string Unit
+        {
+            get => !string.IsNullOrWhiteSpace(_unit) ? _unit : "ชิ้น";
+            set => _unit = value ?? string.Empty;
+        }
         public string Description { get; set; } = string.Empty;
 
         public decimal SellingPrice

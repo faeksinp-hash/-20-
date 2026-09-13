@@ -2035,17 +2035,16 @@
                                 </Border>
                             </StackPanel>
 
-                            <!-- Row 1 Left: Category (หมวดหมู่สินค้า - Searchable / Editable Dropdown) -->
+                            <!-- Row 1 Left: Category (หมวดหมู่สินค้า - Searchable / Selectable Dropdown) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,14">
                                 <TextBlock Text="หมวดหมู่สินค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
-                                    <ComboBox ItemsSource="{Binding CategoriesList}"
-                                              SelectedItem="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                              Text="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <ComboBox ItemsSource="{Binding ProductCategories}"
+                                              DisplayMemberPath="CategoryName"
+                                              SelectedValuePath="CategoryID"
+                                              SelectedValue="{Binding CategoryID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              TextSearch.TextPath="CategoryName"
                                               IsEnabled="{Binding CanEditStockManage}"
-                                              IsEditable="True"
-                                              IsTextSearchEnabled="True"
-                                              StaysOpenOnEdit="True"
                                               Style="{StaticResource LightComboBoxStyle}"
                                               Height="38" Padding="12,0" Background="Transparent" BorderThickness="0"/>
                                 </Border>
@@ -2066,7 +2065,7 @@
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,14">
                                 <TextBlock Text="ราคาทุน (บาท)" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
-                                    <TextBox Text="{Binding Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
+                                    <TextBox Text="{Binding CostPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
                                              Height="38" Padding="12,0" FontSize="14"/>

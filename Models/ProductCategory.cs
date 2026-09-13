@@ -10,6 +10,11 @@ namespace Porjai20.Models
             get => CategoryId;
             set => CategoryId = value;
         }
+        public int CategoryID
+        {
+            get => CategoryId;
+            set => CategoryId = value;
+        }
 
         public string CategoryCode { get; set; } = string.Empty;
         public string Code
