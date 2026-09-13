@@ -134,6 +134,8 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(IsStockInReadOnly));
             OnPropertyChanged(nameof(CanEditStockIn));
             OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
+            OnPropertyChanged(nameof(IsReceiptDeliveryNoteValid));
+            OnPropertyChanged(nameof(IsReceiptDeliveryNoteInvalid));
             OnPropertyChanged(nameof(IsClaimReadOnly));
             OnPropertyChanged(nameof(CanEditClaim));
             OnPropertyChanged(nameof(IsCustomerReadOnly));
@@ -2839,6 +2841,8 @@ namespace Porjai20.ViewModels
                 if (SetProperty(ref _isReceiptViewOnly, value))
                 {
                     OnPropertyChanged(nameof(CanEditReceiptModal));
+                    OnPropertyChanged(nameof(IsReceiptDeliveryNoteValid));
+                    OnPropertyChanged(nameof(IsReceiptDeliveryNoteInvalid));
                     OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
                     CommandManager.InvalidateRequerySuggested();
                 }
@@ -2847,10 +2851,20 @@ namespace Porjai20.ViewModels
 
         public bool CanEditReceiptModal => !IsReceiptViewOnly && CanEditStockIn;
 
+        private static readonly System.Text.RegularExpressions.Regex InvoiceRegex = new System.Text.RegularExpressions.Regex(@"^RC-\d{5}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        public static bool IsValidInvoiceNumber(string? input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && InvoiceRegex.IsMatch(input.Trim());
+        }
+
+        public bool IsReceiptDeliveryNoteValid => CanEditReceiptModal && IsValidInvoiceNumber(ReceiptDeliveryNoteNo);
+        public bool IsReceiptDeliveryNoteInvalid => CanEditReceiptModal && !string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo) && !IsValidInvoiceNumber(ReceiptDeliveryNoteNo);
+
         public bool CanConfirmGoodsReceipt =>
             !IsReceiptViewOnly &&
             CanEditStockIn &&
-            !string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo) &&
+            IsValidInvoiceNumber(ReceiptDeliveryNoteNo) &&
             ReceiptItems != null &&
             ReceiptItems.Count > 0 &&
             ReceiptItems.Any(i => i.ReceivedQty > 0);
@@ -2863,8 +2877,11 @@ namespace Porjai20.ViewModels
             get => _receiptDeliveryNoteNo;
             set
             {
-                if (SetProperty(ref _receiptDeliveryNoteNo, value))
+                string upperVal = value != null ? value.ToUpper() : string.Empty;
+                if (SetProperty(ref _receiptDeliveryNoteNo, upperVal))
                 {
+                    OnPropertyChanged(nameof(IsReceiptDeliveryNoteValid));
+                    OnPropertyChanged(nameof(IsReceiptDeliveryNoteInvalid));
                     OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
                     CommandManager.InvalidateRequerySuggested();
                 }
@@ -6523,6 +6540,8 @@ namespace Porjai20.ViewModels
             }
 
             CalculateReceiptTotal();
+            OnPropertyChanged(nameof(IsReceiptDeliveryNoteValid));
+            OnPropertyChanged(nameof(IsReceiptDeliveryNoteInvalid));
             OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
             CommandManager.InvalidateRequerySuggested();
             IsGoodsReceiptModalOpen = true;
@@ -6531,6 +6550,8 @@ namespace Porjai20.ViewModels
         private void CalculateReceiptTotal()
         {
             ReceiptTotalAmount = ReceiptItems.Sum(i => i.ReceivedQty * i.CostPrice);
+            OnPropertyChanged(nameof(IsReceiptDeliveryNoteValid));
+            OnPropertyChanged(nameof(IsReceiptDeliveryNoteInvalid));
             OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
             CommandManager.InvalidateRequerySuggested();
         }
@@ -6555,10 +6576,10 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            // Guard clause: Validate Invoice / Delivery Note Number
-            if (string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo))
+            // Guard clause: Validate Invoice / Delivery Note Number Regex Pattern RC-XXXXX
+            if (!IsValidInvoiceNumber(ReceiptDeliveryNoteNo))
             {
-                ShowAlert("กรุณากรอกเลขที่ใบส่งของ / ใบกำกับภาษี ก่อนยืนยันการรับสินค้าเข้าคลัง", "แจ้งเตือน", "⚠️");
+                ShowAlert("กรุณากรอกเลขที่ใบส่งของ / ใบกำกับภาษี ให้ถูกต้องตามรูปแบบ RC-XXXXX (ตัวเลข 5 หลัก เช่น RC-00001)", "แจ้งเตือน", "⚠️");
                 return;
             }
 
@@ -6570,9 +6591,10 @@ namespace Porjai20.ViewModels
 
             try
             {
+                string formattedInvoiceNo = ReceiptDeliveryNoteNo.Trim().ToUpper();
                 _databaseService.ProcessGoodsReceipt(
                     SelectedReceiptPO.Id,
-                    ReceiptDeliveryNoteNo.Trim(),
+                    formattedInvoiceNo,
                     ReceiptItems.ToList(),
                     CurrentUser?.Id ?? 1
                 );

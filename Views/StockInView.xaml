@@ -889,24 +889,34 @@
 
                     <!-- PO Info Banner & Status Notice -->
                     <StackPanel Grid.Row="1" Margin="0,0,0,14">
-                        <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="14,12" Margin="0,0,0,8">
+                        <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="16,12" Margin="0,0,0,8">
                             <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="160"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
+                                
+                                <!-- Column 0: PO Number -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
                                     <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" Margin="0,2,0,0"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1">
+
+                                <!-- Column 1: Supplier Name (Expands in middle, trimmed with ellipsis if very long) -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,24,0">
                                     <TextBlock Text="ผู้จัดจำหน่าย" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding SelectedReceiptPO.SupplierName}" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.SupplierName}" 
+                                               FontSize="14" FontWeight="Bold" Foreground="#2D3748" 
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding SelectedReceiptPO.SupplierName}"
+                                               Margin="0,2,0,0"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,2,0,0"/>
+
+                                <!-- Column 2: Order Date (Right-aligned to right border edge) -->
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold" TextAlignment="Right" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -928,37 +938,84 @@
                     <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Padding="14,10" Margin="0,0,0,14">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="220"/>
                                 <ColumnDefinition Width="12"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="13" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
-                            <Border Grid.Column="2" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8">
-                                <Grid>
-                                    <TextBox x:Name="txtInvoiceNo"
-                                             Text="{Binding ReceiptDeliveryNoteNo, UpdateSourceTrigger=PropertyChanged}" 
-                                             IsEnabled="{Binding CanEditReceiptModal}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Padding="10,6" Height="36" FontSize="13" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="กรุณาระบุเลขที่ใบส่งของ หรือ ใบกำกับภาษี..."
-                                               Foreground="#94A3B8"
-                                               FontSize="12.5"
-                                               VerticalAlignment="Center"
-                                               Margin="12,0,10,0"
-                                               IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Text, ElementName=txtInvoiceNo}" Value="">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
-                            </Border>
+                            
+                            <!-- Left label and format guide -->
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="13" FontWeight="Bold" Foreground="#0B2545"/>
+                                <TextBlock Text="รูปแบบ: RC-XXXXX (ตัวอย่าง: RC-00001)" FontSize="11" Foreground="#64748B" Margin="0,3,0,0"/>
+                            </StackPanel>
+
+                            <!-- Right input and validation feedback -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <Border x:Name="InvoiceBorder"
+                                        BorderThickness="1.5" CornerRadius="8"
+                                        ToolTip="กรุณาระบุในรูปแบบ RC-XXXXX (ตัวเลข 5 หลัก เช่น RC-00001)">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#E0F2FE"/>
+                                            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                            <Style.Triggers>
+                                                <!-- Invalid format trigger: Red/Orange border -->
+                                                <DataTrigger Binding="{Binding IsReceiptDeliveryNoteInvalid}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#EF4444"/>
+                                                    <Setter Property="Background" Value="#FEF2F2"/>
+                                                </DataTrigger>
+                                                <!-- Valid format trigger: Green border -->
+                                                <DataTrigger Binding="{Binding IsReceiptDeliveryNoteValid}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#10B981"/>
+                                                    <Setter Property="Background" Value="#F0FDF4"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <TextBox x:Name="txtInvoiceNo"
+                                                 Text="{Binding ReceiptDeliveryNoteNo, UpdateSourceTrigger=PropertyChanged}" 
+                                                 IsEnabled="{Binding CanEditReceiptModal}"
+                                                 Style="{StaticResource LightTextBoxStyle}"
+                                                 FontWeight="SemiBold"
+                                                 Padding="10,6" Height="36" FontSize="13.5" VerticalContentAlignment="Center"/>
+                                        <TextBlock Text="เช่น RC-00001 (บังคับรูปแบบ RC-XXXXX)"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="12.5"
+                                                   VerticalAlignment="Center"
+                                                   Margin="12,0,10,0"
+                                                   IsHitTestVisible="False">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=txtInvoiceNo}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <!-- Valid indicator badge -->
+                                        <TextBlock Text="✓ รูปแบบถูกต้อง" 
+                                                   Foreground="#10B981" 
+                                                   FontWeight="Bold" 
+                                                   FontSize="12" 
+                                                   HorizontalAlignment="Right" 
+                                                   VerticalAlignment="Center" 
+                                                   Margin="0,0,12,0"
+                                                   Visibility="{Binding IsReceiptDeliveryNoteValid, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Error warning below input when pattern doesn't match -->
+                                <TextBlock Text="⚠️ กรุณาระบุในรูปแบบ RC-XXXXX (ตัวเลข 5 หลัก เช่น RC-00001)"
+                                           Foreground="#EF4444"
+                                           FontSize="11.5"
+                                           FontWeight="SemiBold"
+                                           Margin="4,4,0,0"
+                                           Visibility="{Binding IsReceiptDeliveryNoteInvalid, Converter={StaticResource BoolToVis}}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
 
