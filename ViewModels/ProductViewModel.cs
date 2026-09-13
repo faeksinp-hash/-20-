@@ -688,8 +688,21 @@ namespace Porjai20.ViewModels
             get => _selectedDeliveryOrder;
             set
             {
+                // ป้องกันไม่ให้ Selection หลุดเป็น null ขณะที่เปิดป๊อปอัปรายละเอียดคำสั่งซื้อ
+                if (value == null && IsDeliveryDetailModalOpen && _selectedDeliveryOrder != null)
+                {
+                    return;
+                }
+
                 if (SetProperty(ref _selectedDeliveryOrder, value))
                 {
+                    if (_selectedDeliveryOrder != null)
+                    {
+                        string currentStatus = _selectedDeliveryOrder.DeliveryStatus;
+                        if (currentStatus == "ยกเลิกรายการ") currentStatus = "ยกเลิก";
+                        if (currentStatus == "รอดำเนินการ") currentStatus = "รอจัดส่ง";
+                        _selectedDeliveryOrderStatus = currentStatus ?? "รอจัดส่ง";
+                    }
                     OnPropertyChanged(nameof(IsDeliveryOrderSelected));
                     OnPropertyChanged(nameof(SelectedDeliveryOrderStatus));
                     OnPropertyChanged(nameof(SelectedDeliverySubtotal));
@@ -722,26 +735,19 @@ namespace Porjai20.ViewModels
 
         public decimal SelectedDeliveryGrandTotal => SelectedDeliveryOrder?.TotalAmount ?? SelectedDeliverySubtotal;
 
+        private string _selectedDeliveryOrderStatus = "รอจัดส่ง";
         public string SelectedDeliveryOrderStatus
         {
-            get
-            {
-                var status = _selectedDeliveryOrder?.DeliveryStatus;
-                if (status == "ยกเลิกรายการ") return "ยกเลิก";
-                if (status == "รอดำเนินการ") return "รอจัดส่ง";
-                return status ?? "รอจัดส่ง";
-            }
+            get => _selectedDeliveryOrderStatus ?? "รอจัดส่ง";
             set
             {
-                if (_selectedDeliveryOrder != null && !string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     string cleanVal = value.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
-                    if (_selectedDeliveryOrder.DeliveryStatus != cleanVal)
+                    if (_selectedDeliveryOrderStatus != cleanVal)
                     {
-                        _selectedDeliveryOrder.DeliveryStatus = cleanVal;
-                        UpdateDeliveryStatus(_selectedDeliveryOrder, cleanVal);
+                        _selectedDeliveryOrderStatus = cleanVal;
                         OnPropertyChanged(nameof(SelectedDeliveryOrderStatus));
-                        OnPropertyChanged(nameof(SelectedDeliveryOrder));
                     }
                 }
             }
@@ -1464,10 +1470,9 @@ namespace Porjai20.ViewModels
                 if (SelectedDeliveryOrder != null)
                 {
                     string statusToSave = SelectedDeliveryOrderStatus ?? SelectedDeliveryOrder.DeliveryStatus ?? "รอจัดส่ง";
-                    UpdateDeliveryStatus(SelectedDeliveryOrder, statusToSave);
-                    OnPropertyChanged(nameof(SelectedDeliveryOrder));
-                    OnPropertyChanged(nameof(SelectedDeliveryOrderStatus));
-                    _ = LoadDeliveries();
+                    string cleanStatus = statusToSave.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
+                    UpdateDeliveryStatus(SelectedDeliveryOrder, cleanStatus);
+                    System.Windows.MessageBox.Show("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
                 }
             });
             OpenManageModalCommand = new RelayCommand(_ =>
@@ -1475,10 +1480,9 @@ namespace Porjai20.ViewModels
                 if (SelectedDeliveryOrder != null)
                 {
                     string statusToSave = SelectedDeliveryOrderStatus ?? SelectedDeliveryOrder.DeliveryStatus ?? "รอจัดส่ง";
-                    UpdateDeliveryStatus(SelectedDeliveryOrder, statusToSave);
-                    OnPropertyChanged(nameof(SelectedDeliveryOrder));
-                    OnPropertyChanged(nameof(SelectedDeliveryOrderStatus));
-                    _ = LoadDeliveries();
+                    string cleanStatus = statusToSave.Replace("⌛", "").Replace("🚚", "").Replace("☑", "").Replace("✖", "").Trim();
+                    UpdateDeliveryStatus(SelectedDeliveryOrder, cleanStatus);
+                    System.Windows.MessageBox.Show("อัปเดตสถานะจัดส่งเรียบร้อยแล้ว", "สำเร็จ", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
                 }
             });
             CloseManageModalCommand = new RelayCommand(_ => IsManageModalOpen = false);
@@ -1500,12 +1504,20 @@ namespace Porjai20.ViewModels
                 OnPropertyChanged(nameof(DeliveryEndDate));
                 _ = LoadDeliveries();
             });
-            CloseDeliveryDetailCommand = new RelayCommand(_ => IsDeliveryDetailModalOpen = false);
+            CloseDeliveryDetailCommand = new RelayCommand(_ =>
+            {
+                IsDeliveryDetailModalOpen = false;
+                _ = LoadDeliveries();
+            });
             ViewDeliveryDetailsCommand = new RelayCommand(param =>
             {
                 if (param is SalesOrder order)
                 {
                     SelectedDeliveryOrder = order;
+                    string currentStatus = order.DeliveryStatus;
+                    if (currentStatus == "ยกเลิกรายการ") currentStatus = "ยกเลิก";
+                    if (currentStatus == "รอดำเนินการ") currentStatus = "รอจัดส่ง";
+                    SelectedDeliveryOrderStatus = currentStatus ?? "รอจัดส่ง";
                     IsDeliveryDetailModalOpen = true;
                 }
             });
@@ -3797,7 +3809,7 @@ namespace Porjai20.ViewModels
 
         private async Task LoadDeliveries()
         {
-            Deliveries.Clear();
+            int currentSelectedId = SelectedDeliveryOrder?.Id ?? 0;
             var deliveries = await Task.Run(() => _databaseService.GetDeliveries(DeliverySearchKeyword));
 
             if (!string.IsNullOrEmpty(SelectedDeliveryStatusFilter) && SelectedDeliveryStatusFilter != "ทั้งหมด")
@@ -3812,9 +3824,19 @@ namespace Porjai20.ViewModels
                 deliveries = deliveries.Where(d => d.Timestamp >= start && d.Timestamp <= end);
             }
 
+            Deliveries.Clear();
             foreach (var delivery in deliveries)
             {
                 Deliveries.Add(delivery);
+            }
+
+            if (currentSelectedId > 0)
+            {
+                var match = Deliveries.FirstOrDefault(d => d.Id == currentSelectedId);
+                if (match != null)
+                {
+                    SelectedDeliveryOrder = match;
+                }
             }
 
             OnPropertyChanged(nameof(PendingDeliveriesCount));
@@ -3863,17 +3885,18 @@ namespace Porjai20.ViewModels
                 order.DeliveryStatus = cleanStatus;
 
                 var existing = Deliveries.FirstOrDefault(d => d.Id == order.Id);
-                if (existing != null && existing != order)
+                if (existing != null)
                 {
                     existing.DeliveryStatus = cleanStatus;
                 }
+
+                _selectedDeliveryOrderStatus = cleanStatus;
 
                 OnPropertyChanged(nameof(PendingDeliveriesCount));
                 OnPropertyChanged(nameof(InDeliveryCount));
                 OnPropertyChanged(nameof(DeliveredTodayCount));
                 OnPropertyChanged(nameof(SelectedDeliveryOrderStatus));
                 OnPropertyChanged(nameof(SelectedDeliveryOrder));
-                _ = LoadDeliveries();
             }
         }
 
@@ -3888,10 +3911,23 @@ namespace Porjai20.ViewModels
 
         private void PrintDeliverySlip(SalesOrder order)
         {
-            if (order == null) return;
-            
+            var targetOrder = order ?? SelectedDeliveryOrder;
+            if (targetOrder == null)
+            {
+                System.Windows.MessageBox.Show("กรุณาเลือกรายการคำสั่งซื้อที่ต้องการพิมพ์", "แจ้งเตือน", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                return;
+            }
+
+            var items = (SelectedOrderItems != null && SelectedOrderItems.Count > 0 && SelectedDeliveryOrder?.Id == targetOrder.Id)
+                ? SelectedOrderItems.ToList()
+                : null;
+
             // Open the print window and pass the selected delivery order
-            var printWindow = new DeliverySlipWindow(order);
+            var printWindow = new DeliverySlipWindow(targetOrder, items);
+            if (System.Windows.Application.Current?.MainWindow != null)
+            {
+                printWindow.Owner = System.Windows.Application.Current.MainWindow;
+            }
             printWindow.ShowDialog();
         }
 
