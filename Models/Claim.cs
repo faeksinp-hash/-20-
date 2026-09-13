@@ -88,7 +88,12 @@ namespace Porjai20.Models
         public string StockInRefNo { get; set; } = string.Empty;
         public DateTime? StockInDate { get; set; }
         public string ProductName { get; set; } = string.Empty;
-        public string ProductCode { get; set; } = string.Empty;
+        private string _productCode = string.Empty;
+        public string ProductCode
+        {
+            get => string.IsNullOrWhiteSpace(_productCode) ? (Pro_ID > 0 ? $"P-{Pro_ID:D4}" : string.Empty) : _productCode;
+            set => _productCode = value;
+        }
         public int Quantity { get; set; } = 1;
         public string Note { get; set; } = string.Empty;
         public DateTime? UpdatedDate { get; set; }
@@ -104,7 +109,12 @@ namespace Porjai20.Models
         public int Sales_ID { get; set; }
         public int Pro_ID { get; set; }
         public DateTime SaleDate { get; set; }
-        public string ProductCode { get; set; } = string.Empty;
+        private string _productCode = string.Empty;
+        public string ProductCode
+        {
+            get => string.IsNullOrWhiteSpace(_productCode) ? (Pro_ID > 0 ? $"P-{Pro_ID:D4}" : string.Empty) : _productCode;
+            set => _productCode = value;
+        }
         public int Quantity { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
@@ -115,7 +125,12 @@ namespace Porjai20.Models
     {
         public int Pro_ID { get; set; }
         public DateTime StockInDate { get; set; }
-        public string ProductCode { get; set; } = string.Empty;
+        private string _productCode = string.Empty;
+        public string ProductCode
+        {
+            get => string.IsNullOrWhiteSpace(_productCode) ? (Pro_ID > 0 ? $"P-{Pro_ID:D4}" : string.Empty) : _productCode;
+            set => _productCode = value;
+        }
         public int Quantity { get; set; }
         public string ProductName { get; set; } = string.Empty;
     }
@@ -136,7 +151,12 @@ namespace Porjai20.Models
         }
 
         public int Pro_ID { get; set; }
-        public string ProductCode { get; set; } = string.Empty;
+        private string _productCode = string.Empty;
+        public string ProductCode
+        {
+            get => string.IsNullOrWhiteSpace(_productCode) ? (Pro_ID > 0 ? $"P-{Pro_ID:D4}" : string.Empty) : _productCode;
+            set { if (_productCode != value) { _productCode = value; OnPropertyChanged(); } }
+        }
         public string ProductName { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
         public int ReceiptQty { get; set; }
@@ -168,7 +188,12 @@ namespace Porjai20.Models
         }
 
         public int Pro_ID { get; set; }
-        public string ProductCode { get; set; } = string.Empty;
+        private string _productCode = string.Empty;
+        public string ProductCode
+        {
+            get => string.IsNullOrWhiteSpace(_productCode) ? (Pro_ID > 0 ? $"P-{Pro_ID:D4}" : string.Empty) : _productCode;
+            set { if (_productCode != value) { _productCode = value; OnPropertyChanged(); } }
+        }
         public string ProductName { get; set; } = string.Empty;
         public int ReceiptQty { get; set; }
 

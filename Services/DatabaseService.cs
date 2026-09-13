@@ -576,7 +576,7 @@ namespace Porjai20.Services
                         so.Sales_ID AS Sales_ID,
                         soi.Pro_ID AS Pro_ID,
                         so.Sales_Date AS SaleDate,
-                        p.Pro_Barcode AS ProductCode,
+                        COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', p.Pro_ID)) AS ProductCode,
                         soi.Sales_Qty AS Quantity,
                         p.Pro_Name AS ProductName,
                         c.Cus_Name AS CustomerName,
@@ -600,7 +600,7 @@ namespace Porjai20.Services
                 string sql = @"
                     SELECT 
                         soi.Pro_ID AS Pro_ID,
-                        p.Pro_Barcode AS ProductCode,
+                        COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', p.Pro_ID)) AS ProductCode,
                         p.Pro_Name AS ProductName,
                         soi.Pro_Price AS UnitPrice,
                         soi.Sales_Qty AS ReceiptQty,
@@ -627,7 +627,7 @@ namespace Porjai20.Services
                 string sql = @"
                     SELECT 
                         d.Pro_ID AS Pro_ID,
-                        p.Pro_Barcode AS ProductCode,
+                        COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', p.Pro_ID)) AS ProductCode,
                         p.Pro_Name AS ProductName,
                         0 AS UnitPrice,
                         (CASE WHEN d.StockIn_Qty < 0 THEN -d.StockIn_Qty ELSE d.StockIn_Qty END) AS ReceiptQty,
@@ -686,7 +686,7 @@ namespace Porjai20.Services
                     SELECT 
                         d.Pro_ID AS Pro_ID,
                         h.StockIn_Date AS StockInDate,
-                        p.Pro_Barcode AS ProductCode,
+                        COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', p.Pro_ID)) AS ProductCode,
                         d.StockIn_Qty AS Quantity,
                         p.Pro_Name AS ProductName
                     FROM tblStockInDetail d

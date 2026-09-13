@@ -1158,48 +1158,50 @@
                     </Grid.RowDefinitions>
 
                     <!-- ══════════════════════════════════════════════════════════ -->
-                    <!-- 1. ส่วนหัวหน้าต่าง (Header): สีฟ้าสดใส #0284C7             -->
+                    <!-- 1. ส่วนหัวหน้าต่าง (Header): สไตล์คลีนสีขาว (Clean White)   -->
                     <!-- ══════════════════════════════════════════════════════════ -->
-                    <Border Grid.Row="0" Background="#0284C7" Padding="20,16">
+                    <Border Grid.Row="0" Background="#FFFFFF" Padding="24,20,24,16" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" CornerRadius="16">
                         <DockPanel LastChildFill="False">
-                            <!-- ปุ่มปิด (X) มุมขวาบน -->
+                            <!-- ปุ่มปิด (X) มุมขวาบน สไตล์กลมกลืนกับพื้นหลังขาว -->
                             <Button DockPanel.Dock="Right"
                                     Command="{Binding CloseModalCommand}"
-                                    Width="32" Height="32"
-                                    Background="#1AFFFFFF"
-                                    Foreground="#FFFFFF"
+                                    Width="36" Height="36"
+                                    Background="#F1F5F9"
+                                    Foreground="#64748B"
                                     BorderThickness="0"
                                     Cursor="Hand"
                                     VerticalAlignment="Center">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="16">
-                                            <TextBlock Text="✕" Foreground="{TemplateBinding Foreground}" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="18">
+                                            <TextBlock x:Name="Txt" Text="✕" Foreground="{TemplateBinding Foreground}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Bd" Property="Background" Value="#33FFFFFF"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="Txt" Property="Foreground" Value="#DC2626"/>
                                             </Trigger>
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="Bd" Property="Background" Value="#4DFFFFFF"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="#FECACA"/>
+                                                <Setter TargetName="Txt" Property="Foreground" Value="#B91C1C"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
 
-                            <!-- ไอคอนและหัวข้อ + คำบรรยายย่อย -->
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border Width="40" Height="40" CornerRadius="10" Background="#26FFFFFF" Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <TextBlock Text="🛡️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <!-- ไอคอนและหัวข้อ + คำบรรยายย่อย (ระดับเดียวกันบนพื้นขาว) -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
+                                <Border Width="42" Height="42" CornerRadius="10" Background="#E0F2FE" Margin="0,0,14,0" VerticalAlignment="Center">
+                                    <TextBlock Text="🛡️" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="จัดการข้อมูลการเคลมสินค้า"
-                                               FontSize="18" FontWeight="Bold"
-                                               Foreground="#FFFFFF"/>
+                                               FontSize="20" FontWeight="Bold"
+                                               Foreground="#0F172A"/>
                                     <TextBlock Text="ระบบบันทึกและตรวจสอบสถานะการเคลม / เปลี่ยนคืนสินค้า (POS)"
-                                               FontSize="12" Foreground="#E0F2FE"
-                                               Margin="0,2,0,0"/>
+                                               FontSize="12.5" Foreground="#64748B"
+                                               Margin="0,3,0,0"/>
                                 </StackPanel>
                             </StackPanel>
                         </DockPanel>
