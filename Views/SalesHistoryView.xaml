@@ -722,7 +722,7 @@
                             BorderThickness="1.5"
                             CornerRadius="8">
                         <ComboBox ItemsSource="{Binding PaymentMethodOptions}"
-                                  SelectedItem="{Binding SelectedPaymentMethod}"
+                                  SelectedItem="{Binding SelectedPaymentMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Style="{StaticResource DkComboBoxStyle}"
                                   BorderThickness="0"
                                   Background="Transparent"/>
@@ -890,7 +890,35 @@
                                                 <Setter TargetName="PayBadge" Property="Background" Value="#F3E8FF"/>
                                                 <Setter TargetName="PayText"  Property="Foreground" Value="#6B21A8"/>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="สแกน QR / โอนเงิน">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#F3E8FF"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#6B21A8"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="สแกน QR Code">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#F3E8FF"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#6B21A8"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="Transfer">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#F3E8FF"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#6B21A8"/>
+                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding PaymentMethod}" Value="Credit Card">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#0369A1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="บัตรเครดิต">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#0369A1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="บัตรเครดิต / เดบิต">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#0369A1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="บัตรเครดิต/เดบิต">
+                                                <Setter TargetName="PayBadge" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="PayText"  Property="Foreground" Value="#0369A1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PaymentMethod}" Value="Card">
                                                 <Setter TargetName="PayBadge" Property="Background" Value="#E0F2FE"/>
                                                 <Setter TargetName="PayText"  Property="Foreground" Value="#0369A1"/>
                                             </DataTrigger>

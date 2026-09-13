@@ -82,14 +82,26 @@ namespace Porjai20.ViewModels
         public DateTime StartDate
         {
             get => _startDate;
-            set => SetProperty(ref _startDate, value);
+            set
+            {
+                if (SetProperty(ref _startDate, value))
+                {
+                    ExecuteSearch();
+                }
+            }
         }
 
         private DateTime _endDate = DateTime.Today;
         public DateTime EndDate
         {
             get => _endDate;
-            set => SetProperty(ref _endDate, value);
+            set
+            {
+                if (SetProperty(ref _endDate, value))
+                {
+                    ExecuteSearch();
+                }
+            }
         }
 
         private string _searchKeyword = string.Empty;
@@ -103,7 +115,13 @@ namespace Porjai20.ViewModels
         public string SelectedPaymentMethod
         {
             get => _selectedPaymentMethod;
-            set => SetProperty(ref _selectedPaymentMethod, value);
+            set
+            {
+                if (SetProperty(ref _selectedPaymentMethod, value))
+                {
+                    ExecuteSearch();
+                }
+            }
         }
 
         // ── Selection & State ────────────────────────────────────────────
@@ -363,8 +381,33 @@ namespace Porjai20.ViewModels
                 if (!string.IsNullOrWhiteSpace(SelectedPaymentMethod) &&
                     SelectedPaymentMethod != "ทั้งหมด")
                 {
-                    sql += " AND (s.Sales_PaymentType = @PayMethod OR (@PayMethod = 'เงินสด' AND (s.Sales_PaymentType IS NULL OR s.Sales_PaymentType = '')))";
-                    parameters.Add("PayMethod", SelectedPaymentMethod);
+                    if (SelectedPaymentMethod == "เงินสด")
+                    {
+                        sql += @" AND (s.Sales_PaymentType IS NULL 
+                                    OR TRIM(s.Sales_PaymentType) = '' 
+                                    OR s.Sales_PaymentType LIKE '%เงินสด%' 
+                                    OR s.Sales_PaymentType LIKE '%Cash%')";
+                    }
+                    else if (SelectedPaymentMethod == "โอนเงิน")
+                    {
+                        sql += @" AND (s.Sales_PaymentType LIKE '%โอน%' 
+                                    OR s.Sales_PaymentType LIKE '%QR%' 
+                                    OR s.Sales_PaymentType LIKE '%Transfer%' 
+                                    OR s.Sales_PaymentType LIKE '%สแกน%' 
+                                    OR s.Sales_PaymentType LIKE '%PromptPay%')";
+                    }
+                    else if (SelectedPaymentMethod == "บัตรเครดิต")
+                    {
+                        sql += @" AND (s.Sales_PaymentType LIKE '%บัตร%' 
+                                    OR s.Sales_PaymentType LIKE '%Credit%' 
+                                    OR s.Sales_PaymentType LIKE '%Card%' 
+                                    OR s.Sales_PaymentType LIKE '%เดบิต%')";
+                    }
+                    else
+                    {
+                        sql += " AND s.Sales_PaymentType = @PayMethod";
+                        parameters.Add("PayMethod", SelectedPaymentMethod);
+                    }
                 }
 
                 sql += " GROUP BY s.Sales_ID ORDER BY s.Sales_Date DESC";
@@ -382,6 +425,31 @@ namespace Porjai20.ViewModels
                         {
                             order.CustomerName = "ลูกค้าทั่วไป";
                         }
+
+                        // Normalize payment method for consistent badge display and receipt dialog
+                        var rawPay = order.PaymentMethod ?? string.Empty;
+                        if (string.IsNullOrWhiteSpace(rawPay) || 
+                            rawPay.Contains("เงินสด", StringComparison.OrdinalIgnoreCase) || 
+                            rawPay.Contains("Cash", StringComparison.OrdinalIgnoreCase))
+                        {
+                            order.PaymentMethod = "เงินสด";
+                        }
+                        else if (rawPay.Contains("โอน", StringComparison.OrdinalIgnoreCase) || 
+                                 rawPay.Contains("QR", StringComparison.OrdinalIgnoreCase) || 
+                                 rawPay.Contains("Transfer", StringComparison.OrdinalIgnoreCase) || 
+                                 rawPay.Contains("สแกน", StringComparison.OrdinalIgnoreCase) ||
+                                 rawPay.Contains("PromptPay", StringComparison.OrdinalIgnoreCase))
+                        {
+                            order.PaymentMethod = "โอนเงิน";
+                        }
+                        else if (rawPay.Contains("บัตร", StringComparison.OrdinalIgnoreCase) || 
+                                 rawPay.Contains("Credit", StringComparison.OrdinalIgnoreCase) || 
+                                 rawPay.Contains("Card", StringComparison.OrdinalIgnoreCase) || 
+                                 rawPay.Contains("เดบิต", StringComparison.OrdinalIgnoreCase))
+                        {
+                            order.PaymentMethod = "บัตรเครดิต";
+                        }
+
                         return order;
                     },
                     parameters,
@@ -461,10 +529,14 @@ namespace Porjai20.ViewModels
         // ── Command Handlers ─────────────────────────────────────────────
         private void ExecuteClearFilter()
         {
-            SearchKeyword         = string.Empty;
-            SelectedPaymentMethod = "ทั้งหมด";
-            StartDate             = DateTime.Today;
-            EndDate               = DateTime.Today;
+            _searchKeyword         = string.Empty;
+            _selectedPaymentMethod = "ทั้งหมด";
+            _startDate             = DateTime.Today;
+            _endDate               = DateTime.Today;
+            OnPropertyChanged(nameof(SearchKeyword));
+            OnPropertyChanged(nameof(SelectedPaymentMethod));
+            OnPropertyChanged(nameof(StartDate));
+            OnPropertyChanged(nameof(EndDate));
             ExecuteSearch();
         }
 
@@ -577,8 +649,10 @@ namespace Porjai20.ViewModels
 
         private void QuickFilter(DateTime start, DateTime end)
         {
-            StartDate = start;
-            EndDate   = end;
+            _startDate = start;
+            _endDate   = end;
+            OnPropertyChanged(nameof(StartDate));
+            OnPropertyChanged(nameof(EndDate));
             ExecuteSearch();
         }
     }
