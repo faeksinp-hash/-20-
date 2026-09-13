@@ -133,6 +133,7 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(CanEditStockManage));
             OnPropertyChanged(nameof(IsStockInReadOnly));
             OnPropertyChanged(nameof(CanEditStockIn));
+            OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
             OnPropertyChanged(nameof(IsClaimReadOnly));
             OnPropertyChanged(nameof(CanEditClaim));
             OnPropertyChanged(nameof(IsCustomerReadOnly));
@@ -1472,7 +1473,7 @@ namespace Porjai20.ViewModels
             // Goods Receipt Commands
             OpenGoodsReceiptModalCommand = new RelayCommand(param => OpenGoodsReceiptModal(param as PurchaseOrder));
             CloseGoodsReceiptModalCommand = new RelayCommand(_ => { IsGoodsReceiptModalOpen = false; });
-            ConfirmGoodsReceiptCommand = new RelayCommand(_ => ConfirmGoodsReceipt(), _ => !IsReceiptViewOnly && ReceiptItems.Count > 0 && ReceiptItems.Any(i => i.ReceivedQty > 0));
+            ConfirmGoodsReceiptCommand = new RelayCommand(_ => ConfirmGoodsReceipt(), _ => CanConfirmGoodsReceipt);
             SearchPendingPOCommand = new RelayCommand(_ => _ = LoadPendingPurchaseOrders());
             ClearStockSearchCommand = new RelayCommand(_ => 
             { 
@@ -2838,6 +2839,7 @@ namespace Porjai20.ViewModels
                 if (SetProperty(ref _isReceiptViewOnly, value))
                 {
                     OnPropertyChanged(nameof(CanEditReceiptModal));
+                    OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
@@ -2845,13 +2847,28 @@ namespace Porjai20.ViewModels
 
         public bool CanEditReceiptModal => !IsReceiptViewOnly && CanEditStockIn;
 
+        public bool CanConfirmGoodsReceipt =>
+            !IsReceiptViewOnly &&
+            CanEditStockIn &&
+            !string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo) &&
+            ReceiptItems != null &&
+            ReceiptItems.Count > 0 &&
+            ReceiptItems.Any(i => i.ReceivedQty > 0);
+
         public string StockInSummaryText => $"แสดงทั้งหมด {PendingPurchaseOrders.Count} รายการ (รอดำเนินการ {PendingPurchaseOrders.Count(p => p.IsPending)} รายการ | ตรวจรับแล้ว {PendingPurchaseOrders.Count(p => p.IsReceived)} รายการ)";
 
         private string _receiptDeliveryNoteNo = string.Empty;
         public string ReceiptDeliveryNoteNo
         {
             get => _receiptDeliveryNoteNo;
-            set => SetProperty(ref _receiptDeliveryNoteNo, value);
+            set
+            {
+                if (SetProperty(ref _receiptDeliveryNoteNo, value))
+                {
+                    OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         public ObservableCollection<GoodsReceiptItem> ReceiptItems { get; set; } = new ObservableCollection<GoodsReceiptItem>();
@@ -6506,12 +6523,16 @@ namespace Porjai20.ViewModels
             }
 
             CalculateReceiptTotal();
+            OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
+            CommandManager.InvalidateRequerySuggested();
             IsGoodsReceiptModalOpen = true;
         }
 
         private void CalculateReceiptTotal()
         {
             ReceiptTotalAmount = ReceiptItems.Sum(i => i.ReceivedQty * i.CostPrice);
+            OnPropertyChanged(nameof(CanConfirmGoodsReceipt));
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private void ConfirmGoodsReceipt()
@@ -6534,6 +6555,13 @@ namespace Porjai20.ViewModels
                 return;
             }
 
+            // Guard clause: Validate Invoice / Delivery Note Number
+            if (string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo))
+            {
+                ShowAlert("กรุณากรอกเลขที่ใบส่งของ / ใบกำกับภาษี ก่อนยืนยันการรับสินค้าเข้าคลัง", "แจ้งเตือน", "⚠️");
+                return;
+            }
+
             if (ReceiptItems.Count == 0 || !ReceiptItems.Any(i => i.ReceivedQty > 0))
             {
                 ShowAlert("กรุณาระบุจำนวนรับจริงอย่างน้อย 1 รายการ", "แจ้งเตือน", "⚠️");
@@ -6544,7 +6572,7 @@ namespace Porjai20.ViewModels
             {
                 _databaseService.ProcessGoodsReceipt(
                     SelectedReceiptPO.Id,
-                    ReceiptDeliveryNoteNo,
+                    ReceiptDeliveryNoteNo.Trim(),
                     ReceiptItems.ToList(),
                     CurrentUser?.Id ?? 1
                 );
