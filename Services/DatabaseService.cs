@@ -545,12 +545,22 @@ namespace Porjai20.Services
                     SELECT 
                         c.Claim_ID AS Claim_ID, c.Claim_ID AS Id,
                         c.Sales_ID AS Sales_ID, c.Pro_ID AS Pro_ID,
+                        COALESCE(s.RefNo, printf('SALE-%06d', c.Sales_ID)) AS SalesOrderRefNo,
+                        COALESCE(s.RefNo, printf('SALE-%06d', c.Sales_ID)) AS SalesID,
+                        COALESCE(s.RefNo, printf('SALE-%06d', c.Sales_ID)) AS InvoiceNo,
+                        COALESCE(cust.Cus_Name, 'ลูกค้าทั่วไป') AS CustomerName,
+                        COALESCE(cust.Cus_Tel, '-') AS CustomerPhone,
+                        COALESCE(cust.Cus_Tel, '-') AS PhoneNumber,
+                        s.Sales_Date AS SaleDate,
                         c.Claim_Date AS Claim_Date, c.Claim_Reason AS Claim_Reason,
                         c.Claim_Status AS Claim_Status,
                         COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') AS Claim_Action,
                         COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') AS ClaimAction,
-                        p.Pro_Name AS ProductName, p.Pro_Barcode AS ProductCode
+                        p.Pro_Name AS ProductName,
+                        COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', p.Pro_ID)) AS ProductCode
                     FROM tblClaim c
+                    LEFT JOIN tblSales_H s ON c.Sales_ID = s.Sales_ID
+                    LEFT JOIN tblCustomer cust ON s.Cus_ID = cust.Cus_ID
                     LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID
                     ORDER BY c.Claim_ID DESC";
                 return connection.Query<Models.Claim>(sql);
@@ -828,6 +838,23 @@ namespace Porjai20.Services
             {
                 string sql = "UPDATE tblClaim SET Claim_Status = @Status WHERE Claim_ID = @Id";
                 connection.Execute(sql, new { Status = status, Id = claimId });
+            }
+        }
+
+        public void DeductProductStockForClaim(int productId, int qty = 1)
+        {
+            if (productId <= 0 || qty <= 0) return;
+            try
+            {
+                using (var connection = GetConnection())
+                {
+                    string sql = "UPDATE tblProduct SET Pro_Qty = MAX(0, Pro_Qty - @Qty) WHERE Pro_ID = @Id";
+                    connection.Execute(sql, new { Qty = qty, Id = productId });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"DeductProductStockForClaim failed: {ex.Message}");
             }
         }
 

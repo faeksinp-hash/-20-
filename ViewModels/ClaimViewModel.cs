@@ -91,8 +91,8 @@ namespace Porjai20.ViewModels
         }
 
         public int PendingClaimsCount => Claims.Count(c => c.Status == "รอดำเนินการ" || c.Status == "Pending");
-        public int ApprovedClaimsCount => Claims.Count(c => c.Status == "เคลมสำเร็จ" || c.Status == "ได้รับของใหม่" || c.Status == "อนุมัติเคลม" || c.Status == "คืนเงิน" || c.Status == "Approved");
-        public int CompletedClaimsCount => Claims.Count(c => c.Status == "ยกเลิก" || c.Status == "จัดส่งสำเร็จ" || c.Status == "เสร็จสิ้น" || c.Status == "Completed");
+        public int ApprovedClaimsCount => Claims.Count(c => c.Status == "เคลมสำเร็จ" || c.Status == "อนุมัติแล้ว" || c.Status == "เปลี่ยนสินค้าใหม่" || c.Status == "ได้รับของใหม่" || c.Status == "อนุมัติเคลม" || c.Status == "คืนเงิน" || c.Status == "Approved");
+        public int CompletedClaimsCount => Claims.Count(c => c.Status == "ยกเลิก" || c.Status == "ปฏิเสธการเคลม" || c.Status == "จัดส่งสำเร็จ" || c.Status == "เสร็จสิ้น" || c.Status == "Completed");
 
         private async Task LoadClaims()
         {
@@ -122,9 +122,9 @@ namespace Porjai20.ViewModels
             CloseModalCommand = new RelayCommand(_ => CloseModal());
             LookupReceiptCommand = new RelayCommand(_ => LookupReceipt());
             CloseClaimDetailModalCommand = new RelayCommand(_ => CloseClaimDetail());
-            ApproveClaimActionCommand = new RelayCommand(_ => ExecuteChangeClaimStatus("ได้รับของใหม่"), _ => IsClaimSelected);
-            RejectClaimActionCommand = new RelayCommand(_ => ExecuteChangeClaimStatus("ยกเลิก"), _ => IsClaimSelected);
-            ReplaceProductClaimActionCommand = new RelayCommand(_ => ExecuteChangeClaimStatus("คืนเงิน"), _ => IsClaimSelected);
+            ApproveClaimActionCommand = new RelayCommand(_ => ExecuteApproveClaim(), _ => IsClaimSelected);
+            ReplaceProductClaimActionCommand = new RelayCommand(_ => ExecuteReplaceProductClaim(), _ => IsClaimSelected);
+            RejectClaimActionCommand = new RelayCommand(_ => ExecuteRejectClaim(), _ => IsClaimSelected);
 
             ToggleReceiptProductSelectorCommand = new RelayCommand(_ =>
             {
@@ -205,6 +205,77 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(IsClaimSelected));
                 }
             };
+        }
+
+        private void ExecuteApproveClaim()
+        {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            if (SelectedClaim == null || SelectedClaim.Id == 0) return;
+
+            SelectedClaim.Status = "อนุมัติแล้ว";
+            ClaimStatus = "อนุมัติแล้ว";
+            _databaseService.UpdateClaim(SelectedClaim);
+
+            // Close modal immediately and show modern success alert
+            IsClaimDetailModalOpen = false;
+            SelectedClaim = null;
+            ShowAlert("บันทึกการอนุมัติเคลมเรียบร้อยแล้ว", "สำเร็จ", "✅");
+            _ = LoadClaims();
+        }
+
+        private void ExecuteReplaceProductClaim()
+        {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            if (SelectedClaim == null || SelectedClaim.Id == 0) return;
+
+            SelectedClaim.Status = "เปลี่ยนสินค้าใหม่";
+            SelectedClaim.ClaimAction = "เปลี่ยนสินค้าใหม่";
+            ClaimStatus = "เปลี่ยนสินค้าใหม่";
+            ClaimAction = "เปลี่ยนสินค้าใหม่";
+            _databaseService.UpdateClaim(SelectedClaim);
+
+            // Deduct stock for replacement product if valid product id
+            if (SelectedClaim.Pro_ID > 0)
+            {
+                _databaseService.DeductProductStockForClaim(SelectedClaim.Pro_ID, SelectedClaim.Quantity > 0 ? SelectedClaim.Quantity : 1);
+            }
+
+            // Close modal immediately and show modern success alert
+            IsClaimDetailModalOpen = false;
+            SelectedClaim = null;
+            ShowAlert("บันทึกการเปลี่ยนสินค้าเรียบร้อยแล้ว", "สำเร็จ", "✅");
+            _ = LoadClaims();
+        }
+
+        private void ExecuteRejectClaim()
+        {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            if (SelectedClaim == null || SelectedClaim.Id == 0) return;
+
+            SelectedClaim.Status = "ปฏิเสธการเคลม";
+            ClaimStatus = "ปฏิเสธการเคลม";
+            _databaseService.UpdateClaim(SelectedClaim);
+
+            // Close modal immediately and show modern success alert
+            IsClaimDetailModalOpen = false;
+            SelectedClaim = null;
+            ShowAlert("ปฏิเสธรายการเคลมเรียบร้อยแล้ว", "สำเร็จ", "✅");
+            _ = LoadClaims();
         }
 
         private void ExecuteChangeClaimStatus(string status, string action = null)

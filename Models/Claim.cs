@@ -82,9 +82,39 @@ namespace Porjai20.Models
             }
         }
         public string SalesOrderRefNo { get; set; } = string.Empty;
+        public string SalesID
+        {
+            get => !string.IsNullOrWhiteSpace(SalesOrderRefNo) ? SalesOrderRefNo : (Sales_ID > 0 ? $"SALE-{Sales_ID:D6}" : "-");
+            set => SalesOrderRefNo = value;
+        }
+        public string InvoiceNo
+        {
+            get => SalesID;
+            set => SalesID = value;
+        }
+
         public DateTime? SaleDate { get; set; }
-        public string CustomerName { get; set; } = string.Empty;
-        public string CustomerPhone { get; set; } = string.Empty;
+
+        private string _customerName = string.Empty;
+        public string CustomerName
+        {
+            get => string.IsNullOrWhiteSpace(_customerName) ? "ลูกค้าทั่วไป" : _customerName;
+            set => _customerName = value;
+        }
+
+        private string _customerPhone = string.Empty;
+        public string CustomerPhone
+        {
+            get => string.IsNullOrWhiteSpace(_customerPhone) ? "-" : _customerPhone;
+            set => _customerPhone = value;
+        }
+
+        public string PhoneNumber
+        {
+            get => CustomerPhone;
+            set => CustomerPhone = value;
+        }
+
         public string StockInRefNo { get; set; } = string.Empty;
         public DateTime? StockInDate { get; set; }
         public string ProductName { get; set; } = string.Empty;

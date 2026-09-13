@@ -613,7 +613,7 @@ namespace Porjai20.ViewModels
 
         private async void ExecutePrint()
         {
-            await ExecutePrintAsync();
+            await ExecutePrintAsync(Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow);
         }
 
         private void ExecuteVoid()
