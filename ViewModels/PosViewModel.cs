@@ -1359,6 +1359,7 @@ namespace Porjai20.ViewModels
                 {
                     RefNo = string.IsNullOrWhiteSpace(LastRefNo) ? "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture) : LastRefNo,
                     Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
+                    CustomerName = !string.IsNullOrWhiteSpace(CustomerName) ? CustomerName : "ลูกค้าทั่วไป",
                     TotalAmount = FinalGrandTotal,
                     CashReceived = FinalCashReceived,
                     Change = FinalChange,
@@ -1376,6 +1377,8 @@ namespace Porjai20.ViewModels
                 }).ToList();
 
                 Porjai20.Views.ReceiptWindow receiptWindow = new Porjai20.Views.ReceiptWindow(order, items);
+                receiptWindow.Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+                                     ?? Application.Current?.MainWindow;
                 receiptWindow.ShowDialog();
             }
             catch (Exception ex)

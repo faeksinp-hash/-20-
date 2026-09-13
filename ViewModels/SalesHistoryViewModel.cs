@@ -474,11 +474,26 @@ namespace Porjai20.ViewModels
             IsDetailModalOpen = true;
         }
 
-        private void ExecutePrint()
+        private async void ExecutePrint()
         {
-            if (!IsOrderSelected) return;
-            // TODO: open ReceiptWindow with SelectedOrder
-            ShowAlert($"กำลังพิมพ์ใบเสร็จ: {SelectedOrder.RefNo}", "พิมพ์ใบเสร็จ", "🖨️");
+            if (!IsOrderSelected || SelectedOrder == null) return;
+
+            try
+            {
+                if (SelectedOrderItems == null || SelectedOrderItems.Count == 0)
+                {
+                    await LoadOrderItemsAsync(SelectedOrder.Id);
+                }
+
+                var receiptWindow = new ReceiptWindow(SelectedOrder, SelectedOrderItems);
+                receiptWindow.Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+                                     ?? Application.Current?.MainWindow;
+                receiptWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ShowAlert($"เกิดข้อผิดพลาดในการพิมพ์ใบเสร็จ:\n{ex.Message}", "ข้อผิดพลาด", "❌");
+            }
         }
 
         private void ExecuteVoid()
