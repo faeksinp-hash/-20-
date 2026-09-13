@@ -2710,11 +2710,13 @@ namespace Porjai20.ViewModels
                 {
                     OnPropertyChanged(nameof(CanReceiveSelectedPO));
                     OnPropertyChanged(nameof(SelectedPOReceiveButtonText));
+                    OnPropertyChanged(nameof(HasSelectedReceiptPO));
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
         }
 
+        public bool HasSelectedReceiptPO => SelectedReceiptPO != null;
         public bool CanReceiveSelectedPO => SelectedReceiptPO != null && SelectedReceiptPO.IsPending && !RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_in");
         public string SelectedPOReceiveButtonText => (SelectedReceiptPO != null && SelectedReceiptPO.IsReceived) ? "🔍 ดูรายละเอียด" : "📥 ตรวจรับสินค้า";
 

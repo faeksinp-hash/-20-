@@ -633,31 +633,62 @@
                         </Button.Effect>
                     </Button>
 
-                    <!-- Action Button: Open Goods Receipt Modal -->
+                    <!-- Action Button: Open Goods Receipt Modal / View Details -->
                     <Button Grid.Column="4"
                             Content="{Binding SelectedPOReceiveButtonText}"
                             Command="{Binding OpenGoodsReceiptModalCommand}"
                             CommandParameter="{Binding SelectedReceiptPO}"
-                            IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                            IsEnabled="{Binding HasSelectedReceiptPO}"
                             Foreground="White"
-                            Padding="18,0"
+                            Padding="20,0"
                             Height="40">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource RoseBtnStyle}">
-                                <Setter Property="Background" Value="#00A3E0"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SelectedReceiptPO.IsReceived}" Value="True">
-                                        <Setter Property="Background" Value="#64748B"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#0284C7"/>
+                                <Setter Property="BorderBrush" Value="#0284C7"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13.5"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Bd"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="8"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#0EA5E9"/>
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#0EA5E9"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#0369A1"/>
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#0369A1"/>
+                                                </Trigger>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter TargetName="Bd" Property="Opacity" Value="0.45"/>
+                                                    <Setter Property="Cursor" Value="Arrow"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </Button.Style>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#0284C7" BlurRadius="10" ShadowDepth="2" Direction="270" Opacity="0.3"/>
+                        </Button.Effect>
                     </Button>
                 </Grid>
             </Border>
 
             <!-- ══════════════════════════════════════════════════════════ -->
-            <!--  ROW 3 — DataGrid Table: Pending Purchase Orders (POs)     -->
+            <!--  ROW 3 — DataGrid Table: Purchase Orders                   -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <Border Grid.Row="3"
                     Background="#FFFFFF"
@@ -674,11 +705,12 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- DataGrid showing Pending Purchase Orders -->
+                    <!-- DataGrid showing Purchase Orders (Pending and Received) -->
                     <DataGrid Grid.Row="0"
                               x:Name="PendingOrdersDataGrid"
                               ItemsSource="{Binding PendingPurchaseOrders}"
                               SelectedItem="{Binding SelectedReceiptPO, Mode=TwoWay}"
+                              MouseDoubleClick="PendingOrdersDataGrid_MouseDoubleClick"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               HeadersVisibility="Column"
@@ -700,41 +732,42 @@
                             <!-- #1: PO Number (เลขที่ใบสั่งซื้อ) -->
                             <DataGridTextColumn Header="เลขที่ใบสั่งซื้อ"
                                                 Binding="{Binding PONumber}"
-                                                Width="1.3*"
+                                                Width="1.5*"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #2: Order Date (วันที่ทำรายการ) -->
                             <DataGridTextColumn Header="วันที่ทำรายการ"
                                                 Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy HH:mm}"
-                                                Width="1.2*"
+                                                Width="1.4*"
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #3: Supplier Name (ผู้จัดจำหน่าย) -->
                             <DataGridTextColumn Header="ผู้จัดจำหน่าย / ซัพพลายเออร์"
                                                 Binding="{Binding SupplierName}"
-                                                Width="2*"
+                                                Width="3*"
                                                 ElementStyle="{StaticResource ColLeftBold}"/>
 
                             <!-- #4: Expected Date (กำหนดส่งมอบ) -->
                             <DataGridTextColumn Header="กำหนดส่งมอบ"
                                                 Binding="{Binding ExpectedDate, StringFormat=dd/MM/yyyy}"
-                                                Width="1.1*"
+                                                Width="1.3*"
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #5: Total Amount (ยอดรวมสุทธิ) -->
-                            <DataGridTemplateColumn Header="ยอดรวมสุทธิ" Width="1.2*">
+                            <DataGridTemplateColumn Header="ยอดรวมสุทธิ" Width="1.4*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}"
                                                    FontSize="13" FontWeight="Bold"
                                                    Foreground="#000000"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
                             <!-- #6: Status Badge (สถานะ) -->
-                            <DataGridTemplateColumn Header="สถานะ" Width="1.1*">
+                            <DataGridTemplateColumn Header="สถานะ" Width="1.4*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border CornerRadius="6"
@@ -777,49 +810,6 @@
                                                 </TextBlock.Style>
                                             </TextBlock>
                                         </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
-                            <!-- #7: Action Column (จัดการ / ตรวจรับสินค้า) -->
-                            <DataGridTemplateColumn Header="การดำเนินการ" Width="1.3*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Command="{Binding DataContext.OpenGoodsReceiptModalCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Height="32" Padding="14,0"
-                                                FontSize="12" FontWeight="Bold"
-                                                Cursor="Hand"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Background" Value="#00A3E0"/>
-                                                    <Setter Property="Foreground" Value="White"/>
-                                                    <Setter Property="Content" Value="📥 ตรวจรับสินค้า"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
-                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter TargetName="bd" Property="Opacity" Value="0.85"/>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsReceived}" Value="True">
-                                                            <Setter Property="Background" Value="#F1F5F9"/>
-                                                            <Setter Property="Foreground" Value="#475569"/>
-                                                            <Setter Property="Content" Value="🔍 ดูรายละเอียด"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
