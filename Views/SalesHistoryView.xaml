@@ -1204,8 +1204,9 @@
 
                         <!-- Print Receipt Button -->
                         <Button Grid.Column="2"
+                                x:Name="PrintReceiptBtn"
                                 Content="🖨️  พิมพ์ใบเสร็จ"
-                                Command="{Binding PrintReceiptCommand}"
+                                Click="PrintReceiptBtn_Click"
                                 Style="{StaticResource PurpleBtnStyle}"
                                 Background="#00A3E0"
                                 Foreground="White"

@@ -28,5 +28,13 @@ namespace Porjai20.Views
                 vm.LoadSalesHistory();
             }
         }
+
+        private async void PrintReceiptBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is SalesHistoryViewModel vm && vm.SelectedOrder != null)
+            {
+                await vm.ExecutePrintAsync(Window.GetWindow(this) ?? Application.Current.MainWindow);
+            }
+        }
     }
 }

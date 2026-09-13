@@ -119,6 +119,7 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(IsOrderSelected));
                     OnPropertyChanged(nameof(CanVoidOrder));
                     OnPropertyChanged(nameof(StatusBarText));
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                     _ = LoadOrderItemsAsync(_selectedOrder?.Id ?? 0);
                 }
             }
@@ -268,7 +269,7 @@ namespace Porjai20.ViewModels
             CloseDetailModalCommand = new RelayCommand(_ => { IsDetailModalOpen = false; SelectedOrder = null; });
             CloseDetailCommand      = CloseDetailModalCommand;
             PrintOrderCommand       = new RelayCommand(_ => ExecutePrint(), _ => IsOrderSelected);
-            PrintReceiptCommand     = PrintOrderCommand;
+            PrintReceiptCommand     = new RelayCommand(_ => ExecutePrint());
             VoidOrderCommand        = new RelayCommand(_ => ExecuteVoid(), _ => CanVoidOrder);
             ExportExcelCommand      = new RelayCommand(_ => ExecuteExportExcel());
             QuickFilterTodayCommand = new RelayCommand(_ => QuickFilter(DateTime.Today, DateTime.Today));
@@ -403,7 +404,7 @@ namespace Porjai20.ViewModels
         }
 
         /// <summary>Loads line items for the given order ID into SelectedOrderItems.</summary>
-        private async Task LoadOrderItemsAsync(int orderId)
+        public async Task LoadOrderItemsAsync(int orderId)
         {
             SelectedOrderItems.Clear();
             if (orderId == 0) return;
@@ -474,9 +475,9 @@ namespace Porjai20.ViewModels
             IsDetailModalOpen = true;
         }
 
-        private async void ExecutePrint()
+        public async Task ExecutePrintAsync(Window? explicitOwner = null)
         {
-            if (!IsOrderSelected || SelectedOrder == null) return;
+            if (SelectedOrder == null) return;
 
             try
             {
@@ -485,8 +486,50 @@ namespace Porjai20.ViewModels
                     await LoadOrderItemsAsync(SelectedOrder.Id);
                 }
 
-                var receiptWindow = new ReceiptWindow(SelectedOrder, SelectedOrderItems);
-                receiptWindow.Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+                // Format payment cash/change matching POS logic
+                bool isCash = string.Equals(SelectedOrder.PaymentMethod, "เงินสด", StringComparison.OrdinalIgnoreCase)
+                           || string.Equals(SelectedOrder.PaymentMethod, "Cash", StringComparison.OrdinalIgnoreCase);
+
+                decimal effectiveCash;
+                decimal effectiveChange;
+
+                if (isCash)
+                {
+                    effectiveCash = SelectedOrder.CashReceived > 0 ? SelectedOrder.CashReceived : SelectedOrder.TotalAmount;
+                    effectiveChange = SelectedOrder.Change >= 0 ? SelectedOrder.Change : (effectiveCash - SelectedOrder.TotalAmount);
+                    if (effectiveChange < 0) effectiveChange = 0;
+                }
+                else
+                {
+                    effectiveCash = SelectedOrder.TotalAmount;
+                    effectiveChange = 0;
+                }
+
+                var order = new SalesOrder
+                {
+                    Sales_ID = SelectedOrder.Id,
+                    RefNo = !string.IsNullOrWhiteSpace(SelectedOrder.RefNo) ? SelectedOrder.RefNo : $"SALE-{SelectedOrder.Id:D6}",
+                    Sales_Date = SelectedOrder.Sales_Date,
+                    CustomerName = !string.IsNullOrWhiteSpace(SelectedOrder.CustomerDisplayName) ? SelectedOrder.CustomerDisplayName : "ลูกค้าทั่วไป",
+                    TotalAmount = SelectedOrder.TotalAmount,
+                    CashReceived = effectiveCash,
+                    Change = effectiveChange,
+                    PaymentMethod = !string.IsNullOrWhiteSpace(SelectedOrder.PaymentMethod) ? SelectedOrder.PaymentMethod : "เงินสด",
+                    Status = !string.IsNullOrWhiteSpace(SelectedOrder.Status) ? SelectedOrder.Status : "ชำระเงินแล้ว"
+                };
+
+                var items = SelectedOrderItems.Select(item => new SalesOrderItem
+                {
+                    Pro_ID = item.Pro_ID,
+                    ProductName = !string.IsNullOrWhiteSpace(item.ProductName) ? item.ProductName : $"สินค้า #{item.Pro_ID}",
+                    UnitPrice = item.UnitPrice,
+                    Quantity = item.Quantity,
+                    Total = item.Total
+                }).ToList();
+
+                var receiptWindow = new ReceiptWindow(order, items);
+                receiptWindow.Owner = explicitOwner
+                                     ?? Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
                                      ?? Application.Current?.MainWindow;
                 receiptWindow.ShowDialog();
             }
@@ -494,6 +537,11 @@ namespace Porjai20.ViewModels
             {
                 ShowAlert($"เกิดข้อผิดพลาดในการพิมพ์ใบเสร็จ:\n{ex.Message}", "ข้อผิดพลาด", "❌");
             }
+        }
+
+        private async void ExecutePrint()
+        {
+            await ExecutePrintAsync();
         }
 
         private void ExecuteVoid()
