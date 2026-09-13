@@ -635,15 +635,24 @@
 
                     <!-- Action Button: Open Goods Receipt Modal -->
                     <Button Grid.Column="4"
-                            Content="📥 ตรวจรับสินค้า"
+                            Content="{Binding SelectedPOReceiveButtonText}"
                             Command="{Binding OpenGoodsReceiptModalCommand}"
                             CommandParameter="{Binding SelectedReceiptPO}"
                             IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource RoseBtnStyle}"
-                            Background="#00A3E0"
                             Foreground="White"
                             Padding="18,0"
-                            Height="40"/>
+                            Height="40">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RoseBtnStyle}">
+                                <Setter Property="Background" Value="#00A3E0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedReceiptPO.IsReceived}" Value="True">
+                                        <Setter Property="Background" Value="#64748B"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </Grid>
             </Border>
 
@@ -724,11 +733,93 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <!-- #6: Status Text (สถานะ) -->
+                            <!-- #6: Status Badge (สถานะ) -->
                             <DataGridTemplateColumn Header="สถานะ" Width="1.1*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Status}" FontSize="13" FontWeight="Bold" Foreground="#000000" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border CornerRadius="6"
+                                                Padding="10,4"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <!-- Default: Pending (Soft Yellow/Orange) -->
+                                                    <Setter Property="Background" Value="#FEF3C7"/>
+                                                    <Setter Property="BorderBrush" Value="#FDE68A"/>
+                                                    <Setter Property="BorderThickness" Value="1"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsReceived}" Value="True">
+                                                            <Setter Property="Background" Value="#DCFCE7"/>
+                                                            <Setter Property="BorderBrush" Value="#BBF7D0"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
+                                                            <Setter Property="Background" Value="#FEE2E2"/>
+                                                            <Setter Property="BorderBrush" Value="#FECACA"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock FontSize="12.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <!-- Default: Dark Orange text for รอดำเนินการ -->
+                                                        <Setter Property="Foreground" Value="#D97706"/>
+                                                        <Setter Property="Text" Value="{Binding DisplayStatus}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReceived}" Value="True">
+                                                                <Setter Property="Foreground" Value="#15803D"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
+                                                                <Setter Property="Foreground" Value="#DC2626"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- #7: Action Column (จัดการ / ตรวจรับสินค้า) -->
+                            <DataGridTemplateColumn Header="การดำเนินการ" Width="1.3*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding DataContext.OpenGoodsReceiptModalCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Height="32" Padding="14,0"
+                                                FontSize="12" FontWeight="Bold"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Background" Value="#00A3E0"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="Content" Value="📥 ตรวจรับสินค้า"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="bd" Property="Opacity" Value="0.85"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsReceived}" Value="True">
+                                                            <Setter Property="Background" Value="#F1F5F9"/>
+                                                            <Setter Property="Foreground" Value="#475569"/>
+                                                            <Setter Property="Content" Value="🔍 ดูรายละเอียด"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -740,9 +831,10 @@
                     <DockPanel Grid.Row="1"
                                LastChildFill="False"
                                Margin="0,12,0,0">
-                        <TextBlock Text="{Binding PendingPurchaseOrders.Count, StringFormat=แสดงทั้งหมด {0} รายการใบสั่งซื้อรอดำเนินการ}"
-                                   Foreground="#718096"
-                                   FontSize="12"
+                        <TextBlock Text="{Binding StockInSummaryText}"
+                                   Foreground="#475569"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
                                    Margin="0"/>
@@ -797,28 +889,42 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <!-- PO Info Banner -->
-                    <Border Grid.Row="1" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="14,12" Margin="0,0,0,14">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" Margin="0,2,0,0"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="ผู้จัดจำหน่าย" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                <TextBlock Text="{Binding SelectedReceiptPO.SupplierName}" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,2,0,0"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="วันที่สั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                    <!-- PO Info Banner & Status Notice -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,14">
+                        <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="14,12" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="ผู้จัดจำหน่าย" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.SupplierName}" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Notice Banner if already received -->
+                        <Border Visibility="{Binding IsReceiptViewOnly, Converter={StaticResource BoolToVis}}"
+                                Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1.5" CornerRadius="10" Padding="14,8">
+                            <DockPanel LastChildFill="True">
+                                <TextBlock Text="✅" FontSize="16" DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="รายการใบสั่งซื้อนี้ได้ทำการตรวจรับสินค้าเข้าคลังเรียบร้อยแล้ว" FontWeight="Bold" FontSize="13" Foreground="#15803D"/>
+                                    <TextBlock Text="อยู่ในโหมดดูรายละเอียด (Read-Only) เพื่อป้องกันการตรวจรับซ้ำซ้อน" FontSize="11.5" Foreground="#166534"/>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </StackPanel>
 
                     <!-- Delivery Note Input Field -->
                     <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Padding="14,10" Margin="0,0,0,14">
@@ -830,7 +936,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="13" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
                             <Border Grid.Column="2" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8">
-                                <TextBox Text="{Binding ReceiptDeliveryNoteNo, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
+                                <TextBox Text="{Binding ReceiptDeliveryNoteNo, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditReceiptModal}"
                                          Style="{StaticResource LightTextBoxStyle}"
                                          Padding="10,6" Height="36" FontSize="13" VerticalContentAlignment="Center"/>
                             </Border>
@@ -864,7 +970,7 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="1.5" CornerRadius="6" Padding="4,2" HorizontalAlignment="Center" Width="90">
-                                                    <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding DataContext.CanEditStockIn, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding DataContext.CanEditReceiptModal, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                              Style="{StaticResource LightTextBoxStyle}"
                                                              FontWeight="Bold" FontSize="14" Foreground="#0B2545"
                                                              TextAlignment="Center" VerticalContentAlignment="Center"/>
@@ -907,14 +1013,25 @@
                         </StackPanel>
 
                         <Button Grid.Column="2"
-                                Content="ยกเลิก"
                                 Command="{Binding CloseGoodsReceiptModalCommand}"
-                                Style="{StaticResource CancelBtnStyle}"
-                                Height="42"/>
+                                Height="42">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource CancelBtnStyle}">
+                                    <Setter Property="Content" Value="ยกเลิก"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsReceiptViewOnly}" Value="True">
+                                            <Setter Property="Content" Value="ปิดหน้าต่าง"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
 
                         <Button Grid.Column="4"
                                 Content="📥 ยืนยันการรับสินค้าเข้าคลัง"
-                                Command="{Binding ConfirmGoodsReceiptCommand}" IsEnabled="{Binding CanEditStockIn}"
+                                Command="{Binding ConfirmGoodsReceiptCommand}" 
+                                IsEnabled="{Binding CanEditReceiptModal}"
+                                Visibility="{Binding IsReceiptViewOnly, Converter={StaticResource InverseBoolToVis}}"
                                 Style="{StaticResource RoseBtnStyle}"
                                 Background="#00A3E0"
                                 Foreground="White"

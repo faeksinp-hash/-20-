@@ -47,5 +47,9 @@ namespace Porjai20.Models
         }
         public string SupplierName { get; set; } = string.Empty;
         public DateTime ExpectedDate { get; set; } = DateTime.Now.AddDays(3);
+
+        public bool IsPending => Status == "รอดำเนินการ" || Status == "รอรับของ" || Status == "Pending";
+        public bool IsReceived => Status == "ได้รับสินค้าแล้ว" || Status == "ตรวจรับแล้ว" || Status == "รับเข้าแล้ว" || Status == "เสร็จสิ้น" || Status == "Completed";
+        public string DisplayStatus => IsReceived ? "ตรวจรับแล้ว" : (Status == "ยกเลิก" ? "ยกเลิก" : "รอดำเนินการ");
     }
 }

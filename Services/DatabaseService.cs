@@ -756,12 +756,57 @@ namespace Porjai20.Services
                         d.Detail_ID AS Detail_ID, d.Detail_ID AS Id,
                         d.StockIn_ID AS StockIn_ID, d.Pro_ID AS Pro_ID,
                         d.StockIn_Qty AS Quantity, h.StockIn_Date AS Timestamp,
-                        p.Pro_Name AS ProductName, p.Pro_Barcode AS ProductCode
+                        p.Pro_Name AS ProductName, p.Pro_Barcode AS ProductCode,
+                        COALESCE(pod.PO_Cost, p.Pro_Cost, 0) AS UnitCost
                     FROM tblStockInDetail d
                     JOIN tblStockIn_H h ON d.StockIn_ID = h.StockIn_ID
                     JOIN tblProduct p ON d.Pro_ID = p.Pro_ID
+                    LEFT JOIN tblPODetail pod ON h.PO_ID = pod.PO_ID AND d.Pro_ID = pod.Pro_ID
                     ORDER BY d.Detail_ID DESC";
                 return connection.Query<Models.StockTransaction>(sql);
+            }
+        }
+
+        public (int TotalEntries, int TotalQty, decimal TotalCost) GetStockInKPIs()
+        {
+            using (var connection = GetConnection())
+            {
+                int stockInCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblStockIn_H;");
+                int totalQty = connection.ExecuteScalar<int>("SELECT COALESCE(SUM(StockIn_Qty), 0) FROM tblStockInDetail;");
+
+                string sqlCost = @"
+                    SELECT COALESCE(SUM(d.StockIn_Qty * COALESCE(pod.PO_Cost, p.Pro_Cost, 0)), 0)
+                    FROM tblStockInDetail d
+                    JOIN tblStockIn_H h ON d.StockIn_ID = h.StockIn_ID
+                    LEFT JOIN tblPODetail pod ON h.PO_ID = pod.PO_ID AND d.Pro_ID = pod.Pro_ID
+                    LEFT JOIN tblProduct p ON d.Pro_ID = p.Pro_ID;";
+                decimal totalCost = connection.ExecuteScalar<decimal>(sqlCost);
+
+                if (stockInCount == 0)
+                {
+                    string sqlCompleted = @"
+                        SELECT 
+                            COUNT(1) AS TotalEntries,
+                            COALESCE(SUM(PO_Total), 0) AS TotalCost
+                        FROM tblPO_H 
+                        WHERE PO_Status = 'ได้รับสินค้าแล้ว' OR PO_Status = 'ตรวจรับแล้ว' OR PO_Status = 'รับเข้าแล้ว';";
+                    var completed = connection.QueryFirstOrDefault(sqlCompleted);
+
+                    if (completed != null && completed.TotalEntries != null && (long)completed.TotalEntries > 0)
+                    {
+                        stockInCount = (int)(long)completed.TotalEntries;
+                        totalCost = (decimal)(completed.TotalCost ?? 0m);
+
+                        string sqlQty = @"
+                            SELECT COALESCE(SUM(d.PO_Qty), 0)
+                            FROM tblPODetail d
+                            JOIN tblPO_H h ON d.PO_ID = h.PO_ID
+                            WHERE h.PO_Status = 'ได้รับสินค้าแล้ว' OR h.PO_Status = 'ตรวจรับแล้ว' OR h.PO_Status = 'รับเข้าแล้ว';";
+                        totalQty = connection.ExecuteScalar<int>(sqlQty);
+                    }
+                }
+
+                return (stockInCount, totalQty, totalCost);
             }
         }
 
@@ -1138,13 +1183,19 @@ namespace Porjai20.Services
                         p.Partner_Name AS SupplierName
                     FROM tblPO_H po
                     LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
-                    WHERE (po.PO_Status = 'รอดำเนินการ' OR po.PO_Status = 'Pending' OR po.PO_Status = 'รอรับของ')";
+                    WHERE 1=1";
                 if (!string.IsNullOrWhiteSpace(searchKeyword))
                 {
-                    sql += " AND (po.PO_ID LIKE @Search OR p.Partner_Name LIKE @Search)";
+                    sql += @" AND (
+                        CAST(po.PO_ID AS TEXT) LIKE @Search 
+                        OR ('PO-' || printf('%05d', po.PO_ID)) LIKE @Search
+                        OR ('PO' || printf('%05d', po.PO_ID)) LIKE @Search
+                        OR p.Partner_Name LIKE @Search
+                        OR po.PO_Status LIKE @Search
+                    )";
                 }
-                sql += " ORDER BY po.PO_ID DESC";
-                return connection.Query<Models.PurchaseOrder>(sql, new { Search = "%" + searchKeyword + "%" });
+                sql += " ORDER BY po.PO_Date DESC, po.PO_ID DESC";
+                return connection.Query<Models.PurchaseOrder>(sql, new { Search = "%" + searchKeyword.Trim() + "%" });
             }
         }
 

@@ -1472,7 +1472,8 @@ namespace Porjai20.ViewModels
             // Goods Receipt Commands
             OpenGoodsReceiptModalCommand = new RelayCommand(param => OpenGoodsReceiptModal(param as PurchaseOrder));
             CloseGoodsReceiptModalCommand = new RelayCommand(_ => { IsGoodsReceiptModalOpen = false; });
-            ConfirmGoodsReceiptCommand = new RelayCommand(_ => ConfirmGoodsReceipt(), _ => ReceiptItems.Count > 0 && ReceiptItems.Any(i => i.ReceivedQty > 0));
+            ConfirmGoodsReceiptCommand = new RelayCommand(_ => ConfirmGoodsReceipt(), _ => !IsReceiptViewOnly && ReceiptItems.Count > 0 && ReceiptItems.Any(i => i.ReceivedQty > 0));
+            SearchPendingPOCommand = new RelayCommand(_ => _ = LoadPendingPurchaseOrders());
             ClearStockSearchCommand = new RelayCommand(_ => 
             { 
                 SearchText = string.Empty; 
@@ -1949,9 +1950,14 @@ namespace Porjai20.ViewModels
 
         public ObservableCollection<StockTransaction> StockTransactions { get; } = new ObservableCollection<StockTransaction>();
 
-        public int TotalStockInEntriesCount => StockTransactions?.Count ?? 0;
-        public int TotalStockInQtyCount => StockTransactions?.Sum(t => t.Quantity) ?? 0;
-        public decimal TotalStockInCostSum => StockTransactions?.Sum(t => t.TotalCost) ?? 0;
+        private int _totalStockInEntriesCount;
+        public int TotalStockInEntriesCount => _totalStockInEntriesCount;
+
+        private int _totalStockInQtyCount;
+        public int TotalStockInQtyCount => _totalStockInQtyCount;
+
+        private decimal _totalStockInCostSum;
+        public decimal TotalStockInCostSum => _totalStockInCostSum;
 
         public ICommand OpenStockInModalCommand { get; private set; }
         public ICommand CloseStockInModalCommand { get; private set; }
@@ -1962,6 +1968,11 @@ namespace Porjai20.ViewModels
             StockTransactions.Clear();
             var list = await Task.Run(() => _databaseService.GetStockTransactions(SearchText));
             foreach (var t in list) StockTransactions.Add(t);
+
+            var kpi = await Task.Run(() => _databaseService.GetStockInKPIs());
+            _totalStockInEntriesCount = kpi.TotalEntries;
+            _totalStockInQtyCount = kpi.TotalQty;
+            _totalStockInCostSum = kpi.TotalCost;
 
             OnPropertyChanged(nameof(TotalStockInEntriesCount));
             OnPropertyChanged(nameof(TotalStockInQtyCount));
@@ -2693,8 +2704,19 @@ namespace Porjai20.ViewModels
         public PurchaseOrder? SelectedReceiptPO
         {
             get => _selectedReceiptPO;
-            set => SetProperty(ref _selectedReceiptPO, value);
+            set
+            {
+                if (SetProperty(ref _selectedReceiptPO, value))
+                {
+                    OnPropertyChanged(nameof(CanReceiveSelectedPO));
+                    OnPropertyChanged(nameof(SelectedPOReceiveButtonText));
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
+
+        public bool CanReceiveSelectedPO => SelectedReceiptPO != null && SelectedReceiptPO.IsPending && !RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_in");
+        public string SelectedPOReceiveButtonText => (SelectedReceiptPO != null && SelectedReceiptPO.IsReceived) ? "🔍 ดูรายละเอียด" : "📥 ตรวจรับสินค้า";
 
         private bool _isGoodsReceiptModalOpen;
         public bool IsGoodsReceiptModalOpen
@@ -2702,6 +2724,24 @@ namespace Porjai20.ViewModels
             get => _isGoodsReceiptModalOpen;
             set => SetProperty(ref _isGoodsReceiptModalOpen, value);
         }
+
+        private bool _isReceiptViewOnly;
+        public bool IsReceiptViewOnly
+        {
+            get => _isReceiptViewOnly;
+            set
+            {
+                if (SetProperty(ref _isReceiptViewOnly, value))
+                {
+                    OnPropertyChanged(nameof(CanEditReceiptModal));
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        public bool CanEditReceiptModal => !IsReceiptViewOnly && CanEditStockIn;
+
+        public string StockInSummaryText => $"แสดงทั้งหมด {PendingPurchaseOrders.Count} รายการ (รอดำเนินการ {PendingPurchaseOrders.Count(p => p.IsPending)} รายการ | ตรวจรับแล้ว {PendingPurchaseOrders.Count(p => p.IsReceived)} รายการ)";
 
         private string _receiptDeliveryNoteNo = string.Empty;
         public string ReceiptDeliveryNoteNo
@@ -6252,6 +6292,8 @@ namespace Porjai20.ViewModels
                 PendingPurchaseOrders.Add(p);
             }
             OnPropertyChanged(nameof(PendingPOCount));
+            OnPropertyChanged(nameof(StockInSummaryText));
+            _ = LoadStockTransactions();
         }
 
         private void OpenGoodsReceiptModal(PurchaseOrder? po)
@@ -6271,8 +6313,25 @@ namespace Porjai20.ViewModels
             }
 
             SelectedReceiptPO = po;
+            IsReceiptViewOnly = po.IsReceived;
             ReceiptDeliveryNoteNo = string.Empty;
             ReceiptItems.Clear();
+
+            if (po.IsReceived)
+            {
+                try
+                {
+                    using (var conn = _databaseService.GetConnection())
+                    {
+                        var note = conn.ExecuteScalar<string>("SELECT Note FROM tblStockIn_H WHERE PO_ID = @PO_ID ORDER BY StockIn_ID DESC LIMIT 1;", new { PO_ID = po.Id });
+                        if (!string.IsNullOrWhiteSpace(note))
+                        {
+                            ReceiptDeliveryNoteNo = note;
+                        }
+                    }
+                }
+                catch { }
+            }
 
             var poItems = _databaseService.GetPurchaseOrderItems(po.Id);
             foreach (var item in poItems)
@@ -6311,6 +6370,12 @@ namespace Porjai20.ViewModels
             if (SelectedReceiptPO == null || SelectedReceiptPO.Id == 0)
             {
                 ShowAlert("ไม่พบข้อมูลใบสั่งซื้อ", "ข้อผิดพลาด", "❌");
+                return;
+            }
+
+            if (SelectedReceiptPO.IsReceived)
+            {
+                ShowAlert("ใบสั่งซื้อนี้ทำการตรวจรับสินค้าเข้าคลังเรียบร้อยแล้ว ไม่สามารถตรวจรับซ้ำได้", "แจ้งเตือน", "ℹ️");
                 return;
             }
 
