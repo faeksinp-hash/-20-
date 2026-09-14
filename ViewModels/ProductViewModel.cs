@@ -1458,7 +1458,7 @@ namespace Porjai20.ViewModels
 
         public ObservableCollection<string> ReportPeriods { get; } = new ObservableCollection<string>
         {
-            "ทั้งหมด", "วันนี้", "7 วันล่าสุด", "เดือนนี้", "ปีนี้", "รายวัน", "รายสัปดาห์", "รายเดือน", "รายปี"
+            "ทั้งหมด", "วันนี้", "7 วันล่าสุด", "เดือนนี้", "ปีนี้"
         };
 
         public ObservableCollection<dynamic> ReportResults { get; set; } = new ObservableCollection<dynamic>();
@@ -5442,10 +5442,10 @@ namespace Porjai20.ViewModels
         private void ApplyPeriodFilter()
         {
             var today = DateTime.Today;
+            int currentYear = today.Year > 2400 ? today.Year - 543 : today.Year;
             switch (SelectedReportPeriod)
             {
                 case "วันนี้":
-                case "รายวัน":
                     ReportStartDate = today;
                     ReportEndDate = today;
                     break;
@@ -5453,19 +5453,13 @@ namespace Porjai20.ViewModels
                     ReportStartDate = today.AddDays(-6);
                     ReportEndDate = today;
                     break;
-                case "รายสัปดาห์":
-                    ReportStartDate = today.AddDays(-(int)today.DayOfWeek);
-                    ReportEndDate = today;
-                    break;
                 case "เดือนนี้":
-                case "รายเดือน":
-                    ReportStartDate = new DateTime(today.Year, today.Month, 1);
+                    ReportStartDate = new DateTime(currentYear, today.Month, 1);
                     ReportEndDate = today;
                     break;
                 case "ปีนี้":
-                case "รายปี":
-                    ReportStartDate = new DateTime(today.Year, 1, 1);
-                    ReportEndDate = today;
+                    ReportStartDate = new DateTime(currentYear, 1, 1, 0, 0, 0);
+                    ReportEndDate = new DateTime(currentYear, 12, 31, 23, 59, 59);
                     break;
                 case "ทั้งหมด":
                 default:
@@ -5487,8 +5481,13 @@ namespace Porjai20.ViewModels
             string summaryTitle = "🏆 สรุปรายการสำคัญ";
             string totalCountText = "รวมทั้งหมด 0 รายการ";
 
-            string startStr = start.ToString("yyyy-MM-dd 00:00:00");
-            string endStr = end.ToString("yyyy-MM-dd 23:59:59");
+            int startYr = start.Year > 2400 ? start.Year - 543 : start.Year;
+            int endYr = end.Year > 2400 ? end.Year - 543 : end.Year;
+            string startStr = $"{startYr:D4}-{start.Month:D2}-{start.Day:D2} 00:00:00";
+            string endStr = $"{endYr:D4}-{end.Month:D2}-{end.Day:D2} 23:59:59";
+            string startStrBE = $"{startYr + 543:D4}-{start.Month:D2}-{start.Day:D2} 00:00:00";
+            string endStrBE = $"{endYr + 543:D4}-{end.Month:D2}-{end.Day:D2} 23:59:59";
+            var chartParams = new { startStr, endStr, startStrBE, endStrBE };
 
             try
             {
@@ -5518,12 +5517,12 @@ namespace Porjai20.ViewModels
                                            COUNT(s.Sales_ID) as Count
                                     FROM tblSales_H s
                                     LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
-                                    WHERE s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr
+                                    WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
                                     GROUP BY s.Cus_ID
                                     ORDER BY Total DESC
                                     LIMIT 7";
 
-                            var topCustomers = conn.Query<(string Name, string Tel, decimal Total, int Count)>(sqlCust, new { startStr, endStr }).ToList();
+                            var topCustomers = conn.Query<(string Name, string Tel, decimal Total, int Count)>(sqlCust, chartParams).ToList();
                             if (topCustomers.Any())
                             {
                                 var values = new ChartValues<double>();
@@ -5574,11 +5573,11 @@ namespace Porjai20.ViewModels
                                            COALESCE(SUM(s.Sales_Total), 0) as Total, 
                                            COUNT(s.Sales_ID) as Count
                                     FROM tblEmployee e
-                                    LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID AND (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr)
+                                    LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID AND ((s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE))
                                     GROUP BY e.Emp_ID
                                     ORDER BY Total DESC";
 
-                            var staffSales = conn.Query<(string Username, string Role, decimal Total, int Count)>(sqlStaff, new { startStr, endStr }).ToList();
+                            var staffSales = conn.Query<(string Username, string Role, decimal Total, int Count)>(sqlStaff, chartParams).ToList();
                             if (staffSales.Any())
                             {
                                 var values = new ChartValues<double>();
@@ -5630,12 +5629,12 @@ namespace Porjai20.ViewModels
                                     FROM tblProduct p
                                     JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
                                     JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    WHERE s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr
+                                    WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
                                     GROUP BY p.Pro_ID
                                     ORDER BY Qty DESC
                                     LIMIT 5";
 
-                            var bestSelling = conn.Query<(string Name, int Qty, decimal Total)>(sqlProd, new { startStr, endStr }).ToList();
+                            var bestSelling = conn.Query<(string Name, int Qty, decimal Total)>(sqlProd, chartParams).ToList();
                             if (bestSelling.Any())
                             {
                                 var values = new ChartValues<double>();
@@ -5684,11 +5683,11 @@ namespace Porjai20.ViewModels
                                            COALESCE(SUM(po.PO_Total), 0) as Total, 
                                            COUNT(po.PO_ID) as Count
                                     FROM tblPartner p
-                                    LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID AND (po.PO_Date >= @startStr AND po.PO_Date <= @endStr)
+                                    LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID AND ((po.PO_Date >= @startStr AND po.PO_Date <= @endStr) OR (po.PO_Date >= @startStrBE AND po.PO_Date <= @endStrBE))
                                     GROUP BY p.Partner_ID
                                     ORDER BY Total DESC";
 
-                            var supplierPOs = conn.Query<(string Name, decimal Total, int Count)>(sqlPartner, new { startStr, endStr }).ToList();
+                            var supplierPOs = conn.Query<(string Name, decimal Total, int Count)>(sqlPartner, chartParams).ToList();
                             if (supplierPOs.Any())
                             {
                                 var values = new ChartValues<double>();
@@ -5737,11 +5736,11 @@ namespace Porjai20.ViewModels
                                     FROM tblProduct p
                                     JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
                                     JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    WHERE s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr
+                                    WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
                                     GROUP BY p.Pro_Category
                                     ORDER BY Total DESC";
 
-                            var catSales = conn.Query<(string Category, decimal Total)>(sqlCat, new { startStr, endStr }).ToList();
+                            var catSales = conn.Query<(string Category, decimal Total)>(sqlCat, chartParams).ToList();
                             if (catSales.Any())
                             {
                                 decimal grandTotal = catSales.Sum(c => c.Total);
@@ -5792,11 +5791,11 @@ namespace Porjai20.ViewModels
                                            COUNT(PO_ID) as Count, 
                                            COALESCE(SUM(PO_Total), 0) as Total
                                     FROM tblPO_H
-                                    WHERE PO_Date >= @startStr AND PO_Date <= @endStr
+                                    WHERE (PO_Date >= @startStr AND PO_Date <= @endStr) OR (PO_Date >= @startStrBE AND PO_Date <= @endStrBE)
                                     GROUP BY PO_Status
                                     ORDER BY Count DESC";
 
-                            var poStatus = conn.Query<(string Status, int Count, decimal Total)>(sqlPO, new { startStr, endStr }).ToList();
+                            var poStatus = conn.Query<(string Status, int Count, decimal Total)>(sqlPO, chartParams).ToList();
                             if (poStatus.Any())
                             {
                                 int rank = 1;
@@ -5842,12 +5841,12 @@ namespace Porjai20.ViewModels
                                            COALESCE(SUM(d.StockIn_Qty), 0) as Qty
                                     FROM tblStockIn_H h
                                     JOIN tblStockInDetail d ON h.StockIn_ID = d.StockIn_ID
-                                    WHERE h.StockIn_Date >= @startStr AND h.StockIn_Date <= @endStr
+                                    WHERE (h.StockIn_Date >= @startStr AND h.StockIn_Date <= @endStr) OR (h.StockIn_Date >= @startStrBE AND h.StockIn_Date <= @endStrBE)
                                     GROUP BY SUBSTR(h.StockIn_Date, 1, 10)
                                     ORDER BY Date DESC
                                     LIMIT 10";
 
-                            var stockIns = conn.Query<(string Date, int Qty)>(sqlStock, new { startStr, endStr }).ToList();
+                            var stockIns = conn.Query<(string Date, int Qty)>(sqlStock, chartParams).ToList();
                             if (stockIns.Any())
                             {
                                 var chartList = stockIns.OrderBy(x => x.Date).ToList();
@@ -5904,12 +5903,12 @@ namespace Porjai20.ViewModels
                                            SUM(Sales_Total) as Total, 
                                            COUNT(Sales_ID) as Count
                                     FROM tblSales_H
-                                    WHERE Sales_Date >= @startStr AND Sales_Date <= @endStr
+                                    WHERE (Sales_Date >= @startStr AND Sales_Date <= @endStr) OR (Sales_Date >= @startStrBE AND Sales_Date <= @endStrBE)
                                     GROUP BY SUBSTR(Sales_Date, 1, 10)
                                     ORDER BY Date DESC
                                     LIMIT 10";
 
-                            var dailySales = conn.Query<(string Date, decimal Total, int Count)>(sqlSales, new { startStr, endStr }).ToList();
+                            var dailySales = conn.Query<(string Date, decimal Total, int Count)>(sqlSales, chartParams).ToList();
                             if (dailySales.Any())
                             {
                                 var chartList = dailySales.OrderBy(x => x.Date).ToList();
@@ -5961,11 +5960,11 @@ namespace Porjai20.ViewModels
                                 : @"SELECT COALESCE(Claim_Reason, 'ไม่ระบุสาเหตุ') as Reason, 
                                            COUNT(Claim_ID) as Count
                                     FROM tblClaim
-                                    WHERE Claim_Date >= @startStr AND Claim_Date <= @endStr
+                                    WHERE (Claim_Date >= @startStr AND Claim_Date <= @endStr) OR (Claim_Date >= @startStrBE AND Claim_Date <= @endStrBE)
                                     GROUP BY Claim_Reason
                                     ORDER BY Count DESC";
 
-                            var claimReasons = conn.Query<(string Reason, int Count)>(sqlClaim, new { startStr, endStr }).ToList();
+                            var claimReasons = conn.Query<(string Reason, int Count)>(sqlClaim, chartParams).ToList();
                             if (claimReasons.Any())
                             {
                                 var values = new ChartValues<double>();
@@ -6015,12 +6014,12 @@ namespace Porjai20.ViewModels
                                     FROM tblDelivery d
                                     JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
                                     WHERE (d.Delivery_Status = 'จัดส่งสำเร็จ' OR d.Delivery_Status = 'สำเร็จ' OR d.Delivery_Status IS NOT NULL)
-                                      AND (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr)
+                                      AND ((s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE))
                                     GROUP BY SUBSTR(s.Sales_Date, 1, 10)
                                     ORDER BY Date DESC
                                     LIMIT 10";
 
-                            var deliveryDays = conn.Query<(string Date, int Count)>(sqlDeliv, new { startStr, endStr }).ToList();
+                            var deliveryDays = conn.Query<(string Date, int Count)>(sqlDeliv, chartParams).ToList();
                             if (deliveryDays.Any())
                             {
                                 var chartList = deliveryDays.OrderBy(x => x.Date).ToList();
@@ -6069,29 +6068,47 @@ namespace Porjai20.ViewModels
                                     FROM tblSales_H
                                     GROUP BY SUBSTR(Sales_Date, 1, 7)
                                     ORDER BY Month DESC
-                                    LIMIT 6"
+                                    LIMIT 12"
                                 : @"SELECT SUBSTR(Sales_Date, 1, 7) as Month, SUM(Sales_Total) as Total
                                     FROM tblSales_H
-                                    WHERE Sales_Date >= @startStr AND Sales_Date <= @endStr
+                                    WHERE (Sales_Date >= @startStr AND Sales_Date <= @endStr) OR (Sales_Date >= @startStrBE AND Sales_Date <= @endStrBE)
                                     GROUP BY SUBSTR(Sales_Date, 1, 7)
                                     ORDER BY Month DESC
-                                    LIMIT 6";
+                                    LIMIT 12";
 
                             string sqlMonthlyExp = isAllPeriod
                                 ? @"SELECT SUBSTR(Expense_Date, 1, 7) as Month, SUM(Expense_Amount) as Total
                                     FROM tblExpense
                                     GROUP BY SUBSTR(Expense_Date, 1, 7)
                                     ORDER BY Month DESC
-                                    LIMIT 6"
+                                    LIMIT 12"
                                 : @"SELECT SUBSTR(Expense_Date, 1, 7) as Month, SUM(Expense_Amount) as Total
                                     FROM tblExpense
-                                    WHERE Expense_Date >= @startStr AND Expense_Date <= @endStr
+                                    WHERE (Expense_Date >= @startStr AND Expense_Date <= @endStr) OR (Expense_Date >= @startStrBE AND Expense_Date <= @endStrBE)
                                     GROUP BY SUBSTR(Expense_Date, 1, 7)
                                     ORDER BY Month DESC
-                                    LIMIT 6";
+                                    LIMIT 12";
 
-                            var revList = conn.Query<(string Month, decimal Total)>(sqlMonthlyRev, new { startStr, endStr }).ToDictionary(x => x.Month, x => x.Total);
-                            var expList = conn.Query<(string Month, decimal Total)>(sqlMonthlyExp, new { startStr, endStr }).ToDictionary(x => x.Month, x => x.Total);
+                            var revRaw = conn.Query<(string Month, decimal Total)>(sqlMonthlyRev, chartParams);
+                            var expRaw = conn.Query<(string Month, decimal Total)>(sqlMonthlyExp, chartParams);
+
+                            string NormalizeMonth(string m)
+                            {
+                                if (string.IsNullOrEmpty(m) || m.Length < 7) return m;
+                                if (int.TryParse(m.Substring(0, 4), out int y) && y > 2400)
+                                {
+                                    return $"{(y - 543):D4}{m.Substring(4)}";
+                                }
+                                return m;
+                            }
+
+                            var revList = revRaw
+                                .GroupBy(x => NormalizeMonth(x.Month))
+                                .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
+
+                            var expList = expRaw
+                                .GroupBy(x => NormalizeMonth(x.Month))
+                                .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
 
                             var allMonths = revList.Keys.Union(expList.Keys).OrderBy(m => m).ToList();
                             if (!allMonths.Any())
@@ -6190,6 +6207,19 @@ namespace Porjai20.ViewModels
                 end = ReportEndDate.Date.AddDays(1).AddTicks(-1);
             }
 
+            int startYr = start.Year > 2400 ? start.Year - 543 : start.Year;
+            int endYr = end.Year > 2400 ? end.Year - 543 : end.Year;
+            DateTime startCE = new DateTime(startYr, start.Month, start.Day, start.Hour, start.Minute, start.Second);
+            DateTime endCE = end == DateTime.MaxValue ? DateTime.MaxValue : new DateTime(endYr, end.Month, end.Day, end.Hour, end.Minute, end.Second);
+
+            string sCe = startCE.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            string eCe = endCE == DateTime.MaxValue ? "9999-12-31 23:59:59" : endCE.ToString("yyyy-MM-dd 23:59:59", System.Globalization.CultureInfo.InvariantCulture);
+
+            string sBe = (startYr + 543).ToString("D4") + startCE.ToString("-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            string eBe = endCE == DateTime.MaxValue ? "9999-12-31 23:59:59" : (endYr + 543).ToString("D4") + endCE.ToString("-MM-dd 23:59:59", System.Globalization.CultureInfo.InvariantCulture);
+
+            var dateParams = new { S = sCe, E = eCe, S_BE = sBe, E_BE = eBe };
+
             try
             {
                 using (var conn = _databaseService.GetConnection())
@@ -6238,8 +6268,8 @@ namespace Porjai20.ViewModels
                         case "รายงานข้อมูลการสั่งซื้อสินค้า":
                             string sqlPO = isAllPeriod
                                 ? "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H ORDER BY PO_Date DESC"
-                                : "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H WHERE PO_Date >= @S AND PO_Date <= @E ORDER BY PO_Date DESC";
-                            var pos = await conn.QueryAsync(sqlPO, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                                : "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H WHERE (PO_Date >= @S AND PO_Date <= @E) OR (PO_Date >= @S_BE AND PO_Date <= @E_BE) ORDER BY PO_Date DESC";
+                            var pos = await conn.QueryAsync(sqlPO, dateParams);
                             rows = pos.Select(r => new ReportRow { Col1 = r.col1, Col2 = "-", Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 });
                             totalCount = rows.Count();
                             ReportSummaryText = isAllPeriod ? $"จำนวนใบสั่งซื้อทั้งหมด: {totalCount} ใบ" : $"จำนวนใบสั่งซื้อ: {totalCount} ใบ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
@@ -6248,8 +6278,8 @@ namespace Porjai20.ViewModels
                         case "รายงานข้อมูลการรับเข้าสินค้า":
                             string sqlStockIn = isAllPeriod
                                 ? "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H ORDER BY StockIn_Date DESC"
-                                : "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H WHERE StockIn_Date >= @S AND StockIn_Date <= @E ORDER BY StockIn_Date DESC";
-                            var stockIns = await conn.QueryAsync(sqlStockIn, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                                : "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H WHERE (StockIn_Date >= @S AND StockIn_Date <= @E) OR (StockIn_Date >= @S_BE AND StockIn_Date <= @E_BE) ORDER BY StockIn_Date DESC";
+                            var stockIns = await conn.QueryAsync(sqlStockIn, dateParams);
                             rows = stockIns.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2 ?? "-", Col3 = "-", Col4 = "-", Col5 = r.col5 });
                             totalCount = rows.Count();
                             ReportSummaryText = isAllPeriod ? $"จำนวนรายการรับเข้าทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการรับเข้า: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
@@ -6258,8 +6288,8 @@ namespace Porjai20.ViewModels
                         case "รายงานข้อมูลการขายหน้าร้าน":
                             string sqlSales = isAllPeriod
                                 ? "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H ORDER BY Sales_Date DESC"
-                                : "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H WHERE Sales_Date >= @S AND Sales_Date <= @E ORDER BY Sales_Date DESC";
-                            var sales = await conn.QueryAsync(sqlSales, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                                : "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H WHERE (Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE) ORDER BY Sales_Date DESC";
+                            var sales = await conn.QueryAsync(sqlSales, dateParams);
                             rows = sales.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 });
                             totalCount = rows.Count();
                             totalAmount = rows.Sum(r => { decimal.TryParse(r.Col2, out decimal v); return v; });
@@ -6269,12 +6299,12 @@ namespace Porjai20.ViewModels
                         case "รายงานข้อมูลรายรับ-รายจ่าย":
                             string sqlSalesInc = isAllPeriod
                                 ? "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H"
-                                : "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H WHERE Sales_Date >= @S AND Sales_Date <= @E";
+                                : "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H WHERE (Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE)";
                             string sqlExpRows = isAllPeriod
                                 ? "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense"
-                                : "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense WHERE Expense_Date >= @S AND Expense_Date <= @E";
-                            var salesInc = await conn.QueryAsync(sqlSalesInc, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
-                            var expRows = await conn.QueryAsync(sqlExpRows, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                                : "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
+                            var salesInc = await conn.QueryAsync(sqlSalesInc, dateParams);
+                            var expRows = await conn.QueryAsync(sqlExpRows, dateParams);
                             rows = salesInc.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 })
                                    .Concat(expRows.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 }));
                             var incomeTotal = salesInc.Sum(r => { decimal.TryParse((string)r.col3, out decimal v); return v; });
@@ -6306,9 +6336,9 @@ namespace Porjai20.ViewModels
                                            c.Claim_Date as col5 
                                     FROM tblClaim c 
                                     LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID 
-                                    WHERE c.Claim_Date >= @S AND c.Claim_Date <= @E 
-                                    ORDER BY c.Claim_ID DESC";
-                            var claims = await conn.QueryAsync(sqlClaims, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                                    WHERE (c.Claim_Date >= @S AND c.Claim_Date <= @E) OR (c.Claim_Date >= @S_BE AND c.Claim_Date <= @E_BE) 
+                                     ORDER BY c.Claim_ID DESC";
+                            var claims = await conn.QueryAsync(sqlClaims, dateParams);
                             rows = claims.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 });
                             totalCount = rows.Count();
                             ReportSummaryText = isAllPeriod ? $"จำนวนรายการเคลมสินค้าทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการเคลมสินค้า: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
@@ -6323,19 +6353,19 @@ namespace Porjai20.ViewModels
                         ReportRows.Add(row);
 
                     string salesKpiSql = isAllPeriod
-                        ? "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H"
-                        : "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE Sales_Date >= @S AND Sales_Date <= @E";
-                    var salesQuery = await conn.QueryAsync<decimal>(salesKpiSql, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                        ? "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL"
+                        : "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE (Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL) AND ((Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE))";
+                    var salesQuery = await conn.QueryAsync<decimal>(salesKpiSql, dateParams);
                     ReportTotalRevenue = salesQuery.FirstOrDefault();
 
                     string expKpiSql = isAllPeriod
                         ? "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense"
-                        : "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense WHERE Expense_Date >= @S AND Expense_Date <= @E";
-                    var expQuery = await conn.QueryAsync<decimal>(expKpiSql, new { S = start.ToString("yyyy-MM-dd"), E = end.ToString("yyyy-MM-dd") });
+                        : "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
+                    var expQuery = await conn.QueryAsync<decimal>(expKpiSql, dateParams);
                     ReportTotalExpenses = expQuery.FirstOrDefault();
 
                     ReportNetProfit = ReportTotalRevenue - ReportTotalExpenses;
-                    RenderReportCharts(SelectedReportType, ReportRows.ToList(), isAllPeriod, start, end);
+                    RenderReportCharts(SelectedReportType, ReportRows.ToList(), isAllPeriod, startCE, endCE);
 
 
                     if (!rows.Any())
