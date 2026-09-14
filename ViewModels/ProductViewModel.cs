@@ -1129,11 +1129,24 @@ namespace Porjai20.ViewModels
         public string ClaimSenderName => "ร้านพอใจ ทุกอย่าง 20 บาท";
         public string ClaimSenderPhone => !string.IsNullOrWhiteSpace(CurrentUser?.Phone) ? CurrentUser.Phone : "02-111-2222";
 
+        private string _ghostTextPrefix = string.Empty;
+        public string GhostTextPrefix
+        {
+            get => _ghostTextPrefix;
+            set => SetProperty(ref _ghostTextPrefix, value);
+        }
+
         private string _ghostTextSuggestion = string.Empty;
         public string GhostTextSuggestion
         {
             get => _ghostTextSuggestion;
             set => SetProperty(ref _ghostTextSuggestion, value);
+        }
+
+        public void ClearGhostText()
+        {
+            GhostTextPrefix = string.Empty;
+            GhostTextSuggestion = string.Empty;
         }
 
         public string SearchReceiptText
@@ -1180,8 +1193,30 @@ namespace Porjai20.ViewModels
         {
             if (string.IsNullOrWhiteSpace(input))
             {
-                GhostTextSuggestion = string.Empty;
+                ClearGhostText();
                 return;
+            }
+
+            var trimmed = input.Trim();
+
+            // เงื่อนไข Case-Sensitive อย่างเคร่งครัด:
+            // หากผู้ใช้พิมพ์ตัวพิมพ์เล็ก เช่น "sa" หรือ "sale" -> ต้อง "ไม่แสดง" ข้อความแนะนำใดๆ ทั้งสิ้น
+            // ฝั่งเลขที่ใบรับสินค้าของคู่ค้า: ต้องพิมพ์ "RC-" ตัวพิมพ์ใหญ่เท่านั้น หากพิมพ์ "rc" จะต้องไม่ขึ้นแนะนำ
+            if (ClaimType == "บริษัทคู่ค้า")
+            {
+                if (!trimmed.StartsWith("R", System.StringComparison.Ordinal))
+                {
+                    ClearGhostText();
+                    return;
+                }
+            }
+            else
+            {
+                if (!trimmed.StartsWith("S", System.StringComparison.Ordinal))
+                {
+                    ClearGhostText();
+                    return;
+                }
             }
 
             if (_cachedDocumentNumbers.Count == 0)
@@ -1193,17 +1228,51 @@ namespace Porjai20.ViewModels
                 catch { }
             }
 
-            var trimmed = input.Trim();
-            var match = _cachedDocumentNumbers.FirstOrDefault(doc =>
-                doc.StartsWith(trimmed, System.StringComparison.OrdinalIgnoreCase));
-
-            if (!string.IsNullOrEmpty(match) && !string.Equals(match, trimmed, System.StringComparison.OrdinalIgnoreCase))
+            string? match = null;
+            if (ClaimType == "บริษัทคู่ค้า")
             {
-                GhostTextSuggestion = trimmed + match.Substring(trimmed.Length);
+                match = _cachedDocumentNumbers.FirstOrDefault(doc =>
+                    doc.StartsWith("RC-", System.StringComparison.Ordinal) &&
+                    doc.StartsWith(trimmed, System.StringComparison.Ordinal));
+
+                if (string.IsNullOrEmpty(match))
+                {
+                    match = _databaseService.GetStockInSuggestion(trimmed);
+                    if (!string.IsNullOrEmpty(match) && !_cachedDocumentNumbers.Contains(match))
+                    {
+                        _cachedDocumentNumbers.Add(match);
+                    }
+                }
             }
             else
             {
-                GhostTextSuggestion = string.Empty;
+                // ตรวจสอบเลขที่ใบเสร็จจริงในรูปแบบ SALE-XXXXXXXXXXXXXX (14 หลัก รวม 19 ตัวอักษร)
+                match = _cachedDocumentNumbers.FirstOrDefault(doc =>
+                    System.Text.RegularExpressions.Regex.IsMatch(doc, @"^SALE-\d{14}$") &&
+                    doc.StartsWith(trimmed, System.StringComparison.Ordinal));
+
+                if (string.IsNullOrEmpty(match))
+                {
+                    match = _databaseService.GetReceiptSuggestion(trimmed);
+                    if (!string.IsNullOrEmpty(match) && !_cachedDocumentNumbers.Contains(match))
+                    {
+                        _cachedDocumentNumbers.Add(match);
+                    }
+                }
+            }
+
+            // หากข้อความที่พิมพ์ตรงกับส่วนหน้าของรหัสบิลแบบ Case-Sensitive และยังพิมพ์ไม่ครบ:
+            // ให้แสดงเฉพาะส่วนที่เหลือต่อท้ายเคอร์เซอร์ เช่น พิมพ์ "SALE-2026" ส่วน Ghost Text คือ "0914024806"
+            if (!string.IsNullOrEmpty(match) && 
+                !string.Equals(match, trimmed, System.StringComparison.Ordinal) && 
+                match.StartsWith(trimmed, System.StringComparison.Ordinal))
+            {
+                GhostTextPrefix = trimmed;
+                GhostTextSuggestion = match.Substring(trimmed.Length);
+            }
+            else
+            {
+                ClearGhostText();
             }
         }
 
@@ -1211,8 +1280,25 @@ namespace Porjai20.ViewModels
         {
             if (string.IsNullOrWhiteSpace(input)) return null;
             var trimmed = input.Trim();
-            return _cachedDocumentNumbers.FirstOrDefault(doc =>
-                doc.StartsWith(trimmed, System.StringComparison.OrdinalIgnoreCase));
+
+            if (ClaimType == "บริษัทคู่ค้า")
+            {
+                if (!trimmed.StartsWith("R", System.StringComparison.Ordinal)) return null;
+                var match = _cachedDocumentNumbers.FirstOrDefault(doc =>
+                    doc.StartsWith("RC-", System.StringComparison.Ordinal) &&
+                    doc.StartsWith(trimmed, System.StringComparison.Ordinal));
+                if (!string.IsNullOrEmpty(match)) return match;
+                return _databaseService.GetStockInSuggestion(trimmed);
+            }
+            else
+            {
+                if (!trimmed.StartsWith("S", System.StringComparison.Ordinal)) return null;
+                var match = _cachedDocumentNumbers.FirstOrDefault(doc =>
+                    System.Text.RegularExpressions.Regex.IsMatch(doc, @"^SALE-\d{14}$") &&
+                    doc.StartsWith(trimmed, System.StringComparison.Ordinal));
+                if (!string.IsNullOrEmpty(match)) return match;
+                return _databaseService.GetReceiptSuggestion(trimmed);
+            }
         }
 
         private string _claimStockInRefNo = string.Empty;
@@ -4875,7 +4961,7 @@ namespace Porjai20.ViewModels
             IsReceiptProductSelectorOpen = false;
             AvailableReceiptItems.Clear();
             CurrentClaimItems.Clear();
-            GhostTextSuggestion = string.Empty;
+            ClearGhostText();
             OnPropertyChanged(nameof(SearchReceiptText));
             IsModalOpen = false;
         }

@@ -1254,18 +1254,18 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <Grid Grid.Column="0" VerticalAlignment="Center">
-                                                        <!-- Layer 1 (ด้านหลัง): Ghost Text ข้อความแนะนำสีเทาจาง -->
+                                                        <!-- Layer 1 (ด้านหลัง): Ghost Text ข้อความแนะนำสีเทาจาง (แสดงเฉพาะส่วนที่เหลือต่อท้ายเคอร์เซอร์ ไม่เหลื่อมซ้อนกับข้อความที่พิมพ์) -->
                                                         <TextBlock x:Name="txtGhostText"
                                                                    FontFamily="{Binding ElementName=txtReceiptNo, Path=FontFamily}"
                                                                    FontSize="{Binding ElementName=txtReceiptNo, Path=FontSize}"
                                                                    FontWeight="{Binding ElementName=txtReceiptNo, Path=FontWeight}"
-                                                                   Foreground="#94A3B8"
                                                                    IsHitTestVisible="False"
-                                                                   Margin="{Binding ElementName=txtReceiptNo, Path=Margin}"
-                                                                   Opacity="0.5"
+                                                                   Margin="2,0,0,0"
                                                                    Padding="{Binding ElementName=txtReceiptNo, Path=Padding}"
-                                                                   Text="{Binding GhostTextSuggestion}"
-                                                                   VerticalAlignment="Center"/>
+                                                                   VerticalAlignment="Center">
+                                                            <Run Text="{Binding GhostTextPrefix}" Foreground="Transparent"/>
+                                                            <Run Text="{Binding GhostTextSuggestion}" Foreground="#94A3B8"/>
+                                                        </TextBlock>
 
                                                         <!-- Layer 2 (ด้านหน้า): TextBox รับค่าจริง พื้นหลังโปร่งใส -->
                                                         <TextBox x:Name="txtReceiptNo"

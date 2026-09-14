@@ -21,7 +21,7 @@ namespace Porjai20.Views
             {
                 if (ModalGrid.Visibility == Visibility.Visible && DataContext is ProductViewModel vm)
                 {
-                    vm.GhostTextSuggestion = string.Empty;
+                    vm.ClearGhostText();
                     await vm.RefreshDocumentNumbersCacheAsync();
                 }
             };
@@ -34,11 +34,11 @@ namespace Porjai20.Views
                 // ตรวจสอบหากผู้ใช้กดปุ่ม Key.Tab หรือ (Key.Right ในขณะที่เคอร์เซอร์อยู่ท้ายสุดของข้อความ)
                 if (e.Key == Key.Tab || (e.Key == Key.Right && txtReceiptNo.CaretIndex == txtReceiptNo.Text.Length))
                 {
-                    // แทนที่ข้อความใน TextBox ด้วยข้อความแนะนำเต็มทันที
-                    string completed = vm.GetCanonicalDocumentNumber(txtReceiptNo.Text) ?? vm.GhostTextSuggestion;
+                    // แทนที่ข้อความใน TextBox ด้วยเลขที่บิลเต็ม 14 หลักทันที
+                    string completed = vm.GetCanonicalDocumentNumber(txtReceiptNo.Text) ?? (txtReceiptNo.Text + vm.GhostTextSuggestion);
                     txtReceiptNo.Text = completed;
                     txtReceiptNo.CaretIndex = txtReceiptNo.Text.Length;
-                    vm.GhostTextSuggestion = string.Empty;
+                    vm.ClearGhostText();
                     e.Handled = true; // ป้องกันไม่ให้ปุ่ม Tab เลื่อนโฟกัสกระโดดไปช่องอื่น
                 }
             }

@@ -382,6 +382,54 @@ namespace Porjai20.Services
                     SET Sales_PaymentType = 'เงินสด'
                     WHERE Sales_PaymentType IS NULL OR TRIM(Sales_PaymentType) = '';
                 ");
+
+                // Ensure existing tblSales_H records have a real 14-digit timestamp RefNo (SALE-YYYYMMDDHHMMSS)
+                var existingSales = connection.Query<(int Sales_ID, string? RefNo, string? Sales_Date)>(
+                    "SELECT Sales_ID, RefNo, Sales_Date FROM tblSales_H;"
+                ).AsList();
+
+                foreach (var s in existingSales)
+                {
+                    if (string.IsNullOrWhiteSpace(s.RefNo) || !System.Text.RegularExpressions.Regex.IsMatch(s.RefNo, @"^SALE-\d{14}$"))
+                    {
+                        string ts;
+                        if (DateTime.TryParse(s.Sales_Date, out DateTime parsedDate))
+                        {
+                            ts = parsedDate.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            ts = DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                        string newRefNo = $"SALE-{ts}";
+                        connection.Execute("UPDATE tblSales_H SET RefNo = @NewRefNo WHERE Sales_ID = @Id;", new { NewRefNo = newRefNo, Id = s.Sales_ID });
+                    }
+                }
+
+                // If tblSales_H is completely empty, seed a sample sale with real 14-digit RefNo
+                if (existingSales.Count == 0)
+                {
+                    int proId = connection.ExecuteScalar<int>("SELECT Pro_ID FROM tblProduct LIMIT 1;");
+                    int cusId = connection.ExecuteScalar<int>("SELECT Cus_ID FROM tblCustomer LIMIT 1;");
+                    int empId = connection.ExecuteScalar<int>("SELECT Emp_ID FROM tblEmployee LIMIT 1;");
+                    string nowTs = DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+                    string sampleRef = $"SALE-{nowTs}";
+                    string sampleDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+                    connection.Execute(@"
+                        INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
+                        VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, 100.0, 100.0, 0.0, 'เงินสด', 'ชำระเงินแล้ว');",
+                        new { RefNo = sampleRef, Sales_Date = sampleDate, Cus_ID = cusId > 0 ? (int?)cusId : null, Emp_ID = empId > 0 ? (int?)empId : null });
+
+                    int salesId = connection.ExecuteScalar<int>("SELECT last_insert_rowid();");
+                    if (proId > 0 && salesId > 0)
+                    {
+                        connection.Execute(@"
+                            INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
+                            VALUES (@Sales_ID, @Pro_ID, 20.0, 5, 100.0);",
+                            new { Sales_ID = salesId, Pro_ID = proId });
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -843,21 +891,29 @@ namespace Porjai20.Services
 
         public System.Collections.Generic.List<string> GetCachedDocumentNumbers()
         {
-            var docNumbers = new System.Collections.Generic.HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+            // Strict case-sensitive collection
+            var docNumbers = new System.Collections.Generic.HashSet<string>(System.StringComparer.Ordinal);
             try
             {
                 using (var connection = GetConnection())
                 {
-                    // 1) tblSales_H (RefNo and formatted SALE-XXXXXX)
+                    // 1) tblSales_H: Real receipt numbers matching ^SALE-\d{14}$ (no mock SALE-000001)
                     try
                     {
                         var salesRefs = connection.Query<string>(@"
-                            SELECT DISTINCT RefNo FROM tblSales_H WHERE RefNo IS NOT NULL AND TRIM(RefNo) != ''
-                            UNION
-                            SELECT DISTINCT printf('SALE-%06d', Sales_ID) FROM tblSales_H;");
+                            SELECT DISTINCT RefNo FROM tblSales_H 
+                            WHERE RefNo IS NOT NULL AND TRIM(RefNo) != ''
+                            ORDER BY Sales_Date DESC;");
                         foreach (var r in salesRefs)
                         {
-                            if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                            if (!string.IsNullOrWhiteSpace(r))
+                            {
+                                var trimmed = r.Trim();
+                                if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^SALE-\d{14}$"))
+                                {
+                                    docNumbers.Add(trimmed);
+                                }
+                            }
                         }
                     }
                     catch { }
@@ -871,7 +927,14 @@ namespace Porjai20.Services
                             SELECT DISTINCT printf('RC-%05d', StockIn_ID) FROM tblStockIn_H;");
                         foreach (var r in stockRefs)
                         {
-                            if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                            if (!string.IsNullOrWhiteSpace(r))
+                            {
+                                var trimmed = r.Trim();
+                                if (trimmed.StartsWith("RC-", System.StringComparison.Ordinal))
+                                {
+                                    docNumbers.Add(trimmed);
+                                }
+                            }
                         }
                     }
                     catch { }
@@ -883,7 +946,14 @@ namespace Porjai20.Services
                             SELECT DISTINCT printf('PO-%05d', PO_ID) FROM tblPO_H WHERE PO_ID > 0;");
                         foreach (var r in poRefs)
                         {
-                            if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                            if (!string.IsNullOrWhiteSpace(r))
+                            {
+                                var trimmed = r.Trim();
+                                if (trimmed.StartsWith("PO-", System.StringComparison.Ordinal))
+                                {
+                                    docNumbers.Add(trimmed);
+                                }
+                            }
                         }
                     }
                     catch { }
@@ -897,7 +967,14 @@ namespace Porjai20.Services
                             var grRefs = connection.Query<string>("SELECT DISTINCT RefNo FROM tblGoodsReceived_H WHERE RefNo IS NOT NULL AND TRIM(RefNo) != '';");
                             foreach (var r in grRefs)
                             {
-                                if (!string.IsNullOrWhiteSpace(r)) docNumbers.Add(r.Trim());
+                                if (!string.IsNullOrWhiteSpace(r))
+                                {
+                                    var trimmed = r.Trim();
+                                    if (trimmed.StartsWith("RC-", System.StringComparison.Ordinal) || trimmed.StartsWith("GR-", System.StringComparison.Ordinal))
+                                    {
+                                        docNumbers.Add(trimmed);
+                                    }
+                                }
                             }
                         }
                     }
@@ -921,6 +998,95 @@ namespace Porjai20.Services
             }
             catch { }
             return docNumbers.OrderBy(x => x).ToList();
+        }
+
+        public string? GetReceiptSuggestion(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query)) return null;
+            var trimmed = query.Trim();
+            // Strict case-sensitive check: must start with uppercase "S"
+            if (!trimmed.StartsWith("S", System.StringComparison.Ordinal)) return null;
+
+            try
+            {
+                using (var connection = GetConnection())
+                {
+                    // Query real tblSales_H table ordered by Sales_Date DESC
+                    string sql = @"
+                        SELECT RefNo FROM tblSales_H 
+                        WHERE RefNo IS NOT NULL 
+                          AND (RefNo GLOB @query || '*' OR RefNo LIKE @query || '%')
+                        ORDER BY Sales_Date DESC 
+                        LIMIT 15;";
+                    var results = connection.Query<string>(sql, new { query = trimmed });
+                    foreach (var r in results)
+                    {
+                        if (!string.IsNullOrWhiteSpace(r))
+                        {
+                            var cand = r.Trim();
+                            if (cand.StartsWith(trimmed, System.StringComparison.Ordinal) && 
+                                System.Text.RegularExpressions.Regex.IsMatch(cand, @"^SALE-\d{14}$"))
+                            {
+                                return cand;
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        public string? GetStockInSuggestion(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query)) return null;
+            var trimmed = query.Trim();
+            // Strict case-sensitive check: must start with uppercase "R"
+            if (!trimmed.StartsWith("R", System.StringComparison.Ordinal)) return null;
+
+            try
+            {
+                using (var connection = GetConnection())
+                {
+                    string sql = @"
+                        SELECT Note FROM tblStockIn_H 
+                        WHERE Note IS NOT NULL 
+                          AND (Note GLOB @query || '*' OR Note LIKE @query || '%')
+                        ORDER BY StockIn_Date DESC 
+                        LIMIT 10;";
+                    var results = connection.Query<string>(sql, new { query = trimmed });
+                    foreach (var r in results)
+                    {
+                        if (!string.IsNullOrWhiteSpace(r))
+                        {
+                            var cand = r.Trim();
+                            if (cand.StartsWith(trimmed, System.StringComparison.Ordinal))
+                            {
+                                return cand;
+                            }
+                        }
+                    }
+
+                    string formattedSql = @"
+                        SELECT printf('RC-%05d', StockIn_ID) FROM tblStockIn_H 
+                        ORDER BY StockIn_Date DESC 
+                        LIMIT 10;";
+                    var formattedList = connection.Query<string>(formattedSql);
+                    foreach (var f in formattedList)
+                    {
+                        if (!string.IsNullOrWhiteSpace(f))
+                        {
+                            var cand = f.Trim();
+                            if (cand.StartsWith(trimmed, System.StringComparison.Ordinal))
+                            {
+                                return cand;
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+            return null;
         }
 
         public int GetSalesIdByRefNo(string refNo)
