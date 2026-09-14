@@ -7,7 +7,9 @@
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200"
              FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
-              Background="#F4F7FA">
+             Background="#F4F7FA"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
     <UserControl.Resources>
 
@@ -481,7 +483,9 @@
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!--  OUTER ROOT GRID: Clean 100% full-width layout canvas           -->
     <!-- ════════════════════════════════════════════════════════════════ -->
-    <Grid Background="#E0F2FE">
+    <Grid Background="#E0F2FE"
+          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+          ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
         <!-- ════════════════════════════════════════════════════════════ -->
         <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
@@ -815,6 +819,7 @@
                               BorderThickness="0"
                               Background="Transparent"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
                               ColumnHeaderStyle="{StaticResource SHColumnHeaderStyle}"
                               RowStyle="{StaticResource SHRowStyle}"
                               CellStyle="{StaticResource SHCellStyle}"
@@ -1110,7 +1115,7 @@
                     <Border Grid.Row="2" Height="1" Background="#BAE6FD" Margin="0,0,0,12"/>
 
                     <!-- Items List DataGrid (Light Modal Styling) -->
-                    <ScrollViewer Grid.Row="3" MaxHeight="240" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="3" MaxHeight="240" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                         <DataGrid ItemsSource="{Binding SelectedOrderItems}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"

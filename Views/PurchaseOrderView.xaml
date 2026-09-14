@@ -7,7 +7,9 @@ xmlns:local="clr-namespace:Porjai20"
 mc:Ignorable="d"
 d:DesignHeight="800" d:DesignWidth="1200"
 FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
-Background="#F4F7FA">
+Background="#F4F7FA"
+ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+ScrollViewer.VerticalScrollBarVisibility="Hidden">
 <UserControl.Resources>
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
@@ -576,7 +578,9 @@ SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 <!-- ════════════════════════════════════════════════════════════════ -->
 <!--  OUTER ROOT GRID: Full 100% canvas for main page and modals     -->
 <!-- ════════════════════════════════════════════════════════════════ -->
-<Grid Visibility="{Binding IsPurchaseOrderMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
+<Grid Visibility="{Binding IsPurchaseOrderMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE"
+      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+      ScrollViewer.VerticalScrollBarVisibility="Hidden">
 <!-- ════════════════════════════════════════════════════════════ -->
 <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
 <!-- ════════════════════════════════════════════════════════════ -->
@@ -1002,7 +1006,7 @@ Margin="0"/>
             </Grid>
 
             <!-- 2. PO Card List (Scrollable) -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,8">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,8">
                 <ItemsControl ItemsSource="{Binding PurchaseOrders}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -1162,7 +1166,7 @@ Margin="0"/>
             </Grid>
 
             <!-- 2. Scrollable Checkbox Product List -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,12">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,12">
                 <ItemsControl ItemsSource="{Binding LowStockProducts}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -1487,6 +1491,7 @@ Margin="0"/>
                                   RowHeight="40"
                                   GridLinesVisibility="None"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                   BorderThickness="0"
                                   Background="Transparent"
                                   ColumnHeaderStyle="{StaticResource POColumnHeaderStyle}"

@@ -1111,7 +1111,10 @@
                             <DataTrigger Binding="{Binding CurrentView}" Value="purchase_order">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <views:PurchaseOrderView />
+                                        <views:PurchaseOrderView HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                                ScrollViewer.VerticalScrollBarVisibility="Hidden" />
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
@@ -1125,7 +1128,10 @@
                             <DataTrigger Binding="{Binding CurrentView}" Value="sales_history">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <views:SalesHistoryView>
+                                        <views:SalesHistoryView HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                               HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
                                             <views:SalesHistoryView.DataContext>
                                                 <vm:SalesHistoryViewModel/>
                                             </views:SalesHistoryView.DataContext>
