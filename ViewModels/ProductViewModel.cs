@@ -22,7 +22,7 @@ namespace Porjai20.ViewModels
         private string _code;
         private string _name;
         private string _category;
-        private string _unit;
+        private string _unit = string.Empty;
         private decimal _price;
         private decimal _cost;
         private int _stock;
@@ -1774,11 +1774,12 @@ namespace Porjai20.ViewModels
             OpenAddModalCommand = new RelayCommand(_ =>
             {
                 ExecuteOpenAddProductModal();
-                SelectedProduct = new Product { SellingPrice = 20, CostPrice = 0, StockQuantity = 0, ReorderPoint = 10 };
+                SelectedProduct = new Product { SellingPrice = 20, CostPrice = 0, StockQuantity = 0, ReorderPoint = 10, Unit = string.Empty };
                 SellingPrice = 20; // Default store price 20 baht
                 CostPrice = 0;
                 StockQuantity = 0;
                 ReorderPoint = 10;
+                Unit = string.Empty;
                 IsProductModalOpen = true;
                 IsAddModalOpen = true; // Trigger Modal
             });
@@ -2160,10 +2161,18 @@ namespace Porjai20.ViewModels
                     if (ProductCategories != null)
                     {
                         var matched = ProductCategories.FirstOrDefault(c => c.CategoryID == value || c.CategoryId == value || c.Id == value);
-                        if (matched != null && !string.IsNullOrWhiteSpace(matched.CategoryName))
+                        if (matched != null)
                         {
-                            _category = matched.CategoryName;
-                            OnPropertyChanged(nameof(Category));
+                            if (_selectedProductCategory != matched)
+                            {
+                                _selectedProductCategory = matched;
+                                OnPropertyChanged(nameof(SelectedProductCategory));
+                            }
+                            if (!string.IsNullOrWhiteSpace(matched.CategoryName))
+                            {
+                                _category = matched.CategoryName;
+                                OnPropertyChanged(nameof(Category));
+                            }
                         }
                     }
                 }
@@ -2185,18 +2194,26 @@ namespace Porjai20.ViewModels
                     if (!string.IsNullOrWhiteSpace(value) && ProductCategories != null)
                     {
                         var matched = ProductCategories.FirstOrDefault(c => string.Equals(c.CategoryName, value, StringComparison.OrdinalIgnoreCase));
-                        if (matched != null && _categoryId != matched.CategoryID)
+                        if (matched != null)
                         {
-                            _categoryId = matched.CategoryID;
-                            OnPropertyChanged(nameof(CategoryId));
-                            OnPropertyChanged(nameof(CategoryID));
+                            if (_selectedProductCategory != matched)
+                            {
+                                _selectedProductCategory = matched;
+                                OnPropertyChanged(nameof(SelectedProductCategory));
+                            }
+                            if (_categoryId != matched.CategoryID)
+                            {
+                                _categoryId = matched.CategoryID;
+                                OnPropertyChanged(nameof(CategoryId));
+                                OnPropertyChanged(nameof(CategoryID));
+                            }
                         }
                     }
                 }
             }
         }
 
-        public string Unit { get => string.IsNullOrWhiteSpace(_unit) ? "ชิ้น" : _unit; set { SetProperty(ref _unit, value); } }
+        public string Unit { get => _unit ?? string.Empty; set { SetProperty(ref _unit, value); } }
         public decimal Price { get => _price; set { SetProperty(ref _price, value); } }
         public int Stock { get => _stock; set { SetProperty(ref _stock, value); } }
         public int ReorderPoint { get => _reorderPoint; set { SetProperty(ref _reorderPoint, value); } }
@@ -2274,6 +2291,32 @@ namespace Porjai20.ViewModels
         // --- Stock Management View & Product Categories Properties ---
         public ObservableCollection<ProductCategory> ProductCategories { get; } = new ObservableCollection<ProductCategory>();
         public ObservableCollection<string> CategoriesList { get; } = new ObservableCollection<string>();
+
+        private ProductCategory? _selectedProductCategory;
+        public ProductCategory? SelectedProductCategory
+        {
+            get => _selectedProductCategory;
+            set
+            {
+                if (SetProperty(ref _selectedProductCategory, value))
+                {
+                    if (value != null)
+                    {
+                        if (_categoryId != value.CategoryID)
+                        {
+                            _categoryId = value.CategoryID;
+                            OnPropertyChanged(nameof(CategoryId));
+                            OnPropertyChanged(nameof(CategoryID));
+                        }
+                        if (_category != value.CategoryName)
+                        {
+                            _category = value.CategoryName;
+                            OnPropertyChanged(nameof(Category));
+                        }
+                    }
+                }
+            }
+        }
 
         private string _selectedStockViewMode = "products";
         public string SelectedStockViewMode
@@ -2714,16 +2757,18 @@ namespace Porjai20.ViewModels
             StockQuantity = 0;
             Stock = 0;
             ReorderPoint = 10;
-            Unit = "ชิ้น";
+            Unit = string.Empty;
 
             if (ProductCategories.Any())
             {
                 var firstCat = ProductCategories.First();
+                SelectedProductCategory = firstCat;
                 CategoryID = firstCat.CategoryID;
                 Category = firstCat.CategoryName;
             }
             else
             {
+                SelectedProductCategory = null;
                 Category = "เบ็ดเตล็ด";
             }
 
@@ -2735,14 +2780,55 @@ namespace Porjai20.ViewModels
 
         public void ExecuteOpenEditProductModal()
         {
-            if (SelectedProduct == null || SelectedProduct.Id <= 0)
+            if (SelectedProduct == null || (SelectedProduct.Id <= 0 && SelectedProduct.Pro_ID <= 0))
             {
                 ShowAlert("กรุณาคลิกเลือกรายการสินค้าในตารางก่อนดำเนินการ", "แจ้งเตือน", "⚠️");
                 return;
             }
 
-            // Load Categories first before binding CategoryID so ComboBox matches immediately
+            int targetId = SelectedProduct.Id > 0 ? SelectedProduct.Id : SelectedProduct.Pro_ID;
+
+            // Load Categories first before binding so ComboBox items are populated
             LoadProductCategories();
+
+            // Refresh fresh product record from SQLite to guarantee we have the latest CategoryId & data
+            using (var conn = _databaseService.GetConnection())
+            {
+                var freshProduct = conn.QueryFirstOrDefault<Product>(@"
+                    SELECT 
+                        Pro_ID AS Pro_ID, 
+                        Pro_ID AS Id, 
+                        Pro_Barcode AS Pro_Barcode, 
+                        Pro_Barcode AS Barcode, 
+                        Pro_Barcode AS Code, 
+                        Pro_Name AS Pro_Name, 
+                        Pro_Name AS Name, 
+                        COALESCE(Pro_Category, '') AS Pro_Category, 
+                        COALESCE(Pro_Category, '') AS Category, 
+                        COALESCE(Pro_Unit, 'ชิ้น') AS Pro_Unit, 
+                        COALESCE(Pro_Unit, 'ชิ้น') AS Unit, 
+                        COALESCE(CategoryId, 0) AS CategoryId,
+                        COALESCE(CategoryId, 0) AS CategoryID,
+                        Pro_Price AS Pro_Price, 
+                        Pro_Price AS Price, 
+                        COALESCE(Pro_Cost, 0) AS Pro_Cost, 
+                        COALESCE(Pro_Cost, 0) AS Cost, 
+                        COALESCE(Pro_Cost, 0) AS CostPrice, 
+                        Pro_Qty AS Pro_Qty, 
+                        Pro_Qty AS Stock, 
+                        Pro_MinQty AS Pro_MinQty, 
+                        Pro_MinQty AS ReorderPoint, 
+                        Pro_Image AS Pro_Image, 
+                        Pro_Image AS ImagePath, 
+                        '' AS Description 
+                    FROM tblProduct 
+                    WHERE Pro_ID = @Id", new { Id = targetId });
+
+                if (freshProduct != null)
+                {
+                    SelectedProduct = freshProduct;
+                }
+            }
 
             IsEditMode = true;
             ProductModalTitle = "⚙️ แก้ไขข้อมูลสินค้า";
@@ -2754,26 +2840,43 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(Code));
             Name = SelectedProduct.Name;
 
-            // Set Category and CategoryID
-            Category = SelectedProduct.Category;
+            // Set Category and CategoryID with explicit match to ProductCategories
+            ProductCategory? matchedCat = null;
             if (SelectedProduct.CategoryID > 0)
             {
-                CategoryID = SelectedProduct.CategoryID;
+                matchedCat = ProductCategories.FirstOrDefault(c => c.CategoryID == SelectedProduct.CategoryID || c.CategoryId == SelectedProduct.CategoryID || c.Id == SelectedProduct.CategoryID);
             }
-            else if (SelectedProduct.CategoryId > 0)
+            if (matchedCat == null && SelectedProduct.CategoryId > 0)
             {
-                CategoryID = SelectedProduct.CategoryId;
+                matchedCat = ProductCategories.FirstOrDefault(c => c.CategoryID == SelectedProduct.CategoryId || c.CategoryId == SelectedProduct.CategoryId || c.Id == SelectedProduct.CategoryId);
             }
-            else if (!string.IsNullOrWhiteSpace(SelectedProduct.Category) && ProductCategories != null)
+            if (matchedCat == null && !string.IsNullOrWhiteSpace(SelectedProduct.Category))
             {
-                var matched = ProductCategories.FirstOrDefault(c => string.Equals(c.CategoryName, SelectedProduct.Category, StringComparison.OrdinalIgnoreCase));
-                if (matched != null)
+                matchedCat = ProductCategories.FirstOrDefault(c => string.Equals(c.CategoryName, SelectedProduct.Category, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (matchedCat != null)
+            {
+                SelectedProductCategory = matchedCat;
+                CategoryID = matchedCat.CategoryID;
+                Category = matchedCat.CategoryName;
+            }
+            else
+            {
+                SelectedProductCategory = ProductCategories.FirstOrDefault();
+                if (SelectedProductCategory != null)
                 {
-                    CategoryID = matched.CategoryID;
+                    CategoryID = SelectedProductCategory.CategoryID;
+                    Category = SelectedProductCategory.CategoryName;
+                }
+                else
+                {
+                    Category = SelectedProduct.Category ?? "";
+                    CategoryID = SelectedProduct.CategoryID;
                 }
             }
 
-            Unit = string.IsNullOrWhiteSpace(SelectedProduct.Unit) ? "ชิ้น" : SelectedProduct.Unit;
+            Unit = SelectedProduct.Unit ?? string.Empty;
             Price = SelectedProduct.Price;
             Cost = SelectedProduct.Cost;
             CostPrice = SelectedProduct.Cost;
@@ -2882,23 +2985,32 @@ namespace Porjai20.ViewModels
                         Code = value.Code;
                         Name = value.Name;
                         Category = value.Category;
+
+                        ProductCategory? matched = null;
                         if (value.CategoryID > 0)
                         {
-                            CategoryID = value.CategoryID;
+                            matched = ProductCategories.FirstOrDefault(c => c.CategoryID == value.CategoryID || c.CategoryId == value.CategoryID || c.Id == value.CategoryID);
                         }
-                        else if (value.CategoryId > 0)
+                        if (matched == null && value.CategoryId > 0)
                         {
-                            CategoryID = value.CategoryId;
+                            matched = ProductCategories.FirstOrDefault(c => c.CategoryID == value.CategoryId || c.CategoryId == value.CategoryId || c.Id == value.CategoryId);
                         }
-                        else if (!string.IsNullOrWhiteSpace(value.Category) && ProductCategories != null)
+                        if (matched == null && !string.IsNullOrWhiteSpace(value.Category) && ProductCategories != null)
                         {
-                            var matched = ProductCategories.FirstOrDefault(c => string.Equals(c.CategoryName, value.Category, StringComparison.OrdinalIgnoreCase));
-                            if (matched != null)
-                            {
-                                CategoryID = matched.CategoryID;
-                            }
+                            matched = ProductCategories.FirstOrDefault(c => string.Equals(c.CategoryName, value.Category, StringComparison.OrdinalIgnoreCase));
                         }
-                        Unit = string.IsNullOrWhiteSpace(value.Unit) ? "ชิ้น" : value.Unit;
+
+                        if (matched != null)
+                        {
+                            SelectedProductCategory = matched;
+                            CategoryID = matched.CategoryID;
+                            Category = matched.CategoryName;
+                        }
+                        else
+                        {
+                            CategoryID = value.CategoryID > 0 ? value.CategoryID : value.CategoryId;
+                        }
+                        Unit = value.Unit ?? string.Empty;
                         Price = value.Price;
                         Cost = value.Cost;
                         CostPrice = value.Cost;
@@ -3879,12 +3991,15 @@ namespace Porjai20.ViewModels
         private async Task AddProduct()
         {
             decimal parsedCost = CostPrice > 0 ? CostPrice : Cost;
+            int catIdToSave = SelectedProductCategory?.CategoryID ?? (CategoryID > 0 ? CategoryID : 0);
+            string catNameToSave = SelectedProductCategory?.CategoryName ?? (!string.IsNullOrWhiteSpace(Category) ? Category : "");
+
             var product = new Product
             {
                 Code = Code,
                 Name = Name,
-                Category = Category ?? "",
-                CategoryId = CategoryID,
+                Category = catNameToSave,
+                CategoryId = catIdToSave,
                 Unit = string.IsNullOrWhiteSpace(Unit) ? "ชิ้น" : Unit.Trim(),
                 Price = Price,
                 Cost = parsedCost,
@@ -3901,7 +4016,18 @@ namespace Porjai20.ViewModels
                     VALUES (@Code, @Name, @Price, @Cost, @Stock, @ReorderPoint, @Category, @ImagePath, @Unit, @CategoryId);
                     SELECT last_insert_rowid();";
                 
-                var id = await conn.ExecuteScalarAsync<int>(sql, product);
+                var id = await conn.ExecuteScalarAsync<int>(sql, new {
+                    Code = product.Code,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Cost = product.Cost,
+                    Stock = product.Stock,
+                    ReorderPoint = product.ReorderPoint,
+                    Category = product.Category,
+                    ImagePath = product.ImagePath,
+                    Unit = product.Unit,
+                    CategoryId = product.CategoryId
+                });
                 product.Id = id;
                 product.Pro_ID = id;
 
@@ -3917,11 +4043,14 @@ namespace Porjai20.ViewModels
             if (SelectedProduct == null) return;
 
             decimal parsedCost = CostPrice > 0 ? CostPrice : Cost;
+            int catIdToSave = SelectedProductCategory?.CategoryID ?? (CategoryID > 0 ? CategoryID : (SelectedProduct.CategoryID > 0 ? SelectedProduct.CategoryID : 0));
+            string catNameToSave = SelectedProductCategory?.CategoryName ?? (!string.IsNullOrWhiteSpace(Category) ? Category : (SelectedProduct.Category ?? ""));
+
             var product = SelectedProduct;
             product.Code = Code;
             product.Name = Name;
-            product.Category = Category ?? "";
-            product.CategoryId = CategoryID;
+            product.Category = catNameToSave;
+            product.CategoryId = catIdToSave;
             product.Unit = string.IsNullOrWhiteSpace(Unit) ? "ชิ้น" : Unit.Trim();
             product.Price = Price;
             product.Cost = parsedCost;
@@ -3946,10 +4075,22 @@ namespace Porjai20.ViewModels
                         CategoryId = @CategoryId
                     WHERE Pro_ID = @Id";
                 
-                await conn.ExecuteAsync(sql, product);
+                await conn.ExecuteAsync(sql, new {
+                    Code = product.Code,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Cost = product.Cost,
+                    Stock = product.Stock,
+                    ReorderPoint = product.ReorderPoint,
+                    Category = product.Category,
+                    ImagePath = product.ImagePath,
+                    Unit = product.Unit,
+                    CategoryId = product.CategoryId,
+                    Id = product.Id > 0 ? product.Id : product.Pro_ID
+                });
 
                 // Update in local cache
-                var existing = _allProducts.FirstOrDefault(p => p.Id == product.Id);
+                var existing = _allProducts.FirstOrDefault(p => p.Id == product.Id || p.Pro_ID == product.Id);
                 if (existing != null)
                 {
                     int idx = _allProducts.IndexOf(existing);
@@ -4027,14 +4168,16 @@ namespace Porjai20.ViewModels
             if (ProductCategories != null && ProductCategories.Any())
             {
                 var firstCat = ProductCategories.First();
+                SelectedProductCategory = firstCat;
                 CategoryID = firstCat.CategoryID;
                 Category = firstCat.CategoryName;
             }
             else
             {
+                SelectedProductCategory = null;
                 Category = CategoriesList?.FirstOrDefault() ?? "เบ็ดเตล็ด";
             }
-            Unit = "ชิ้น";
+            Unit = string.Empty;
             Price = 20; // Default for 20 Baht Shop
             Cost = 0;
             CostPrice = 0;

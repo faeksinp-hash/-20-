@@ -2043,6 +2043,7 @@
                                               DisplayMemberPath="CategoryName"
                                               SelectedValuePath="CategoryID"
                                               SelectedValue="{Binding CategoryID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              SelectedItem="{Binding SelectedProductCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               TextSearch.TextPath="CategoryName"
                                               IsEnabled="{Binding CanEditStockManage}"
                                               Style="{StaticResource LightComboBoxStyle}"

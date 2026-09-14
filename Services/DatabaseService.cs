@@ -299,6 +299,9 @@ namespace Porjai20.Services
 
                 // Migrate and self-heal delivery recipient info if blank
                 MigrateDeliveryRecords(connection);
+
+                // Migrate and self-heal product categories if CategoryId is missing or 0
+                MigrateProductCategories(connection);
             }
         }
 
@@ -462,6 +465,49 @@ namespace Porjai20.Services
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating delivery records: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Migration สำหรับจับคู่ CategoryId ใน tblProduct จาก tblProductCategory ตามชื่อหมวดหมู่ หาก CategoryId เป็น NULL หรือ 0
+        /// </summary>
+        private void MigrateProductCategories(IDbConnection connection)
+        {
+            try
+            {
+                connection.Execute(@"
+                    UPDATE tblProduct
+                    SET CategoryId = (
+                        SELECT c.CategoryId 
+                        FROM tblProductCategory c 
+                        WHERE TRIM(c.CategoryName) = TRIM(tblProduct.Pro_Category)
+                        LIMIT 1
+                    )
+                    WHERE (CategoryId IS NULL OR CategoryId = 0)
+                      AND Pro_Category IS NOT NULL 
+                      AND TRIM(Pro_Category) != ''
+                      AND EXISTS (
+                          SELECT 1 FROM tblProductCategory c 
+                          WHERE TRIM(c.CategoryName) = TRIM(tblProduct.Pro_Category)
+                      );
+                ");
+
+                // ถ้า CategoryId ยังคงเป็น NULL หรือ 0 ให้กำหนดเป็นหมวดหมู่แรกสุดใน tblProductCategory
+                int defaultCatId = connection.ExecuteScalar<int>(
+                    "SELECT CategoryId FROM tblProductCategory ORDER BY CategoryId ASC LIMIT 1;"
+                );
+                if (defaultCatId > 0)
+                {
+                    connection.Execute(@"
+                        UPDATE tblProduct
+                        SET CategoryId = @DefaultCatId
+                        WHERE CategoryId IS NULL OR CategoryId = 0;
+                    ", new { DefaultCatId = defaultCatId });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating product categories: {ex.Message}");
             }
         }
 

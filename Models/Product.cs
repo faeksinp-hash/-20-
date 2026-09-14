@@ -183,7 +183,7 @@ namespace Porjai20.Models
 
         public string Unit
         {
-            get => !string.IsNullOrWhiteSpace(_unit) ? _unit : "ชิ้น";
+            get => _unit ?? string.Empty;
             set => _unit = value ?? string.Empty;
         }
         public string Description { get; set; } = string.Empty;
