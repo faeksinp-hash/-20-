@@ -1131,6 +1131,13 @@ namespace Porjai20.Services
                 return false;
             }
 
+            // Guard Clause: ตรวจสอบว่าต้องมีเลขที่ใบเสร็จหรือเลขที่ใบรับสินค้าก่อนบันทึกข้อมูล
+            if (string.IsNullOrWhiteSpace(claim.SalesOrderRefNo) && string.IsNullOrWhiteSpace(claim.StockInRefNo))
+            {
+                errorMessage = "กรุณากรอกเลขที่ใบเสร็จหรือเลขที่ใบรับสินค้าก่อนบันทึกข้อมูล";
+                return false;
+            }
+
             // 1. Map Foreign Keys before INSERT if not set
             if (claim.Sales_ID <= 0 && !string.IsNullOrWhiteSpace(claim.SalesOrderRefNo))
             {

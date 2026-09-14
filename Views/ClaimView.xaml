@@ -1867,13 +1867,13 @@
                                 </Button>
 
                                 <!-- ปุ่ม "บันทึกข้อมูล" (สีฟ้า) -->
-                                <Button Width="130" Height="38"
-                                        IsEnabled="{Binding CanEditClaim}"
-                                        Cursor="Hand">
+                                <Button x:Name="btnSaveClaim"
+                                        Width="130" Height="38">
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Command" Value="{Binding UpdateClaimCommand}"/>
                                             <Setter Property="Content" Value="💾 บันทึกการแก้ไข"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="Button">
@@ -1886,6 +1886,7 @@
                                                             </Trigger>
                                                             <Trigger Property="IsEnabled" Value="False">
                                                                 <Setter TargetName="B" Property="Background" Value="#BAE6FD"/>
+                                                                <Setter TargetName="B" Property="Opacity" Value="0.55"/>
                                                                 <Setter Property="Foreground" Value="#94A3B8"/>
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
@@ -1893,6 +1894,10 @@
                                                 </Setter.Value>
                                             </Setter>
                                             <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Cursor" Value="Arrow"/>
+                                                    <Setter Property="Opacity" Value="0.6"/>
+                                                </Trigger>
                                                 <DataTrigger Binding="{Binding SelectedClaim.Id}" Value="0">
                                                     <Setter Property="Command" Value="{Binding AddClaimCommand}"/>
                                                     <Setter Property="Content" Value="➕ บันทึกข้อมูล"/>

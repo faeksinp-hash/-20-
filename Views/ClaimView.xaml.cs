@@ -15,6 +15,7 @@ namespace Porjai20.Views
                 if (DataContext is ProductViewModel vm)
                 {
                     await vm.RefreshDocumentNumbersCacheAsync();
+                    UpdateSaveButtonState();
                 }
             };
             ModalGrid.IsVisibleChanged += async (s, e) =>
@@ -23,8 +24,23 @@ namespace Porjai20.Views
                 {
                     vm.ClearGhostText();
                     await vm.RefreshDocumentNumbersCacheAsync();
+                    UpdateSaveButtonState();
                 }
             };
+            txtReceiptNo.TextChanged += (s, e) =>
+            {
+                CommandManager.InvalidateRequerySuggested();
+                UpdateSaveButtonState();
+            };
+        }
+
+        private void UpdateSaveButtonState()
+        {
+            if (DataContext is ProductViewModel vm)
+            {
+                bool isNew = vm.SelectedClaim == null || vm.SelectedClaim.Id == 0;
+                btnSaveClaim.IsEnabled = isNew ? vm.CanSaveClaim() : vm.CanUpdateClaim();
+            }
         }
 
         private void TxtReceiptNo_PreviewKeyDown(object sender, KeyEventArgs e)

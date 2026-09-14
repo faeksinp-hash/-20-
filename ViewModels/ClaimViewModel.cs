@@ -206,6 +206,13 @@ namespace Porjai20.ViewModels
 
         private void InitializeClaimModal()
         {
+            CurrentClaimItems.CollectionChanged += (s, e) =>
+            {
+                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                (AddClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (UpdateClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            };
+
             OpenAddClaimModalCommand = new RelayCommand(_ => OpenAddModal());
             OpenEditModalCommand = new RelayCommand(_ => OpenEditModal(), _ => IsClaimSelected);
             CloseModalCommand = new RelayCommand(_ => CloseModal());

@@ -1099,6 +1099,9 @@ namespace Porjai20.ViewModels
                     RefreshClaimValidation();
                     OnPropertyChanged(nameof(SearchReceiptText));
                     UpdateGhostTextSuggestion(SearchReceiptText);
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                    (AddClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                    (UpdateClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -1113,6 +1116,9 @@ namespace Porjai20.ViewModels
                 {
                     OnPropertyChanged(nameof(SearchReceiptText));
                     LookupSalesOrderForClaim();
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                    (AddClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                    (UpdateClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -1171,6 +1177,9 @@ namespace Porjai20.ViewModels
                 }
                 OnPropertyChanged(nameof(SearchReceiptText));
                 UpdateGhostTextSuggestion(norm);
+                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                (AddClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (UpdateClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
 
@@ -1311,6 +1320,9 @@ namespace Porjai20.ViewModels
                 {
                     OnPropertyChanged(nameof(SearchReceiptText));
                     LookupStockInForClaim();
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                    (AddClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                    (UpdateClaimCommand as RelayCommand)?.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -1814,8 +1826,8 @@ namespace Porjai20.ViewModels
 
             // Claim Commands
             SearchClaimCommand = new RelayCommand(_ => _ = LoadClaims());
-            AddClaimCommand = new RelayCommand(_ => AddClaim(), _ => (!string.IsNullOrEmpty(ClaimProductName) || CurrentClaimItems.Count > 0) && !string.IsNullOrEmpty(ClaimReason));
-            UpdateClaimCommand = new RelayCommand(_ => UpdateClaimRecord(), _ => SelectedClaim != null && SelectedClaim.Id > 0);
+            AddClaimCommand = new RelayCommand(_ => AddClaim(), _ => CanSaveClaim());
+            UpdateClaimCommand = new RelayCommand(_ => UpdateClaimRecord(), _ => CanUpdateClaim());
             DeleteClaimCommand = new RelayCommand(_ => DeleteClaimRecord(), _ => SelectedClaim != null && SelectedClaim.Id > 0);
             ClearClaimCommand = new RelayCommand(_ => ClearClaimForm());
             UpdateClaimStatusCommand = new RelayCommand(param => 
@@ -2964,6 +2976,7 @@ namespace Porjai20.ViewModels
         public ICommand OpenClaimCommand { get; }
         public ICommand SearchClaimCommand { get; }
         public ICommand AddClaimCommand { get; }
+        public ICommand SaveClaimCommand => AddClaimCommand;
         public ICommand UpdateClaimCommand { get; }
         public ICommand DeleteClaimCommand { get; }
         public ICommand ClearClaimCommand { get; }
@@ -4726,11 +4739,51 @@ namespace Porjai20.ViewModels
         }
 
 
+        public bool CanSaveClaim()
+        {
+            // 1. ต้องมีเลขที่ใบเสร็จ หรือเลขที่ใบรับสินค้า (ห้ามเป็นค่าว่างหรือช่องว่าง)
+            bool hasDocumentNo = !string.IsNullOrWhiteSpace(SearchReceiptText);
+
+            // 2. ต้องมีรายการสินค้าที่ต้องการเคลมอย่างน้อย 1 รายการ
+            bool hasItems = (CurrentClaimItems != null && CurrentClaimItems.Count > 0) || !string.IsNullOrEmpty(ClaimProductName);
+
+            // 3. สิทธิ์การแก้ไข (ไม่เป็น ReadOnly)
+            bool hasPermission = CanEditClaim;
+
+            return hasDocumentNo && hasItems && hasPermission;
+        }
+
+        public bool CanUpdateClaim()
+        {
+            // 1. ต้องมีเลขที่ใบเสร็จ หรือเลขที่ใบรับสินค้า (ห้ามเป็นค่าว่างหรือช่องว่าง)
+            bool hasDocumentNo = !string.IsNullOrWhiteSpace(SearchReceiptText);
+
+            // 2. ต้องมีรายการสินค้าที่ต้องการเคลมอย่างน้อย 1 รายการ
+            bool hasItems = (CurrentClaimItems != null && CurrentClaimItems.Count > 0) || !string.IsNullOrEmpty(ClaimProductName);
+
+            return SelectedClaim != null && SelectedClaim.Id > 0 && hasDocumentNo && hasItems && CanEditClaim;
+        }
+
         private void AddClaim()
         {
             if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
             {
                 ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            // Guard Clause: ตรวจสอบเลขที่ใบเสร็จ หรือเลขที่ใบรับสินค้าก่อนบันทึก
+            if (string.IsNullOrWhiteSpace(SearchReceiptText))
+            {
+                string docLabel = ClaimType == "บริษัทคู่ค้า" ? "เลขที่ใบรับสินค้า" : "เลขที่ใบเสร็จ";
+                ShowAlert($"กรุณาระบุ{docLabel}ให้ถูกต้องก่อนบันทึกข้อมูล", "ข้อมูลไม่ครบถ้วน", "⚠️");
+                return;
+            }
+
+            // Guard Clause: ตรวจสอบว่ามีรายการสินค้าที่ต้องการเคลมอย่างน้อย 1 รายการ
+            if ((CurrentClaimItems == null || CurrentClaimItems.Count == 0) && string.IsNullOrWhiteSpace(ClaimProductName))
+            {
+                ShowAlert("กรุณาเลือกรายการสินค้าที่ต้องการเคลมอย่างน้อย 1 รายการ", "ข้อมูลไม่ครบถ้วน", "⚠️");
                 return;
             }
 
@@ -4857,6 +4910,20 @@ namespace Porjai20.ViewModels
             if (RolePermissions.IsReadOnly(CurrentUser?.Role, "claim"))
             {
                 ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            // Guard Clause: ตรวจสอบเลขที่เอกสารก่อนบันทึกการแก้ไข
+            if (string.IsNullOrWhiteSpace(SearchReceiptText))
+            {
+                string docLabel = ClaimType == "บริษัทคู่ค้า" ? "เลขที่ใบรับสินค้า" : "เลขที่ใบเสร็จ";
+                ShowAlert($"กรุณาระบุ{docLabel}ให้ถูกต้องก่อนบันทึกข้อมูล", "ข้อมูลไม่ครบถ้วน", "⚠️");
+                return;
+            }
+
+            if ((CurrentClaimItems == null || CurrentClaimItems.Count == 0) && string.IsNullOrWhiteSpace(ClaimProductName))
+            {
+                ShowAlert("กรุณาเลือกรายการสินค้าที่ต้องการเคลมอย่างน้อย 1 รายการ", "ข้อมูลไม่ครบถ้วน", "⚠️");
                 return;
             }
 
