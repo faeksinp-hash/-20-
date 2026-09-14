@@ -130,6 +130,21 @@ namespace Porjai20.ViewModels
             set => SetProperty(ref _newCustomersArrow, value);
         }
 
+        // ─── Dynamic Header Labels ───────────────────────────────────────────────────
+        private string _weeklyDateRangeText = "";
+        public string WeeklyDateRangeText
+        {
+            get => _weeklyDateRangeText;
+            set => SetProperty(ref _weeklyDateRangeText, value);
+        }
+
+        private string _monthlyYearText = $"ปี {DateTime.Today.Year}";
+        public string MonthlyYearText
+        {
+            get => _monthlyYearText;
+            set => SetProperty(ref _monthlyYearText, value);
+        }
+
         // ─── Line Chart: Monthly Sales ───────────────────────────────────────────────
         public SeriesCollection MonthlySalesSeries { get; }
         public string[] MonthLabels { get; } =
@@ -139,7 +154,7 @@ namespace Porjai20.ViewModels
         // ─── Bar Chart: Weekly Sales ──────────────────────────────────────────────────
         public SeriesCollection WeeklySalesSeries { get; }
         public string[] DayLabels { get; } = { "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส.", "อา." };
-        public Func<double, string> ShortMoneyFormatter { get; } = val => $"฿{val/1000:N0}K";
+        public Func<double, string> ShortMoneyFormatter { get; } = val => val >= 1000 ? $"฿{val / 1000:F1}K" : $"฿{val:N0}";
 
         // ─── Recent Orders ────────────────────────────────────────────────────────────
         public ObservableCollection<RecentOrderRow> RecentOrders { get; }
@@ -214,47 +229,112 @@ namespace Porjai20.ViewModels
             _ = LoadData();
         }
 
+        public static DateTime? ParseDateToInvariant(string? dateStr)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr)) return null;
+            dateStr = dateStr.Trim();
+
+            string[] formats = {
+                "yyyy-MM-dd HH:mm:ss.FFFFFFF",
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-ddTHH:mm:ss",
+                "yyyy-MM-dd",
+                "dd/MM/yyyy HH:mm:ss",
+                "dd/MM/yyyy",
+                "yyyy/MM/dd HH:mm:ss",
+                "yyyy/MM/dd",
+                "d/M/yyyy HH:mm:ss",
+                "d/M/yyyy",
+                "yyyy-M-d HH:mm:ss",
+                "yyyy-M-d"
+            };
+
+            if (DateTime.TryParseExact(dateStr, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dtExact))
+            {
+                if (dtExact.Year > 2400)
+                    return dtExact.AddYears(-543);
+                return dtExact;
+            }
+
+            if (DateTime.TryParse(dateStr, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dtInv))
+            {
+                if (dtInv.Year > 2400)
+                    return dtInv.AddYears(-543);
+                return dtInv;
+            }
+
+            var thaiCulture = new System.Globalization.CultureInfo("th-TH");
+            if (DateTime.TryParse(dateStr, thaiCulture, System.Globalization.DateTimeStyles.None, out var dtThai))
+            {
+                if (dtThai.Year > 2400)
+                    return dtThai.AddYears(-543);
+                return dtThai;
+            }
+
+            return null;
+        }
+
+        public Task LoadDashboardData() => LoadData();
+
         public async Task LoadData()
         {
             try
             {
                 using (var conn = _databaseService.GetConnection())
                 {
-                    var today = DateTime.Today.ToString("yyyy-MM-dd");
-                    var yesterday = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
+                    var today = DateTime.Today;
+                    var yesterday = today.AddDays(-1);
 
-                    // 1. Sales Card
-                    var salesToday = await conn.ExecuteScalarAsync<decimal>(
-                        "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE date(Sales_Date) = date(@Today) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')",
-                        new { Today = today });
-                    var salesYesterday = await conn.ExecuteScalarAsync<decimal>(
-                        "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE date(Sales_Date) = date(@Yesterday) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')",
-                        new { Yesterday = yesterday });
+                    // Dynamic Date range calculation for current week (Monday to Sunday)
+                    int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
+                    DateTime monday = today.AddDays(-diff).Date;
+                    DateTime sunday = monday.AddDays(6).Date;
+
+                    string[] thaiMonths = { "", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค." };
+                    if (monday.Month == sunday.Month)
+                        WeeklyDateRangeText = $"{monday.Day}–{sunday.Day} {thaiMonths[monday.Month]} {monday.Year}";
+                    else
+                        WeeklyDateRangeText = $"{monday.Day} {thaiMonths[monday.Month]} – {sunday.Day} {thaiMonths[sunday.Month]} {monday.Year}";
+
+                    MonthlyYearText = $"ปี {today.Year}";
+
+                    // Query all active sales orders (exclude Cancelled / ยกเลิก)
+                    var allSales = (await conn.QueryAsync<SalesOrderRecord>(
+                        "SELECT Sales_ID, RefNo, Sales_Date, Sales_Total, Sales_Status, Cus_ID FROM tblSales_H WHERE Sales_Status IS NULL OR (Sales_Status != 'ยกเลิก' AND Sales_Status != 'Cancelled')")).ToList();
+
+                    // Convert all sales dates into invariant NormalizedDate
+                    foreach (var s in allSales)
+                    {
+                        s.NormalizedDate = ParseDateToInvariant(s.Sales_Date);
+                    }
+
+                    // 1. Sales Card: Today vs Yesterday
+                    var salesTodayList = allSales.Where(s => s.NormalizedDate.HasValue && s.NormalizedDate.Value.Date == today.Date).ToList();
+                    var salesYesterdayList = allSales.Where(s => s.NormalizedDate.HasValue && s.NormalizedDate.Value.Date == yesterday.Date).ToList();
+
+                    decimal salesToday = salesTodayList.Sum(s => (decimal)s.Sales_Total);
+                    decimal salesYesterday = salesYesterdayList.Sum(s => (decimal)s.Sales_Total);
 
                     decimal salesChange = 0;
                     if (salesYesterday > 0)
-                        salesChange = ((salesToday - salesYesterday) / salesYesterday) * 100;
+                        salesChange = ((salesToday - salesYesterday) / salesYesterday) * 100m;
                     else if (salesToday > 0)
-                        salesChange = 100;
+                        salesChange = 100m;
 
                     TodaySales = salesToday.ToString("C");
                     TodaySalesChange = $"{Math.Abs(salesChange):F0}% vs เมื่อวาน";
                     TodaySalesColor = salesChange >= 0 ? "#22C55E" : "#EF4444";
                     TodaySalesArrow = salesChange >= 0 ? "▲" : "▼";
 
-                    // 2. Orders Card
-                    var ordersToday = await conn.ExecuteScalarAsync<int>(
-                        "SELECT COUNT(*) FROM tblSales_H WHERE date(Sales_Date) = date(@Today) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')",
-                        new { Today = today });
-                    var ordersYesterday = await conn.ExecuteScalarAsync<int>(
-                        "SELECT COUNT(*) FROM tblSales_H WHERE date(Sales_Date) = date(@Yesterday) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')",
-                        new { Yesterday = yesterday });
+                    // 2. Orders Card: Today vs Yesterday
+                    int ordersToday = salesTodayList.Count;
+                    int ordersYesterday = salesYesterdayList.Count;
 
                     double ordersChange = 0;
                     if (ordersYesterday > 0)
-                        ordersChange = ((double)(ordersToday - ordersYesterday) / ordersYesterday) * 100;
+                        ordersChange = ((double)(ordersToday - ordersYesterday) / ordersYesterday) * 100.0;
                     else if (ordersToday > 0)
-                        ordersChange = 100;
+                        ordersChange = 100.0;
 
                     TodayOrders = ordersToday.ToString();
                     TodayOrdersChange = $"{Math.Abs(ordersChange):F0}% vs เมื่อวาน";
@@ -269,65 +349,128 @@ namespace Porjai20.ViewModels
                     TodayStockArrow = "●";
 
                     // 4. New Customers Card
-                    var custToday = await conn.ExecuteScalarAsync<int>(
-                        "SELECT COUNT(*) FROM tblCustomer WHERE date('now') = date(@Today)",
-                        new { Today = today });
-                    var custYesterday = 0;
+                    int custToday = 0;
+                    int custYesterday = 0;
+                    int totalCust = 0;
 
-                    double custChange = 0;
+                    try
+                    {
+                        var customers = (await conn.QueryAsync<CustomerRecord>("SELECT Cus_ID, Cus_RegDate FROM tblCustomer")).ToList();
+                        totalCust = customers.Count;
+                        foreach (var c in customers)
+                        {
+                            var dt = ParseDateToInvariant(c.Cus_RegDate);
+                            if (dt.HasValue)
+                            {
+                                if (dt.Value.Date == today.Date) custToday++;
+                                else if (dt.Value.Date == yesterday.Date) custYesterday++;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        totalCust = await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM tblCustomer");
+                    }
 
                     NewCustomers = custToday.ToString();
-                    NewCustomersChange = $"{Math.Abs(custChange):F0}% vs เมื่อวาน";
-                    NewCustomersColor = custChange >= 0 ? "#22C55E" : "#EF4444";
-                    NewCustomersArrow = custChange >= 0 ? "▲" : "▼";
+                    if (custToday > 0)
+                    {
+                        double custChange = 0;
+                        if (custYesterday > 0)
+                            custChange = ((double)(custToday - custYesterday) / custYesterday) * 100.0;
+                        else
+                            custChange = 100.0;
 
-                    // 5. Line Chart: Monthly Sales
-                    var currentYear = DateTime.Today.Year;
+                        NewCustomersChange = $"{Math.Abs(custChange):F0}% vs เมื่อวาน";
+                        NewCustomersColor = custChange >= 0 ? "#22C55E" : "#EF4444";
+                        NewCustomersArrow = custChange >= 0 ? "▲" : "▼";
+                    }
+                    else
+                    {
+                        if (custYesterday > 0)
+                        {
+                            NewCustomersChange = "100% vs เมื่อวาน";
+                            NewCustomersColor = "#EF4444";
+                            NewCustomersArrow = "▼";
+                        }
+                        else
+                        {
+                            NewCustomersChange = totalCust > 0 ? $"ลูกค้าทั้งหมด {totalCust} ท่าน" : "0% vs เมื่อวาน";
+                            NewCustomersColor = "#9CA3AF";
+                            NewCustomersArrow = "●";
+                        }
+                    }
+
+                    // 5. Line Chart: Monthly Sales (Jan to Dec of Current Year)
+                    int currentYear = today.Year;
                     var monthlyValues = new ChartValues<double>();
                     var netValues = new ChartValues<double>();
                     for (int m = 1; m <= 12; m++)
                     {
-                        var startOfMonth = new DateTime(currentYear, m, 1).ToString("yyyy-MM-dd");
-                        var endOfMonth = new DateTime(currentYear, m, DateTime.DaysInMonth(currentYear, m)).ToString("yyyy-MM-dd");
-                        var sales = await conn.ExecuteScalarAsync<double>(
-                            "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE date(Sales_Date) >= date(@Start) AND date(Sales_Date) <= date(@End) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')",
-                            new { Start = startOfMonth, End = endOfMonth });
-                        monthlyValues.Add(sales);
-                        netValues.Add(sales * 0.4); // 40% margin
+                        double monthSales = (double)allSales
+                            .Where(s => s.NormalizedDate.HasValue && s.NormalizedDate.Value.Year == currentYear && s.NormalizedDate.Value.Month == m)
+                            .Sum(s => (decimal)s.Sales_Total);
+
+                        monthlyValues.Add(monthSales);
+                        netValues.Add(monthSales * 0.4); // 40% margin
                     }
                     MonthlySalesSeries[0].Values = monthlyValues;
                     MonthlySalesSeries[1].Values = netValues;
 
-                    // 6. Bar Chart: Weekly Sales
+                    // 6. Bar Chart: Weekly Sales (Monday to Sunday of Current Week)
                     var weeklyValues = new ChartValues<double>();
-                    for (int d = 6; d >= 0; d--)
+                    for (int i = 0; i < 7; i++)
                     {
-                        var dateStr = DateTime.Today.AddDays(-d).ToString("yyyy-MM-dd");
-                        var sales = await conn.ExecuteScalarAsync<double>(
-                            "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE date(Sales_Date) = date(@Date) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')",
-                            new { Date = dateStr });
-                        weeklyValues.Add(sales);
+                        DateTime dayDate = monday.AddDays(i);
+                        double daySales = (double)allSales
+                            .Where(s => s.NormalizedDate.HasValue && s.NormalizedDate.Value.Date == dayDate.Date)
+                            .Sum(s => (decimal)s.Sales_Total);
+
+                        weeklyValues.Add(daySales);
                     }
                     WeeklySalesSeries[0].Values = weeklyValues;
 
                     // 7. Recent Orders Grid
                     var recentOrdersList = new List<RecentOrderRow>();
-                    var orders = await conn.QueryAsync<SalesOrder>("SELECT Sales_ID AS Sales_ID, Sales_ID AS Id, * FROM tblSales_H ORDER BY Sales_Date DESC LIMIT 5");
+                    string recentSql = @"
+                        SELECT s.Sales_ID AS Sales_ID, s.Sales_ID AS Id, s.RefNo, s.Sales_Date, s.Sales_Total, s.Sales_Status,
+                               s.Sales_PaymentType, s.Cus_ID, c.Cus_Name AS CustomerName
+                        FROM tblSales_H s
+                        LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                        ORDER BY s.Sales_ID DESC
+                        LIMIT 5";
+                    var orders = await conn.QueryAsync(recentSql);
                     foreach (var order in orders)
                     {
+                        int orderId = Convert.ToInt32(order.Sales_ID);
                         var itemsCount = await conn.ExecuteScalarAsync<int>(
                             "SELECT COALESCE(SUM(Sales_Qty), 0) FROM tblSalesDetail WHERE Sales_ID = @OrderId",
-                            new { OrderId = order.Id });
-                        string statusColor = "#22C55E";
+                            new { OrderId = orderId });
+
                         string statusText = "สำเร็จ";
+                        string statusColor = "#22C55E";
+                        string rawStatus = order.Sales_Status != null ? order.Sales_Status.ToString() : "";
+                        if (rawStatus == "ยกเลิก" || rawStatus == "Cancelled")
+                        {
+                            statusText = "ยกเลิก";
+                            statusColor = "#EF4444";
+                        }
+
+                        string customerName = order.CustomerName != null ? order.CustomerName.ToString() : "";
+                        if (string.IsNullOrWhiteSpace(customerName) || customerName == "-")
+                        {
+                            customerName = "ลูกค้าทั่วไป";
+                        }
+
+                        decimal totalAmt = Convert.ToDecimal(order.Sales_Total);
 
                         recentOrdersList.Add(new RecentOrderRow
                         {
-                            OrderId = order.RefNo,
-                            Customer = "ลูกค้าทั่วไป",
+                            OrderId = order.RefNo ?? $"SALE-{orderId}",
+                            Customer = customerName,
                             PurchaseType = "รับที่ร้าน",
                             Items = itemsCount,
-                            Total = order.TotalAmount.ToString("C"),
+                            Total = totalAmt.ToString("C"),
                             Status = statusText,
                             StatusColor = statusColor
                         });
@@ -395,4 +538,22 @@ namespace Porjai20.ViewModels
         public string Revenue  { get; set; } = string.Empty;
         public string Trend    { get; set; } = string.Empty;
     }
+
+    internal class SalesOrderRecord
+    {
+        public int Sales_ID { get; set; }
+        public string? RefNo { get; set; }
+        public string? Sales_Date { get; set; }
+        public double Sales_Total { get; set; }
+        public string? Sales_Status { get; set; }
+        public int? Cus_ID { get; set; }
+        public DateTime? NormalizedDate { get; set; }
+    }
+
+    internal class CustomerRecord
+    {
+        public int Cus_ID { get; set; }
+        public string? Cus_RegDate { get; set; }
+    }
 }
+

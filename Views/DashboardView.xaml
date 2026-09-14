@@ -333,7 +333,7 @@
                         <DockPanel Grid.Row="0" Margin="0,0,0,10">
                             <StackPanel>
                                 <TextBlock Text="ยอดขายรายเดือน" FontSize="14" FontWeight="Bold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                <TextBlock Text="ปี 2026" FontSize="11" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                <TextBlock Text="{Binding MonthlyYearText}" FontSize="11" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
                             </StackPanel>
                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
@@ -380,7 +380,7 @@
                         <DockPanel Grid.Row="0" Margin="0,0,0,10">
                             <StackPanel>
                                 <TextBlock Text="ยอดขายสัปดาห์นี้" FontSize="14" FontWeight="Bold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                <TextBlock Text="11–17 ก.ค. 2026" FontSize="11" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                <TextBlock Text="{Binding WeeklyDateRangeText}" FontSize="11" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
                             </StackPanel>
                             <TextBlock DockPanel.Dock="Right" Text="↗" FontSize="16" Foreground="{StaticResource LtPinkAccent}" VerticalAlignment="Center"/>
                         </DockPanel>

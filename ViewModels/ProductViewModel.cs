@@ -5215,13 +5215,24 @@ namespace Porjai20.ViewModels
             {
                 using (var conn = _databaseService.GetConnection())
                 {
-                    var todayStr = DateTime.Today.ToString("yyyy-MM-dd");
+                    var today = DateTime.Today;
 
-                    string salesSql = "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE date(Sales_Date) = date(@Today) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')";
-                    TodaySalesTotal = await conn.ExecuteScalarAsync<decimal>(salesSql, new { Today = todayStr });
+                    var allSales = (await conn.QueryAsync("SELECT Sales_ID, Sales_Date, Sales_Total, Sales_Status FROM tblSales_H WHERE Sales_Status IS NULL OR (Sales_Status != 'ยกเลิก' AND Sales_Status != 'Cancelled')")).ToList();
 
-                    string ordersSql = "SELECT COUNT(*) FROM tblSales_H WHERE date(Sales_Date) = date(@Today) AND (Sales_Status = 'ชำระเงินแล้ว' OR Sales_Status = 'Completed')";
-                    TodayOrdersCount = await conn.ExecuteScalarAsync<int>(ordersSql, new { Today = todayStr });
+                    decimal salesToday = 0;
+                    int ordersToday = 0;
+                    foreach (var s in allSales)
+                    {
+                        var dt = DashboardViewModel.ParseDateToInvariant(s.Sales_Date != null ? s.Sales_Date.ToString() : null);
+                        if (dt.HasValue && dt.Value.Date == today.Date)
+                        {
+                            salesToday += Convert.ToDecimal(s.Sales_Total);
+                            ordersToday++;
+                        }
+                    }
+
+                    TodaySalesTotal = salesToday;
+                    TodayOrdersCount = ordersToday;
 
                     string stockSql = "SELECT COALESCE(SUM(Pro_Qty), 0) FROM tblProduct";
                     TotalProductsInStock = await conn.ExecuteScalarAsync<int>(stockSql);
@@ -5235,7 +5246,7 @@ namespace Porjai20.ViewModels
                     }
 
                     RecentSalesOrders.Clear();
-                    string recentSql = "SELECT Sales_ID AS Sales_ID, Sales_ID AS Id, * FROM tblSales_H ORDER BY Sales_Date DESC LIMIT 5";
+                    string recentSql = "SELECT Sales_ID AS Sales_ID, Sales_ID AS Id, * FROM tblSales_H ORDER BY Sales_ID DESC LIMIT 5";
                     var recents = await conn.QueryAsync<SalesOrder>(recentSql);
                     foreach (var o in recents)
                     {
