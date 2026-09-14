@@ -153,6 +153,12 @@ namespace Porjai20.ViewModels
                     if (SelectedShippingMethod != "Delivery")
                     {
                         SelectedShippingMethod = "Delivery";
+                        if (SelectedCustomer != null)
+                        {
+                            if (string.IsNullOrWhiteSpace(CustomerName)) CustomerName = SelectedCustomer.Name ?? "";
+                            if (string.IsNullOrWhiteSpace(CustomerPhone)) CustomerPhone = SelectedCustomer.Phone ?? "";
+                            if (string.IsNullOrWhiteSpace(CustomerAddress)) CustomerAddress = SelectedCustomer.Address ?? "";
+                        }
                         OpenDeliveryModal();
                     }
                 }
@@ -434,6 +440,7 @@ namespace Porjai20.ViewModels
                     {
                         CustomerName = value.Name;
                         CustomerPhone = value.Phone;
+                        CustomerAddress = value.Address;
                         _customerSearchText = value.Phone;
                         OnPropertyChanged(nameof(CustomerSearchText));
                         OnPropertyChanged(nameof(MemberPhone));
@@ -1258,9 +1265,29 @@ namespace Porjai20.ViewModels
 
                         if (SelectedShippingMethod == "Delivery")
                         {
-                            string sqlDeliv = @"INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Delivery_Status)
-                                                VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, 'รอจัดส่ง')";
-                            await conn.ExecuteAsync(sqlDeliv, new { Sales_ID = orderId, Recipient_Name = CustomerName, Recipient_Tel = CustomerPhone, Recipient_Address = CustomerAddress }, trans);
+                            string recipientName = !string.IsNullOrWhiteSpace(CustomerName) 
+                                ? CustomerName.Trim() 
+                                : (!string.IsNullOrWhiteSpace(DeliveryCustomerName) ? DeliveryCustomerName.Trim() : (SelectedCustomer?.Name?.Trim() ?? "ลูกค้าทั่วไป"));
+
+                            string recipientTel = !string.IsNullOrWhiteSpace(CustomerPhone) 
+                                ? CustomerPhone.Trim() 
+                                : (!string.IsNullOrWhiteSpace(DeliveryCustomerPhone) ? DeliveryCustomerPhone.Trim() : (SelectedCustomer?.Phone?.Trim() ?? "-"));
+
+                            string recipientAddress = !string.IsNullOrWhiteSpace(CustomerAddress) 
+                                ? CustomerAddress.Trim() 
+                                : (!string.IsNullOrWhiteSpace(DeliveryCustomerAddress) ? DeliveryCustomerAddress.Trim() : (SelectedCustomer?.Address?.Trim() ?? "ไม่ระบุที่อยู่"));
+
+                            string sqlDeliv = @"INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Tracking_No, Delivery_Status)
+                                                VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, @Tracking_No, @Delivery_Status);";
+                            await conn.ExecuteAsync(sqlDeliv, new 
+                            { 
+                                Sales_ID = orderId, 
+                                Recipient_Name = recipientName, 
+                                Recipient_Tel = recipientTel, 
+                                Recipient_Address = recipientAddress,
+                                Tracking_No = (string?)null,
+                                Delivery_Status = "รอจัดส่ง"
+                            }, trans);
                         }
 
                         foreach (var item in CartItems)

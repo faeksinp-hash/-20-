@@ -296,6 +296,9 @@ namespace Porjai20.Services
 
                 // Migrate sales dates and payment methods to standard formats
                 MigrateSalesRecords(connection);
+
+                // Migrate and self-heal delivery recipient info if blank
+                MigrateDeliveryRecords(connection);
             }
         }
 
@@ -437,6 +440,31 @@ namespace Porjai20.Services
             }
         }
 
+        /// <summary>
+        /// Migration สำหรับซ่อมแซมข้อมูลการจัดส่งสินค้า (tblDelivery) ที่ชื่อ เบอร์โทร หรือที่อยู่ว่างเปล่า โดยดึงข้อมูลจาก tblCustomer ผ่าน tblSales_H
+        /// </summary>
+        private void MigrateDeliveryRecords(IDbConnection connection)
+        {
+            try
+            {
+                connection.Execute(@"
+                    UPDATE tblDelivery
+                    SET 
+                        Recipient_Name = COALESCE(NULLIF(TRIM(Recipient_Name), ''), (SELECT c.Cus_Name FROM tblSales_H s JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID WHERE s.Sales_ID = tblDelivery.Sales_ID), 'ลูกค้าทั่วไป'),
+                        Recipient_Tel = COALESCE(NULLIF(TRIM(Recipient_Tel), ''), (SELECT c.Cus_Tel FROM tblSales_H s JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID WHERE s.Sales_ID = tblDelivery.Sales_ID), '-'),
+                        Recipient_Address = COALESCE(NULLIF(TRIM(Recipient_Address), ''), (SELECT c.Cus_Address FROM tblSales_H s JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID WHERE s.Sales_ID = tblDelivery.Sales_ID), 'ไม่ระบุที่อยู่'),
+                        Delivery_Status = COALESCE(NULLIF(TRIM(Delivery_Status), ''), 'รอจัดส่ง')
+                    WHERE Recipient_Name IS NULL OR TRIM(Recipient_Name) = ''
+                       OR Recipient_Tel IS NULL OR TRIM(Recipient_Tel) = ''
+                       OR Recipient_Address IS NULL OR TRIM(Recipient_Address) = '';
+                ");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating delivery records: {ex.Message}");
+            }
+        }
+
         public int SaveSalesOrder(Models.SalesOrder order)
         {
             using (var connection = GetConnection())
@@ -497,6 +525,35 @@ namespace Porjai20.Services
             {
                 string sql = "UPDATE tblDelivery SET Delivery_Status = @Status WHERE Sales_ID = @Id";
                 connection.Execute(sql, new { Status = status, Id = orderId });
+            }
+        }
+
+        public void SaveDelivery(int salesId, string recipientName, string recipientTel, string recipientAddress, string? trackingNo = null, string deliveryStatus = "รอจัดส่ง", IDbConnection? conn = null, IDbTransaction? trans = null)
+        {
+            string sql = @"
+                INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Tracking_No, Delivery_Status)
+                VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, @Tracking_No, @Delivery_Status);";
+
+            var param = new
+            {
+                Sales_ID = salesId,
+                Recipient_Name = !string.IsNullOrWhiteSpace(recipientName) ? recipientName.Trim() : "ลูกค้าทั่วไป",
+                Recipient_Tel = !string.IsNullOrWhiteSpace(recipientTel) ? recipientTel.Trim() : "-",
+                Recipient_Address = !string.IsNullOrWhiteSpace(recipientAddress) ? recipientAddress.Trim() : "ไม่ระบุที่อยู่",
+                Tracking_No = trackingNo,
+                Delivery_Status = !string.IsNullOrWhiteSpace(deliveryStatus) ? deliveryStatus.Trim() : "รอจัดส่ง"
+            };
+
+            if (conn != null)
+            {
+                conn.Execute(sql, param, trans);
+            }
+            else
+            {
+                using (var connection = GetConnection())
+                {
+                    connection.Execute(sql, param);
+                }
             }
         }
 

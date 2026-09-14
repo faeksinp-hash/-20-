@@ -462,6 +462,15 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _isDeliverySelected, value))
                 {
+                    if (value)
+                    {
+                        if (string.IsNullOrWhiteSpace(DeliveryCustomerName)) 
+                            DeliveryCustomerName = !string.IsNullOrWhiteSpace(CustomerName) ? CustomerName : (SelectedCustomer?.Name ?? "");
+                        if (string.IsNullOrWhiteSpace(DeliveryCustomerPhone)) 
+                            DeliveryCustomerPhone = !string.IsNullOrWhiteSpace(CustomerPhone) ? CustomerPhone : (SelectedCustomer?.Phone ?? "");
+                        if (string.IsNullOrWhiteSpace(DeliveryCustomerAddress)) 
+                            DeliveryCustomerAddress = !string.IsNullOrWhiteSpace(CustomerAddress) ? CustomerAddress : (SelectedCustomer?.Address ?? "");
+                    }
                     OnPropertyChanged(nameof(IsPickupSelected));
                     OnPropertyChanged(nameof(CheckoutDeliveryMethod));
                     OnPropertyChanged(nameof(ShippingFee));
@@ -822,6 +831,10 @@ namespace Porjai20.ViewModels
                     CustomerName = value.Name;
                     CustomerPhone = value.Phone;
                     CustomerAddress = value.Address;
+
+                    if (string.IsNullOrWhiteSpace(DeliveryCustomerName)) DeliveryCustomerName = value.Name ?? "";
+                    if (string.IsNullOrWhiteSpace(DeliveryCustomerPhone)) DeliveryCustomerPhone = value.Phone ?? "";
+                    if (string.IsNullOrWhiteSpace(DeliveryCustomerAddress)) DeliveryCustomerAddress = value.Address ?? "";
                 }
             }
         }
@@ -4229,9 +4242,29 @@ namespace Porjai20.ViewModels
 
                         if (IsDeliverySelected)
                         {
-                            string sqlDeliv = @"INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Delivery_Status)
-                                                VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, 'รอจัดส่ง')";
-                            await conn.ExecuteAsync(sqlDeliv, new { Sales_ID = orderId, Recipient_Name = DeliveryCustomerName, Recipient_Tel = DeliveryCustomerPhone, Recipient_Address = DeliveryCustomerAddress }, trans);
+                            string recipientName = !string.IsNullOrWhiteSpace(DeliveryCustomerName)
+                                ? DeliveryCustomerName.Trim()
+                                : (!string.IsNullOrWhiteSpace(RecipientName) ? RecipientName.Trim() : (!string.IsNullOrWhiteSpace(CustomerName) ? CustomerName.Trim() : (SelectedCustomer?.Name?.Trim() ?? "ลูกค้าทั่วไป")));
+
+                            string recipientTel = !string.IsNullOrWhiteSpace(DeliveryCustomerPhone)
+                                ? DeliveryCustomerPhone.Trim()
+                                : (!string.IsNullOrWhiteSpace(RecipientPhone) ? RecipientPhone.Trim() : (!string.IsNullOrWhiteSpace(CustomerPhone) ? CustomerPhone.Trim() : (SelectedCustomer?.Phone?.Trim() ?? "-")));
+
+                            string recipientAddress = !string.IsNullOrWhiteSpace(DeliveryCustomerAddress)
+                                ? DeliveryCustomerAddress.Trim()
+                                : (!string.IsNullOrWhiteSpace(ShippingAddress) ? ShippingAddress.Trim() : (!string.IsNullOrWhiteSpace(CustomerAddress) ? CustomerAddress.Trim() : (SelectedCustomer?.Address?.Trim() ?? "ไม่ระบุที่อยู่")));
+
+                            string sqlDeliv = @"INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Tracking_No, Delivery_Status)
+                                                VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, @Tracking_No, @Delivery_Status);";
+                            await conn.ExecuteAsync(sqlDeliv, new 
+                            { 
+                                Sales_ID = orderId, 
+                                Recipient_Name = recipientName, 
+                                Recipient_Tel = recipientTel, 
+                                Recipient_Address = recipientAddress,
+                                Tracking_No = (string?)null,
+                                Delivery_Status = "รอจัดส่ง"
+                            }, trans);
                         }
 
                         foreach (var item in CartItems)
