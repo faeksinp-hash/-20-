@@ -1010,3 +1010,10 @@ D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pd
 D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
 D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
 D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\BCrypt-Net-Next.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\ClosedXML.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\ClosedXML.Parser.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\DocumentFormat.OpenXml.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\DocumentFormat.OpenXml.Framework.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\ExcelNumberFormat.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\RBush.dll
+D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\SixLabors.Fonts.dll

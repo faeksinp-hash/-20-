@@ -4,10 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using ClosedXML.Excel;
 using Dapper;
 using Porjai20.Models;
 using Porjai20.Services;
@@ -1547,9 +1550,10 @@ namespace Porjai20.ViewModels
         }
 
         public ObservableCollection<ReportRow> ReportRows { get; set; } = new ObservableCollection<ReportRow>();
+        public bool HasReportData => (ReportRows != null && ReportRows.Any()) || (ReportSummaryList != null && ReportSummaryList.Any());
         public ICommand GenerateReportCommand { get; }
         public ICommand ProcessReportCommand { get; }
-        public ICommand ExportExcelCommand { get; }
+        public ICommand ExportExcelCommand { get; set; }
 
         public ProductViewModel()
         {
@@ -1609,11 +1613,8 @@ namespace Porjai20.ViewModels
             SwitchToReportsCommand = new RelayCommand(async _ => await NavigateAsync(async () => { CurrentView = "reports"; await SwitchToReports(); }));
             GenerateReportCommand = new RelayCommand(async _ => await GenerateReport());
             ProcessReportCommand = GenerateReportCommand;
-            ExportReportCommand = new RelayCommand(_ =>
-            {
-                ShowAlert("ส่งออกข้อมูลรายงานเป็นไฟล์ Excel สำเร็จ", "ส่งออกสำเร็จ", "🎉");
-            });
-            ExportExcelCommand = ExportReportCommand;
+            ExportExcelCommand = new RelayCommand(async _ => await ExecuteExportExcel(), _ => HasReportData);
+            ExportReportCommand = ExportExcelCommand;
             PrintReportCommand = new RelayCommand(_ =>
             {
                 ShowAlert("ส่งคำสั่งพิมพ์รายงานไปยังเครื่องพิมพ์เรียบร้อยแล้ว", "พิมพ์รายงาน", "🖨️");
@@ -1626,6 +1627,8 @@ namespace Porjai20.ViewModels
                 ReportEndDate = DateTime.Today;
                 ReportRows.Clear();
                 await GenerateReport();
+                OnPropertyChanged(nameof(HasReportData));
+                CommandManager.InvalidateRequerySuggested();
             });
             OpenReportDetailModalCommand = new RelayCommand(param =>
             {
@@ -6555,8 +6558,1006 @@ namespace Porjai20.ViewModels
             finally
             {
                 IsGeneratingReport = false;
+                OnPropertyChanged(nameof(HasReportData));
+                CommandManager.InvalidateRequerySuggested();
             }
         }
+
+        #region Excel Export Implementation (ClosedXML)
+
+        private static string SanitizeFileName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "รายงาน";
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var sanitized = new string(name.Select(c => invalidChars.Contains(c) ? '_' : c).ToArray());
+            return sanitized.Trim();
+        }
+
+        private async Task ExecuteExportExcel()
+        {
+            if (!HasReportData)
+            {
+                ShowAlert("ไม่พบข้อมูลรายงานที่จะส่งออก กรุณากดปุ่ม 'ประมวลผล' เพื่อสร้างรายงานก่อนดำเนินการ", "แจ้งเตือน", "⚠️");
+                return;
+            }
+
+            string safeType = SanitizeFileName(SelectedReportType);
+            string safePeriod = SanitizeFileName(SelectedReportPeriod);
+            string defaultFileName = $"รายงาน_{safeType}_{safePeriod}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+                FileName = defaultFileName,
+                Title = "บันทึกรายงาน Excel"
+            };
+
+            if (saveFileDialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            string filePath = saveFileDialog.FileName;
+
+            try
+            {
+                using (var workbook = new XLWorkbook())
+                {
+                    string sheetName = SelectedReportType.Length > 25 ? SelectedReportType.Substring(0, 25) : SelectedReportType;
+                    sheetName = System.Text.RegularExpressions.Regex.Replace(sheetName, @"[:\\/?*\[\]]", "_");
+                    if (string.IsNullOrWhiteSpace(sheetName)) sheetName = "รายงานสรุปผล";
+
+                    var ws = workbook.Worksheets.Add(sheetName);
+                    ws.Style.Font.FontName = "Segoe UI";
+
+                    // 1. ส่วนหัวเอกสาร (Header Section)
+                    // แถวที่ 1: ชื่อร้าน "ร้านพอใจ ทุกอย่าง 20 บาท" (ตัวหนา, ขนาด 16pt)
+                    ws.Cell(1, 1).Value = "ร้านพอใจ ทุกอย่าง 20 บาท";
+                    ws.Cell(1, 1).Style.Font.FontSize = 16;
+                    ws.Cell(1, 1).Style.Font.Bold = true;
+                    ws.Cell(1, 1).Style.Font.FontColor = XLColor.FromHtml("#0F172A");
+
+                    // แถวที่ 2: ชื่อประเภทรายงาน (ตัวหนา, ขนาด 13pt)
+                    ws.Cell(2, 1).Value = SelectedReportType;
+                    ws.Cell(2, 1).Style.Font.FontSize = 13;
+                    ws.Cell(2, 1).Style.Font.Bold = true;
+                    ws.Cell(2, 1).Style.Font.FontColor = XLColor.FromHtml("#0284C7");
+
+                    // แถวที่ 3: ช่วงเวลาที่เลือก และวันที่พิมพ์ออกรายงาน
+                    string periodInfo = SelectedReportPeriod == "ทั้งหมด"
+                        ? "ช่วงเวลา: ทั้งหมด"
+                        : $"ช่วงเวลา: {SelectedReportPeriod} ({ReportStartDate:dd/MM/yyyy} - {ReportEndDate:dd/MM/yyyy})";
+                    ws.Cell(3, 1).Value = $"{periodInfo}  |  วันที่พิมพ์ออกรายงาน: {DateTime.Now:dd/MM/yyyy HH:mm:ss} น.";
+                    ws.Cell(3, 1).Style.Font.FontSize = 10.5;
+                    ws.Cell(3, 1).Style.Font.FontColor = XLColor.FromHtml("#64748B");
+
+                    // แถวที่ 4: สรุปยอดรวม 3 ช่อง (ยอดขายรวม | ต้นทุน/รายจ่ายรวม | กำไรสุทธิ)
+                    ws.Range(4, 1, 4, 2).Merge();
+                    ws.Cell(4, 1).Value = $"ยอดขายรวม: ฿{ReportTotalRevenue:N2}";
+                    ws.Cell(4, 1).Style.Font.Bold = true;
+                    ws.Cell(4, 1).Style.Font.FontSize = 11;
+                    ws.Cell(4, 1).Style.Fill.BackgroundColor = XLColor.FromHtml("#E0F2FE");
+                    ws.Cell(4, 1).Style.Font.FontColor = XLColor.FromHtml("#0369A1");
+                    ws.Cell(4, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    ws.Range(4, 1, 4, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    ws.Range(4, 1, 4, 2).Style.Border.OutsideBorderColor = XLColor.FromHtml("#BAE6FD");
+
+                    ws.Range(4, 3, 4, 4).Merge();
+                    ws.Cell(4, 3).Value = $"ต้นทุน/รายจ่ายรวม: ฿{ReportTotalExpenses:N2}";
+                    ws.Cell(4, 3).Style.Font.Bold = true;
+                    ws.Cell(4, 3).Style.Font.FontSize = 11;
+                    ws.Cell(4, 3).Style.Fill.BackgroundColor = XLColor.FromHtml("#FEF3C7");
+                    ws.Cell(4, 3).Style.Font.FontColor = XLColor.FromHtml("#B45309");
+                    ws.Cell(4, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    ws.Range(4, 3, 4, 4).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    ws.Range(4, 3, 4, 4).Style.Border.OutsideBorderColor = XLColor.FromHtml("#FDE68A");
+
+                    ws.Range(4, 5, 4, 6).Merge();
+                    ws.Cell(4, 5).Value = $"กำไรสุทธิ: ฿{ReportNetProfit:N2}";
+                    ws.Cell(4, 5).Style.Font.Bold = true;
+                    ws.Cell(4, 5).Style.Font.FontSize = 11;
+                    ws.Cell(4, 5).Style.Fill.BackgroundColor = XLColor.FromHtml("#DCFCE7");
+                    ws.Cell(4, 5).Style.Font.FontColor = XLColor.FromHtml("#15803D");
+                    ws.Cell(4, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    ws.Range(4, 5, 4, 6).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    ws.Range(4, 5, 4, 6).Style.Border.OutsideBorderColor = XLColor.FromHtml("#86EFAC");
+
+                    // แถวที่ 5: เว้นบรรทัดว่าง
+
+                    // 2. ส่วนตารางข้อมูล (Data Table)
+                    int headerRow = 6;
+                    ws.Row(headerRow).Height = 26;
+
+                    await PopulateExcelReportData(ws, headerRow);
+
+                    // จัดความกว้างคอลัมน์อัตโนมัติ พร้อมเผื่อระยะขอบ
+                    ws.Columns().AdjustToContents();
+                    foreach (var col in ws.Columns())
+                    {
+                        col.Width = Math.Max(col.Width + 4, 12);
+                    }
+
+                    workbook.SaveAs(filePath);
+                }
+
+                ShowConfirm($"บันทึกไฟล์รายงาน Excel เรียบร้อยแล้ว\nที่อยู่ไฟล์: {filePath}\n\nคุณต้องการเปิดไฟล์ขึ้นมาดูทันทีหรือไม่?", () =>
+                {
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowAlert($"ไม่สามารถเปิดไฟล์ได้: {ex.Message}", "ข้อผิดพลาด", "⚠️");
+                    }
+                }, "ส่งออกข้อมูลสำเร็จ");
+            }
+            catch (IOException)
+            {
+                ShowAlert("ไม่สามารถบันทึกไฟล์ได้ เนื่องจากไฟล์นี้กำลังถูกเปิดใช้งานอยู่ในโปรแกรมอื่น (เช่น Microsoft Excel)\n\nกรุณาปิดไฟล์ดังกล่าวแล้วลองกดบันทึกใหม่อีกครั้ง", "ไม่สามารถบันทึกไฟล์ได้", "⚠️");
+            }
+            catch (Exception ex)
+            {
+                ShowAlert($"เกิดข้อผิดพลาดในการส่งออกไฟล์ Excel: {ex.Message}", "ข้อผิดพลาด", "❌");
+            }
+        }
+
+        private async Task PopulateExcelReportData(IXLWorksheet ws, int headerRow)
+        {
+            bool isAllPeriod = SelectedReportPeriod == "ทั้งหมด";
+            DateTime start = ReportStartDate != default ? ReportStartDate.Date : DateTime.Today;
+            DateTime end = (ReportEndDate.Date >= DateTime.MaxValue.Date.AddDays(-1)) ? DateTime.MaxValue : ReportEndDate.Date.AddDays(1).AddTicks(-1);
+
+            int startYr = start.Year > 2400 ? start.Year - 543 : start.Year;
+            int endYr = end.Year > 2400 ? end.Year - 543 : end.Year;
+            DateTime startCE = new DateTime(startYr, start.Month, start.Day, start.Hour, start.Minute, start.Second);
+            DateTime endCE = end == DateTime.MaxValue ? DateTime.MaxValue : new DateTime(endYr, end.Month, end.Day, end.Hour, end.Minute, end.Second);
+
+            string sCe = startCE.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            string eCe = endCE == DateTime.MaxValue ? "9999-12-31 23:59:59" : endCE.ToString("yyyy-MM-dd 23:59:59", System.Globalization.CultureInfo.InvariantCulture);
+            string sBe = (startYr + 543).ToString("D4") + startCE.ToString("-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            string eBe = endCE == DateTime.MaxValue ? "9999-12-31 23:59:59" : (endYr + 543).ToString("D4") + endCE.ToString("-MM-dd 23:59:59", System.Globalization.CultureInfo.InvariantCulture);
+            var dateParams = new { S = sCe, E = eCe, S_BE = sBe, E_BE = eBe };
+
+            using (var conn = _databaseService.GetConnection())
+            {
+                switch (SelectedReportType)
+                {
+                    case "รายงานข้อมูลลูกค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "ชื่อลูกค้า", "จำนวนบิลที่ซื้อ", "เบอร์โทรศัพท์", "ที่อยู่", "ยอดซื้อสะสม (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
+                                       COUNT(s.Sales_ID) as BillCount, 
+                                       COALESCE(c.Cus_Tel, '-') as Tel, 
+                                       COALESCE(c.Cus_Address, '-') as Address, 
+                                       COALESCE(SUM(s.Sales_Total), 0) as Total
+                                FROM tblCustomer c
+                                LEFT JOIN tblSales_H s ON c.Cus_ID = s.Cus_ID
+                                GROUP BY c.Cus_ID
+                                ORDER BY Total DESC, BillCount DESC"
+                            : @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
+                                       COUNT(s.Sales_ID) as BillCount, 
+                                       COALESCE(c.Cus_Tel, '-') as Tel, 
+                                       COALESCE(c.Cus_Address, '-') as Address, 
+                                       COALESCE(SUM(s.Sales_Total), 0) as Total
+                                FROM tblCustomer c
+                                LEFT JOIN tblSales_H s ON c.Cus_ID = s.Cus_ID AND ((s.Sales_Date >= @S AND s.Sales_Date <= @E) OR (s.Sales_Date >= @S_BE AND s.Sales_Date <= @E_BE))
+                                GROUP BY c.Cus_ID
+                                ORDER BY Total DESC, BillCount DESC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        decimal sumTotal = 0;
+                        long sumBills = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string name = item.Name ?? "-";
+                            long bills = Convert.ToInt64(item.BillCount ?? 0);
+                            string tel = item.Tel ?? "-";
+                            string addr = item.Address ?? "-";
+                            decimal total = Convert.ToDecimal(item.Total ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = name;
+
+                            ws.Cell(rowIdx, 3).Value = bills;
+                            ws.Cell(rowIdx, 3).Style.NumberFormat.Format = "#,##0";
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ws.Cell(rowIdx, 4).Value = tel;
+                            ws.Cell(rowIdx, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 5).Value = addr;
+
+                            ws.Cell(rowIdx, 6).Value = total;
+                            ws.Cell(rowIdx, 6).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 6, seq % 2 == 0);
+                            sumTotal += total;
+                            sumBills += bills;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 3, (sumBills, "#,##0") },
+                            { 6, (sumTotal, "#,##0.00") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลสินค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "รหัสสินค้า", "ชื่อสินค้า", "หมวดหมู่", "ราคาขาย (บาท)", "ราคาทุน (บาท)", "คงเหลือในสต็อก", "จำนวนที่ขายได้ (ชิ้น)", "ยอดขายรวม (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT COALESCE(p.Pro_Barcode, 'P-' || p.Pro_ID) as Code,
+                                       p.Pro_Name as Name,
+                                       COALESCE(p.Pro_Category, '-') as Category,
+                                       p.Pro_Price as Price,
+                                       p.Pro_Cost as Cost,
+                                       p.Pro_Qty as Stock,
+                                       COALESCE(SUM(d.Sales_Qty), 0) as SoldQty,
+                                       COALESCE(SUM(d.Sales_Subtotal), 0) as SoldTotal
+                                FROM tblProduct p
+                                LEFT JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
+                                LEFT JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                                GROUP BY p.Pro_ID
+                                ORDER BY SoldQty DESC, p.Pro_Qty ASC"
+                            : @"SELECT COALESCE(p.Pro_Barcode, 'P-' || p.Pro_ID) as Code,
+                                       p.Pro_Name as Name,
+                                       COALESCE(p.Pro_Category, '-') as Category,
+                                       p.Pro_Price as Price,
+                                       p.Pro_Cost as Cost,
+                                       p.Pro_Qty as Stock,
+                                       COALESCE(SUM(d.Sales_Qty), 0) as SoldQty,
+                                       COALESCE(SUM(d.Sales_Subtotal), 0) as SoldTotal
+                                FROM tblProduct p
+                                LEFT JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
+                                LEFT JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID AND ((s.Sales_Date >= @S AND s.Sales_Date <= @E) OR (s.Sales_Date >= @S_BE AND s.Sales_Date <= @E_BE))
+                                GROUP BY p.Pro_ID
+                                ORDER BY SoldQty DESC, p.Pro_Qty ASC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        long totalStock = 0;
+                        long totalSoldQty = 0;
+                        decimal totalSoldAmt = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string code = item.Code ?? "-";
+                            string name = item.Name ?? "-";
+                            string cat = item.Category ?? "-";
+                            decimal price = Convert.ToDecimal(item.Price ?? 0);
+                            decimal cost = Convert.ToDecimal(item.Cost ?? 0);
+                            int stock = Convert.ToInt32(item.Stock ?? 0);
+                            int soldQty = Convert.ToInt32(item.SoldQty ?? 0);
+                            decimal soldTotal = Convert.ToDecimal(item.SoldTotal ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = code;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = name;
+                            ws.Cell(rowIdx, 4).Value = cat;
+
+                            ws.Cell(rowIdx, 5).Value = price;
+                            ws.Cell(rowIdx, 5).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ws.Cell(rowIdx, 6).Value = cost;
+                            ws.Cell(rowIdx, 6).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ws.Cell(rowIdx, 7).Value = stock;
+                            ws.Cell(rowIdx, 7).Style.NumberFormat.Format = "#,##0";
+                            ws.Cell(rowIdx, 7).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ws.Cell(rowIdx, 8).Value = soldQty;
+                            ws.Cell(rowIdx, 8).Style.NumberFormat.Format = "#,##0";
+                            ws.Cell(rowIdx, 8).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ws.Cell(rowIdx, 9).Value = soldTotal;
+                            ws.Cell(rowIdx, 9).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 9).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 9, seq % 2 == 0);
+                            totalStock += stock;
+                            totalSoldQty += soldQty;
+                            totalSoldAmt += soldTotal;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 7, (totalStock, "#,##0") },
+                            { 8, (totalSoldQty, "#,##0") },
+                            { 9, (totalSoldAmt, "#,##0.00") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลการขายหน้าร้าน":
+                    {
+                        var headers = new[] { "ลำดับ", "วันที่ทำรายการ", "เลขที่บิล", "ชื่อลูกค้า", "รูปแบบการชำระเงิน", "สถานะ", "ยอดสุทธิ (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT s.Sales_Date as SalesDate, 
+                                       s.RefNo as RefNo, 
+                                       COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as CustomerName, 
+                                       COALESCE(s.Sales_PaymentType, 'เงินสด') as PaymentType, 
+                                       COALESCE(s.Sales_Status, 'ชำระเงินแล้ว') as Status, 
+                                       s.Sales_Total as Total
+                                FROM tblSales_H s
+                                LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                                ORDER BY s.Sales_Date DESC"
+                            : @"SELECT s.Sales_Date as SalesDate, 
+                                       s.RefNo as RefNo, 
+                                       COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as CustomerName, 
+                                       COALESCE(s.Sales_PaymentType, 'เงินสด') as PaymentType, 
+                                       COALESCE(s.Sales_Status, 'ชำระเงินแล้ว') as Status, 
+                                       s.Sales_Total as Total
+                                FROM tblSales_H s
+                                LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                                WHERE (s.Sales_Date >= @S AND s.Sales_Date <= @E) OR (s.Sales_Date >= @S_BE AND s.Sales_Date <= @E_BE)
+                                ORDER BY s.Sales_Date DESC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        decimal grandTotal = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string date = item.SalesDate ?? "-";
+                            string refNo = item.RefNo ?? "-";
+                            string cusName = item.CustomerName ?? "-";
+                            string payType = item.PaymentType ?? "-";
+                            string status = item.Status ?? "-";
+                            decimal total = Convert.ToDecimal(item.Total ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = date;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = refNo;
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 4).Value = cusName;
+                            ws.Cell(rowIdx, 5).Value = payType;
+                            ws.Cell(rowIdx, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 6).Value = status;
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 7).Value = total;
+                            ws.Cell(rowIdx, 7).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 7).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 7, seq % 2 == 0);
+                            grandTotal += total;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 7, (grandTotal, "#,##0.00") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลรายรับ-รายจ่าย":
+                    {
+                        var headers = new[] { "ลำดับ", "วันที่", "ประเภท", "เลขอ้างอิง / รายละเอียด", "หมวดหมู่ / วิธีชำระ", "จำนวนเงิน (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sqlSales = isAllPeriod
+                            ? "SELECT Sales_Date as Dt, 'รายรับ (การขาย)' as Typ, RefNo as Ref, Sales_PaymentType as Cat, Sales_Total as Amt FROM tblSales_H WHERE Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL"
+                            : "SELECT Sales_Date as Dt, 'รายรับ (การขาย)' as Typ, RefNo as Ref, Sales_PaymentType as Cat, Sales_Total as Amt FROM tblSales_H WHERE (Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL) AND ((Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE))";
+
+                        string sqlExp = isAllPeriod
+                            ? "SELECT Expense_Date as Dt, 'รายจ่าย' as Typ, COALESCE(Expense_Note, '-') as Ref, Expense_Category as Cat, Expense_Amount as Amt FROM tblExpense"
+                            : "SELECT Expense_Date as Dt, 'รายจ่าย' as Typ, COALESCE(Expense_Note, '-') as Ref, Expense_Category as Cat, Expense_Amount as Amt FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
+
+                        var sales = (await conn.QueryAsync(sqlSales, dateParams)).ToList();
+                        var exps = (await conn.QueryAsync(sqlExp, dateParams)).ToList();
+                        var combined = sales.Concat(exps).OrderByDescending(x => (string)x.Dt).ToList();
+
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        decimal totalInc = 0;
+                        decimal totalExp = 0;
+
+                        foreach (var item in combined)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string dt = item.Dt ?? "-";
+                            string typ = item.Typ ?? "-";
+                            string refVal = item.Ref ?? "-";
+                            string cat = item.Cat ?? "-";
+                            decimal amt = Convert.ToDecimal(item.Amt ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = dt;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = typ;
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            if (typ.Contains("รายรับ"))
+                                ws.Cell(rowIdx, 3).Style.Font.FontColor = XLColor.FromHtml("#16A34A");
+                            else
+                                ws.Cell(rowIdx, 3).Style.Font.FontColor = XLColor.FromHtml("#DC2626");
+
+                            ws.Cell(rowIdx, 4).Value = refVal;
+                            ws.Cell(rowIdx, 5).Value = cat;
+
+                            ws.Cell(rowIdx, 6).Value = amt;
+                            ws.Cell(rowIdx, 6).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 6, seq % 2 == 0);
+                            if (typ.Contains("รายรับ")) totalInc += amt;
+                            else totalExp += amt;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, $"รวมรายรับ: ฿{totalInc:N2} | รวมรายจ่าย: ฿{totalExp:N2} | กำไรสุทธิ: ฿{(totalInc - totalExp):N2}", null);
+                        break;
+                    }
+
+                    case "รายงานข้อมูลการสั่งซื้อสินค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "วันที่สั่งซื้อ", "เลขที่ใบสั่งซื้อ", "ซัพพลายเออร์", "สถานะ", "ยอดรวม (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT po.PO_Date as Dt, ('PO-' || po.PO_ID) as PoNo, COALESCE(p.Partner_Name, '-') as Sup, COALESCE(po.PO_Status, 'สำเร็จ') as Status, po.PO_Total as Total
+                                FROM tblPO_H po
+                                LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
+                                ORDER BY po.PO_Date DESC"
+                            : @"SELECT po.PO_Date as Dt, ('PO-' || po.PO_ID) as PoNo, COALESCE(p.Partner_Name, '-') as Sup, COALESCE(po.PO_Status, 'สำเร็จ') as Status, po.PO_Total as Total
+                                FROM tblPO_H po
+                                LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
+                                WHERE (po.PO_Date >= @S AND po.PO_Date <= @E) OR (po.PO_Date >= @S_BE AND po.PO_Date <= @E_BE)
+                                ORDER BY po.PO_Date DESC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        decimal grandTotal = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string dt = item.Dt ?? "-";
+                            string poNo = item.PoNo ?? "-";
+                            string sup = item.Sup ?? "-";
+                            string status = item.Status ?? "-";
+                            decimal total = Convert.ToDecimal(item.Total ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = dt;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = poNo;
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 4).Value = sup;
+
+                            ws.Cell(rowIdx, 5).Value = status;
+                            ws.Cell(rowIdx, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 6).Value = total;
+                            ws.Cell(rowIdx, 6).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 6, seq % 2 == 0);
+                            grandTotal += total;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 6, (grandTotal, "#,##0.00") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลการรับเข้าสินค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "วันที่รับเข้า", "เลขที่อ้างอิง", "ซัพพลายเออร์ / รายละเอียด", "จำนวนรับเข้ารวม (ชิ้น)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT si.StockIn_Date as Dt, ('IN-' || si.StockIn_ID) as SiNo, COALESCE(si.Note, p.Partner_Name, '-') as Sup, COALESCE(SUM(sd.StockIn_Qty), 0) as Qty
+                                FROM tblStockIn_H si
+                                LEFT JOIN tblPO_H po ON si.PO_ID = po.PO_ID
+                                LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
+                                LEFT JOIN tblStockInDetail sd ON si.StockIn_ID = sd.StockIn_ID
+                                GROUP BY si.StockIn_ID
+                                ORDER BY si.StockIn_Date DESC"
+                            : @"SELECT si.StockIn_Date as Dt, ('IN-' || si.StockIn_ID) as SiNo, COALESCE(si.Note, p.Partner_Name, '-') as Sup, COALESCE(SUM(sd.StockIn_Qty), 0) as Qty
+                                FROM tblStockIn_H si
+                                LEFT JOIN tblPO_H po ON si.PO_ID = po.PO_ID
+                                LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
+                                LEFT JOIN tblStockInDetail sd ON si.StockIn_ID = sd.StockIn_ID
+                                WHERE (si.StockIn_Date >= @S AND si.StockIn_Date <= @E) OR (si.StockIn_Date >= @S_BE AND si.StockIn_Date <= @E_BE)
+                                GROUP BY si.StockIn_ID
+                                ORDER BY si.StockIn_Date DESC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        long totalQty = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string dt = item.Dt ?? "-";
+                            string siNo = item.SiNo ?? "-";
+                            string sup = item.Sup ?? "-";
+                            long qty = Convert.ToInt64(item.Qty ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = dt;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = siNo;
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 4).Value = sup;
+
+                            ws.Cell(rowIdx, 5).Value = qty;
+                            ws.Cell(rowIdx, 5).Style.NumberFormat.Format = "#,##0";
+                            ws.Cell(rowIdx, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 5, seq % 2 == 0);
+                            totalQty += qty;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 5, (totalQty, "#,##0") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลการจัดส่งสินค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "วันที่สั่ง", "เลขที่บิล", "Tracking No", "ชื่อผู้รับ", "เบอร์โทร", "ที่อยู่จัดส่ง", "สถานะจัดส่ง" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = @"SELECT s.Sales_Date as Dt, s.RefNo as RefNo, COALESCE(d.Tracking_No, '-') as Tracking, 
+                                              COALESCE(d.Recipient_Name, '-') as Name, COALESCE(d.Recipient_Tel, '-') as Tel, 
+                                              COALESCE(d.Recipient_Address, '-') as Addr, COALESCE(d.Delivery_Status, 'รอจัดส่ง') as Status
+                                       FROM tblDelivery d
+                                       LEFT JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                                       ORDER BY d.Delivery_ID DESC";
+
+                        var data = (await conn.QueryAsync(sql)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = (string)(item.Dt ?? "-");
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = (string)(item.RefNo ?? "-");
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 4).Value = (string)(item.Tracking ?? "-");
+                            ws.Cell(rowIdx, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 5).Value = (string)(item.Name ?? "-");
+                            ws.Cell(rowIdx, 6).Value = (string)(item.Tel ?? "-");
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 7).Value = (string)(item.Addr ?? "-");
+
+                            ws.Cell(rowIdx, 8).Value = (string)(item.Status ?? "-");
+                            ws.Cell(rowIdx, 8).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ApplyDataRowStyle(ws, rowIdx, 8, seq % 2 == 0);
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, $"รวมรายการจัดส่งทั้งหมด: {data.Count} รายการ", null);
+                        break;
+                    }
+
+                    case "รายงานข้อมูลการเคลม":
+                    {
+                        var headers = new[] { "ลำดับ", "วันที่เคลม", "เลขที่เคลม", "สินค้า / รายละเอียด", "สาเหตุการเคลม", "รูปแบบการเคลม", "สถานะเคลม" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT c.Claim_Date as Dt, ('CLM-' || c.Claim_ID) as ClmNo, 
+                                       COALESCE(p.Pro_Name, 'สินค้าทั่วไป') as Prod, 
+                                       COALESCE(c.Claim_Reason, 'ไม่ระบุ') as Reason, 
+                                       COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') as Action, 
+                                       COALESCE(c.Claim_Status, 'รอดำเนินการ') as Status
+                                FROM tblClaim c
+                                LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID
+                                ORDER BY c.Claim_ID DESC"
+                            : @"SELECT c.Claim_Date as Dt, ('CLM-' || c.Claim_ID) as ClmNo, 
+                                       COALESCE(p.Pro_Name, 'สินค้าทั่วไป') as Prod, 
+                                       COALESCE(c.Claim_Reason, 'ไม่ระบุ') as Reason, 
+                                       COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') as Action, 
+                                       COALESCE(c.Claim_Status, 'รอดำเนินการ') as Status
+                                FROM tblClaim c
+                                LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID
+                                WHERE (c.Claim_Date >= @S AND c.Claim_Date <= @E) OR (c.Claim_Date >= @S_BE AND c.Claim_Date <= @E_BE)
+                                ORDER BY c.Claim_ID DESC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = (string)(item.Dt ?? "-");
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = (string)(item.ClmNo ?? "-");
+                            ws.Cell(rowIdx, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 4).Value = (string)(item.Prod ?? "-");
+                            ws.Cell(rowIdx, 5).Value = (string)(item.Reason ?? "-");
+                            ws.Cell(rowIdx, 6).Value = (string)(item.Action ?? "-");
+
+                            ws.Cell(rowIdx, 7).Value = (string)(item.Status ?? "-");
+                            ws.Cell(rowIdx, 7).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ApplyDataRowStyle(ws, rowIdx, 7, seq % 2 == 0);
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, $"รวมรายการเคลมสินค้า: {data.Count} รายการ", null);
+                        break;
+                    }
+
+                    case "รายงานข้อมูลพนักงาน":
+                    {
+                        var headers = new[] { "ลำดับ", "รหัสพนักงาน", "ชื่อพนักงาน", "ชื่อผู้ใช้งาน", "บทบาท / ตำแหน่ง", "เบอร์โทรศัพท์", "ยอดขายที่ทำได้ (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = isAllPeriod
+                            ? @"SELECT e.Emp_ID as Id, e.Emp_Name as Name, e.Emp_Username as Username, e.Emp_Role as Role, 
+                                       COALESCE(e.Emp_Tel, '-') as Tel, COALESCE(SUM(s.Sales_Total), 0) as Total
+                                FROM tblEmployee e
+                                LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID
+                                GROUP BY e.Emp_ID
+                                ORDER BY Total DESC"
+                            : @"SELECT e.Emp_ID as Id, e.Emp_Name as Name, e.Emp_Username as Username, e.Emp_Role as Role, 
+                                       COALESCE(e.Emp_Tel, '-') as Tel, COALESCE(SUM(s.Sales_Total), 0) as Total
+                                FROM tblEmployee e
+                                LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID AND ((s.Sales_Date >= @S AND s.Sales_Date <= @E) OR (s.Sales_Date >= @S_BE AND s.Sales_Date <= @E_BE))
+                                GROUP BY e.Emp_ID
+                                ORDER BY Total DESC";
+
+                        var data = (await conn.QueryAsync(sql, dateParams)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        decimal totalEmpSales = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            int id = Convert.ToInt32(item.Id ?? 0);
+                            string name = item.Name ?? "-";
+                            string user = item.Username ?? "-";
+                            string role = item.Role ?? "-";
+                            string tel = item.Tel ?? "-";
+                            decimal total = Convert.ToDecimal(item.Total ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = id;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = name;
+                            ws.Cell(rowIdx, 4).Value = user;
+                            ws.Cell(rowIdx, 5).Value = role;
+
+                            ws.Cell(rowIdx, 6).Value = tel;
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 7).Value = total;
+                            ws.Cell(rowIdx, 7).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 7).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 7, seq % 2 == 0);
+                            totalEmpSales += total;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 7, (totalEmpSales, "#,##0.00") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลบริษัทคู่ค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "ชื่อบริษัทคู่ค้า", "ผู้ติดต่อ", "เบอร์โทรศัพท์", "ที่อยู่", "มูลค่าการสั่งซื้อสะสม (บาท)" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = @"SELECT p.Partner_Name as Name, COALESCE(p.Partner_Contact, '-') as Contact, 
+                                              COALESCE(p.Partner_Tel, '-') as Tel, COALESCE(p.Partner_Address, '-') as Addr, 
+                                              COALESCE(SUM(po.PO_Total), 0) as Total
+                                       FROM tblPartner p
+                                       LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID
+                                       GROUP BY p.Partner_ID
+                                       ORDER BY Total DESC";
+
+                        var data = (await conn.QueryAsync(sql)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        decimal totalPartnerPo = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string name = item.Name ?? "-";
+                            string contact = item.Contact ?? "-";
+                            string tel = item.Tel ?? "-";
+                            string addr = item.Addr ?? "-";
+                            decimal total = Convert.ToDecimal(item.Total ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = name;
+                            ws.Cell(rowIdx, 3).Value = contact;
+
+                            ws.Cell(rowIdx, 4).Value = tel;
+                            ws.Cell(rowIdx, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 5).Value = addr;
+
+                            ws.Cell(rowIdx, 6).Value = total;
+                            ws.Cell(rowIdx, 6).Style.NumberFormat.Format = "#,##0.00";
+                            ws.Cell(rowIdx, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 6, seq % 2 == 0);
+                            totalPartnerPo += total;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 6, (totalPartnerPo, "#,##0.00") }
+                        });
+                        break;
+                    }
+
+                    case "รายงานข้อมูลประเภทสินค้า":
+                    {
+                        var headers = new[] { "ลำดับ", "รหัสประเภท", "ชื่อประเภทสินค้า", "คำอธิบาย", "จำนวนสินค้าในหมวดหมู่" };
+                        ApplyTableHeader(ws, headerRow, headers);
+
+                        string sql = @"SELECT c.CategoryCode as Code, c.CategoryName as Name, COALESCE(c.Description, '-') as Descr, COUNT(p.Pro_ID) as ProdCount
+                                       FROM tblProductCategory c
+                                       LEFT JOIN tblProduct p ON (p.CategoryId = c.CategoryId OR TRIM(p.Pro_Category) = TRIM(c.CategoryName))
+                                       GROUP BY c.CategoryId
+                                       ORDER BY c.CategoryCode ASC";
+
+                        var data = (await conn.QueryAsync(sql)).ToList();
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        long totalItems = 0;
+
+                        foreach (var item in data)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            string code = item.Code ?? "-";
+                            string name = item.Name ?? "-";
+                            string desc = item.Descr ?? "-";
+                            long count = Convert.ToInt64(item.ProdCount ?? 0);
+
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 2).Value = code;
+                            ws.Cell(rowIdx, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            ws.Cell(rowIdx, 3).Value = name;
+                            ws.Cell(rowIdx, 4).Value = desc;
+
+                            ws.Cell(rowIdx, 5).Value = count;
+                            ws.Cell(rowIdx, 5).Style.NumberFormat.Format = "#,##0";
+                            ws.Cell(rowIdx, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
+                            ApplyDataRowStyle(ws, rowIdx, 5, seq % 2 == 0);
+                            totalItems += count;
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, "รวมทั้งสิ้น", new Dictionary<int, (object val, string fmt)>
+                        {
+                            { 5, (totalItems, "#,##0") }
+                        });
+                        break;
+                    }
+
+                    default:
+                    {
+                        var validHeaders = new List<string> { "ลำดับ" };
+                        var activeColIndices = new List<int>();
+                        for (int i = 0; i < _colHeaders.Length; i++)
+                        {
+                            if (_colHeaders[i] != "-" && !string.IsNullOrWhiteSpace(_colHeaders[i]))
+                            {
+                                validHeaders.Add(_colHeaders[i]);
+                                activeColIndices.Add(i + 1);
+                            }
+                        }
+                        ApplyTableHeader(ws, headerRow, validHeaders);
+
+                        int rowIdx = headerRow + 1;
+                        int seq = 1;
+                        foreach (var row in ReportRows)
+                        {
+                            ws.Row(rowIdx).Height = 20;
+                            ws.Cell(rowIdx, 1).Value = seq;
+                            ws.Cell(rowIdx, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            for (int c = 0; c < activeColIndices.Count; c++)
+                            {
+                                int colNum = activeColIndices[c];
+                                string val = colNum switch
+                                {
+                                    1 => row.Col1,
+                                    2 => row.Col2,
+                                    3 => row.Col3,
+                                    4 => row.Col4,
+                                    5 => row.Col5,
+                                    _ => ""
+                                };
+
+                                int cellCol = c + 2;
+                                if (decimal.TryParse(val, out decimal numVal) && !val.StartsWith("0") && val.Length < 11)
+                                {
+                                    ws.Cell(rowIdx, cellCol).Value = numVal;
+                                    ws.Cell(rowIdx, cellCol).Style.NumberFormat.Format = (numVal % 1 == 0) ? "#,##0" : "#,##0.00";
+                                    ws.Cell(rowIdx, cellCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+                                }
+                                else
+                                {
+                                    ws.Cell(rowIdx, cellCol).Value = val;
+                                }
+                            }
+
+                            ApplyDataRowStyle(ws, rowIdx, validHeaders.Count, seq % 2 == 0);
+                            rowIdx++;
+                            seq++;
+                        }
+
+                        ApplyTableSummaryRow(ws, rowIdx, validHeaders.Count, $"รวมข้อมูลทั้งหมด: {ReportRows.Count} รายการ", null);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private static void ApplyTableHeader(IXLWorksheet ws, int row, IList<string> headers)
+        {
+            for (int i = 0; i < headers.Count; i++)
+            {
+                var cell = ws.Cell(row, i + 1);
+                cell.Value = headers[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Font.FontSize = 11;
+                cell.Style.Font.FontColor = XLColor.FromHtml("#1E293B");
+                cell.Style.Fill.BackgroundColor = XLColor.FromHtml("#E2E8F0");
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                cell.Style.Border.OutsideBorderColor = XLColor.FromHtml("#CBD5E1");
+            }
+        }
+
+        private static void ApplyDataRowStyle(IXLWorksheet ws, int row, int colCount, bool isEven)
+        {
+            var fillCol = isEven ? XLColor.FromHtml("#F8FAFC") : XLColor.White;
+            var range = ws.Range(row, 1, row, colCount);
+            range.Style.Fill.BackgroundColor = fillCol;
+            range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            range.Style.Border.InsideBorderColor = XLColor.FromHtml("#E2E8F0");
+            range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            range.Style.Border.OutsideBorderColor = XLColor.FromHtml("#CBD5E1");
+            range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+        }
+
+        private static void ApplyTableSummaryRow(IXLWorksheet ws, int row, int colCount, string label, Dictionary<int, (object val, string fmt)>? values)
+        {
+            ws.Row(row).Height = 24;
+            var range = ws.Range(row, 1, row, colCount);
+            range.Style.Font.Bold = true;
+            range.Style.Fill.BackgroundColor = XLColor.FromHtml("#F1F5F9");
+            range.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+            range.Style.Border.TopBorderColor = XLColor.FromHtml("#94A3B8");
+            range.Style.Border.BottomBorder = XLBorderStyleValues.Double;
+            range.Style.Border.BottomBorderColor = XLColor.FromHtml("#475569");
+            range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+
+            if (values != null && values.Any())
+            {
+                ws.Cell(row, 1).Value = label;
+                ws.Cell(row, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+                foreach (var kvp in values)
+                {
+                    var cell = ws.Cell(row, kvp.Key);
+                    if (kvp.Value.val is decimal decVal)
+                        cell.Value = decVal;
+                    else if (kvp.Value.val is long longVal)
+                        cell.Value = longVal;
+                    else if (kvp.Value.val is int intVal)
+                        cell.Value = intVal;
+                    else
+                        cell.Value = kvp.Value.val?.ToString() ?? "";
+
+                    cell.Style.NumberFormat.Format = kvp.Value.fmt;
+                    cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+                }
+            }
+            else
+            {
+                ws.Range(row, 1, row, colCount).Merge();
+                ws.Cell(row, 1).Value = label;
+                ws.Cell(row, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+        }
+
+        #endregion
 
         // --- User Management Logic ---
         private async Task PerformLogin()

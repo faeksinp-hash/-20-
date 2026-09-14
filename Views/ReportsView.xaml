@@ -782,7 +782,8 @@
                             <!-- Top-Right Action Buttons (Excel & Print) -->
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                 <!-- ปุ่ม Excel -->
-                                <Button Command="{Binding ExportReportCommand}"
+                                <Button Command="{Binding ExportExcelCommand}"
+                                        IsEnabled="{Binding HasReportData}"
                                         Height="34"
                                         Padding="12,0"
                                         Margin="0,0,8,0"
@@ -807,6 +808,10 @@
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
                                                                 <Setter TargetName="bd" Property="Background" Value="#BBF7D0"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter TargetName="bd" Property="Opacity" Value="0.45"/>
+                                                                <Setter Property="Cursor" Value="Arrow"/>
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
