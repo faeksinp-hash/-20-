@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MatchaShop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a8f746de627c8e391cae20d05b19a9cb6e50239d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+869ce270b96004df4ae0d3a532297c887ea3ae70")]
 [assembly: System.Reflection.AssemblyProductAttribute("MatchaShop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MatchaShop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
