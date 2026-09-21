@@ -48,7 +48,7 @@ namespace Porjai20.Views
                 decimal totalSpent = history.Sum(h => h.TotalAmount);
                 
                 TotalOrdersTextBlock.Text = totalOrders.ToString();
-                TotalSpentTextBlock.Text = totalSpent.ToString("C");
+                TotalSpentTextBlock.Text = totalSpent.ToString("N2");
             }
         }
 

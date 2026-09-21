@@ -6,8 +6,9 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
-              Background="#F4F7FA">
+             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+             FontWeight="Light"
+             Background="#F4F7FA">
 
     <UserControl.Resources>
 
@@ -1224,7 +1225,7 @@
                             <DataGridTemplateColumn Header="ยอดสุทธิ" Width="1.1*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" Style="{StaticResource ColAmountStyle}"/>
+                                        <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}" Style="{StaticResource ColAmountStyle}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -1475,20 +1476,20 @@
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Header="ราคา"
-                                                        Binding="{Binding UnitPrice, StringFormat=฿{0:N2}}"
+                                                        Binding="{Binding UnitPrice, StringFormat={}{0:N2}}"
                                                         Width="95">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#64748B"/>
                                                 <Setter Property="HorizontalAlignment" Value="Right"/>
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="13"/>
+                                                <Setter Property="FontSize" Value="14"/>
                                                 <Setter Property="Margin" Value="0,0,10,0"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Header="รวมเงิน"
-                                                        Binding="{Binding Total, StringFormat=฿{0:N2}}"
+                                                        Binding="{Binding Total, StringFormat={}{0:N2}}"
                                                         Width="105">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
@@ -1496,7 +1497,7 @@
                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                 <Setter Property="HorizontalAlignment" Value="Right"/>
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="13"/>
+                                                <Setter Property="FontSize" Value="14"/>
                                                 <Setter Property="Margin" Value="0,0,12,0"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
@@ -1513,13 +1514,13 @@
                             <DockPanel LastChildFill="False">
                                 <TextBlock Text="ยอดรวมสินค้า"
                                            Foreground="#64748B"
-                                           FontSize="13.5"
+                                           FontSize="15"
                                            FontWeight="Medium"
                                            DockPanel.Dock="Left"
                                            VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding SelectedDeliverySubtotal, StringFormat=฿{0:N2}}"
+                                <TextBlock Text="{Binding SelectedDeliverySubtotal, StringFormat={}{0:N2}}"
                                            Foreground="#1E293B"
-                                           FontSize="14"
+                                           FontSize="15"
                                            FontWeight="SemiBold"
                                            DockPanel.Dock="Right"
                                            VerticalAlignment="Center"/>
@@ -1528,16 +1529,16 @@
                             <!-- 2. ค่าจัดส่ง (Shipping Fee) -->
                             <DockPanel LastChildFill="False" Margin="0,8,0,0">
                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                    <TextBlock Text="🚚 " FontSize="13" VerticalAlignment="Center"/>
+                                    <TextBlock Text="🚚 " FontSize="14" VerticalAlignment="Center"/>
                                     <TextBlock Text="ค่าจัดส่ง"
                                                Foreground="#64748B"
-                                               FontSize="13.5"
+                                               FontSize="15"
                                                FontWeight="Medium"
                                                VerticalAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Text="{Binding SelectedDeliveryShippingFee, StringFormat=฿{0:N2}}"
+                                <TextBlock Text="{Binding SelectedDeliveryShippingFee, StringFormat={}{0:N2}}"
                                            Foreground="#00A3E0"
-                                           FontSize="14"
+                                           FontSize="15"
                                            FontWeight="SemiBold"
                                            DockPanel.Dock="Right"
                                            VerticalAlignment="Center"/>
@@ -1550,11 +1551,11 @@
                             <DockPanel LastChildFill="False">
                                 <TextBlock Text="ยอดรวมสุทธิทั้งสิ้น"
                                            Foreground="#0F172A"
-                                           FontSize="14.5"
+                                           FontSize="16"
                                            FontWeight="Bold"
                                            DockPanel.Dock="Left"
                                            VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding SelectedDeliveryGrandTotal, StringFormat=฿{0:N2}}"
+                                <TextBlock Text="{Binding SelectedDeliveryGrandTotal, StringFormat={}{0:N2}}"
                                            FontSize="26"
                                            FontWeight="Bold"
                                            Foreground="#00A3E0"

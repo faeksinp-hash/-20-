@@ -7,7 +7,8 @@
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+             FontWeight="Light"
              Background="#F4F7FA"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -20,7 +21,7 @@
 
         <!-- 1. ปุ่มประมวลผล (Primary Blue) -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#00A3E0"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="15,6"/>
@@ -491,8 +492,8 @@
                         </Grid>
 
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding ReportTotalRevenue, StringFormat=฿{0:N2}}"
-                                   FontSize="24" FontWeight="Bold"
+                                   Text="{Binding ReportTotalRevenue, StringFormat={}{0:N2}}"
+                                   FontSize="26" FontWeight="Bold"
                                    Foreground="#0B2545"
                                    Margin="0,0,0,6"
                                    TextTrimming="CharacterEllipsis"/>
@@ -538,8 +539,8 @@
                         </Grid>
 
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding ReportNetProfit, StringFormat=฿{0:N2}}"
-                                   FontSize="24" FontWeight="Bold"
+                                   Text="{Binding ReportNetProfit, StringFormat={}{0:N2}}"
+                                   FontSize="26" FontWeight="Bold"
                                    Foreground="#2C7A7B"
                                    Margin="0,0,0,6"
                                    TextTrimming="CharacterEllipsis"/>
@@ -585,8 +586,8 @@
                         </Grid>
 
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding ReportTotalExpenses, StringFormat=฿{0:N2}}"
-                                   FontSize="24" FontWeight="Bold"
+                                   Text="{Binding ReportTotalExpenses, StringFormat={}{0:N2}}"
+                                   FontSize="26" FontWeight="Bold"
                                    Foreground="#D69E2E"
                                    Margin="0,0,0,6"
                                    TextTrimming="CharacterEllipsis"/>

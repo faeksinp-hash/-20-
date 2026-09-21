@@ -3596,7 +3596,7 @@ namespace Porjai20.ViewModels
         public ObservableCollection<Product> FilteredProducts => Products;
 
         public int CartTotalItems => CartItems.Sum(item => item.Quantity);
-        public string CartTotalString => TotalAmount.ToString("C");
+        public string CartTotalString => TotalAmount.ToString("N2");
 
         // Checkout Wizard Properties (Phase 5 Prep)
         private bool _isCheckoutWizardOpen;
@@ -4291,7 +4291,7 @@ namespace Porjai20.ViewModels
             {
                 if (IsCashPayment && CashReceived < CheckoutGrandTotal)
                 {
-                    CustomMessageBox.Show($"จำนวนเงินที่รับมาไม่เพียงพอ (ยอดที่ต้องชำระ ฿{CheckoutGrandTotal:N2})", "เงินสดไม่เพียงพอ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    CustomMessageBox.Show($"จำนวนเงินที่รับมาไม่เพียงพอ (ยอดที่ต้องชำระ {CheckoutGrandTotal:N2})", "เงินสดไม่เพียงพอ", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -4343,7 +4343,7 @@ namespace Porjai20.ViewModels
 
             if (IsCashPayment && CashReceived < CheckoutGrandTotal)
             {
-                CustomMessageBox.Show($"จำนวนเงินที่รับมาไม่เพียงพอ (ยอดที่ต้องชำระ ฿{CheckoutGrandTotal:N2})", "เงินสดไม่เพียงพอ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show($"จำนวนเงินที่รับมาไม่เพียงพอ (ยอดที่ต้องชำระ {CheckoutGrandTotal:N2})", "เงินสดไม่เพียงพอ", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -5678,7 +5678,7 @@ namespace Porjai20.ViewModels
                             chartTitle = "📊 ลูกค้าที่มียอดซื้อสะสมสูงสุด (Top Customer Spenders)";
                             displayMode = 0;
                             summaryTitle = "👥 สรุปรายชื่อลูกค้ายอดซื้อสูงสุด";
-                            newFormatter = val => "฿" + val.ToString("N0");
+                            newFormatter = val => val.ToString("N0");
 
                             string sqlCust = isAllPeriod
                                 ? @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
@@ -5715,7 +5715,7 @@ namespace Porjai20.ViewModels
                                         Rank = rank++,
                                         Title = item.Name,
                                         Subtitle = $"ซื้อ {item.Count} บิล | โทร: {item.Tel}",
-                                        ValueText = $"฿{item.Total:N2}",
+                                        ValueText = $"{item.Total:N2}",
                                         Tag = "ลูกค้ายอดซื้อสูงสุด",
                                         Color = "#0284C7"
                                     });
@@ -5736,7 +5736,7 @@ namespace Porjai20.ViewModels
                             chartTitle = "📊 ยอดขายต่อคน เทียบผลงานบุคคล (Staff Performance)";
                             displayMode = 0;
                             summaryTitle = "🧑‍💼 สรุปพนักงานยอดขายสูงสุด";
-                            newFormatter = val => "฿" + val.ToString("N0");
+                            newFormatter = val => val.ToString("N0");
 
                             string sqlStaff = isAllPeriod
                                 ? @"SELECT e.Emp_Username as Username, 
@@ -5770,7 +5770,7 @@ namespace Porjai20.ViewModels
                                         Rank = rank++,
                                         Title = item.Username,
                                         Subtitle = $"{item.Role} | {item.Count} บิลที่ขายได้",
-                                        ValueText = $"฿{item.Total:N2}",
+                                        ValueText = $"{item.Total:N2}",
                                         Tag = "พนักงานขายยอดเยี่ยม",
                                         Color = "#10B981"
                                     });
@@ -5826,7 +5826,7 @@ namespace Porjai20.ViewModels
                                     {
                                         Rank = rank++,
                                         Title = item.Name,
-                                        Subtitle = $"ยอดขายรวม ฿{item.Total:N2}",
+                                        Subtitle = $"ยอดขายรวม {item.Total:N2}",
                                         ValueText = $"{item.Qty} ชิ้น",
                                         Tag = $"อันดับที่ {rank - 1}",
                                         Color = "#0EA5E9"
@@ -5848,7 +5848,7 @@ namespace Porjai20.ViewModels
                             chartTitle = "📊 มูลค่าการสั่งซื้อต่อคู่ค้า (Supplier Order Volume)";
                             displayMode = 0;
                             summaryTitle = "🏢 สรุปคู่ค้ามูลค่าสูงสุด";
-                            newFormatter = val => "฿" + val.ToString("N0");
+                            newFormatter = val => val.ToString("N0");
 
                             string sqlPartner = isAllPeriod
                                 ? @"SELECT COALESCE(p.Partner_Name, 'ซัพพลายเออร์ทั่วไป') as Name, 
@@ -5880,7 +5880,7 @@ namespace Porjai20.ViewModels
                                         Rank = rank++,
                                         Title = item.Name,
                                         Subtitle = $"สั่งซื้อ {item.Count} ใบสั่งซื้อ",
-                                        ValueText = $"฿{item.Total:N2}",
+                                        ValueText = $"{item.Total:N2}",
                                         Tag = "คู่ค้าสำคัญ",
                                         Color = "#0284C7"
                                     });
@@ -5945,7 +5945,7 @@ namespace Porjai20.ViewModels
                                         Rank = rank++,
                                         Title = item.Category,
                                         Subtitle = $"สัดส่วน {pct:0.1f}% ของยอดรวม",
-                                        ValueText = $"฿{item.Total:N2}",
+                                        ValueText = $"{item.Total:N2}",
                                         Tag = "หมวดหมู่",
                                         Color = c
                                     });
@@ -5993,7 +5993,7 @@ namespace Porjai20.ViewModels
                                     {
                                         Rank = rank++,
                                         Title = item.Status,
-                                        Subtitle = $"มูลค่ารวม ฿{item.Total:N2}",
+                                        Subtitle = $"มูลค่ารวม {item.Total:N2}",
                                         ValueText = $"{item.Count} ใบ",
                                         Tag = item.Status,
                                         Color = color
@@ -6068,7 +6068,7 @@ namespace Porjai20.ViewModels
                             chartTitle = "📈 แนวโน้มยอดขายหน้าร้าน (Sales Trend)";
                             displayMode = 0;
                             summaryTitle = "💳 สรุปวันที่ขายดีที่สุด";
-                            newFormatter = val => "฿" + val.ToString("N0");
+                            newFormatter = val => val.ToString("N0");
 
                             string sqlSales = isAllPeriod
                                 ? @"SELECT SUBSTR(Sales_Date, 1, 10) as Date, 
@@ -6116,7 +6116,7 @@ namespace Porjai20.ViewModels
                                         Rank = rank++,
                                         Title = $"วันที่ {item.Date}",
                                         Subtitle = $"จำนวน {item.Count} ธุรกรรมบิล",
-                                        ValueText = $"฿{item.Total:N2}",
+                                        ValueText = $"{item.Total:N2}",
                                         Tag = "ยอดขายดีเด่น",
                                         Color = "#0284C7"
                                     });
@@ -6240,7 +6240,7 @@ namespace Porjai20.ViewModels
                             chartTitle = "📊 รายรับ vs รายจ่ายรายเดือน (Monthly Income vs Expense)";
                             displayMode = 0;
                             summaryTitle = "💰 สรุปกำไรสุทธิรายเดือน";
-                            newFormatter = val => "฿" + val.ToString("N0");
+                            newFormatter = val => val.ToString("N0");
 
                             string sqlMonthlyRev = isAllPeriod
                                 ? @"SELECT SUBSTR(Sales_Date, 1, 7) as Month, SUM(Sales_Total) as Total
@@ -6336,14 +6336,14 @@ namespace Porjai20.ViewModels
                                 {
                                     Rank = pRank++,
                                     Title = $"เดือน {m}",
-                                    Subtitle = $"รายรับ: ฿{r:N2} | รายจ่าย: ฿{e:N2}",
-                                    ValueText = $"฿{net:N2}",
+                                    Subtitle = $"รายรับ: {r:N2} | รายจ่าย: {e:N2}",
+                                    ValueText = $"{net:N2}",
                                     Tag = net >= 0 ? "กำไรสุทธิ" : "ขาดทุนสุทธิ",
                                     Color = net >= 0 ? "#10B981" : "#EF4444"
                                 });
                             }
 
-                            totalCountText = $"กำไรสุทธิรวม: ฿{totalNetAll:N2}";
+                            totalCountText = $"กำไรสุทธิรวม: {totalNetAll:N2}";
                             break;
                     }
                 }
@@ -6633,7 +6633,7 @@ namespace Porjai20.ViewModels
 
                     // แถวที่ 4: สรุปยอดรวม 3 ช่อง (ยอดขายรวม | ต้นทุน/รายจ่ายรวม | กำไรสุทธิ)
                     ws.Range(4, 1, 4, 2).Merge();
-                    ws.Cell(4, 1).Value = $"ยอดขายรวม: ฿{ReportTotalRevenue:N2}";
+                    ws.Cell(4, 1).Value = $"ยอดขายรวม: {ReportTotalRevenue:N2}";
                     ws.Cell(4, 1).Style.Font.Bold = true;
                     ws.Cell(4, 1).Style.Font.FontSize = 11;
                     ws.Cell(4, 1).Style.Fill.BackgroundColor = XLColor.FromHtml("#E0F2FE");
@@ -6643,7 +6643,7 @@ namespace Porjai20.ViewModels
                     ws.Range(4, 1, 4, 2).Style.Border.OutsideBorderColor = XLColor.FromHtml("#BAE6FD");
 
                     ws.Range(4, 3, 4, 4).Merge();
-                    ws.Cell(4, 3).Value = $"ต้นทุน/รายจ่ายรวม: ฿{ReportTotalExpenses:N2}";
+                    ws.Cell(4, 3).Value = $"ต้นทุน/รายจ่ายรวม: {ReportTotalExpenses:N2}";
                     ws.Cell(4, 3).Style.Font.Bold = true;
                     ws.Cell(4, 3).Style.Font.FontSize = 11;
                     ws.Cell(4, 3).Style.Fill.BackgroundColor = XLColor.FromHtml("#FEF3C7");
@@ -6653,7 +6653,7 @@ namespace Porjai20.ViewModels
                     ws.Range(4, 3, 4, 4).Style.Border.OutsideBorderColor = XLColor.FromHtml("#FDE68A");
 
                     ws.Range(4, 5, 4, 6).Merge();
-                    ws.Cell(4, 5).Value = $"กำไรสุทธิ: ฿{ReportNetProfit:N2}";
+                    ws.Cell(4, 5).Value = $"กำไรสุทธิ: {ReportNetProfit:N2}";
                     ws.Cell(4, 5).Style.Font.Bold = true;
                     ws.Cell(4, 5).Style.Font.FontSize = 11;
                     ws.Cell(4, 5).Style.Fill.BackgroundColor = XLColor.FromHtml("#DCFCE7");
@@ -7026,7 +7026,7 @@ namespace Porjai20.ViewModels
                             seq++;
                         }
 
-                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, $"รวมรายรับ: ฿{totalInc:N2} | รวมรายจ่าย: ฿{totalExp:N2} | กำไรสุทธิ: ฿{(totalInc - totalExp):N2}", null);
+                        ApplyTableSummaryRow(ws, rowIdx, headers.Length, $"รวมรายรับ: {totalInc:N2} | รวมรายจ่าย: {totalExp:N2} | กำไรสุทธิ: {(totalInc - totalExp):N2}", null);
                         break;
                     }
 

@@ -6,8 +6,9 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
-              Background="#F4F7FA">
+             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+             FontWeight="Light"
+             Background="#F4F7FA">
 
     <UserControl.Resources>
         <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
@@ -522,7 +523,7 @@
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding TotalStockInCostSum, StringFormat=฿{0:N2}}"
+                                   Text="{Binding TotalStockInCostSum, StringFormat={}{0:N2}}"
                                    FontSize="24" FontWeight="Bold"
                                    Foreground="#6B21A8"
                                    Margin="0,0,0,6"/>
@@ -765,8 +766,8 @@
                             <DataGridTemplateColumn Header="ยอดรวมสุทธิ" Width="1.4*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}"
-                                                   FontSize="13" FontWeight="Bold"
+                                        <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}"
+                                                   FontSize="14" FontWeight="Bold"
                                                    Foreground="#000000"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                                    Margin="0,0,12,0"/>
@@ -1039,7 +1040,7 @@
                                     <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" IsReadOnly="True" Width="0.8*" ElementStyle="{StaticResource ColCenterBold}"/>
                                     <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding ProductName}" IsReadOnly="True" Width="2*" ElementStyle="{StaticResource ColLeftBold}"/>
                                     <DataGridTextColumn Header="สั่งซื้อ" Binding="{Binding OrderedQty}" IsReadOnly="True" Width="0.6*" ElementStyle="{StaticResource ColCenterBold}"/>
-                                    <DataGridTextColumn Header="ต้นทุน/หน่วย" Binding="{Binding CostPrice, StringFormat='฿{0:N2}'}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ColRightBold}"/>
+                                    <DataGridTextColumn Header="ต้นทุน/หน่วย" Binding="{Binding CostPrice, StringFormat='{}{0:N2}'}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ColRightBold}"/>
 
                                     <!-- Editable Received Qty Column -->
                                     <DataGridTemplateColumn Header="จำนวนรับจริง *" Width="1.4*">
@@ -1059,8 +1060,8 @@
                                     <DataGridTemplateColumn Header="รวมทุนรับจริง" Width="*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding ReceivedSubtotal, StringFormat='฿{0:N2}'}"
-                                                           FontSize="13" FontWeight="Bold" Foreground="#059669"
+                                                <TextBlock Text="{Binding ReceivedSubtotal, StringFormat='{}{0:N2}'}"
+                                                           FontSize="14" FontWeight="Bold" Foreground="#059669"
                                                            HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -1084,8 +1085,8 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="ยอดรวมทุนการรับเข้าสุทธิ: " FontSize="14" Foreground="#718096" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding ReceiptTotalAmount, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
+                            <TextBlock Text="ยอดรวมทุนการรับเข้าสุทธิ: " FontSize="15" Foreground="#718096" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ReceiptTotalAmount, StringFormat={}{0:N2}}" FontSize="20" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <Button Grid.Column="2"
@@ -1207,8 +1208,8 @@
                                         <TextBlock Text="{Binding SelectedProduct.Stock, StringFormat='{}{0:N0} ชิ้น'}" FontSize="13" FontWeight="Bold" Foreground="#0B2545"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,2,0,0" HorizontalAlignment="Right">
-                                        <TextBlock Text="ต้นทุนล่าสุด: " FontSize="12" Foreground="#718096"/>
-                                        <TextBlock Text="{Binding SelectedProduct.Cost, StringFormat=฿{0:N2}}" FontSize="12" FontWeight="SemiBold" Foreground="#2D3748"/>
+                                        <TextBlock Text="ต้นทุนล่าสุด: " FontSize="13" Foreground="#718096"/>
+                                        <TextBlock Text="{Binding SelectedProduct.Cost, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#2D3748"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

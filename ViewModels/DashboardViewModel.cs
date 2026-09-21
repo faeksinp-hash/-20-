@@ -18,7 +18,7 @@ namespace Porjai20.ViewModels
         private readonly DatabaseService _databaseService;
 
         // ─── Summary Cards ───────────────────────────────────────────────────────────
-        private string _todaySales = "฿0.00";
+        private string _todaySales = "0.00";
         public string TodaySales
         {
             get => _todaySales;
@@ -149,12 +149,12 @@ namespace Porjai20.ViewModels
         public SeriesCollection MonthlySalesSeries { get; }
         public string[] MonthLabels { get; } =
             { "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค." };
-        public Func<double, string> MoneyFormatter { get; } = val => $"฿{val:N0}";
+        public Func<double, string> MoneyFormatter { get; } = val => $"{val:N0}";
 
         // ─── Bar Chart: Weekly Sales ──────────────────────────────────────────────────
         public SeriesCollection WeeklySalesSeries { get; }
         public string[] DayLabels { get; } = { "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส.", "อา." };
-        public Func<double, string> ShortMoneyFormatter { get; } = val => val >= 1000 ? $"฿{val / 1000:F1}K" : $"฿{val:N0}";
+        public Func<double, string> ShortMoneyFormatter { get; } = val => val >= 1000 ? $"{val / 1000:F1}K" : $"{val:N0}";
 
         // ─── Recent Orders ────────────────────────────────────────────────────────────
         public ObservableCollection<RecentOrderRow> RecentOrders { get; }
@@ -321,7 +321,7 @@ namespace Porjai20.ViewModels
                     else if (salesToday > 0)
                         salesChange = 100m;
 
-                    TodaySales = salesToday.ToString("C");
+                    TodaySales = salesToday.ToString("N2");
                     TodaySalesChange = $"{Math.Abs(salesChange):F0}% vs เมื่อวาน";
                     TodaySalesColor = salesChange >= 0 ? "#22C55E" : "#EF4444";
                     TodaySalesArrow = salesChange >= 0 ? "▲" : "▼";
@@ -470,7 +470,7 @@ namespace Porjai20.ViewModels
                             Customer = customerName,
                             PurchaseType = "รับที่ร้าน",
                             Items = itemsCount,
-                            Total = totalAmt.ToString("C"),
+                            Total = totalAmt.ToString("N2"),
                             Status = statusText,
                             StatusColor = statusColor
                         });
@@ -500,7 +500,7 @@ namespace Porjai20.ViewModels
                             Name = row.Name,
                             Category = row.Category,
                             Sold = (int)row.Sold,
-                            Revenue = ((decimal)row.Revenue).ToString("C"),
+                            Revenue = ((decimal)row.Revenue).ToString("N2"),
                             Trend = "+15%"
                         });
                     }

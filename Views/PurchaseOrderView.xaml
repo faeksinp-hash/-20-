@@ -6,7 +6,8 @@ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:local="clr-namespace:Porjai20"
 mc:Ignorable="d"
 d:DesignHeight="800" d:DesignWidth="1200"
-FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+FontWeight="Light"
 Background="#F4F7FA"
 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -760,8 +761,8 @@ Margin="0"/>
 Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
 </StackPanel>
 <TextBlock Grid.Row="1"
-Text="{Binding TotalPOAmount, StringFormat=฿{0:N2}}"
-FontSize="22" FontWeight="Bold"
+Text="{Binding TotalPOAmount, StringFormat={}{0:N2}}"
+FontSize="24" FontWeight="Bold"
 Foreground="#6B21A8"
 Margin="0,0,0,4"/>
 <TextBlock Grid.Row="2"
@@ -1107,7 +1108,7 @@ Margin="0"/>
                                         </StackPanel>
 
                                         <!-- Total Amount -->
-                                        <TextBlock Grid.Column="1" Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" FontSize="16" FontWeight="ExtraBold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding TotalAmount, StringFormat={}{0:N2}}" FontSize="17" FontWeight="ExtraBold" Foreground="#0F172A" VerticalAlignment="Center"/>
                                     </Grid>
                                 </Grid>
                             </Border>
@@ -1423,8 +1424,8 @@ Margin="0"/>
 
                                                     <!-- ราคาต้นทุน -->
                                                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,8,0">
-                                                        <TextBlock Text=" ฿" FontSize="11" Foreground="#64748B"/>
-                                                        <TextBlock Text="{Binding Cost, StringFormat={}{0:N2}}" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
+                                                        <TextBlock Text="ทุน: " FontSize="12" Foreground="#64748B"/>
+                                                        <TextBlock Text="{Binding Cost, StringFormat={}{0:N2}}" FontSize="12" FontWeight="Bold" Foreground="#10B981"/>
                                                     </StackPanel>
 
                                                     <!-- จำนวนคงเหลือ (ชิดขวา) -->
@@ -1553,8 +1554,8 @@ Margin="0"/>
                     <DockPanel LastChildFill="False" Margin="0,4,0,0">
                         <!-- Total Amount -->
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                            <TextBlock Text="ยอดรวมค่าสั่งซื้อสุทธิ: " FontSize="15" FontWeight="Bold" Foreground="#0F172A"/>
-                            <TextBlock Text="{Binding POTotalAmount, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text="ยอดรวมค่าสั่งซื้อสุทธิ: " FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text="{Binding POTotalAmount, StringFormat={}{0:N2}}" FontSize="20" FontWeight="Bold" Foreground="#0F172A"/>
                         </StackPanel>
 
                         <!-- Footer Action Buttons (Cancel & Save) -->

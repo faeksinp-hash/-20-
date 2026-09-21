@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+             FontWeight="Light"
              Background="#F4F7FA">
 
     <UserControl.Resources>
@@ -583,7 +584,7 @@
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding TotalCumulativeSpent, StringFormat=฿{0:N2}}"
+                                   Text="{Binding TotalCumulativeSpent, StringFormat={}{0:N2}}"
                                    FontSize="24" FontWeight="Bold"
                                    Foreground="#D69E2E"
                                    Margin="0,0,0,6"/>
@@ -799,7 +800,7 @@
 
                         <!-- #7: Total Spent -->
                         <DataGridTextColumn Header="ยอดซื้อสะสม"
-                                            Binding="{Binding TotalSpent, StringFormat=฿{0:N2}}"
+                                            Binding="{Binding TotalSpent, StringFormat={}{0:N2}}"
                                             Width="1.6*"
                                             ElementStyle="{StaticResource ColAmountStyle}"/>
 

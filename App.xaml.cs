@@ -16,8 +16,9 @@ namespace Porjai20
             // 🌟 บรรทัดสำคัญที่สุดที่ขาดไป: สั่งให้แอปพลิเคชันไปโหลดไฟล์ App.xaml เข้ามาใช้งาน
             InitializeComponent();
 
-            // ตั้งค่าระบบเงินตราและฟอร์แมตภาษาให้เป็น th-TH (รองรับเครื่องหมาย ฿)
-            var culture = new System.Globalization.CultureInfo("th-TH");
+            // ตั้งค่าระบบเงินตราและฟอร์แมตภาษาให้เป็น th-TH (กำหนดให้ไม่มีเครื่องหมายสกุลเงิน)
+            var culture = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.GetCultureInfo("th-TH").Clone();
+            culture.NumberFormat.CurrencySymbol = string.Empty;
             System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
             System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
             FrameworkElement.LanguageProperty.OverrideMetadata(

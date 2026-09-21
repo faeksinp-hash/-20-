@@ -8,6 +8,8 @@
              xmlns:viewmodels="clr-namespace:Porjai20.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="1024"
+             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+             FontWeight="Light"
              Background="#E0F2FE">
 
     <UserControl.Resources>
@@ -24,9 +26,9 @@
         <!-- Global TextBlock style for this UserControl -->
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource PosText}"/>
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Light"/>
         </Style>
 
         <!-- Category Pill RadioButton Style (ToggleButtonStyle) -->
@@ -225,7 +227,7 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="{Binding Price, StringFormat=฿{0:N2}}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="0" Text="{Binding Price, StringFormat={}{0:N2}}" FontSize="16" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
 
                                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                                     <TextBlock Text="คงเหลือ " FontSize="11" Foreground="#718096"/>
@@ -311,7 +313,7 @@
                                             <!-- Column 1: Details -->
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding Product.Name}" FontWeight="Bold" FontSize="16" Foreground="#0B2545" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding Product.Price, StringFormat=฿{0:N0} / ชิ้น}" FontSize="13" FontWeight="SemiBold" Foreground="#64748B" Margin="0,3,0,0"/>
+                                                <TextBlock Text="{Binding Product.Price, StringFormat={}{0:N0} / ชิ้น}" FontSize="15" FontWeight="Normal" Foreground="#64748B" Margin="0,3,0,0"/>
                                             </StackPanel>
 
                                             <!-- Column 2: Qty Selector -->
@@ -381,8 +383,8 @@
                                     <StackPanel Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVis}}" Margin="0,8,0,0">
                                         <Border Height="1" Background="#BAE6FD" Margin="0,0,0,6"/>
                                         <Grid>
-                                            <TextBlock Text="{Binding CustomerName, StringFormat='ผู้รับ: {0}'}" FontSize="12" FontWeight="SemiBold" Foreground="#0B2545" TextTrimming="CharacterEllipsis" MaxWidth="220" HorizontalAlignment="Left"/>
-                                            <TextBlock Text="{Binding ShippingFee, StringFormat='ค่าส่ง ฿{0:N0}'}" FontSize="12" FontWeight="Bold" Foreground="#0082B3" HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding CustomerName, StringFormat='ผู้รับ: {0}'}" FontSize="14" FontWeight="SemiBold" Foreground="#0B2545" TextTrimming="CharacterEllipsis" MaxWidth="220" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="{Binding ShippingFee, StringFormat='ค่าส่ง {0:N0} บาท'}" FontSize="14" FontWeight="SemiBold" Foreground="#0082B3" HorizontalAlignment="Right"/>
                                         </Grid>
                                     </StackPanel>
                                 </StackPanel>
@@ -390,17 +392,17 @@
 
                             <!-- Quantity Summary -->
                             <Grid Margin="0,0,0,10">
-                                <TextBlock Text="จำนวนรายการ" FontSize="15" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                <TextBlock Text="จำนวนรายการ" FontSize="16" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding CartTotalItems}" FontSize="17" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
-                                    <TextBlock Text=" ชิ้น" FontSize="15" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding CartTotalItems}" FontSize="18" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                                    <TextBlock Text=" ชิ้น" FontSize="16" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- Total Amount Summary -->
                             <Grid Margin="0,0,0,16">
-                                <TextBlock Text="ยอดรวมทั้งหมด" FontSize="17" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N0}}" FontSize="30" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="ยอดรวมทั้งหมด" FontSize="18" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N0}}" FontSize="32" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
 
                             <Button Command="{Binding CheckoutCommand}" Content="ถัดไป &gt;" 
@@ -726,14 +728,14 @@
 
                                         <!-- Row 1: ยอดรวมสินค้า -->
                                         <Grid Grid.Row="0" Margin="0,0,0,6">
-                                            <TextBlock Text="ยอดรวมสินค้า" FontSize="13" Foreground="#718096"/>
-                                            <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" FontSize="13" Foreground="#718096" HorizontalAlignment="Right"/>
+                                            <TextBlock Text="ยอดรวมสินค้า" FontSize="15" Foreground="#718096"/>
+                                            <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}" FontSize="15" Foreground="#718096" HorizontalAlignment="Right"/>
                                         </Grid>
 
                                         <!-- Row 2: ยอดสุทธิ -->
                                         <Grid Grid.Row="1">
-                                            <TextBlock Text="ยอดสุทธิ" FontSize="14" FontWeight="Bold" Foreground="#2D3748"/>
-                                            <TextBlock Text="{Binding CheckoutGrandTotal, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#0B2545" HorizontalAlignment="Right"/>
+                                            <TextBlock Text="ยอดสุทธิ" FontSize="16" FontWeight="Bold" Foreground="#2D3748"/>
+                                            <TextBlock Text="{Binding CheckoutGrandTotal, StringFormat={}{0:N2}}" FontSize="20" FontWeight="Bold" Foreground="#0B2545" HorizontalAlignment="Right"/>
                                         </Grid>
                                     </Grid>
 
@@ -782,12 +784,12 @@
                                         <StackPanel>
                                             <Grid Margin="0,0,0,6">
                                                 <TextBlock Text="ยอดรวมสินค้า" FontSize="15" FontWeight="SemiBold" Foreground="#64748B"/>
-                                                <TextBlock Text="{Binding TotalAmount, StringFormat=฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Right"/>
                                             </Grid>
 
                                             <Grid Margin="0,0,0,8" Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}">
                                                 <TextBlock Text="ส่วนลด / คูปอง" FontSize="15" FontWeight="SemiBold" Foreground="#EF4444"/>
-                                                <TextBlock Text="{Binding DiscountAmount, StringFormat=-฿{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding DiscountAmount, StringFormat=-{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Right"/>
                                             </Grid>
 
                                             <Border Height="1" Background="#CBD5E1" Margin="0,2,0,10"/>
@@ -814,7 +816,7 @@
                                         <Border Grid.Column="0" Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="2" CornerRadius="14" Padding="16,12">
                                             <StackPanel>
                                                 <TextBlock Text="รับเงินสดมา" FontSize="16" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,0,4"/>
-                                                <TextBlock Text="{Binding CashReceived, StringFormat=฿{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#0B2545" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding CashReceived, StringFormat={}{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#0B2545" HorizontalAlignment="Right"/>
                                             </StackPanel>
                                         </Border>
 
@@ -822,7 +824,7 @@
                                         <Border Grid.Column="2" Background="#DCFCE7" BorderBrush="#22C55E" BorderThickness="2" CornerRadius="14" Padding="16,12">
                                             <StackPanel>
                                                 <TextBlock Text="เงินทอนลูกค้า" FontSize="16" FontWeight="Bold" Foreground="#15803D" Margin="0,0,0,4"/>
-                                                <TextBlock Text="{Binding Change, StringFormat=฿{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#166534" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding Change, StringFormat={}{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#166534" HorizontalAlignment="Right"/>
                                             </StackPanel>
                                         </Border>
                                     </Grid>
@@ -877,11 +879,11 @@
                                                     </Style>
                                                 </Grid.Resources>
 
-                                                <Button Grid.Column="0" Command="{Binding NumpadCommand}" CommandParameter="20" Content="฿20" Style="{StaticResource QuickCashStyle}"/>
-                                                <Button Grid.Column="2" Command="{Binding NumpadCommand}" CommandParameter="50" Content="฿50" Style="{StaticResource QuickCashStyle}"/>
-                                                <Button Grid.Column="4" Command="{Binding NumpadCommand}" CommandParameter="100" Content="฿100" Style="{StaticResource QuickCashStyle}"/>
-                                                <Button Grid.Column="6" Command="{Binding NumpadCommand}" CommandParameter="500" Content="฿500" Style="{StaticResource QuickCashStyle}"/>
-                                                <Button Grid.Column="8" Command="{Binding NumpadCommand}" CommandParameter="1000" Content="฿1,000" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="0" Command="{Binding NumpadCommand}" CommandParameter="20" Content="20" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="2" Command="{Binding NumpadCommand}" CommandParameter="50" Content="50" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="4" Command="{Binding NumpadCommand}" CommandParameter="100" Content="100" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="6" Command="{Binding NumpadCommand}" CommandParameter="500" Content="500" Style="{StaticResource QuickCashStyle}"/>
+                                                <Button Grid.Column="8" Command="{Binding NumpadCommand}" CommandParameter="1000" Content="1,000" Style="{StaticResource QuickCashStyle}"/>
                                                 <Button Grid.Column="10" Command="{Binding NumpadCommand}" CommandParameter="Exact" Content="รับพอดี" Style="{StaticResource QuickCashStyle}" Background="#00A3E0" Foreground="White"/>
                                             </Grid>
 
@@ -1576,19 +1578,19 @@
 
                                         <Grid Margin="0,0,0,10" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
                                             <TextBlock Text="รับเงินสดมา" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
-                                            <TextBlock Text="{Binding FinalCashReceived, StringFormat=฿{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding FinalCashReceived, StringFormat={}{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
                                         </Grid>
 
                                         <Grid Margin="0,0,0,10" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
                                             <TextBlock Text="เงินทอนลูกค้า" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
-                                            <TextBlock Text="{Binding FinalChange, StringFormat=฿{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#166534" HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding FinalChange, StringFormat={}{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#166534" HorizontalAlignment="Right"/>
                                         </Grid>
 
                                         <Border Height="1.5" Background="#BAE6FD" Margin="0,10"/>
 
                                         <Grid>
                                             <TextBlock Text="ยอดชำระสุทธิทั้งสิ้น" FontSize="18" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
-                                            <TextBlock Text="{Binding FinalGrandTotal, StringFormat=฿{0:N2}}" FontSize="28" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding FinalGrandTotal, StringFormat={}{0:N2}}" FontSize="28" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                         </Grid>
                                     </StackPanel>
                                 </Border>
@@ -1997,12 +1999,11 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="ค่าบริการจัดส่ง (บาท)" FontSize="13.5" FontWeight="SemiBold" Foreground="#334155"/>
-                                            <TextBlock Text="ค่าจัดส่งเริ่มต้นอัตโนมัติ ฿50 (สามารถแก้ไขตัวเลขได้)" FontSize="12" Foreground="#64748B" Margin="0,3,0,0"/>
+                                            <TextBlock Text="ค่าบริการจัดส่ง (บาท)" FontSize="15" FontWeight="SemiBold" Foreground="#334155"/>
+                                            <TextBlock Text="ค่าจัดส่งเริ่มต้นอัตโนมัติ 50 บาท (สามารถแก้ไขตัวเลขได้)" FontSize="13" Foreground="#64748B" Margin="0,3,0,0"/>
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                            <TextBlock Text="฿" FontSize="19" FontWeight="Bold" Foreground="#0082B3" VerticalAlignment="Center" Margin="0,0,8,0"/>
                                             <TextBox Text="{Binding CustomShippingFee, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:N0}'}" 
                                                      Width="120" Height="44" FontSize="17" FontWeight="Bold" Foreground="#002288"
                                                      TextAlignment="Center" VerticalContentAlignment="Center" Background="#FFFFFF" BorderBrush="#00A3E0" BorderThickness="2">
@@ -2012,6 +2013,7 @@
                                                     </Style>
                                                 </TextBox.Resources>
                                             </TextBox>
+                                            <TextBlock Text="บาท" FontSize="15" FontWeight="SemiBold" Foreground="#0082B3" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         </StackPanel>
                                     </Grid>
                                 </StackPanel>

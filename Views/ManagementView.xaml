@@ -6,8 +6,9 @@
              xmlns:local="clr-namespace:Porjai20"
              xmlns:converters="clr-namespace:Porjai20.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+              d:DesignHeight="800" d:DesignWidth="1200"
+              FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+              FontWeight="Light"
               Background="#F4F7FA">
 
     <UserControl.Resources>
@@ -827,7 +828,7 @@
 
                             <!-- #4: Cost Price (ราคาทุน) -->
                             <DataGridTextColumn Header="ราคาทุน"
-                                                Binding="{Binding Cost, StringFormat=฿{0:N2}}"
+                                                Binding="{Binding Cost, StringFormat={}{0:N2}}"
                                                 Width="1.1*"
                                                 ElementStyle="{StaticResource ColRightBold}">
                                 <DataGridTextColumn.HeaderStyle>
@@ -846,8 +847,8 @@
                                 </DataGridTemplateColumn.HeaderStyle>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Price, StringFormat=฿{0:N2}}"
-                                                   FontSize="13.5" FontWeight="Bold"
+                                        <TextBlock Text="{Binding Price, StringFormat={}{0:N2}}"
+                                                   FontSize="14" FontWeight="Bold"
                                                    Foreground="#000000"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                     </DataTemplate>

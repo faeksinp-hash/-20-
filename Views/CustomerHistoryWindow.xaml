@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="📜 ประวัติการสั่งซื้อลูกค้า" Height="640" Width="760"
         WindowStartupLocation="CenterScreen"
-        FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
+        FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+        FontWeight="Light"
         Background="#F4F7FA">
 
     <Window.Resources>
@@ -303,7 +304,7 @@
 
                     <!-- #3: Total Amount -->
                     <DataGridTextColumn Header="ยอดสุทธิ"
-                                        Binding="{Binding TotalAmount, StringFormat=฿{0:N2}}"
+                                        Binding="{Binding TotalAmount, StringFormat={}{0:N2}}"
                                         Width="1.4*"
                                         ElementStyle="{StaticResource ColAmountStyle}"/>
 
@@ -341,11 +342,11 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="จำนวนรายการรวม: " FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
-                    <TextBlock x:Name="TotalOrdersTextBlock" FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,24,0"/>
+                    <TextBlock Text="จำนวนรายการรวม: " FontSize="15" FontWeight="SemiBold" Foreground="#718096"/>
+                    <TextBlock x:Name="TotalOrdersTextBlock" FontSize="15" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,24,0"/>
 
-                    <TextBlock Text="ยอดรวมทั้งหมด: " FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
-                    <TextBlock x:Name="TotalSpentTextBlock" FontSize="16" FontWeight="Bold" Foreground="#0B2545"/>
+                    <TextBlock Text="ยอดรวมทั้งหมด: " FontSize="15" FontWeight="SemiBold" Foreground="#718096"/>
+                    <TextBlock x:Name="TotalSpentTextBlock" FontSize="18" FontWeight="Bold" Foreground="#0B2545"/>
                 </StackPanel>
 
                 <Button Grid.Column="1"
@@ -356,7 +357,7 @@
                         Foreground="#718096"
                         BorderBrush="#BAE6FD"
                         BorderThickness="1"
-                        Padding="20,0" Height="36"/>
+                        Padding="20,0" Height="42"/>
             </Grid>
         </Border>
     </Grid>

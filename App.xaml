@@ -51,7 +51,7 @@
             <Setter Property="BorderBrush" Value="#00A3E0"/>
             <Setter Property="BorderThickness" Value="1.5"/>
             <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Padding" Value="12,0"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -63,18 +63,40 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Base Window & UserControl Typography -->
+        <Style TargetType="Window">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontWeight" Value="Light"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
+        <Style TargetType="UserControl">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontWeight" Value="Light"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="{StaticResource TextDark}"/>
+            <Setter Property="Padding" Value="0,2"/>
+        </Style>
+
         <!-- Remove default focus outline from all buttons globally -->
         <Style TargetType="Button">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontWeight" Value="Light"/>
         </Style>
 
         <!-- Global Button Styles -->
         <Style x:Key="PrimaryBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#00A3E0"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -104,13 +126,14 @@
         </Style>
 
         <Style x:Key="SecondaryBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#E0F2FE"/>
             <Setter Property="Foreground" Value="#0B2545"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
@@ -147,11 +170,12 @@
         </Style>
 
         <Style x:Key="DangerBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#EF4444"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -184,32 +208,38 @@
         <Style x:Key="ColLeft" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Light"/>
         </Style>
         <Style x:Key="ColLeftBold" TargetType="TextBlock" BasedOn="{StaticResource ColLeft}">
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
         <Style x:Key="ColCenter" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Light"/>
         </Style>
         <Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource ColCenter}">
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
         <Style x:Key="ColRight" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Light"/>
         </Style>
         <Style x:Key="ColRightBold" TargetType="TextBlock" BasedOn="{StaticResource ColRight}">
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
         <!-- Modal Close Button Style -->
         <Style x:Key="ModalCloseButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="38"/>
             <Setter Property="Background" Value="#FCE4EC"/>
             <Setter Property="Foreground" Value="#D81B60"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -221,7 +251,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="18">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="19">
                             <TextBlock x:Name="Txt" Text="✕" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -239,14 +269,14 @@
             </Setter>
         </Style>
 
-        <!-- Base TextBlock Style -->
+        <!-- Base TextBlock Style (Default Body Text: 15pt, Light weight) -->
         <Style TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Foreground" Value="{StaticResource TextDark}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,5"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Light"/>
         </Style>
 
         <!-- ================================================================= -->
@@ -291,8 +321,8 @@
 
         <!-- Global ComboBoxItem Style -->
         <Style TargetType="ComboBoxItem">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Padding" Value="12,8"/>
@@ -324,14 +354,14 @@
 
         <!-- Global ComboBox Style -->
         <Style TargetType="ComboBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Padding" Value="12,0,32,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -393,13 +423,20 @@
             </Setter>
         </Style>
 
+        <!-- Global DataGrid Style -->
+        <Style TargetType="DataGrid">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="RowHeight" Value="48"/>
+        </Style>
+
         <!-- Global DataGridColumnHeader Style (Solid Black Text) -->
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#F1F5F9"/>
             <Setter Property="Foreground" Value="#000000"/>
-            <Setter Property="FontSize" Value="17"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
@@ -407,11 +444,11 @@
 
         <!-- Global DataGridRow Style (Solid Black Text under ALL states) -->
         <Style TargetType="DataGridRow">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#000000"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -448,9 +485,11 @@
 
         <!-- Global DataGridCell Style (Solid Black Text under ALL states) -->
         <Style TargetType="DataGridCell">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="8,0"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -486,10 +525,10 @@
 
         <!-- Search TextBox Style -->
         <Style x:Key="SearchTextBoxStyle" TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -501,7 +540,7 @@
                         <Grid>
                             <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"/>
                             <ScrollViewer x:Name="PART_ContentHost" BorderThickness="0" IsTabStop="False" VerticalAlignment="Center"/>
-                            <TextBlock Text="{TemplateBinding Tag}" Foreground="#E2E8F0" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" IsHitTestVisible="False">
+                            <TextBlock Text="{TemplateBinding Tag}" Foreground="#94A3B8" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" IsHitTestVisible="False">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -521,13 +560,14 @@
 
         <!-- Global Light Input & Modal Styles -->
         <Style x:Key="LightTextBoxStyle" TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="Foreground" Value="#1E293B"/>
             <Setter Property="CaretBrush" Value="#1E293B"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="42"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="Template">
@@ -555,13 +595,13 @@
         </Style>
 
         <Style x:Key="MultiLineTextBoxStyle" TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="Foreground" Value="#1E293B"/>
             <Setter Property="CaretBrush" Value="#1E293B"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="VerticalContentAlignment" Value="Top"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="Template">
@@ -592,13 +632,14 @@
         <Style x:Key="LightComboBoxStyle" BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox"/>
 
         <Style x:Key="LightPasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="Foreground" Value="#1E293B"/>
             <Setter Property="CaretBrush" Value="#1E293B"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="42"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="Template">
@@ -626,15 +667,15 @@
 
         <!-- Input TextBox Style -->
         <Style x:Key="InputTextBoxStyle" TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
             <Setter Property="Padding" Value="15,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Height" Value="48"/>
+            <Setter Property="Height" Value="46"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Foreground" Value="#1E293B"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -648,10 +689,10 @@
         </Style>
 
         <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="Background" Value="#FFFFFF"/>
@@ -681,16 +722,16 @@
         </Style>
 
         <Style TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="Padding" Value="14,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Foreground" Value="#1E293B"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -706,10 +747,10 @@
         <Style x:Key="RoundedComboBoxStyle" BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox"/>
 
         <Style x:Key="RoundedPasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="Background" Value="#FFFFFF"/>

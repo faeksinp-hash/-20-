@@ -58,7 +58,7 @@ namespace Porjai20.ViewModels
         public ObservableCollection<CartItem> CartItems { get; } = new ObservableCollection<CartItem>();
 
         public int CartTotalItems => CartItems.Sum(item => item.Quantity);
-        public string CartTotalString => TotalAmount.ToString("C");
+        public string CartTotalString => TotalAmount.ToString("N2");
 
         private decimal _totalAmount;
         public decimal TotalAmount
