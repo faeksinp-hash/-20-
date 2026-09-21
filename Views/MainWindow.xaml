@@ -49,8 +49,8 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
-            <Setter Property="FontWeight" Value="Light"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
@@ -243,15 +243,16 @@
         <Style x:Key="SidebarButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#E2E8F0"/>
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="Margin" Value="8,3"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="Margin" Value="8,2"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -480,9 +481,9 @@
                 <EventTrigger SourceName="SidebarToggleBtn" RoutedEvent="ToggleButton.Checked">
                     <BeginStoryboard>
                         <Storyboard>
-                            <DoubleAnimation Storyboard.TargetName="SidebarGrid" Storyboard.TargetProperty="Width" To="260" Duration="0:0:0.25">
+                            <DoubleAnimation Storyboard.TargetName="SidebarGrid" Storyboard.TargetProperty="Width" To="275" Duration="0:0:0.25">
                                 <DoubleAnimation.EasingFunction>
-                                    <CubicEase EasingMode="EaseInOut"/>
+                                     <CubicEase EasingMode="EaseInOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
                         </Storyboard>
@@ -493,7 +494,7 @@
             <!-- ======================================================= -->
             <!--  LEFT SIDEBAR                                           -->
             <!-- ======================================================= -->
-            <Grid Grid.Column="0" x:Name="SidebarGrid" Width="260" Background="#0B2545">
+            <Grid Grid.Column="0" x:Name="SidebarGrid" Width="275" Background="#0B2545">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80"/>   <!-- Header/Logo -->
                     <RowDefinition Height="*"/>    <!-- Scrollable Navigation -->
@@ -540,8 +541,8 @@
                             <!-- Brand Title (Visible when expanded) -->
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0"
                                         Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}">
-                                <TextBlock Text="ร้านพอใจ" FontSize="17" FontWeight="Bold" Foreground="#FFFFFF"/>
-                                <TextBlock Text="ทุกอย่าง 20 บาท" FontSize="11.5" FontWeight="SemiBold" Foreground="#BAE6FD" Margin="0,-1,0,0"/>
+                                <TextBlock Text="ร้านพอใจ" FontSize="19" FontWeight="Medium" Foreground="#FFFFFF"/>
+                                <TextBlock Text="ทุกอย่าง 20 บาท" FontSize="14" FontWeight="Normal" Foreground="#BAE6FD" Margin="0,1,0,0"/>
                             </StackPanel>
                         </Grid>
 
@@ -578,7 +579,7 @@
                     <StackPanel Margin="0,10,0,20">
                         
                         <!-- Section: เมนูหลัก -->
-                        <TextBlock Text="เมนูหลัก" FontSize="11" FontWeight="Bold"
+                        <TextBlock Text="เมนูหลัก" FontSize="14" FontWeight="Bold"
                                    Foreground="#94A3B8" Margin="18,14,0,6"
                                    Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}"/>
 
@@ -594,15 +595,15 @@
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
-                            <Grid Height="40" Margin="10,0">
+                            <Grid Height="44" Margin="10,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="4"/>
-                                    <ColumnDefinition Width="24"/>
+                                    <ColumnDefinition Width="26"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Left Indicator Bar -->
-                                <Border Grid.Column="0" Width="4" Height="16" CornerRadius="2" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                <Border Grid.Column="0" Width="4" Height="18" CornerRadius="2" VerticalAlignment="Center" HorizontalAlignment="Left">
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="Transparent"/>
@@ -617,11 +618,11 @@
 
                                 <!-- Centered Icon Container -->
                                 <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Path Data="{StaticResource IconShop}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Path Data="{StaticResource IconShop}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
 
                                 <!-- Label -->
-                                <TextBlock Grid.Column="2" Text="หน้าแรก" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"
+                                <TextBlock Grid.Column="2" Text="หน้าแรก" FontSize="17" FontWeight="Medium" VerticalAlignment="Center" Margin="10,0,0,0"
                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                            Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}"/>
                             </Grid>
@@ -631,7 +632,7 @@
                         <Button Command="{Binding SwitchToPosCommand}" ToolTip="ขายหน้าร้าน (POS)">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource SidebarButtonStyle}">
-                                    <Setter Property="Height" Value="46"/>
+                                    <Setter Property="Height" Value="48"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding CurrentView}" Value="pos">
                                             <Setter Property="Background" Value="#00A3E0"/>
@@ -640,10 +641,10 @@
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
-                            <Grid Height="42" Margin="10,0">
+                            <Grid Height="44" Margin="10,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="4"/>
-                                    <ColumnDefinition Width="24"/>
+                                    <ColumnDefinition Width="26"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
@@ -663,11 +664,11 @@
 
                                 <!-- Centered Icon Container -->
                                 <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Path Data="{StaticResource IconCart}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Path Data="{StaticResource IconCart}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
 
                                 <!-- Label -->
-                                <TextBlock Grid.Column="2" Text="ขายหน้าร้าน" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"
+                                <TextBlock Grid.Column="2" Text="ขายหน้าร้าน" FontSize="17" FontWeight="Medium" VerticalAlignment="Center" Margin="10,0,0,0"
                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                            Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}"/>
                             </Grid>
@@ -685,7 +686,7 @@
                                                         <StackPanel>
                                                             <!-- Group Category Header -->
                                                             <TextBlock Text="{Binding Name}"
-                                                                       FontSize="11" FontWeight="Bold"
+                                                                       FontSize="14" FontWeight="Bold"
                                                                        Foreground="#94A3B8"
                                                                        Margin="18,14,0,6"
                                                                        Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}"/>
@@ -710,8 +711,9 @@
                                     <Button Command="{Binding NavigateCommand}" ToolTip="{Binding Label}">
                                         <Button.Style>
                                             <Style TargetType="Button" BasedOn="{StaticResource SidebarButtonStyle}">
-                                                <Setter Property="Height" Value="40"/>
-                                                <Setter Property="Margin" Value="10,1"/>
+                                                <Setter Property="Height" Value="48"/>
+                                                <Setter Property="MinHeight" Value="48"/>
+                                                <Setter Property="Margin" Value="8,2"/>
                                                 <Style.Triggers>
                                                     <!-- Enable/Disable based on login -->
                                                     <DataTrigger Binding="{Binding DataContext.CurrentUser, RelativeSource={RelativeSource AncestorType=Window}}" Value="{x:Null}">
@@ -809,15 +811,15 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
-                                        <Grid Margin="10,0">
+                                        <Grid Margin="10,0" Height="44">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="4"/>
-                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="26"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             
                                             <!-- Dynamic Left Indicator Bar -->
-                                            <Border Grid.Column="0" Width="4" Height="14" CornerRadius="2" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                            <Border Grid.Column="0" Width="4" Height="16" CornerRadius="2" VerticalAlignment="Center" HorizontalAlignment="Left">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Setter Property="Background" Value="Transparent"/>
@@ -908,7 +910,7 @@
                                             <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                 <TextBlock Text="{Binding IconGlyph}"
                                                            FontFamily="Segoe MDL2 Assets"
-                                                           FontSize="15"
+                                                           FontSize="17"
                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center">
@@ -929,7 +931,7 @@
 
                                                 <Path Data="{Binding IconPathKey, Converter={StaticResource ResourceKeyToBrushConverter}}"
                                                       Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                                      Stretch="Uniform" Width="14" Height="14"
+                                                      Stretch="Uniform" Width="16" Height="16"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <Path.Style>
                                                         <Style TargetType="Path">
@@ -949,7 +951,7 @@
 
                                             <!-- Label -->
                                             <TextBlock Grid.Column="2" Text="{Binding Label}"
-                                                       FontSize="13" FontWeight="SemiBold"
+                                                       FontSize="17" FontWeight="Medium"
                                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                                        VerticalAlignment="Center" Margin="10,0,0,0"
                                                        Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}"/>
@@ -996,15 +998,15 @@
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding IsChecked, ElementName=SidebarToggleBtn, Converter={StaticResource BoolToVis}}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding CurrentUser.Name}"
-                                           FontSize="13" FontWeight="Bold"
+                                           FontSize="16" FontWeight="SemiBold"
                                            Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"
                                            VerticalAlignment="Center"/>
-                                <Border Background="#D1FAE5" CornerRadius="4" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="ออนไลน์" FontSize="9.5" FontWeight="Bold" Foreground="#047857" VerticalAlignment="Center"/>
+                                <Border Background="#D1FAE5" CornerRadius="4" Padding="6,2" Margin="6,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="ออนไลน์" FontSize="12" FontWeight="Bold" Foreground="#047857" VerticalAlignment="Center"/>
                                 </Border>
                             </StackPanel>
                             <TextBlock Text="{Binding CurrentUser.Role}"
-                                       FontSize="11" Foreground="#94A3B8" Margin="0,2,0,0"/>
+                                       FontSize="14" Foreground="#94A3B8" Margin="0,2,0,0"/>
                         </StackPanel>
 
                         <!-- Logout -->

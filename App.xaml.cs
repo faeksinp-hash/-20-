@@ -31,7 +31,7 @@ namespace Porjai20
         }
 
         // กำหนด Flag สำหรับ Debug (ต้องเป็น false เสมอเมื่อ commit)
-        private const bool DEBUG_SKIP_LOGIN = false;
+        private readonly bool DEBUG_SKIP_LOGIN = false;
 
         /// <summary>
         /// จุดเริ่มต้นของโปรแกรม (Entry Point) ทำหน้าที่เหมือน Program.cs ของ WinForms

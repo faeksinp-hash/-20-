@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\ShopManagement_\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement_\u0E2B\u0E25\u0E31\u0E01\\matchashop\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement_\u0E2B\u0E25\u0E31\u0E01\\matchashop\\matchashop.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:matchashop.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
@@ -14,8 +18,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "App.xaml",
+              "DocumentMoniker": "D:\\ShopManagement_\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\App.xaml",
+              "RelativeDocumentMoniker": "App.xaml",
+              "ToolTip": "D:\\ShopManagement_\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\App.xaml",
+              "RelativeToolTip": "App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-09-21T04:11:30.578Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
@@ -26,15 +42,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MatchaShop",
               "DocumentMoniker": "D:\\ShopManagement_\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\MatchaShop.csproj",
               "RelativeDocumentMoniker": "MatchaShop.csproj",
-              "ToolTip": "D:\\ShopManagement_\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\MatchaShop.csproj*",
-              "RelativeToolTip": "MatchaShop.csproj*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\ShopManagement_\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\MatchaShop.csproj",
+              "RelativeToolTip": "MatchaShop.csproj",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-09-13T12:40:16.743Z",
+              "WhenOpened": "2026-09-21T04:10:00.179Z",
               "EditorCaption": ""
             }
           ]
