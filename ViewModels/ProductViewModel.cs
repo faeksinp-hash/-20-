@@ -7572,27 +7572,25 @@ namespace Porjai20.ViewModels
                     bool isPasswordValid = false;
                     if (user != null && !string.IsNullOrEmpty(user.Password))
                     {
-                        if (DatabaseService.IsBCryptHash(user.Password))
+                        if (user.Password == LoginPassword)
+                        {
+                            isPasswordValid = true;
+                        }
+                        else if (DatabaseService.IsBCryptHash(user.Password))
                         {
                             try
                             {
-                                isPasswordValid = BCrypt.Net.BCrypt.Verify(LoginPassword, user.Password);
+                                if (BCrypt.Net.BCrypt.Verify(LoginPassword, user.Password))
+                                {
+                                    isPasswordValid = true;
+                                    await conn.ExecuteAsync("UPDATE tblEmployee SET Emp_Password = @Password WHERE Emp_ID = @Id", new { Password = LoginPassword, Id = user.Id });
+                                    user.Password = LoginPassword;
+                                }
                             }
                             catch
                             {
                                 isPasswordValid = false;
                             }
-                        }
-                        else if (user.Password == LoginPassword) // Fallback รองรับกรณีรหัสผ่านยังไม่ได้ migrate
-                        {
-                            isPasswordValid = true;
-                            try
-                            {
-                                string upgradedHash = BCrypt.Net.BCrypt.HashPassword(LoginPassword);
-                                await conn.ExecuteAsync("UPDATE tblEmployee SET Emp_Password = @Hash WHERE Emp_ID = @Id", new { Hash = upgradedHash, Id = user.Id });
-                                user.Password = upgradedHash;
-                            }
-                            catch { }
                         }
                     }
 
@@ -7688,9 +7686,6 @@ namespace Porjai20.ViewModels
                 }
 
                 string rawPassword = SelectedUser.Password ?? string.Empty;
-                string hashedPassword = DatabaseService.IsBCryptHash(rawPassword)
-                    ? rawPassword
-                    : BCrypt.Net.BCrypt.HashPassword(rawPassword);
 
                 using (var conn = _databaseService.GetConnection())
                 {
@@ -7700,7 +7695,7 @@ namespace Porjai20.ViewModels
                         Name = SelectedUser.Name,
                         Phone = SelectedUser.Phone,
                         Username = SelectedUser.Username,
-                        Password = hashedPassword,
+                        Password = rawPassword,
                         Role = SelectedUser.Role
                     });
                     IsStaffModalOpen = false;
@@ -7722,9 +7717,6 @@ namespace Porjai20.ViewModels
                 if (SelectedUser == null || SelectedUser.Id == 0) return;
 
                 string rawPassword = SelectedUser.Password ?? string.Empty;
-                string hashedPassword = DatabaseService.IsBCryptHash(rawPassword)
-                    ? rawPassword
-                    : BCrypt.Net.BCrypt.HashPassword(rawPassword);
 
                 using (var conn = _databaseService.GetConnection())
                 {
@@ -7735,7 +7727,7 @@ namespace Porjai20.ViewModels
                         Name = SelectedUser.Name,
                         Phone = SelectedUser.Phone,
                         Username = SelectedUser.Username,
-                        Password = hashedPassword,
+                        Password = rawPassword,
                         Role = SelectedUser.Role
                     });
                     IsStaffModalOpen = false;

@@ -1017,3 +1017,4 @@ D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\DocumentForma
 D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\ExcelNumberFormat.dll
 D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\RBush.dll
 D:\ShopManagement_หลัก\MatchaShop\bin\Debug\net9.0-windows\SixLabors.Fonts.dll
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.sourcelink.json

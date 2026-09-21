@@ -281,14 +281,14 @@ namespace Porjai20.Services
                 int employeeCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblEmployee;");
                 if (employeeCount == 0)
                 {
-                    string adminHash = BCrypt.Net.BCrypt.HashPassword("password");
+                    string adminPassword = "1234";
                     connection.Execute(@"
                         INSERT INTO tblEmployee (Emp_Name, Emp_Username, Emp_Password, Emp_Role) 
                         VALUES ('Administrator', 'admin', @Password, @Role);",
-                        new { Password = adminHash, Role = RolePermissions.RoleOwner });
+                        new { Password = adminPassword, Role = RolePermissions.RoleOwner });
                 }
 
-                // Migrate existing plain-text passwords in tblEmployee to BCrypt hashes
+                // Data Patch: Revert any BCrypt hashes in tblEmployee back to plaintext default passwords
                 MigrateEmployeePasswords(connection);
 
                 // Migrate existing employee roles from legacy values ('Admin', 'User', null/empty) to standard roles
@@ -317,31 +317,31 @@ namespace Porjai20.Services
         }
 
         /// <summary>
-        /// Migration สำหรับแปลงรหัสผ่านเดิมที่เป็น plain text ในตาราง tblEmployee ให้เป็น BCrypt hash อัตโนมัติ
+        /// Data Patch: ปรับค่ารหัสผ่านเดิมที่เป็น BCrypt Hash ให้กลับมาเป็นรหัสผ่านเริ่มต้น (Plaintext "1234")
         /// </summary>
         private void MigrateEmployeePasswords(IDbConnection connection)
         {
             try
             {
-                var employees = connection.Query<(int Emp_ID, string? Emp_Password)>(
-                    "SELECT Emp_ID, Emp_Password FROM tblEmployee WHERE Emp_Password IS NOT NULL AND Emp_Password != '';"
+                var employees = connection.Query<(int Emp_ID, string? Emp_Username, string? Emp_Password)>(
+                    "SELECT Emp_ID, Emp_Username, Emp_Password FROM tblEmployee WHERE Emp_Password IS NOT NULL AND Emp_Password != '';"
                 );
 
                 foreach (var emp in employees)
                 {
-                    if (!string.IsNullOrEmpty(emp.Emp_Password) && !IsBCryptHash(emp.Emp_Password))
+                    if (!string.IsNullOrEmpty(emp.Emp_Password) && IsBCryptHash(emp.Emp_Password))
                     {
-                        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(emp.Emp_Password);
+                        string defaultPassword = "1234";
                         connection.Execute(
-                            "UPDATE tblEmployee SET Emp_Password = @HashedPassword WHERE Emp_ID = @Emp_ID;",
-                            new { HashedPassword = hashedPassword, Emp_ID = emp.Emp_ID }
+                            "UPDATE tblEmployee SET Emp_Password = @Password WHERE Emp_ID = @Emp_ID;",
+                            new { Password = defaultPassword, Emp_ID = emp.Emp_ID }
                         );
                     }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[Migration] Error migrating employee passwords: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[DataPatch] Error patching employee passwords: {ex.Message}");
             }
         }
 
