@@ -115,9 +115,9 @@
             <Setter Property="Foreground"   Value="#2D3748"/>
             <Setter Property="BorderBrush"  Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Height"       Value="40"/>
+            <Setter Property="Height"       Value="44"/>
             <Setter Property="FontFamily"   Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize"     Value="13"/>
+            <Setter Property="FontSize"     Value="15"/>
             <Setter Property="Padding"      Value="8,0"/>
         </Style>
 
@@ -171,13 +171,13 @@
 
         <Style x:Key="LightComboBoxStyle" TargetType="ComboBox">
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderBrush" Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Padding" Value="12,0,32,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -306,7 +306,7 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#0369A1"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="10,6"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -335,7 +335,7 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#B45309"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="10,6"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -364,7 +364,7 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#065F46"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="10,6"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -396,7 +396,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Foreground" Value="#BE123C"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Padding" Value="10,6"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -430,12 +430,12 @@
 
         <Style x:Key="DeliveryStatusModalComboBoxStyle" TargetType="ComboBox">
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontSize" Value="13.5"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="MinWidth" Value="125"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinWidth" Value="135"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Padding" Value="10,0,24,0"/>
+            <Setter Property="Padding" Value="12,0,26,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -465,7 +465,7 @@
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
                                         <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="FontSize" Value="13.5"/>
                                     </Style>
                                 </ContentPresenter.Resources>
                             </ContentPresenter>
@@ -525,11 +525,11 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#00A3E0"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -563,12 +563,12 @@
             <Setter Property="Foreground"      Value="#0B2545"/>
             <Setter Property="BorderBrush"     Value="#00A3E0"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontSize"        Value="14"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="28"/>
-            <Setter Property="Padding"         Value="6,2"/>
-            <Setter Property="MinWidth"        Value="95"/>
+            <Setter Property="Height"          Value="36"/>
+            <Setter Property="Padding"         Value="8,2"/>
+            <Setter Property="MinWidth"        Value="105"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -603,7 +603,7 @@
             <Setter Property="Foreground"              Value="#000000"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Height"                  Value="48"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -630,7 +630,8 @@
         <Style x:Key="DeliveryRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#2D3748"/>
-            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="MinHeight"  Value="48"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -688,21 +689,25 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontSize"            Value="15"/>
         </Style>
         <Style x:Key="ColLeft" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontSize"            Value="15"/>
             <Setter Property="Margin"              Value="4,0"/>
         </Style>
         <Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource ColCenter}">
             <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize"   Value="15"/>
         </Style>
         <Style x:Key="ColAmountStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontWeight"          Value="Bold"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontSize"            Value="16"/>
             <Setter Property="Margin"              Value="0,0,8,0"/>
             <Setter Property="Foreground"          Value="#0B2545"/>
         </Style>
@@ -714,8 +719,8 @@
             <Setter Property="Background"              Value="#F8FAFC"/>
             <Setter Property="Foreground"              Value="#475569"/>
             <Setter Property="FontWeight"              Value="SemiBold"/>
-            <Setter Property="FontSize"                Value="12.5"/>
-            <Setter Property="Height"                  Value="36"/>
+            <Setter Property="FontSize"                Value="15"/>
+            <Setter Property="Height"                  Value="44"/>
             <Setter Property="Padding"                 Value="10,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -730,7 +735,7 @@
                             <TextBlock Text="{TemplateBinding Content}"
                                        Foreground="#475569"
                                        FontWeight="SemiBold"
-                                       FontSize="12.5"
+                                       FontSize="15"
                                        VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -741,8 +746,8 @@
         <Style x:Key="LightModalRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#1E293B"/>
-            <Setter Property="FontSize"   Value="13"/>
-            <Setter Property="MinHeight"  Value="36"/>
+            <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="MinHeight"  Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -815,7 +820,7 @@
                                    Foreground="#2D3748"
                                    Margin="0,0,0,2"/>
                         <TextBlock Text="จัดการการจัดส่งสินค้า — ระบบจัดการร้าน พอใจ"
-                                   FontSize="13"
+                                   FontSize="15"
                                    Foreground="#718096"
                                    Margin="0"/>
                     </StackPanel>
@@ -854,10 +859,10 @@
                         </Grid.RowDefinitions>
                         <!-- Icon + Label -->
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
-                                <TextBlock Text="⏳" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
+                                <TextBlock Text="⏳" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="ออเดอร์รอจัดส่ง" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="ออเดอร์รอจัดส่ง" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <!-- Value -->
@@ -869,7 +874,7 @@
                         <!-- Sub-label -->
                         <TextBlock Grid.Row="2"
                                    Text="รายการที่ต้องเตรียม/นำส่ง"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -893,10 +898,10 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#EBF8FF" Margin="0,0,10,0">
-                                <TextBlock Text="🛵" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#EBF8FF" Margin="0,0,10,0">
+                                <TextBlock Text="🛵" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="อยู่ระหว่างจัดส่ง" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="อยู่ระหว่างจัดส่ง" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -906,7 +911,7 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="ไรเดอร์กำลังเดินทางส่งสินค้า"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -930,10 +935,10 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#D1FAE5" Margin="0,0,10,0">
-                                <TextBlock Text="✅" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#D1FAE5" Margin="0,0,10,0">
+                                <TextBlock Text="✅" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="จัดส่งสำเร็จวันนี้" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="จัดส่งสำเร็จวันนี้" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -943,7 +948,7 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="ออเดอร์ส่งถึงมือลูกค้าเรียบร้อย"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -991,14 +996,14 @@
                             <TextBox x:Name="DeliverySearchBox"
                                      Text="{Binding DeliverySearchKeyword, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource LightTextBoxStyle}"
-                                     Height="40"
+                                     Height="44"
                                      Padding="38,0,12,0"
                                      VerticalContentAlignment="Center"
-                                     FontSize="13"/>
+                                     FontSize="16"/>
                             <!-- Placeholder -->
                             <TextBlock Text="ค้นหา เลขที่บิล, ชื่อลูกค้า, เบอร์โทร..."
                                        Foreground="#A0AEC0"
-                                       FontSize="13"
+                                       FontSize="15"
                                        VerticalAlignment="Center"
                                        Margin="38,0,12,0"
                                        IsHitTestVisible="False">
@@ -1025,6 +1030,7 @@
                         <ComboBox ItemsSource="{Binding DeliveryStatusOptions}"
                                   SelectedItem="{Binding SelectedDeliveryStatusFilter}"
                                   Style="{StaticResource LightComboBoxStyle}"
+                                  Height="44"
                                   BorderThickness="0"
                                   Background="Transparent"/>
                     </Border>
@@ -1036,7 +1042,7 @@
                             Background="#1E88E5"
                             Cursor="Hand"
                             Padding="24,0"
-                            Height="40">
+                            Height="44">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -1049,7 +1055,7 @@
                                                 <TextBlock Text="ค้นหา"
                                                            Foreground="#FFFFFF"
                                                            FontWeight="Bold"
-                                                           FontSize="14"
+                                                           FontSize="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"/>
                                             </Border>
@@ -1076,8 +1082,9 @@
                             Content="ล้าง"
                             Command="{Binding ClearDeliveryFilterCommand}"
                             Style="{StaticResource SecondaryBtnStyle}"
+                            FontSize="16"
                             Padding="16,0"
-                            Height="40"/>
+                            Height="44"/>
                 </Grid>
             </Border>
 
@@ -1147,8 +1154,8 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center" Margin="6,0">
-                                            <TextBlock Text="{Binding CustomerPhone, TargetNullValue='-', FallbackValue='-'}" FontWeight="Bold" FontSize="12.5" Foreground="#2D3748"/>
-                                            <TextBlock Text="{Binding CustomerAddress, TargetNullValue='ไม่ระบุที่อยู่', FallbackValue='ไม่ระบุที่อยู่'}" FontSize="11" Foreground="#718096" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding CustomerPhone, TargetNullValue='-', FallbackValue='-'}" FontWeight="Bold" FontSize="14" Foreground="#2D3748"/>
+                                            <TextBlock Text="{Binding CustomerAddress, TargetNullValue='ไม่ระบุที่อยู่', FallbackValue='ไม่ระบุที่อยู่'}" FontSize="13" Foreground="#718096" TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -1159,16 +1166,16 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="StatusBadge"
-                                                CornerRadius="6" Padding="8,4"
+                                                CornerRadius="6" Padding="10,4"
                                                 HorizontalAlignment="Center"
                                                 Background="#E0F2FE"
                                                 BorderBrush="#BAE6FD"
                                                 BorderThickness="1">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <TextBlock x:Name="StatusIcon" Text="⌛ " FontSize="11" Foreground="#0369A1" VerticalAlignment="Center"/>
+                                                <TextBlock x:Name="StatusIcon" Text="⌛ " FontSize="13" Foreground="#0369A1" VerticalAlignment="Center"/>
                                                 <TextBlock x:Name="StatusText"
                                                            Text="{Binding DeliveryStatus}"
-                                                           FontSize="12" FontWeight="Bold"
+                                                           FontSize="14" FontWeight="Bold"
                                                            Foreground="#0369A1"
                                                            VerticalAlignment="Center"/>
                                             </StackPanel>
@@ -1255,7 +1262,7 @@
                                Margin="0,12,0,0">
                         <TextBlock Text="{Binding Deliveries.Count, StringFormat=แสดงทั้งหมด {0} รายการการจัดส่ง}"
                                    Foreground="#718096"
-                                   FontSize="12"
+                                   FontSize="14"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
                                    Margin="0"/>
@@ -1308,11 +1315,11 @@
                             </Border>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="รายละเอียดคำสั่งซื้อเดลิเวอรี่"
-                                           FontSize="18" FontWeight="Bold"
+                                           FontSize="20" FontWeight="Bold"
                                            Foreground="#0F172A"
                                            Margin="0,0,0,2"/>
                                 <TextBlock Text="{Binding SelectedDeliveryOrder.RefNo, StringFormat='เลขที่บิล: {0}'}"
-                                           FontSize="12.5" FontWeight="SemiBold"
+                                           FontSize="14.5" FontWeight="SemiBold"
                                            Foreground="#00A3E0"
                                            Margin="0"/>
                             </StackPanel>
@@ -1347,8 +1354,8 @@
                                             <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="ชื่อลูกค้า" FontSize="10.5" Foreground="#64748B" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerName}" FontSize="13.5" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="ชื่อลูกค้า" FontSize="13" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerName}" FontSize="15" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -1364,8 +1371,8 @@
                                             <TextBlock Text="📞" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="เบอร์โทรศัพท์" FontSize="10.5" Foreground="#64748B" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerPhone}" FontSize="13.5" FontWeight="Bold" Foreground="#00A3E0" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="เบอร์โทรศัพท์" FontSize="13" Foreground="#64748B" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerPhone}" FontSize="15" FontWeight="Bold" Foreground="#00A3E0" TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -1384,10 +1391,10 @@
                                     <TextBlock Text="📍" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="ที่อยู่จัดส่ง:" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                    <TextBlock Text="ที่อยู่จัดส่ง:" FontSize="13" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
                                     <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerAddress, TargetNullValue='ไม่ระบุที่อยู่', FallbackValue='ไม่ระบุที่อยู่'}"
-                                               FontSize="13" Foreground="#1E293B" FontWeight="Medium"
-                                               TextWrapping="Wrap" LineHeight="18"/>
+                                               FontSize="14.5" Foreground="#1E293B" FontWeight="Medium"
+                                               TextWrapping="Wrap" LineHeight="20"/>
                                 </StackPanel>
                             </Grid>
 
@@ -1397,13 +1404,13 @@
                             <!-- Row 3: Order Timestamp & Status Badge -->
                             <Grid VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🕒 วันเวลาสั่งซื้อ: " FontSize="12" Foreground="#64748B"/>
+                                    <TextBlock Text="🕒 วันเวลาสั่งซื้อ: " FontSize="14" Foreground="#64748B"/>
                                     <TextBlock Text="{Binding SelectedDeliveryOrder.Timestamp, StringFormat=dd/MM/yyyy HH:mm}"
-                                               FontSize="12" Foreground="#1E293B" FontWeight="SemiBold"/>
+                                               FontSize="14" Foreground="#1E293B" FontWeight="SemiBold"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <TextBlock Text="สถานะจัดส่ง: " FontSize="12" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="สถานะจัดส่ง: " FontSize="14" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                     <!-- Status Dropdown (Select Menu) -->
                                     <ComboBox SelectedValue="{Binding SelectedDeliveryOrderStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               SelectedValuePath="Tag"
@@ -1420,7 +1427,7 @@
 
                     <!-- 2: Items Header Label -->
                     <TextBlock Grid.Row="2" Text="รายการสินค้าที่จัดส่ง"
-                               FontSize="12.5" FontWeight="Bold"
+                               FontSize="16" FontWeight="Bold"
                                Foreground="#475569" Margin="2,0,0,6"/>
 
                     <!-- 3: Items List Table in Rounded Border Container -->
@@ -1440,7 +1447,7 @@
                                       CanUserReorderColumns="False"
                                       CanUserResizeColumns="False"
                                       CanUserSortColumns="False"
-                                      RowHeight="36"
+                                      RowHeight="44"
                                       GridLinesVisibility="Horizontal"
                                       HorizontalGridLinesBrush="#F1F5F9"
                                       BorderThickness="0"
@@ -1458,46 +1465,46 @@
                                                 <Setter Property="Foreground" Value="#1E293B"/>
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
                                                 <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                                <Setter Property="FontSize" Value="13"/>
+                                                <Setter Property="FontSize" Value="15"/>
                                                 <Setter Property="Margin" Value="10,0,0,0"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Header="จำนวน"
                                                         Binding="{Binding Quantity}"
-                                                        Width="70">
+                                                        Width="80">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#64748B"/>
                                                 <Setter Property="HorizontalAlignment" Value="Center"/>
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="13"/>
+                                                <Setter Property="FontSize" Value="15"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Header="ราคา"
                                                         Binding="{Binding UnitPrice, StringFormat={}{0:N2}}"
-                                                        Width="95">
+                                                        Width="100">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#64748B"/>
                                                 <Setter Property="HorizontalAlignment" Value="Right"/>
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontSize" Value="15"/>
                                                 <Setter Property="Margin" Value="0,0,10,0"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Header="รวมเงิน"
                                                         Binding="{Binding Total, StringFormat={}{0:N2}}"
-                                                        Width="105">
+                                                        Width="115">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#0F172A"/>
                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                 <Setter Property="HorizontalAlignment" Value="Right"/>
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="14"/>
+                                                <Setter Property="FontSize" Value="15"/>
                                                 <Setter Property="Margin" Value="0,0,12,0"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
@@ -1520,7 +1527,7 @@
                                            VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding SelectedDeliverySubtotal, StringFormat={}{0:N2}}"
                                            Foreground="#1E293B"
-                                           FontSize="15"
+                                           FontSize="16"
                                            FontWeight="SemiBold"
                                            DockPanel.Dock="Right"
                                            VerticalAlignment="Center"/>
@@ -1529,7 +1536,7 @@
                             <!-- 2. ค่าจัดส่ง (Shipping Fee) -->
                             <DockPanel LastChildFill="False" Margin="0,8,0,0">
                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                    <TextBlock Text="🚚 " FontSize="14" VerticalAlignment="Center"/>
+                                    <TextBlock Text="🚚 " FontSize="15" VerticalAlignment="Center"/>
                                     <TextBlock Text="ค่าจัดส่ง"
                                                Foreground="#64748B"
                                                FontSize="15"
@@ -1538,7 +1545,7 @@
                                 </StackPanel>
                                 <TextBlock Text="{Binding SelectedDeliveryShippingFee, StringFormat={}{0:N2}}"
                                            Foreground="#00A3E0"
-                                           FontSize="15"
+                                           FontSize="16"
                                            FontWeight="SemiBold"
                                            DockPanel.Dock="Right"
                                            VerticalAlignment="Center"/>
@@ -1551,12 +1558,12 @@
                             <DockPanel LastChildFill="False">
                                 <TextBlock Text="ยอดรวมสุทธิทั้งสิ้น"
                                            Foreground="#0F172A"
-                                           FontSize="16"
+                                           FontSize="17"
                                            FontWeight="Bold"
                                            DockPanel.Dock="Left"
                                            VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding SelectedDeliveryGrandTotal, StringFormat={}{0:N2}}"
-                                           FontSize="26"
+                                           FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="#00A3E0"
                                            DockPanel.Dock="Right"
@@ -1579,12 +1586,12 @@
                         <Button Grid.Column="0"
                                 Content="🛵  อัปเดตสถานะจัดส่ง"
                                 Command="{Binding UpdateDeliveryStatusCommand}"
-                                Height="42"
+                                Height="46"
                                 Cursor="Hand">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontSize" Value="15"/>
                                     <Setter Property="FontWeight" Value="Bold"/>
                                     <Setter Property="Foreground" Value="White"/>
                                     <Setter Property="Template">
@@ -1616,12 +1623,12 @@
                                 Content="🖨️  พิมพ์ใบจัดส่ง"
                                 Command="{Binding PrintDeliverySlipCommand}"
                                 CommandParameter="{Binding SelectedDeliveryOrder}"
-                                Height="42"
+                                Height="46"
                                 Cursor="Hand">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontSize" Value="15"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
                                     <Setter Property="Foreground" Value="#00A3E0"/>
                                     <Setter Property="Template">
@@ -1649,12 +1656,12 @@
                         <Button Grid.Column="4"
                                 Content="ปิด"
                                 Command="{Binding CloseDeliveryDetailCommand}"
-                                Height="42"
+                                Height="46"
                                 Cursor="Hand">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontSize" Value="15"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
                                     <Setter Property="Foreground" Value="#64748B"/>
                                     <Setter Property="Template">
@@ -1704,7 +1711,7 @@
                 <StackPanel>
                     <!-- Header -->
                     <Grid Margin="0,0,0,20">
-                        <TextBlock Text="🚚 อัปเดตสถานะการจัดส่งสินค้า" FontSize="16" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
+                        <TextBlock Text="🚚 อัปเดตสถานะการจัดส่งสินค้า" FontSize="20" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
                         
                         <!-- Circular Soft Pink Close Button ('✕') -->
                         <Button HorizontalAlignment="Right"
@@ -1723,25 +1730,25 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="เลขที่บิล" FontSize="13" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.RefNo}" FontSize="13" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="เลขที่บิล" FontSize="15" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.RefNo}" FontSize="15" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="ชื่อลูกค้า" FontSize="13" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.CustomerName}" FontSize="13" FontWeight="SemiBold" Foreground="#2D3748" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="ชื่อลูกค้า" FontSize="15" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.CustomerName}" FontSize="15" FontWeight="SemiBold" Foreground="#2D3748" VerticalAlignment="Center" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="เบอร์โทร" FontSize="13" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.CustomerPhone}" FontSize="13" FontWeight="SemiBold" Foreground="#0B2545" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="เบอร์โทร" FontSize="15" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.CustomerPhone}" FontSize="15" FontWeight="SemiBold" Foreground="#0B2545" VerticalAlignment="Center" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="ที่อยู่จัดส่ง" FontSize="13" Foreground="#718096" VerticalAlignment="Top" Margin="0,4,0,10"/>
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.CustomerAddress}" FontSize="12.5" Foreground="#2D3748" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="ที่อยู่จัดส่ง" FontSize="15" Foreground="#718096" VerticalAlignment="Top" Margin="0,4,0,10"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDeliveryOrder.CustomerAddress}" FontSize="14.5" Foreground="#2D3748" TextWrapping="Wrap" Margin="0,4,0,10"/>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="สถานะจัดส่ง" FontSize="13" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="สถานะจัดส่ง" FontSize="15" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center"/>
                             <Border Grid.Row="4" Grid.Column="1" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
-                                <ComboBox SelectedValue="{Binding SelectedDeliveryStatus, Mode=TwoWay}" SelectedValuePath="Content" Style="{StaticResource LightComboBoxStyle}" BorderThickness="0" Background="Transparent" Foreground="#2D3748">
+                                <ComboBox SelectedValue="{Binding SelectedDeliveryStatus, Mode=TwoWay}" SelectedValuePath="Content" Style="{StaticResource LightComboBoxStyle}" Height="44" BorderThickness="0" Background="Transparent" Foreground="#2D3748">
                                     <ComboBoxItem Content="รอจัดส่ง"/>
                                     <ComboBoxItem Content="กำลังจัดส่ง"/>
                                     <ComboBoxItem Content="จัดส่งสำเร็จ"/>
@@ -1767,7 +1774,8 @@
                                 Foreground="#718096"
                                 BorderBrush="#BAE6FD"
                                 BorderThickness="1"
-                                Height="42"/>
+                                FontSize="16"
+                                Height="46"/>
 
                         <Button Grid.Column="2"
                                 Command="{Binding SaveDeliveryStatusCommand}"
@@ -1775,7 +1783,8 @@
                                 Style="{StaticResource RoseBtnStyle}"
                                 Background="#00A3E0"
                                 Foreground="White"
-                                Height="42"/>
+                                FontSize="16"
+                                Height="46"/>
                     </Grid>
                 </StackPanel>
             </Border>

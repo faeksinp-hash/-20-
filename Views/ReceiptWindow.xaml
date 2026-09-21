@@ -9,7 +9,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button x:Name="PrintBtn" Content="พิมพ์ใบเสร็จ" Click="PrintBtn_Click" Width="120" Height="36" Background="#00A3E0" Foreground="White" FontWeight="Bold" FontSize="14">
+            <Button x:Name="PrintBtn" Content="พิมพ์ใบเสร็จ" Click="PrintBtn_Click" Width="130" Height="40" Background="#00A3E0" Foreground="White" FontWeight="Bold" FontSize="15">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="15"/>
@@ -84,8 +84,8 @@
 
                 <!-- Summary -->
                 <DockPanel Margin="0,0,0,5">
-                    <TextBlock Text="ยอดรวมสุทธิ:" FontSize="14" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding TotalAmount, StringFormat=F2}" FontSize="14" FontWeight="Bold" HorizontalAlignment="Right"/>
+                    <TextBlock Text="ยอดรวมสุทธิ:" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding TotalAmount, StringFormat=F2}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
                 </DockPanel>
                 <DockPanel Margin="0,0,0,5">
                     <TextBlock Text="วิธีชำระเงิน:"/>

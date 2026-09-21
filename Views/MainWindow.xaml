@@ -1213,46 +1213,46 @@
 
                             <!-- Row 0 Left: Customer Code -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสลูกค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รหัสลูกค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#F8FAFC" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerCode, Mode=OneWay}"
                                              IsReadOnly="True"
                                              Foreground="#0284C7"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="40" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Customer Name -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อ-นามสกุล *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อ-นามสกุล *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="40" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Full Width: Phone Number -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,14">
-                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="40" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Full Width: Address -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CustomerAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource MultiLineTextBoxStyle}"
-                                             Height="70" Padding="12,8" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True"/>
+                                             Height="76" Padding="12,8" FontSize="15" TextWrapping="Wrap" AcceptsReturn="True"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -1282,7 +1282,7 @@
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
 
                         <!-- Clear Button -->
                         <Button Grid.Column="2"
@@ -1291,7 +1291,7 @@
                                 Content="🧹 ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#38BDF8" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"
+                                Height="46" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Delete Button -->
@@ -1301,7 +1301,7 @@
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="42" Padding="16,0" FontSize="15" FontWeight="Bold"
+                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
 
                         <!-- Cancel Button -->
@@ -1310,7 +1310,7 @@
                                 Content="❌ ยกเลิก"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#38BDF8" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -1547,52 +1547,52 @@
 
                             <!-- Row 0 Left: Username (ชื่อผู้ใช้งาน) -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อผู้ใช้งาน / Username *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อผู้ใช้งาน / Username *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding StaffUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Password (รหัสผ่าน) -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสผ่าน / Password *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รหัสผ่าน / Password *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding StaffPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Left: Full Name (ชื่อ-นามสกุล) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อ-นามสกุล *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อ-นามสกุล *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding StaffName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Right: Phone Number (เบอร์โทรศัพท์) -->
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding StaffPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Full Width: Role / Position (สิทธิ์การใช้งาน) -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="สิทธิ์การใช้งาน / ตำแหน่ง *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="สิทธิ์การใช้งาน / ตำแหน่ง *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <ComboBox SelectedValue="{Binding StaffRole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               SelectedValuePath="Content"
                                               Style="{StaticResource LightComboBoxStyle}"
-                                              Height="38" Padding="12,0" Background="Transparent" BorderThickness="0">
+                                              Height="44" Padding="12,0" Background="Transparent" BorderThickness="0">
                                         <ComboBoxItem Content="ผู้ดูแลระบบ"/>
                                         <ComboBoxItem Content="เจ้าของร้าน"/>
                                         <ComboBoxItem Content="พนักงานทั่วไป"/>
@@ -1625,7 +1625,7 @@
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
 
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
@@ -1633,7 +1633,7 @@
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"
+                                Height="46" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Delete Button (Visible in Edit Mode) -->
@@ -1642,7 +1642,7 @@
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="42" Padding="16,0" FontSize="15" FontWeight="Bold"
+                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
 
                         <!-- Cancel Button -->
@@ -1651,7 +1651,7 @@
                                 Content="❌ ยกเลิก"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -1709,63 +1709,63 @@
 
                             <!-- Row 0 Left: Partner Code (รหัสบริษัทคู่ค้า) -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสบริษัทคู่ค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รหัสบริษัทคู่ค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#F8FAFC" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding PartnerCode, Mode=OneWay}"
                                              IsReadOnly="True"
                                              Foreground="#0284C7"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Partner Name (ชื่อบริษัท / ซัพพลายเออร์) -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อบริษัท / ซัพพลายเออร์ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อบริษัท / ซัพพลายเออร์ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding PartnerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Left: Contact Person (ชื่อผู้ติดต่อ) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อผู้ติดต่อ" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อผู้ติดต่อ" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding PartnerContactPerson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Right: Phone Number (เบอร์โทรศัพท์) -->
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding PartnerPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Full Width: Email (อีเมล) -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,14">
-                                <TextBlock Text="อีเมล (Email)" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="อีเมล (Email)" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding PartnerEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 3 Full Width: Address (ที่อยู่ / รายละเอียดที่ตั้ง) -->
                             <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding PartnerAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource MultiLineTextBoxStyle}"
-                                             Height="70" Padding="12,8" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True"/>
+                                             Height="76" Padding="12,8" FontSize="15" TextWrapping="Wrap" AcceptsReturn="True"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -1794,7 +1794,7 @@
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
 
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
@@ -1802,7 +1802,7 @@
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"
+                                Height="46" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Delete Button (Visible in Edit Mode) -->
@@ -1811,7 +1811,7 @@
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="42" Padding="16,0" FontSize="15" FontWeight="Bold"
+                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
 
                         <!-- Cancel Button -->
@@ -1820,7 +1820,7 @@
                                 Content="❌ ยกเลิก"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -1877,51 +1877,51 @@
 
                             <!-- Row 0 Left: Expense Category (หมวดหมู่รายจ่าย) -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="หมวดหมู่รายจ่าย *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="หมวดหมู่รายจ่าย *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <ComboBox ItemsSource="{Binding ExpenseCategories}"
                                               SelectedItem="{Binding SelectedExpenseCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Style="{StaticResource LightComboBoxStyle}"
-                                              Height="38" Padding="12,0" Background="Transparent" BorderThickness="0"/>
+                                              Height="44" Padding="12,0" Background="Transparent" BorderThickness="0"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Expense Amount (จำนวนเงิน บาท) -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="จำนวนเงิน (บาท) *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="จำนวนเงิน (บาท) *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding ExpenseAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14" FontWeight="Bold" Foreground="#0284C7"/>
+                                             Height="44" Padding="12,0" FontSize="16" FontWeight="Bold" Foreground="#0284C7"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Full Width: Expense Description (รายละเอียดรายการ) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,14">
-                                <TextBlock Text="รายละเอียดรายการ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รายละเอียดรายการ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding ExpenseDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Left: Expense Date (วันที่ทำรายการ) -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,0">
-                                <TextBlock Text="วันที่ทำรายการ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="วันที่ทำรายการ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <DatePicker SelectedDate="{Binding ExpenseDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                Height="38" Padding="6,0" FontSize="13" VerticalAlignment="Center" Background="Transparent" BorderThickness="0"/>
+                                                Height="44" Padding="6,0" FontSize="15" VerticalAlignment="Center" Background="Transparent" BorderThickness="0"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Right: Expense Note (หมายเหตุเพิ่มเติม) -->
                             <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,0">
-                                <TextBlock Text="หมายเหตุเพิ่มเติม" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="หมายเหตุเพิ่มเติม" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding ExpenseNote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="13"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -1950,7 +1950,7 @@
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
 
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
@@ -1958,7 +1958,7 @@
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"
+                                Height="46" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Delete Button (Visible in Edit Mode) -->
@@ -1967,7 +1967,7 @@
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="42" Padding="16,0" FontSize="15" FontWeight="Bold"
+                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
 
                         <!-- Cancel Button -->
@@ -1976,7 +1976,7 @@
                                 Content="❌ ยกเลิก"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -2035,7 +2035,7 @@
 
                             <!-- Row 0 Left: Product Code (รหัสสินค้า - Auto Generated & Read-Only) -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสสินค้า (อัตโนมัติ) *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รหัสสินค้า (อัตโนมัติ) *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#F1F5F9" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding ProductCode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
@@ -2043,24 +2043,24 @@
                                              Focusable="False"
                                              Background="Transparent"
                                              BorderThickness="0"
-                                             Height="38" Padding="12,0" FontSize="14" FontWeight="Bold" Foreground="#0284C7"/>
+                                             Height="44" Padding="12,0" FontSize="16" FontWeight="Bold" Foreground="#0284C7"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Product Name (ชื่อสินค้า) -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อสินค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อสินค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Left: Category (หมวดหมู่สินค้า - Searchable / Selectable Dropdown) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="หมวดหมู่สินค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="หมวดหมู่สินค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <ComboBox ItemsSource="{Binding ProductCategories}"
                                               DisplayMemberPath="CategoryName"
@@ -2070,68 +2070,68 @@
                                               TextSearch.TextPath="CategoryName"
                                               IsEnabled="{Binding CanEditStockManage}"
                                               Style="{StaticResource LightComboBoxStyle}"
-                                              Height="38" Padding="12,0" Background="Transparent" BorderThickness="0"/>
+                                              Height="44" Padding="12,0" Background="Transparent" BorderThickness="0"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Right: Unit (หน่วยนับ) -->
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="หน่วยนับ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="หน่วยนับ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Left: Cost Price (ราคาทุน) -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="ราคาทุน (บาท)" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ราคาทุน (บาท)" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CostPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Right: Selling Price (ราคาขาย) -->
                             <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ราคาขาย (บาท) *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ราคาขาย (บาท) *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14" FontWeight="Bold" Foreground="#0284C7"/>
+                                             Height="44" Padding="12,0" FontSize="16" FontWeight="Bold" Foreground="#0284C7"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 3 Left: Stock Qty (จำนวนคงเหลือ) -->
                             <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="จำนวนคงเหลือ *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="จำนวนคงเหลือ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding Stock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 3 Right: Reorder Point (จุดสั่งซื้อขั้นต่ำ) -->
                             <StackPanel Grid.Row="3" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="จุดสั่งซื้อขั้นต่ำ (Reorder Point)" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="จุดสั่งซื้อขั้นต่ำ (Reorder Point)" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding ReorderPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 4 Full Width: Product Image Upload Section (อัปโหลดรูปภาพสินค้า) -->
                             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="รูปภาพสินค้า" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รูปภาพสินค้า" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="8" Padding="12">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -2214,7 +2214,7 @@
                                 Content="💾 บันทึกข้อมูลสินค้า"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
 
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
@@ -2223,7 +2223,7 @@
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"
+                                Height="46" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Delete Button (Visible in Edit Mode) -->
@@ -2233,7 +2233,7 @@
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="42" Padding="16,0" FontSize="15" FontWeight="Bold"
+                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
 
                         <!-- Cancel Button -->
@@ -2242,7 +2242,7 @@
                                 Content="❌ ยกเลิก"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -2298,7 +2298,7 @@
 
                             <!-- Row 0 Left: Category Code (รหัสหมวดหมู่ - Auto Generated & Read-Only) -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสหมวดหมู่ (อัตโนมัติ) *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รหัสหมวดหมู่ (อัตโนมัติ) *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#F1F5F9" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CategoryCode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
@@ -2306,29 +2306,29 @@
                                              Focusable="False"
                                              Background="Transparent"
                                              BorderThickness="0"
-                                             Height="38" Padding="12,0" FontSize="14" FontWeight="SemiBold" Foreground="#0284C7"/>
+                                             Height="44" Padding="12,0" FontSize="16" FontWeight="SemiBold" Foreground="#0284C7"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Category Name (ชื่อประเภทสินค้า) -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อประเภทสินค้า *" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="ชื่อประเภทสินค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CategoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Height="38" Padding="12,0" FontSize="14"/>
+                                             Height="44" Padding="12,0" FontSize="16"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Full Width: Description (รายละเอียดหมวดหมู่) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="รายละเอียดหมวดหมู่" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                                <TextBlock Text="รายละเอียดหมวดหมู่" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
                                 <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
                                     <TextBox Text="{Binding CategoryDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsEnabled="{Binding CanEditStockManage}"
                                              Style="{StaticResource MultiLineTextBoxStyle}"
-                                             Height="60" Padding="12,8" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True"/>
+                                             Height="76" Padding="12,8" FontSize="15" TextWrapping="Wrap" AcceptsReturn="True"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -2358,7 +2358,7 @@
                                 Content="💾 บันทึกข้อมูล"
                                 Style="{StaticResource PrimaryBtnStyle}"
                                 BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
 
                         <!-- Clear Button (Visible only in Add Mode) -->
                         <Button Grid.Column="2"
@@ -2367,7 +2367,7 @@
                                 Content="✏️ ล้างข้อมูล"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"
+                                Height="46" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsCategoryEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Delete Button (Visible in Edit Mode) -->
@@ -2377,7 +2377,7 @@
                                 Content="🗑️ ลบ"
                                 Style="{StaticResource DangerBtnStyle}"
                                 BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="42" Padding="16,0" FontSize="15" FontWeight="Bold"
+                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
                                 Visibility="{Binding IsCategoryEditMode, Converter={StaticResource BoolToVis}}"/>
 
                         <!-- Cancel Button -->
@@ -2386,7 +2386,7 @@
                                 Content="❌ ยกเลิก"
                                 Style="{StaticResource SecondaryBtnStyle}"
                                 Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="42" FontSize="15" FontWeight="Bold"/>
+                                Height="46" FontSize="16" FontWeight="Bold"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -2427,7 +2427,7 @@
 
                     <!-- Message -->
                     <TextBlock Text="{Binding MainConfirmMessage}"
-                               FontSize="14"
+                               FontSize="15"
                                Foreground="#475569"
                                TextWrapping="Wrap"
                                TextAlignment="Center"
@@ -2495,7 +2495,7 @@
 
                     <!-- Message -->
                     <TextBlock Text="{Binding MainAlertMessage}"
-                               FontSize="14"
+                               FontSize="15"
                                Foreground="#475569"
                                TextWrapping="Wrap"
                                TextAlignment="Center"

@@ -38,7 +38,7 @@
             <Setter Property="BorderBrush" Value="#00A3E0"/>
             <Setter Property="BorderThickness" Value="1.5"/>
             <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Padding" Value="12,0"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -84,11 +84,11 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#00A3E0"/>
             <Setter Property="Foreground"      Value="#FFFFFF"/>
-            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontSize"        Value="15"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -121,10 +121,10 @@
             <Setter Property="Foreground"      Value="#00A3E0"/>
             <Setter Property="BorderBrush"     Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -156,11 +156,11 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#EF4444"/>
             <Setter Property="Foreground"      Value="#FFFFFF"/>
-            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -236,7 +236,7 @@
             <Setter Property="Foreground"              Value="#000000"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Height"                  Value="48"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -263,7 +263,7 @@
         <Style x:Key="ExpenseRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#000000"/>
-            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontSize"   Value="15"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -359,7 +359,7 @@
                                    Foreground="#0F172A"
                                    Margin="0,0,0,2"/>
                         <TextBlock Text="ระบบบริหารจัดการและบันทึกค่าใช้จ่ายของร้าน"
-                                   FontSize="13"
+                                   FontSize="15"
                                    Foreground="#475569"
                                    Margin="0"/>
                     </StackPanel>
@@ -396,7 +396,7 @@
                             <Border Width="36" Height="36" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
                                 <TextBlock Text="💸" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="รายจ่ายรวมเดือนนี้" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="รายจ่ายรวมเดือนนี้" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -433,7 +433,7 @@
                             <Border Width="36" Height="36" CornerRadius="10" Background="#EBF8FF" Margin="0,0,10,0">
                                 <TextBlock Text="📋" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="จำนวนรายการรายจ่าย" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="จำนวนรายการรายจ่าย" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -528,13 +528,13 @@
                             <TextBox x:Name="ExpenseSearchBox"
                                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                                      Style="{StaticResource LightTextBoxStyle}"
-                                     Height="40"
+                                     Height="44"
                                      Padding="38,0,12,0"
                                      VerticalContentAlignment="Center"
-                                     FontSize="13"/>
+                                     FontSize="16"/>
                             <TextBlock Text="ค้นหาด้วยรหัส หรือชื่อ..."
                                        Foreground="#A0AEC0"
-                                       FontSize="13"
+                                       FontSize="15"
                                        VerticalAlignment="Center"
                                        Margin="38,0,12,0"
                                        IsHitTestVisible="False">
@@ -559,7 +559,7 @@
                             Background="#1E88E5"
                             Cursor="Hand"
                             Padding="22,0"
-                            Height="40">
+                            Height="44" FontSize="16">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -643,7 +643,7 @@
                           CanUserSortColumns="True"
                           HorizontalScrollBarVisibility="Disabled"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          RowHeight="48"
+                          RowHeight="50"
                           GridLinesVisibility="None"
                           BorderThickness="0"
                           Background="Transparent"

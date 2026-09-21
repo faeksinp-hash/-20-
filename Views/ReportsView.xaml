@@ -27,7 +27,7 @@
             <Setter Property="Padding" Value="15,6"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -53,7 +53,7 @@
             <Setter Property="Padding" Value="15,6"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -81,7 +81,7 @@
             <Setter Property="Padding" Value="15,6"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -107,7 +107,7 @@
             <Setter Property="Padding" Value="15,6"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -179,7 +179,7 @@
         <Style x:Key="LightComboBoxStyle" TargetType="ComboBox">
             <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Foreground"             Value="#2D3748"/>
-            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="FontSize"               Value="16"/>
             <Setter Property="Height"                  Value="38"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding"                 Value="10,0"/>
@@ -187,7 +187,7 @@
 
         <Style x:Key="LightDatePickerStyle" TargetType="DatePicker">
             <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="FontSize"               Value="16"/>
             <Setter Property="Height"                  Value="38"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
@@ -241,7 +241,7 @@
             <Setter Property="Foreground"              Value="#000000"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Height"                  Value="48"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -268,7 +268,7 @@
         <Style x:Key="ReportRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#2D3748"/>
-            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontSize"   Value="16"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -349,7 +349,7 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, Tahoma"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="4,0,0,0"/>
@@ -445,7 +445,7 @@
                                    FontSize="24" FontWeight="Bold"
                                    Foreground="#2D3748" Margin="0,0,0,2"/>
                         <TextBlock Grid.Row="1" Text="รายงานสรุปผลและวิเคราะห์ข้อมูล — ระบบจัดการร้าน พอใจ"
-                                   FontSize="13" Foreground="#718096" Margin="0"/>
+                                   FontSize="15" Foreground="#718096" Margin="0"/>
                     </Grid>
                 </Grid>
             </Grid>
@@ -659,7 +659,7 @@
                                 Cursor="Hand"
                                 Padding="22,0" 
                                 Margin="0,0,10,0" 
-                                Height="40">
+                                Height="44">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Template">
@@ -672,7 +672,7 @@
                                                     <TextBlock Text="ประมวลผล"
                                                                Foreground="#FFFFFF"
                                                                FontWeight="Bold"
-                                                               FontSize="14"
+                                                               FontSize="16"
                                                                HorizontalAlignment="Center"
                                                                VerticalAlignment="Center"/>
                                                 </Border>
@@ -696,7 +696,7 @@
 
                         <!-- ปุ่มขอบฟ้าอ่อน ล้าง -->
                         <Button Command="{Binding ClearReportFilterCommand}" 
-                                Height="40" 
+                                Height="44" 
                                 Padding="20,0" 
                                 Cursor="Hand">
                             <Button.Style>
@@ -705,12 +705,12 @@
                                     <Setter Property="BorderBrush" Value="#BAE6FD"/>
                                     <Setter Property="Foreground" Value="#0B2545"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="FontSize" Value="13.5"/>
+                                    <Setter Property="FontSize" Value="15"/>
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="Button">
                                                 <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                                                    <TextBlock Text="ล้าง" FontWeight="SemiBold" FontSize="13.5" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="ล้าง" FontWeight="SemiBold" FontSize="16" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
@@ -824,7 +824,7 @@
 
                                 <!-- ปุ่ม พิมพ์ -->
                                 <Button Command="{Binding PrintReportCommand}"
-                                        Height="34"
+                                        Height="38"
                                         Padding="12,0"
                                         Cursor="Hand">
                                     <Button.Style>
@@ -967,20 +967,20 @@
 
                                                 <!-- Rank Badge -->
                                                 <Border Grid.Column="0" Width="24" Height="24" CornerRadius="12" Background="#E0F2FE" Margin="0,0,10,0">
-                                                    <TextBlock Text="{Binding Rank}" FontSize="12" FontWeight="Bold" Foreground="#0284C7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Rank}" FontSize="14" FontWeight="Bold" Foreground="#0284C7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
 
                                                 <!-- Title & Subtitle -->
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="Bold" Foreground="#1E293B" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Text="{Binding Subtitle}" FontSize="11.5" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="Bold" Foreground="#1E293B" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Subtitle}" FontSize="13" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
 
                                                 <!-- Value -->
                                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                                    <TextBlock Text="{Binding ValueText}" FontSize="13.5" FontWeight="ExtraBold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                                    <TextBlock Text="{Binding ValueText}" FontSize="15.5" FontWeight="ExtraBold" Foreground="#0F172A" HorizontalAlignment="Right"/>
                                                     <Border Background="#E0F2FE" CornerRadius="4" Padding="5,1" Margin="0,2,0,0" HorizontalAlignment="Right">
-                                                        <TextBlock Text="{Binding Tag}" FontSize="10.5" FontWeight="Bold" Foreground="#0284C7"/>
+                                                        <TextBlock Text="{Binding Tag}" FontSize="12" FontWeight="Bold" Foreground="#0284C7"/>
                                                     </Border>
                                                 </StackPanel>
                                             </Grid>
@@ -1077,13 +1077,13 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="📌 รหัส/รายการ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="0" Text="📌 รหัส/รายการ:" FontSize="14.5" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <TextBlock Grid.Column="1"
                                        Text="{Binding SelectedReportRow.Col1}"
                                        FontSize="14" FontWeight="Bold" Foreground="#2D3748"
                                        VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
 
-                            <TextBlock Grid.Column="2" Text="📅 วันที่:" FontSize="13" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="16,0,8,0"/>
+                            <TextBlock Grid.Column="2" Text="📅 วันที่:" FontSize="14.5" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="16,0,8,0"/>
                             <TextBlock Grid.Column="3"
                                        Text="{Binding SelectedReportRow.Col5}"
                                        FontSize="14" FontWeight="Bold" Foreground="#2D3748"
@@ -1115,8 +1115,8 @@
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="รายละเอียดสินค้า/รายการ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
-                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col2}" FontSize="14" FontWeight="Bold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="0" Text="รายละเอียดสินค้า/รายการ:" FontSize="14.5" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col2}" FontSize="15.5" FontWeight="Bold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
                             </Grid>
 
                             <Grid Grid.Row="2">
@@ -1124,8 +1124,8 @@
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="จำนวนเงิน/ปริมาณ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
-                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col3}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="0" Text="จำนวนเงิน/ปริมาณ:" FontSize="14.5" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col3}" FontSize="16" FontWeight="Bold" Foreground="#0B2545" TextTrimming="CharacterEllipsis"/>
                             </Grid>
 
                             <Grid Grid.Row="4">
@@ -1133,8 +1133,8 @@
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="หมวดหมู่/วิธีการชำระ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
-                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col4}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="0" Text="หมวดหมู่/วิธีการชำระ:" FontSize="14.5" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedReportRow.Col4}" FontSize="15.5" FontWeight="SemiBold" Foreground="#2D3748" TextTrimming="CharacterEllipsis"/>
                             </Grid>
 
                             <Grid Grid.Row="6">
@@ -1142,8 +1142,8 @@
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="สถานะ/หมายเหตุ:" FontSize="13" FontWeight="SemiBold" Foreground="#718096"/>
-                                <TextBlock Grid.Column="1" Text="ประมวลผลสำเร็จ เรียบร้อย" FontSize="13" Foreground="#718096" FontStyle="Italic"/>
+                                <TextBlock Grid.Column="0" Text="สถานะ/หมายเหตุ:" FontSize="14.5" FontWeight="SemiBold" Foreground="#718096"/>
+                                <TextBlock Grid.Column="1" Text="ประมวลผลสำเร็จ เรียบร้อย" FontSize="14.5" Foreground="#718096" FontStyle="Italic"/>
                             </Grid>
                         </Grid>
                     </Border>

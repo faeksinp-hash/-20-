@@ -101,11 +101,11 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#00A3E0"/>
             <Setter Property="Foreground"      Value="#FFFFFF"/>
-            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -144,10 +144,10 @@
             <Setter Property="Background"      Value="#DC2626"/>
             <Setter Property="Foreground"      Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -185,10 +185,10 @@
             <Setter Property="Foreground"      Value="#0B2545"/>
             <Setter Property="BorderBrush"     Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -227,10 +227,10 @@
             <Setter Property="Foreground"      Value="#0B2545"/>
             <Setter Property="BorderBrush"     Value="#00A3E0"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontSize"        Value="14"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="30"/>
+            <Setter Property="Height"          Value="36"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -308,7 +308,7 @@
             <Setter Property="Foreground"              Value="#000000"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Height"                  Value="48"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -335,7 +335,7 @@
         <Style x:Key="CustomerRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#000000"/>
-            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontSize"   Value="15"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -469,7 +469,7 @@
                                    Foreground="#2D3748"
                                    Margin="0,0,0,2"/>
                         <TextBlock Text="จัดการข้อมูลลูกค้า — ระบบจัดการร้าน พอใจ"
-                                   FontSize="13"
+                                   FontSize="15"
                                    Foreground="#718096"
                                    Margin="0"/>
                     </StackPanel>
@@ -503,10 +503,10 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
-                                <TextBlock Text="👥" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
+                                <TextBlock Text="👥" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="ลูกค้าทั้งหมด" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="ลูกค้าทั้งหมด" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -516,7 +516,7 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนสมาชิกทั้งหมดในระบบ"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -543,7 +543,7 @@
                             <Border Width="36" Height="36" CornerRadius="10" Background="#EBF8FF" Margin="0,0,10,0">
                                 <TextBlock Text="🆕" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="ลูกค้าใหม่เดือนนี้" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="ลูกค้าใหม่เดือนนี้" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -638,13 +638,13 @@
                             <TextBox x:Name="CustomerSearchBox"
                                      Text="{Binding CustomerSearchKeyword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                                      Style="{StaticResource LightTextBoxStyle}"
-                                     Height="40"
+                                     Height="44"
                                      Padding="38,0,12,0"
                                      VerticalContentAlignment="Center"
-                                     FontSize="13"/>
+                                     FontSize="16"/>
                             <TextBlock Text="ค้นหาด้วยรหัสลูกค้า หรือ ชื่อลูกค้า..."
                                        Foreground="#A0AEC0"
-                                       FontSize="13"
+                                       FontSize="15"
                                        VerticalAlignment="Center"
                                        Margin="38,0,12,0"
                                        IsHitTestVisible="False">
@@ -669,7 +669,7 @@
                             Background="#1E88E5"
                             Cursor="Hand"
                             Padding="22,0"
-                            Height="40">
+                            Height="44" FontSize="16">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -753,7 +753,7 @@
                           CanUserSortColumns="True"
                           HorizontalScrollBarVisibility="Disabled"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          RowHeight="48"
+                          RowHeight="50"
                           GridLinesVisibility="None"
                           BorderThickness="0"
                           Background="Transparent"

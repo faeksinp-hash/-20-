@@ -277,7 +277,7 @@
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
                       HeadersVisibility="Column"
-                      RowHeight="44"
+                      RowHeight="48"
                       GridLinesVisibility="None"
                       BorderThickness="0"
                       Background="Transparent"
@@ -346,7 +346,7 @@
                     <TextBlock x:Name="TotalOrdersTextBlock" FontSize="15" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,24,0"/>
 
                     <TextBlock Text="ยอดรวมทั้งหมด: " FontSize="15" FontWeight="SemiBold" Foreground="#718096"/>
-                    <TextBlock x:Name="TotalSpentTextBlock" FontSize="18" FontWeight="Bold" Foreground="#0B2545"/>
+                    <TextBlock x:Name="TotalSpentTextBlock" FontSize="20" FontWeight="Bold" Foreground="#0B2545"/>
                 </StackPanel>
 
                 <Button Grid.Column="1"

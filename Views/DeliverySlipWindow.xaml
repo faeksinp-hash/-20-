@@ -21,7 +21,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Button x:Name="PrintBtn" Click="PrintBtn_Click" Height="36" Width="130" Background="#00A3E0" Foreground="White" FontWeight="Bold" FontSize="13.5" Cursor="Hand" Margin="0,0,10,0">
+                    <Button x:Name="PrintBtn" Click="PrintBtn_Click" Height="40" Width="140" Background="#00A3E0" Foreground="White" FontWeight="Bold" FontSize="13.5" Cursor="Hand" Margin="0,0,10,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="12,0">
@@ -39,7 +39,7 @@
                         </Button.Template>
                     </Button>
 
-                    <Button x:Name="CloseBtn" Click="CloseBtn_Click" Height="36" Width="80" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" Foreground="#475569" FontWeight="SemiBold" FontSize="13" Cursor="Hand">
+                    <Button x:Name="CloseBtn" Click="CloseBtn_Click" Height="40" Width="90" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" Foreground="#475569" FontWeight="SemiBold" FontSize="13" Cursor="Hand">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
@@ -124,7 +124,7 @@
                               BorderThickness="1"
                               BorderBrush="#E2E8F0"
                               Background="Transparent"
-                              RowHeight="34"
+                              RowHeight="42"
                               Margin="0,0,0,16">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
@@ -216,7 +216,7 @@
 
                             <DockPanel LastChildFill="False">
                                 <TextBlock Text="ยอดรวมสุทธิทั้งสิ้น" Foreground="#0F172A" FontSize="15" FontWeight="Bold" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding GrandTotal, StringFormat={}{0:N2}}" Foreground="#00A3E0" FontSize="22" FontWeight="Bold" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding GrandTotal, StringFormat={}{0:N2}}" Foreground="#00A3E0" FontSize="24" FontWeight="Bold" DockPanel.Dock="Right" VerticalAlignment="Center"/>
                             </DockPanel>
                         </StackPanel>
                     </Border>

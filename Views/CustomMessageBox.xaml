@@ -23,12 +23,12 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#00A3E0"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
-            <Setter Property="MinHeight"       Value="40"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="MinHeight"       Value="44"/>
             <Setter Property="MinWidth"        Value="100"/>
             <Setter Property="Margin"          Value="4,0"/>
             <Setter Property="Template">
@@ -62,11 +62,11 @@
             <Setter Property="Foreground"      Value="#DC2626"/>
             <Setter Property="BorderBrush"     Value="#FECACA"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
-            <Setter Property="MinHeight"       Value="40"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="MinHeight"       Value="44"/>
             <Setter Property="MinWidth"        Value="100"/>
             <Setter Property="Margin"          Value="4,0"/>
             <Setter Property="Template">
@@ -100,11 +100,11 @@
             <Setter Property="Foreground"      Value="#0B2545"/>
             <Setter Property="BorderBrush"     Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
-            <Setter Property="MinHeight"       Value="40"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="MinHeight"       Value="44"/>
             <Setter Property="MinWidth"        Value="100"/>
             <Setter Property="Margin"          Value="4,0"/>
             <Setter Property="Template">
@@ -214,7 +214,7 @@
                             Style="{StaticResource DialogPrimaryBtnStyle}"
                             Click="BtnOk_Click"
                             Visibility="Collapsed"
-                            Padding="20,0"/>
+                            Padding="24,0"/>
 
                     <!-- Yes Button -->
                     <Button x:Name="BtnYes"
@@ -222,7 +222,7 @@
                             Style="{StaticResource DialogPrimaryBtnStyle}"
                             Click="BtnYes_Click"
                             Visibility="Collapsed"
-                            Padding="20,0"/>
+                            Padding="24,0"/>
 
                     <!-- No Button -->
                     <Button x:Name="BtnNo"
@@ -230,7 +230,7 @@
                             Style="{StaticResource DialogDangerBtnStyle}"
                             Click="BtnNo_Click"
                             Visibility="Collapsed"
-                            Padding="20,0"/>
+                            Padding="24,0"/>
 
                     <!-- Cancel Button -->
                     <Button x:Name="BtnCancel"
@@ -238,7 +238,7 @@
                             Style="{StaticResource DialogSecondaryBtnStyle}"
                             Click="BtnCancel_Click"
                             Visibility="Collapsed"
-                            Padding="20,0"/>
+                            Padding="24,0"/>
                 </StackPanel>
 
             </StackPanel>

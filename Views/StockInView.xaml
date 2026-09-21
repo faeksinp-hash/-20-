@@ -144,11 +144,11 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#00A3E0"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -188,12 +188,12 @@
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Background"      Value="#E0F2FE"/>
             <Setter Property="Foreground"      Value="#475569"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="16"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush"     Value="#BAE6FD"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Height"          Value="44"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -226,10 +226,10 @@
             <Setter Property="Foreground"      Value="#0B2545"/>
             <Setter Property="BorderBrush"     Value="#00A3E0"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontSize"        Value="14"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="28"/>
+            <Setter Property="Height"          Value="34"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -264,7 +264,7 @@
             <Setter Property="Foreground"              Value="#000000"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Height"                  Value="48"/>
             <Setter Property="Padding"                 Value="6,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -291,7 +291,7 @@
         <Style x:Key="StockInRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#000000"/>
-            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontSize"   Value="15"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -349,6 +349,7 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontSize"            Value="15"/>
             <Setter Property="Foreground"          Value="#000000"/>
         </Style>
         <Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource ColCenter}">
@@ -360,6 +361,7 @@
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="FontWeight"          Value="Bold"/>
+            <Setter Property="FontSize"            Value="15"/>
             <Setter Property="Foreground"          Value="#000000"/>
         </Style>
         <Style x:Key="ColRightBold" TargetType="TextBlock">
@@ -367,6 +369,7 @@
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="FontWeight"          Value="Bold"/>
+            <Setter Property="FontSize"            Value="15"/>
             <Setter Property="Foreground"          Value="#000000"/>
         </Style>
 
@@ -408,7 +411,7 @@
                                    Foreground="#2D3748"
                                    Margin="0,0,0,2"/>
                         <TextBlock Text="บันทึกรับสินค้าเข้าคลัง — ระบบจัดการร้าน พอใจ"
-                                   FontSize="13"
+                                   FontSize="15"
                                    Foreground="#718096"
                                    Margin="0"/>
                     </StackPanel>
@@ -442,10 +445,10 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
-                                <TextBlock Text="📥" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
+                                <TextBlock Text="📥" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="รายการรับเข้าทั้งหมด" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="รายการรับเข้าทั้งหมด" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -455,7 +458,7 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนครั้งที่บันทึกการรับสินค้าเข้า"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -479,10 +482,10 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#D1FAE5" Margin="0,0,10,0">
-                                <TextBlock Text="📦" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#D1FAE5" Margin="0,0,10,0">
+                                <TextBlock Text="📦" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="จำนวนชิ้นที่รับเข้ารวม" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="จำนวนชิ้นที่รับเข้ารวม" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -492,7 +495,7 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="รวมจำนวนชิ้นสินค้าที่เพิ่มเข้าสต็อก"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -516,20 +519,20 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#F3E8FF" Margin="0,0,10,0">
-                                <TextBlock Text="💰" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#F3E8FF" Margin="0,0,10,0">
+                                <TextBlock Text="💰" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="มูลค่าทุนรับเข้ารวม" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="มูลค่าทุนรับเข้ารวม" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
                                    Text="{Binding TotalStockInCostSum, StringFormat={}{0:N2}}"
-                                   FontSize="24" FontWeight="Bold"
+                                   FontSize="28" FontWeight="Bold"
                                    Foreground="#6B21A8"
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="รวมมูลค่าเงินทุนที่ใช้ในการรับสินค้าเข้า"
-                                   FontSize="11"
+                                   FontSize="14"
                                    Foreground="#A0AEC0"
                                    Margin="0"/>
                     </Grid>
@@ -566,25 +569,25 @@
                             <!-- Search Icon -->
                             <Path Data="{StaticResource IconSearch}"
                                   Fill="#718096"
-                                  Width="18" Height="18"
+                                  Width="20" Height="20"
                                   HorizontalAlignment="Left"
-                                  Margin="12,0,0,0"
+                                  Margin="14,0,0,0"
                                   Stretch="Uniform"
                                   VerticalAlignment="Center"/>
                             <!-- TextBox -->
                             <TextBox x:Name="StockInSearchBox"
                                      Text="{Binding PendingPOSearchKeyword, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource LightTextBoxStyle}"
-                                     Height="40"
-                                     Padding="38,0,12,0"
+                                     Height="44"
+                                     Padding="42,0,12,0"
                                      VerticalContentAlignment="Center"
-                                     FontSize="13"/>
+                                     FontSize="16"/>
                             <!-- Placeholder -->
                             <TextBlock Text="ค้นหาตามเลขที่ใบสั่งซื้อ หรือ ชื่อซัพพลายเออร์..."
                                        Foreground="#A0AEC0"
-                                       FontSize="13"
+                                       FontSize="15"
                                        VerticalAlignment="Center"
-                                       Margin="38,0,12,0"
+                                       Margin="42,0,12,0"
                                        IsHitTestVisible="False">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
@@ -606,8 +609,8 @@
                             Command="{Binding SearchPendingPOCommand}"
                             Background="#1E88E5"
                             Cursor="Hand"
-                            Padding="22,0"
-                            Height="40">
+                            Padding="24,0"
+                            Height="44">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -620,7 +623,7 @@
                                                 <TextBlock Text="ค้นหา"
                                                            Foreground="#FFFFFF"
                                                            FontWeight="Bold"
-                                                           FontSize="14"
+                                                           FontSize="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"/>
                                             </Border>
@@ -649,8 +652,8 @@
                             CommandParameter="{Binding SelectedReceiptPO}"
                             IsEnabled="{Binding HasSelectedReceiptPO}"
                             Foreground="White"
-                            Padding="20,0"
-                            Height="40">
+                            Padding="22,0"
+                            Height="44">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="#0284C7"/>
@@ -658,7 +661,7 @@
                                 <Setter Property="BorderThickness" Value="1"/>
                                 <Setter Property="Cursor" Value="Hand"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
-                                <Setter Property="FontSize" Value="13.5"/>
+                                <Setter Property="FontSize" Value="16"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
@@ -767,7 +770,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}"
-                                                   FontSize="14" FontWeight="Bold"
+                                                   FontSize="16" FontWeight="Bold"
                                                    Foreground="#000000"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                                    Margin="0,0,12,0"/>
@@ -801,7 +804,7 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <TextBlock FontSize="12.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <!-- Default: Dark Orange text for รอดำเนินการ -->
@@ -832,7 +835,7 @@
                                Margin="0,12,0,0">
                         <TextBlock Text="{Binding StockInSummaryText}"
                                    Foreground="#475569"
-                                   FontSize="13"
+                                   FontSize="14"
                                    FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
@@ -877,11 +880,11 @@
                             <TextBlock Text="📥 " FontSize="20"/>
                             <StackPanel>
                                 <TextBlock Text="ตรวจรับสินค้าเข้าคลัง (Goods Receipt)"
-                                           FontSize="18" FontWeight="Bold"
+                                           FontSize="20" FontWeight="Bold"
                                            Foreground="#2D3748"
                                            Margin="0"/>
                                 <TextBlock Text="ตรวจสอบรายการสินค้าที่ได้รับจริง และกรอกเลขที่ใบส่งของ/ใบกำกับภาษี"
-                                           FontSize="12.5"
+                                           FontSize="14"
                                            Foreground="#718096"
                                            Margin="0,2,0,0"/>
                             </StackPanel>
@@ -900,15 +903,15 @@
                                 
                                 <!-- Column 0: PO Number -->
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
-                                    <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="15" FontWeight="Bold" Foreground="#0B2545" Margin="0,2,0,0"/>
+                                    <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="13.5" Foreground="#718096" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="16" FontWeight="Bold" Foreground="#0B2545" Margin="0,2,0,0"/>
                                 </StackPanel>
 
                                 <!-- Column 1: Supplier Name (Expands in middle, trimmed with ellipsis if very long) -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,24,0">
-                                    <TextBlock Text="ผู้จัดจำหน่าย" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold"/>
+                                    <TextBlock Text="ผู้จัดจำหน่าย" FontSize="13.5" Foreground="#718096" FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding SelectedReceiptPO.SupplierName}" 
-                                               FontSize="14" FontWeight="Bold" Foreground="#2D3748" 
+                                               FontSize="15" FontWeight="Bold" Foreground="#2D3748" 
                                                TextTrimming="CharacterEllipsis"
                                                ToolTip="{Binding SelectedReceiptPO.SupplierName}"
                                                Margin="0,2,0,0"/>
@@ -916,8 +919,8 @@
 
                                 <!-- Column 2: Order Date (Right-aligned to right border edge) -->
                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="11.5" Foreground="#718096" FontWeight="SemiBold" TextAlignment="Right" HorizontalAlignment="Right"/>
-                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="14" FontWeight="SemiBold" Foreground="#2D3748" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="13.5" Foreground="#718096" FontWeight="SemiBold" TextAlignment="Right" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="15" FontWeight="SemiBold" Foreground="#2D3748" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -928,8 +931,8 @@
                             <DockPanel LastChildFill="True">
                                 <TextBlock Text="✅" FontSize="16" DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                 <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="รายการใบสั่งซื้อนี้ได้ทำการตรวจรับสินค้าเข้าคลังเรียบร้อยแล้ว" FontWeight="Bold" FontSize="13" Foreground="#15803D"/>
-                                    <TextBlock Text="อยู่ในโหมดดูรายละเอียด (Read-Only) เพื่อป้องกันการตรวจรับซ้ำซ้อน" FontSize="11.5" Foreground="#166534"/>
+                                    <TextBlock Text="รายการใบสั่งซื้อนี้ได้ทำการตรวจรับสินค้าเข้าคลังเรียบร้อยแล้ว" FontWeight="Bold" FontSize="14" Foreground="#15803D"/>
+                                    <TextBlock Text="อยู่ในโหมดดูรายละเอียด (Read-Only) เพื่อป้องกันการตรวจรับซ้ำซ้อน" FontSize="12.5" Foreground="#166534"/>
                                 </StackPanel>
                             </DockPanel>
                         </Border>
@@ -946,8 +949,8 @@
                             
                             <!-- Left label and format guide -->
                             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="13" FontWeight="Bold" Foreground="#0B2545"/>
-                                <TextBlock Text="รูปแบบ: RC-XXXXX (ตัวอย่าง: RC-00001)" FontSize="11" Foreground="#64748B" Margin="0,3,0,0"/>
+                                <TextBlock Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="14.5" FontWeight="Bold" Foreground="#0B2545"/>
+                                <TextBlock Text="รูปแบบ: RC-XXXXX (ตัวอย่าง: RC-00001)" FontSize="12" Foreground="#64748B" Margin="0,3,0,0"/>
                             </StackPanel>
 
                             <!-- Right input and validation feedback -->
@@ -979,10 +982,10 @@
                                                  IsEnabled="{Binding CanEditReceiptModal}"
                                                  Style="{StaticResource LightTextBoxStyle}"
                                                  FontWeight="SemiBold"
-                                                 Padding="10,6" Height="36" FontSize="13.5" VerticalContentAlignment="Center"/>
+                                                 Padding="10,6" Height="42" FontSize="16" VerticalContentAlignment="Center"/>
                                         <TextBlock Text="เช่น RC-00001 (บังคับรูปแบบ RC-XXXXX)"
                                                    Foreground="#94A3B8"
-                                                   FontSize="12.5"
+                                                   FontSize="14"
                                                    VerticalAlignment="Center"
                                                    Margin="12,0,10,0"
                                                    IsHitTestVisible="False">
@@ -1022,17 +1025,17 @@
 
                     <!-- Receipt Items DataGrid -->
                     <Border Grid.Row="3" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="10" Padding="4" MinHeight="220" MaxHeight="340">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                         <DataGrid ItemsSource="{Binding ReceiptItems}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="False"
                                   CanUserAddRows="False"
                                   HeadersVisibility="Column"
-                                  RowHeight="46"
+                                  RowHeight="48"
                                   GridLinesVisibility="None"
                                   BorderThickness="0"
                                   Background="Transparent"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                   ColumnHeaderStyle="{StaticResource StockInColumnHeaderStyle}"
                                   RowStyle="{StaticResource StockInRowStyle}"
                                   CellStyle="{StaticResource StockInCellStyle}">
@@ -1049,7 +1052,7 @@
                                                 <Border Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="1.5" CornerRadius="6" Padding="4,2" HorizontalAlignment="Center" Width="90">
                                                     <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding DataContext.CanEditReceiptModal, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                              Style="{StaticResource LightTextBoxStyle}"
-                                                             FontWeight="Bold" FontSize="14" Foreground="#0B2545"
+                                                             FontWeight="Bold" FontSize="16" Foreground="#0B2545"
                                                              TextAlignment="Center" VerticalContentAlignment="Center"/>
                                                 </Border>
                                             </DataTemplate>
@@ -1061,7 +1064,7 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding ReceivedSubtotal, StringFormat='{}{0:N2}'}"
-                                                           FontSize="14" FontWeight="Bold" Foreground="#059669"
+                                                           FontSize="16" FontWeight="Bold" Foreground="#059669"
                                                            HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -1085,13 +1088,14 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="ยอดรวมทุนการรับเข้าสุทธิ: " FontSize="15" Foreground="#718096" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding ReceiptTotalAmount, StringFormat={}{0:N2}}" FontSize="20" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
+                            <TextBlock Text="ยอดรวมทุนการรับเข้าสุทธิ: " FontSize="16" Foreground="#718096" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ReceiptTotalAmount, StringFormat={}{0:N2}}" FontSize="24" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <Button Grid.Column="2"
                                 Command="{Binding CloseGoodsReceiptModalCommand}"
-                                Height="42">
+                                Height="46"
+                                FontSize="16">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource CancelBtnStyle}">
                                     <Setter Property="Content" Value="ยกเลิก"/>
@@ -1111,7 +1115,8 @@
                                 IsEnabled="{Binding CanConfirmGoodsReceipt}"
                                 Visibility="{Binding IsReceiptViewOnly, Converter={StaticResource InverseBoolToVis}}"
                                 Style="{StaticResource RoseBtnStyle}"
-                                Height="42"/>
+                                Height="46"
+                                FontSize="16"/>
                     </Grid>
                 </Grid>
             </Border>
@@ -1151,11 +1156,11 @@
                             <TextBlock Text="📥 " FontSize="20"/>
                             <StackPanel>
                                 <TextBlock Text="บันทึกรับสินค้าเข้าคลัง"
-                                           FontSize="18" FontWeight="Bold"
+                                           FontSize="20" FontWeight="Bold"
                                            Foreground="#2D3748"
                                            Margin="0"/>
                                 <TextBlock Text="เลือกรายการสินค้าและกรอกรายละเอียดการรับสินค้าเข้าสต็อก"
-                                           FontSize="12.5"
+                                           FontSize="14"
                                            Foreground="#718096"
                                            Margin="0,2,0,0"/>
                             </StackPanel>
@@ -1171,12 +1176,12 @@
                     <Border Grid.Row="1" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="14,12" Margin="0,0,0,16">
                         <StackPanel>
                             <!-- Product Dropdown Picker -->
-                            <TextBlock Text="เลือกสินค้าที่ต้องการรับเข้า *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                            <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Margin="0,0,0,10">
+                            <TextBlock Text="เลือกสินค้าที่ต้องการรับเข้า *" FontSize="14.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                            <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Margin="0,0,0,10" Height="42">
                                 <ComboBox ItemsSource="{Binding Products}"
                                           SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" IsEnabled="{Binding CanEditStockIn}"
                                           Style="{StaticResource LightComboBoxStyle}"
-                                          Height="38" BorderThickness="0">
+                                          Height="42" FontSize="15" BorderThickness="0">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
@@ -1228,21 +1233,23 @@
 
                             <!-- Ref No -->
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="เลขที่ใบส่งของ หรือ ใบกำกับภาษี *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
+                                <TextBlock Text="เลขที่ใบส่งของ หรือ ใบกำกับภาษี *" FontSize="14.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Height="42">
                                     <TextBox Text="{Binding StockInRefNo, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Padding="10,8"/>
+                                             Height="42" FontSize="16"
+                                             Padding="10,0" VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Supplier -->
                             <StackPanel Grid.Column="2">
-                                <TextBlock Text="ผู้จัดจำหน่าย หรือ ซัพพลายเออร์ *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
+                                <TextBlock Text="ผู้จัดจำหน่าย หรือ ซัพพลายเออร์ *" FontSize="14.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Height="42">
                                     <TextBox Text="{Binding StockInSupplier, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Padding="10,8"/>
+                                             Height="42" FontSize="16"
+                                             Padding="10,0" VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -1257,21 +1264,23 @@
 
                             <!-- Quantity -->
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="จำนวนที่รับเข้า *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
+                                <TextBlock Text="จำนวนที่รับเข้า *" FontSize="14.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Height="42">
                                     <TextBox Text="{Binding StockInQuantity, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Padding="10,8" TextAlignment="Center"/>
+                                             Height="42" FontSize="16"
+                                             Padding="10,0" TextAlignment="Center" VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Unit Cost -->
                             <StackPanel Grid.Column="2">
-                                <TextBlock Text="ต้นทุนต่อหน่วย (บาท) *" FontSize="12.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8">
+                                <TextBlock Text="ต้นทุนต่อหน่วย (บาท) *" FontSize="14.5" Foreground="#718096" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Height="42">
                                     <TextBox Text="{Binding StockInCost, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanEditStockIn}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Padding="10,8"/>
+                                             Height="42" FontSize="16"
+                                             Padding="10,0" VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -1297,7 +1306,8 @@
                                 Foreground="#718096"
                                 BorderBrush="#BAE6FD"
                                 BorderThickness="1"
-                                Height="42"/>
+                                Height="46"
+                                FontSize="16"/>
 
                         <!-- Confirm -->
                         <Button Grid.Column="2"
@@ -1306,7 +1316,8 @@
                                 Style="{StaticResource RoseBtnStyle}"
                                 Background="#00A3E0"
                                 Foreground="White"
-                                Height="42"/>
+                                Height="46"
+                                FontSize="16"/>
                     </Grid>
                 </Grid>
             </Border>

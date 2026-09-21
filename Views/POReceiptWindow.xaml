@@ -73,7 +73,7 @@
             <StackPanel Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                     <TextBlock Text="รวมสุทธิ:" Width="100" TextAlignment="Right" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="{Binding TotalAmount, StringFormat=N2}" Width="150" TextAlignment="Right" FontWeight="Bold" FontSize="18"/>
+                    <TextBlock Text="{Binding TotalAmount, StringFormat=N2}" Width="150" TextAlignment="Right" FontWeight="Bold" FontSize="20"/>
                 </StackPanel>
             </StackPanel>
 
