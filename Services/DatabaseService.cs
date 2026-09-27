@@ -2,6 +2,7 @@ using System.Data;
 using System.IO;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using Porjai20.Common;
 
 namespace Porjai20.Services
 {
@@ -396,7 +397,7 @@ namespace Porjai20.Services
 
                 foreach (var s in existingSales)
                 {
-                    if (string.IsNullOrWhiteSpace(s.RefNo) || !System.Text.RegularExpressions.Regex.IsMatch(s.RefNo, @"^SALE-\d{14}$"))
+                    if (string.IsNullOrWhiteSpace(s.RefNo) || !ValidationHelper.IsSaleReference(s.RefNo))
                     {
                         string ts;
                         if (DateTime.TryParse(s.Sales_Date, out DateTime parsedDate))
@@ -1012,7 +1013,7 @@ namespace Porjai20.Services
                             if (!string.IsNullOrWhiteSpace(r))
                             {
                                 var trimmed = r.Trim();
-                                if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^SALE-\d{14}$"))
+                                if (ValidationHelper.IsSaleReference(trimmed))
                                 {
                                     docNumbers.Add(trimmed);
                                 }
@@ -1128,7 +1129,7 @@ namespace Porjai20.Services
                         {
                             var cand = r.Trim();
                             if (cand.StartsWith(trimmed, System.StringComparison.Ordinal) && 
-                                System.Text.RegularExpressions.Regex.IsMatch(cand, @"^SALE-\d{14}$"))
+                                ValidationHelper.IsSaleReference(cand))
                             {
                                 return cand;
                             }

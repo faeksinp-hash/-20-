@@ -66,25 +66,7 @@ namespace Porjai20.Views
 
         private void PrintBtn_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                PrintDialog printDialog = new PrintDialog();
-                if (printDialog.ShowDialog() == true)
-                {
-                    // Hide top action bar during printing
-                    HeaderActionsBar.Visibility = Visibility.Collapsed;
-
-                    printDialog.PrintVisual(PrintArea, "Delivery Slip - " + (_order?.RefNo ?? ""));
-
-                    HeaderActionsBar.Visibility = Visibility.Visible;
-                    this.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                HeaderActionsBar.Visibility = Visibility.Visible;
-                MessageBox.Show($"เกิดข้อผิดพลาดในการพิมพ์: {ex.Message}", "ข้อผิดพลาด", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            Common.PrintHelper.PrintVisual(PrintArea, "Delivery Slip - " + (_order?.RefNo ?? ""), HeaderActionsBar, this);
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)

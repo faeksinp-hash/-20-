@@ -984,7 +984,7 @@
                                                  Style="{StaticResource LightTextBoxStyle}"
                                                  FontWeight="SemiBold"
                                                  Padding="10,6" Height="42" FontSize="16" VerticalContentAlignment="Center"/>
-                                        <TextBlock Text="เช่น RC-00001 (บังคับรูปแบบ RC-XXXXX)"
+                                        <TextBlock Text="ระบุเลขที่ใบส่งของ / ใบกำกับภาษี (ห้ามเว้นว่าง)"
                                                    Foreground="#94A3B8"
                                                    FontSize="14"
                                                    VerticalAlignment="Center"
@@ -1002,7 +1002,7 @@
                                             </TextBlock.Style>
                                         </TextBlock>
                                         <!-- Valid indicator badge -->
-                                        <TextBlock Text="✓ รูปแบบถูกต้อง" 
+                                        <TextBlock Text="✓ ระบุเลขที่เอกสารแล้ว" 
                                                    Foreground="#10B981" 
                                                    FontWeight="Bold" 
                                                    FontSize="12" 
@@ -1014,7 +1014,7 @@
                                 </Border>
 
                                 <!-- Error warning below input when pattern doesn't match -->
-                                <TextBlock Text="⚠️ กรุณาระบุในรูปแบบ RC-XXXXX (ตัวเลข 5 หลัก เช่น RC-00001)"
+                                <TextBlock Text="⚠️ กรุณาระบุเลขที่ใบส่งของ / ใบกำกับภาษี (ห้ามเว้นว่าง)"
                                            Foreground="#EF4444"
                                            FontSize="11.5"
                                            FontWeight="SemiBold"

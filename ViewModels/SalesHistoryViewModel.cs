@@ -643,8 +643,46 @@ namespace Porjai20.ViewModels
 
         private void ExecuteExportExcel()
         {
-            // TODO: implement CSV/Excel export using a library like ClosedXML
-            ShowAlert("ฟีเจอร์ส่งออก Excel กำลังพัฒนา", "เร็ว ๆ นี้", "ℹ️");
+            if (SalesOrders == null || SalesOrders.Count == 0)
+            {
+                Views.CustomMessageBox.Show("ไม่พบรายการบิลที่ต้องการส่งออก กรุณาค้นหาหรือกรองข้อมูลก่อน", "แจ้งเตือน", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string defaultFileName = $"รายงานประวัติการขาย_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+            string? filePath = ExcelExportService.PromptSaveExcelPath(defaultFileName);
+            if (string.IsNullOrWhiteSpace(filePath)) return;
+
+            try
+            {
+                string periodInfo = StartDate.Date == EndDate.Date
+                    ? $"วันที่ {StartDate:dd/MM/yyyy}"
+                    : $"{StartDate:dd/MM/yyyy} – {EndDate:dd/MM/yyyy}";
+
+                ExcelExportService.ExportSalesOrders(SalesOrders, periodInfo, filePath);
+
+                var res = Views.CustomMessageBox.Show(
+                    $"บันทึกไฟล์รายงาน Excel เรียบร้อยแล้ว\nที่อยู่ไฟล์: {filePath}\n\nคุณต้องการเปิดไฟล์ขึ้นมาดูทันทีหรือไม่?",
+                    "ส่งออกข้อมูลสำเร็จ",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (res == MessageBoxResult.Yes)
+                {
+                    if (!ExcelExportService.TryOpenFile(filePath, out string? err))
+                    {
+                        Views.CustomMessageBox.Show($"ไม่สามารถเปิดไฟล์ได้: {err}", "ข้อผิดพลาด", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (System.IO.IOException)
+            {
+                Views.CustomMessageBox.Show("ไม่สามารถบันทึกไฟล์ได้ เนื่องจากไฟล์นี้กำลังถูกเปิดใช้งานอยู่ในโปรแกรมอื่น (เช่น Microsoft Excel)\n\nกรุณาปิดไฟล์ดังกล่าวแล้วลองกดบันทึกใหม่อีกครั้ง", "ไม่สามารถบันทึกไฟล์ได้", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
+            {
+                Views.CustomMessageBox.Show($"เกิดข้อผิดพลาดในการส่งออก Excel: {ex.Message}", "ข้อผิดพลาด", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void QuickFilter(DateTime start, DateTime end)

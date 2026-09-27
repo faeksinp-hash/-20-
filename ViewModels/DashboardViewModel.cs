@@ -231,47 +231,7 @@ namespace Porjai20.ViewModels
 
         public static DateTime? ParseDateToInvariant(string? dateStr)
         {
-            if (string.IsNullOrWhiteSpace(dateStr)) return null;
-            dateStr = dateStr.Trim();
-
-            string[] formats = {
-                "yyyy-MM-dd HH:mm:ss.FFFFFFF",
-                "yyyy-MM-dd HH:mm:ss",
-                "yyyy-MM-ddTHH:mm:ss",
-                "yyyy-MM-dd",
-                "dd/MM/yyyy HH:mm:ss",
-                "dd/MM/yyyy",
-                "yyyy/MM/dd HH:mm:ss",
-                "yyyy/MM/dd",
-                "d/M/yyyy HH:mm:ss",
-                "d/M/yyyy",
-                "yyyy-M-d HH:mm:ss",
-                "yyyy-M-d"
-            };
-
-            if (DateTime.TryParseExact(dateStr, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dtExact))
-            {
-                if (dtExact.Year > 2400)
-                    return dtExact.AddYears(-543);
-                return dtExact;
-            }
-
-            if (DateTime.TryParse(dateStr, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var dtInv))
-            {
-                if (dtInv.Year > 2400)
-                    return dtInv.AddYears(-543);
-                return dtInv;
-            }
-
-            var thaiCulture = new System.Globalization.CultureInfo("th-TH");
-            if (DateTime.TryParse(dateStr, thaiCulture, System.Globalization.DateTimeStyles.None, out var dtThai))
-            {
-                if (dtThai.Year > 2400)
-                    return dtThai.AddYears(-543);
-                return dtThai;
-            }
-
-            return null;
+            return Common.DateTimeHelper.ParseDateToInvariant(dateStr);
         }
 
         public Task LoadDashboardData() => LoadData();

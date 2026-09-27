@@ -12,6 +12,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClosedXML.Excel;
 using Dapper;
+using Porjai20.Common;
 using Porjai20.Models;
 using Porjai20.Services;
 using Porjai20.Views;
@@ -1273,7 +1274,7 @@ namespace Porjai20.ViewModels
             {
                 // ตรวจสอบเลขที่ใบเสร็จจริงในรูปแบบ SALE-XXXXXXXXXXXXXX (14 หลัก รวม 19 ตัวอักษร)
                 match = _cachedDocumentNumbers.FirstOrDefault(doc =>
-                    System.Text.RegularExpressions.Regex.IsMatch(doc, @"^SALE-\d{14}$") &&
+                    ValidationHelper.IsSaleReference(doc) &&
                     doc.StartsWith(trimmed, System.StringComparison.Ordinal));
 
                 if (string.IsNullOrEmpty(match))
@@ -1319,7 +1320,7 @@ namespace Porjai20.ViewModels
             {
                 if (!trimmed.StartsWith("S", System.StringComparison.Ordinal)) return null;
                 var match = _cachedDocumentNumbers.FirstOrDefault(doc =>
-                    System.Text.RegularExpressions.Regex.IsMatch(doc, @"^SALE-\d{14}$") &&
+                    ValidationHelper.IsSaleReference(doc) &&
                     doc.StartsWith(trimmed, System.StringComparison.Ordinal));
                 if (!string.IsNullOrEmpty(match)) return match;
                 return _databaseService.GetReceiptSuggestion(trimmed);
@@ -3190,20 +3191,18 @@ namespace Porjai20.ViewModels
 
         public bool CanEditReceiptModal => !IsReceiptViewOnly && CanEditStockIn;
 
-        private static readonly System.Text.RegularExpressions.Regex InvoiceRegex = new System.Text.RegularExpressions.Regex(@"^RC-\d{5}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
         public static bool IsValidInvoiceNumber(string? input)
         {
-            return !string.IsNullOrWhiteSpace(input) && InvoiceRegex.IsMatch(input.Trim());
+            return Common.ValidationHelper.IsValidDeliveryNote(input);
         }
 
-        public bool IsReceiptDeliveryNoteValid => CanEditReceiptModal && IsValidInvoiceNumber(ReceiptDeliveryNoteNo);
-        public bool IsReceiptDeliveryNoteInvalid => CanEditReceiptModal && !string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo) && !IsValidInvoiceNumber(ReceiptDeliveryNoteNo);
+        public bool IsReceiptDeliveryNoteValid => CanEditReceiptModal && !string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo);
+        public bool IsReceiptDeliveryNoteInvalid => CanEditReceiptModal && string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo);
 
         public bool CanConfirmGoodsReceipt =>
             !IsReceiptViewOnly &&
             CanEditStockIn &&
-            IsValidInvoiceNumber(ReceiptDeliveryNoteNo) &&
+            !string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo) &&
             ReceiptItems != null &&
             ReceiptItems.Count > 0 &&
             ReceiptItems.Any(i => i.ReceivedQty > 0);
@@ -8057,10 +8056,10 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            // Guard clause: Validate Invoice / Delivery Note Number Regex Pattern RC-XXXXX
-            if (!IsValidInvoiceNumber(ReceiptDeliveryNoteNo))
+            // Guard clause: Validate Invoice / Delivery Note Number (Must not be empty)
+            if (string.IsNullOrWhiteSpace(ReceiptDeliveryNoteNo))
             {
-                ShowAlert("กรุณากรอกเลขที่ใบส่งของ / ใบกำกับภาษี ให้ถูกต้องตามรูปแบบ RC-XXXXX (ตัวเลข 5 หลัก เช่น RC-00001)", "แจ้งเตือน", "⚠️");
+                ShowAlert("กรุณากรอกเลขที่ใบส่งของ / ใบกำกับภาษี (ห้ามเว้นว่าง)", "แจ้งเตือน", "⚠️");
                 return;
             }
 

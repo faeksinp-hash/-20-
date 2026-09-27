@@ -30,13 +30,7 @@ namespace Porjai20.Views
 
         private void PrintBtn_Click(object sender, RoutedEventArgs e)
         {
-            PrintDialog printDialog = new PrintDialog();
-            if (printDialog.ShowDialog() == true)
-            {
-                PrintBtn.Visibility = Visibility.Collapsed;
-                printDialog.PrintVisual(PrintArea, "Purchase Order Receipt");
-                PrintBtn.Visibility = Visibility.Visible;
-            }
+            Common.PrintHelper.PrintVisual(PrintArea, "Purchase Order Receipt", PrintBtn);
         }
     }
 }

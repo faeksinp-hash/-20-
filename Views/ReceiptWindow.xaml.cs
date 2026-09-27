@@ -25,21 +25,7 @@ namespace Porjai20.Views
 
         private void PrintBtn_Click(object sender, RoutedEventArgs e)
         {
-            PrintDialog printDialog = new PrintDialog();
-            if (printDialog.ShowDialog() == true)
-            {
-                // Hide button during printing
-                PrintBtn.Visibility = Visibility.Collapsed;
-                
-                // Print the visual area
-                printDialog.PrintVisual(PrintArea, "Sales Receipt");
-                
-                // Restore button
-                PrintBtn.Visibility = Visibility.Visible;
-                
-                // Close window after printing
-                this.Close();
-            }
+            Common.PrintHelper.PrintVisual(PrintArea, "Sales Receipt", PrintBtn, this);
         }
     }
 }
