@@ -446,6 +446,9 @@
             <Setter Property="Foreground" Value="#2D3748"/>
             <Setter Property="FontSize"   Value="15"/>
             <Setter Property="MinHeight"  Value="48"/>
+            <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="ToolTip"    Value="ดับเบิ้ลคลิกเพื่อดูรายละเอียดและดำเนินการเคลม"/>
+            <EventSetter Event="MouseDoubleClick" Handler="ClaimRow_MouseDoubleClick"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -463,7 +466,6 @@
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
                                 <Setter Property="Foreground"  Value="#1E293B"/>
-                                <Setter Property="FontWeight"  Value="Bold"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -776,11 +778,11 @@
                             Height="42"
                             Margin="0,0,10,0"/>
 
-                    <!-- Add Claim Button -->
+                    <!-- Add Claim Button (Styled to match Search Button) -->
                     <Button Grid.Column="10"
                             Content="➕ บันทึกเคลม"
                             Command="{Binding OpenAddModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource AddBtnStyle}"
+                            Style="{StaticResource SearchBtnStyle}"
                             Padding="18,0"
                             Height="42"/>
                 </Grid>
@@ -817,8 +819,7 @@
                               CanUserResizeColumns="False"
                               CanUserSortColumns="True"
                               RowHeight="50"
-                              GridLinesVisibility="Horizontal"
-                              HorizontalGridLinesBrush="#F1F5F9"
+                              GridLinesVisibility="None"
                               BorderThickness="0"
                               Background="Transparent"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -832,7 +833,7 @@
                             <!-- #1: Claim No (เลขที่เคลม) -->
                             <DataGridTextColumn Header="เลขที่เคลม"
                                                 Binding="{Binding ClaimNo}"
-                                                Width="1.3*"
+                                                Width="140"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #2: Date (วันที่บันทึก) -->
@@ -844,15 +845,15 @@
                             <!-- #3: Claim Type (ประเภทเคลม) -->
                             <DataGridTextColumn Header="ประเภทเคลม"
                                                 Binding="{Binding ClaimTypeDisplay}"
-                                                Width="1.1*"
+                                                Width="110"
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #4: Customer / Ref No -->
-                            <DataGridTemplateColumn Header="ผู้แจ้ง / เลขที่บิลอ้างอิง" Width="1.8*">
+                            <DataGridTemplateColumn Header="ผู้แจ้ง / เลขที่บิลอ้างอิง" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center" Margin="4,0">
-                                            <TextBlock Text="{Binding CustomerName}" FontWeight="Bold" Foreground="#2D3748" FontSize="14.5" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding CustomerName}" FontWeight="Normal" Foreground="#2D3748" FontSize="14.5" TextTrimming="CharacterEllipsis"/>
                                             <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                                 <TextBlock Text="บิล: " FontSize="13" Foreground="#718096"/>
                                                 <TextBlock Text="{Binding SalesOrderRefNo}" FontSize="13" Foreground="#718096"/>
@@ -864,7 +865,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- #5: Product Name -->
-                            <DataGridTemplateColumn Header="สินค้าที่เคลม" Width="1.8*">
+                            <DataGridTemplateColumn Header="สินค้าที่เคลม" Width="180">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center" Margin="4,0">
@@ -875,11 +876,11 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <!-- #6: Qty -->
+                            <!-- #6: Qty (ขยาย Width=80 และจัดกึ่งกลาง) -->
                             <DataGridTextColumn Header="จำนวน"
                                                 Binding="{Binding Quantity}"
-                                                Width="0.6*"
-                                                ElementStyle="{StaticResource ColRightBold}"/>
+                                                Width="80"
+                                                ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #7: Status (สถานะเคลม) - Rounded Status Badge -->
                             <DataGridTemplateColumn Header="สถานะเคลม" Width="130">
@@ -933,26 +934,11 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <!-- #8: Claim Action (รูปแบบการเคลม) -->
+                            <!-- #8: Claim Action (รูปแบบการเคลม - ขยาย Width=150) -->
                             <DataGridTextColumn Header="รูปแบบการเคลม"
                                                 Binding="{Binding ClaimAction}"
-                                                Width="1.2*"
+                                                Width="150"
                                                 ElementStyle="{StaticResource ColCenter}"/>
-
-                            <!-- #9: View Details Button -->
-                            <DataGridTemplateColumn Header="รายละเอียด" Width="135">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="ดูรายละเอียด"
-                                                Command="{Binding DataContext.ViewClaimDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource ViewDetailsButtonStyle}"
-                                                Padding="12,0"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
 
                         </DataGrid.Columns>
                     </DataGrid>
@@ -966,6 +952,12 @@
                                    FontSize="14"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
+                                   Margin="0"/>
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดและดำเนินการเคลม"
+                                   Foreground="#64748B"
+                                   FontSize="13.5"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
                                    Margin="0"/>
                     </DockPanel>
                 </Grid>

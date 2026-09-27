@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Porjai20.Models;
 using Porjai20.ViewModels;
 
 namespace Porjai20.Views
@@ -32,6 +33,20 @@ namespace Porjai20.Views
                 CommandManager.InvalidateRequerySuggested();
                 UpdateSaveButtonState();
             };
+        }
+
+        private void ClaimRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGridRow row && row.Item is Claim claim)
+            {
+                if (DataContext is ProductViewModel vm)
+                {
+                    if (vm.ViewClaimDetailsCommand?.CanExecute(claim) == true)
+                    {
+                        vm.ViewClaimDetailsCommand.Execute(claim);
+                    }
+                }
+            }
         }
 
         private void UpdateSaveButtonState()
