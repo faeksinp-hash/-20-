@@ -632,6 +632,9 @@
             <Setter Property="Foreground" Value="#2D3748"/>
             <Setter Property="FontSize"   Value="15"/>
             <Setter Property="MinHeight"  Value="48"/>
+            <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="ToolTip"    Value="ดับเบิ้ลคลิกเพื่อดูรายละเอียดคำสั่งซื้อเดลิเวอรี"/>
+            <EventSetter Event="MouseDoubleClick" Handler="DeliveryRow_MouseDoubleClick"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -647,9 +650,8 @@
                                 <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
                                 <Setter Property="Foreground"  Value="#1E293B"/>
-                                <Setter Property="FontWeight"  Value="Bold"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -1051,8 +1053,7 @@
                               CanUserResizeColumns="False"
                               CanUserSortColumns="True"
                               RowHeight="50"
-                              GridLinesVisibility="Horizontal"
-                              HorizontalGridLinesBrush="#F1F5F9"
+                              GridLinesVisibility="None"
                               BorderThickness="0"
                               Background="Transparent"
                               HorizontalScrollBarVisibility="Disabled"
@@ -1068,23 +1069,24 @@
                             <!-- #1: Receipt ID (เลขที่บิล) -->
                             <DataGridTextColumn Header="เลขที่บิล"
                                                 Binding="{Binding RefNo}"
-                                                Width="1.3*"
+                                                Width="185"
+                                                MinWidth="180"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #2: Date & Time (วัน-เวลา) -->
                             <DataGridTextColumn Header="วัน-เวลา"
                                                 Binding="{Binding Timestamp, StringFormat=dd/MM/yy HH:mm}"
-                                                Width="1.2*"
+                                                Width="135"
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #3: Customer Name (ชื่อลูกค้า) -->
                             <DataGridTextColumn Header="ชื่อลูกค้า"
                                                 Binding="{Binding CustomerDisplayName, TargetNullValue='-', FallbackValue='-'}"
-                                                Width="1.4*"
+                                                Width="150"
                                                 ElementStyle="{StaticResource ColLeft}"/>
 
                             <!-- #4: Phone & Address (เบอร์โทร & ที่อยู่จัดส่ง) -->
-                            <DataGridTemplateColumn Header="เบอร์โทร &amp; ที่อยู่จัดส่ง" Width="2.3*">
+                            <DataGridTemplateColumn Header="เบอร์โทร &amp; ที่อยู่จัดส่ง" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center" Margin="6,0">
@@ -1096,7 +1098,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- #5: Delivery Status (สถานะจัดส่ง) -->
-                            <DataGridTemplateColumn Header="สถานะจัดส่ง" Width="1.2*">
+                            <DataGridTemplateColumn Header="สถานะจัดส่ง" Width="140">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="StatusBadge" CornerRadius="12" Padding="12,4"
@@ -1161,27 +1163,11 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <!-- #7: Net Amount (ยอดสุทธิ) -->
-                            <DataGridTemplateColumn Header="ยอดสุทธิ" Width="1.1*">
+                            <!-- #6: Net Amount (ยอดสุทธิ) -->
+                            <DataGridTemplateColumn Header="ยอดสุทธิ" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}" Style="{StaticResource ColAmountStyle}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
-                            <!-- #8: View Details Button -->
-                            <DataGridTemplateColumn Header="จัดการ" Width="130">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="จัดการ"
-                                                Command="{Binding DataContext.ViewDeliveryDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource ViewDetailsButtonStyle}"
-                                                Padding="6,2"
-                                                MinWidth="100"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -1198,6 +1184,12 @@
                                    FontSize="14"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
+                                   Margin="0"/>
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่แถวเพื่อดูรายละเอียดและจัดการคำสั่งซื้อ"
+                                   Foreground="#64748B"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
                                    Margin="0"/>
                     </DockPanel>
                 </Grid>
