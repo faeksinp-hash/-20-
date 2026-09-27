@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ใบส่งสินค้า (Delivery Slip)" Height="860" Width="680"
         WindowStartupLocation="CenterScreen" Background="#F1F5F9"
-        FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
+        FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
         FontWeight="Light">
     
     <Grid>

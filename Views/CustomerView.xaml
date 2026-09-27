@@ -6,16 +6,16 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
-             FontWeight="Light"
-             Background="#F4F7FA">
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB">
 
     <UserControl.Resources>
 
         <!-- ══════════════════════════════════════════════════════════ -->
         <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
         <!-- ══════════════════════════════════════════════════════════ -->
-        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FB"/>
         <SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
@@ -421,10 +421,19 @@
         <Style x:Key="ColAmountStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
-            <Setter Property="FontWeight"          Value="Bold"/>
-            <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="Margin"              Value="0,0,8,0"/>
-            <Setter Property="Foreground"          Value="#000000"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Padding"             Value="0,0,16,0"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ColRightBold" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Padding"             Value="0,0,16,0"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
             <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
         </Style>
 
@@ -433,7 +442,7 @@
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!--  OUTER ROOT GRID                                                -->
     <!-- ════════════════════════════════════════════════════════════════ -->
-    <Grid Visibility="{Binding IsCustomerMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
+    <Grid Visibility="{Binding IsCustomerMode, Converter={StaticResource BoolToVis}}" Background="#F4F7FB">
 
         <Grid Margin="16">
             <Grid.RowDefinitions>
@@ -705,25 +714,28 @@
                     <Button Grid.Column="4"
                             Content="ล้าง"
                             Command="{Binding ClearCustomerFilterCommand}"
-                            Style="{StaticResource SecondaryBtnStyle}"
+                            Style="{StaticResource ClearBtnStyle}"
                             Padding="16,0"
-                            Height="40"/>
+                            Height="42"/>
 
                     <!-- Add Customer Action Button (➕ เพิ่มข้อมูลลูกค้า) -->
                     <Button Grid.Column="6"
                             Content="➕ เพิ่มข้อมูลลูกค้า"
-                            Command="{Binding OpenAddCustomerModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource PrimaryBtnStyle}"
+                            Command="{Binding OpenAddCustomerModalCommand}" 
+                            IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource AddBtnStyle}"
                             Padding="18,0"
-                            Height="40"/>
+                            Height="42"
+                            Margin="0,0,10,0"/>
 
                     <!-- Manage Customer Action Button (⚙️ จัดการข้อมูล) -->
                     <Button Grid.Column="8"
                             Content="⚙️ จัดการข้อมูล"
-                            Command="{Binding OpenManageModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                            Command="{Binding OpenManageModalCommand}" 
+                            IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
                             Style="{StaticResource PrimaryBtnStyle}"
                             Padding="18,0"
-                            Height="40"/>
+                            Height="42"/>
                 </Grid>
             </Border>
 
@@ -793,7 +805,7 @@
                         <DataGridTextColumn Header="รายการซื้อ"
                                             Binding="{Binding TotalPurchases}"
                                             Width="1*"
-                                            ElementStyle="{StaticResource ColCenterBold}"/>
+                                            ElementStyle="{StaticResource ColRightBold}"/>
 
                         <!-- #7: Total Spent -->
                         <DataGridTextColumn Header="ยอดซื้อสะสม"

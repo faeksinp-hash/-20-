@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
-             Background="#F4F7FA">
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             Background="#F4F7FB">
 
     <UserControl.Resources>
 

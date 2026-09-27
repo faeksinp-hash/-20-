@@ -7,9 +7,9 @@
              xmlns:converters="clr-namespace:Porjai20.Converters"
              mc:Ignorable="d" 
               d:DesignHeight="800" d:DesignWidth="1200"
-              FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
-              FontWeight="Light"
-              Background="#F4F7FA">
+              FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB">
 
     <UserControl.Resources>
 
@@ -22,7 +22,7 @@
         <!-- ══════════════════════════════════════════════════════════ -->
         <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
         <!-- ══════════════════════════════════════════════════════════ -->
-        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FB"/>
         <SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
@@ -447,7 +447,7 @@
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!--  OUTER ROOT GRID: Full 100% canvas for main page and modals     -->
     <!-- ════════════════════════════════════════════════════════════════ -->
-    <Grid Visibility="{Binding IsManagementMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
+    <Grid Visibility="{Binding IsManagementMode, Converter={StaticResource BoolToVis}}" Background="#F4F7FB">
 
         <!-- ════════════════════════════════════════════════════════════ -->
         <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
@@ -891,8 +891,8 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="StatusBadge"
-                                                CornerRadius="10"
-                                                Padding="10,3"
+                                                CornerRadius="12"
+                                                Padding="12,4"
                                                 BorderThickness="1"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
@@ -900,7 +900,7 @@
                                                 BorderBrush="#86EFAC">
                                             <TextBlock x:Name="StatusText"
                                                        Text="{Binding StockStatus}"
-                                                       FontSize="12"
+                                                       FontSize="13.5"
                                                        FontWeight="SemiBold"
                                                        Foreground="#15803D"
                                                        HorizontalAlignment="Center"

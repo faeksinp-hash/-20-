@@ -8,13 +8,13 @@
              xmlns:viewmodels="clr-namespace:Porjai20.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="1024"
-             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
-             FontWeight="Light"
-             Background="#E0F2FE">
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB">
 
     <UserControl.Resources>
         <!-- SolidColorBrush palette for High-Contrast Crimson Red Theme -->
-        <SolidColorBrush x:Key="PosBg"     Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="PosBg" Color="#F4F7FB"/>
         <SolidColorBrush x:Key="PosCard"   Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosInput"  Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosBorder" Color="#E2E8F0"/>
@@ -285,7 +285,7 @@
                         <ItemsControl ItemsSource="{Binding CartItems}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Margin="0,0,0,10" Padding="14,12">
+                                    <Border Background="#F4F7FB" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Margin="0,0,0,10" Padding="14,12">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -352,7 +352,7 @@
                     <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="#BAE6FD" Padding="0,15,0,0" Margin="0,10,0,0">
                         <StackPanel>
                             <!-- Delivery CheckBox & Info -->
-                            <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="14,10" Margin="0,0,0,14">
+                            <Border Background="#F4F7FB" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="14,10" Margin="0,0,0,14">
                                 <StackPanel>
                                     <Grid>
                                         <CheckBox Content="🚚 จัดส่งสินค้า" 
@@ -591,7 +591,7 @@
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="RadioButton">
-                                                                <Border x:Name="cardBorder" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Padding="16,12" Cursor="Hand">
+                                                                <Border x:Name="cardBorder" Background="#F4F7FB" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Padding="16,12" Cursor="Hand">
                                                                     <Grid>
                                                                         <Grid.ColumnDefinitions>
                                                                             <ColumnDefinition Width="Auto"/>
@@ -636,7 +636,7 @@
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="RadioButton">
-                                                                <Border x:Name="cardBorder" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Padding="16,12" Cursor="Hand">
+                                                                <Border x:Name="cardBorder" Background="#F4F7FB" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="16" Padding="16,12" Cursor="Hand">
                                                                     <Grid>
                                                                         <Grid.ColumnDefinitions>
                                                                             <ColumnDefinition Width="Auto"/>
@@ -810,7 +810,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Received Cash Box -->
-                                        <Border Grid.Column="0" Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="2" CornerRadius="14" Padding="16,12">
+                                        <Border Grid.Column="0" Background="#F4F7FB" BorderBrush="#00A3E0" BorderThickness="2" CornerRadius="14" Padding="16,12">
                                             <StackPanel>
                                                 <TextBlock Text="รับเงินสดมา" FontSize="16" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,0,4"/>
                                                 <TextBlock Text="{Binding CashReceived, StringFormat={}{0:N2}}" FontSize="34" FontWeight="ExtraBold" Foreground="#0B2545" HorizontalAlignment="Right"/>
@@ -1556,7 +1556,7 @@
                                 <TextBlock Text="ระบบได้ทำการบันทึกรายการขายเรียบร้อยแล้ว" FontSize="16" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,0,0,24"/>
 
                                 <!-- Success Receipt Card Box (Enlarged Width 500px & Font 16-28pt) -->
-                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="20" Width="500" Padding="28,22" HorizontalAlignment="Center">
+                                <Border Background="#F4F7FB" BorderBrush="#BAE6FD" BorderThickness="2" CornerRadius="20" Width="500" Padding="28,22" HorizontalAlignment="Center">
                                     <StackPanel>
                                         <Grid Margin="0,0,0,10">
                                             <TextBlock Text="หมายเลขบิลขาย" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
@@ -1663,7 +1663,7 @@
                         <TextBlock Text="{Binding ErrorModalMessage}" FontSize="13" Foreground="#4A5568" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" Margin="20,0,20,15"/>
 
                         <!-- 4. ปุ่ม "รับทราบ" -->
-                        <Button Command="{Binding CloseErrorModalCommand}" Background="#E0F2FE" BorderBrush="#EF4444" BorderThickness="1" Width="160" Height="38" Cursor="Hand">
+                        <Button Command="{Binding CloseErrorModalCommand}" Background="#F4F7FB" BorderBrush="#EF4444" BorderThickness="1" Width="160" Height="38" Cursor="Hand">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="19"/>
@@ -1699,7 +1699,7 @@
                     <!-- Header -->
                     <Grid Grid.Row="0" Margin="0,0,0,20">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border Width="44" Height="44" CornerRadius="22" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1.5" Margin="0,0,14,0">
+                            <Border Width="44" Height="44" CornerRadius="22" Background="#F4F7FB" BorderBrush="#BAE6FD" BorderThickness="1.5" Margin="0,0,14,0">
                                 <TextBlock Text="🚚" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel VerticalAlignment="Center">

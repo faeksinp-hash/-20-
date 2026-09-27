@@ -9,9 +9,9 @@
         xmlns:converters="clr-namespace:Porjai20.Converters"
         mc:Ignorable="d"
         Title="ระบบจัดการร้าน พอใจ ทุกอย่าง 20 บาท" WindowState="Maximized" MinWidth="1100" MinHeight="720"
-        Background="#F4F7FA" WindowStartupLocation="CenterScreen"
-        FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
-        FontWeight="Light"
+        Background="#F4F7FB" WindowStartupLocation="CenterScreen"
+        FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+        FontWeight="Normal"
         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
         ScrollViewer.VerticalScrollBarVisibility="Disabled">
 
@@ -1030,7 +1030,7 @@
             <!-- ═══════════════════════════════════════════════════════ -->
             <!--  MAIN CONTENT PANEL                                     -->
             <!-- ═══════════════════════════════════════════════════════ -->
-            <ContentControl Grid.Column="1" Background="#F4F7FA"
+            <ContentControl Grid.Column="1" Background="#F4F7FB"
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"

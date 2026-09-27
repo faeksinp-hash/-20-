@@ -7,9 +7,9 @@
              xmlns:controls="clr-namespace:Porjai20.Views.Controls"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
-             FontWeight="Light"
-             Background="#F4F7FA"
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
@@ -723,7 +723,7 @@
                             <DataGridTextColumn Header="รายการ"
                                                 Binding="{Binding ItemCount}"
                                                 Width="0.7*"
-                                                ElementStyle="{StaticResource ColCenter}"/>
+                                                ElementStyle="{StaticResource ColRightBold}"/>
 
                             <!-- #5: Net Amount (ยอดสุทธิ) -->
                             <DataGridTemplateColumn Header="ยอดสุทธิ" Width="1.1*">
@@ -738,8 +738,7 @@
                             <DataGridTemplateColumn Header="ช่องทางชำระ" Width="1.1*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border x:Name="PayBadge"
-                                                CornerRadius="6" Padding="10,4"
+                                        <Border x:Name="PayBadge" CornerRadius="12" Padding="12,4"
                                                 HorizontalAlignment="Center"
                                                 Background="#E0F2FE">
                                             <TextBlock x:Name="PayText"
@@ -810,8 +809,7 @@
                             <DataGridTemplateColumn Header="สถานะบิล" Width="1.0*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border x:Name="StatusBadge"
-                                                CornerRadius="6" Padding="10,4"
+                                        <Border x:Name="StatusBadge" CornerRadius="12" Padding="12,4"
                                                 HorizontalAlignment="Center"
                                                 Background="#D1FAE5">
                                             <TextBlock x:Name="StatusText"
@@ -822,32 +820,32 @@
                                         </Border>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding Status}" Value="ชำระเงินแล้ว">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#D1FAE5"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#065F46"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#15803D"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Status}" Value="Completed">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#D1FAE5"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#065F46"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#15803D"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Status}" Value="รอชำระเงิน">
                                                 <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#92400E"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B45309"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Status}" Value="Pending">
                                                 <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#92400E"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B45309"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#E0F2FE"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#0082B3"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B91C1C"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Status}" Value="Voided">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#E0F2FE"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#0082B3"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B91C1C"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Status}" Value="โมฆะ">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#E0F2FE"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#0082B3"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B91C1C"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>

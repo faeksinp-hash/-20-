@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
-             FontWeight="Light"
-             Background="#F4F7FA">
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB">
 
     <UserControl.Resources>
 
@@ -782,10 +782,7 @@
                             <DataGridTemplateColumn Header="สถานะ" Width="1.4*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border CornerRadius="6"
-                                                Padding="10,4"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
+                                        <Border CornerRadius="12" Padding="12,4" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <!-- Default: Pending (Soft Yellow/Orange) -->
@@ -808,14 +805,14 @@
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <!-- Default: Dark Orange text for รอดำเนินการ -->
-                                                        <Setter Property="Foreground" Value="#D97706"/>
+                                                        <Setter Property="Foreground" Value="#B45309"/>
                                                         <Setter Property="Text" Value="{Binding DisplayStatus}"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsReceived}" Value="True">
                                                                 <Setter Property="Foreground" Value="#15803D"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
-                                                                <Setter Property="Foreground" Value="#DC2626"/>
+                                                                <Setter Property="Foreground" Value="#B91C1C"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -1043,7 +1040,7 @@
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" IsReadOnly="True" Width="0.8*" ElementStyle="{StaticResource ColCenterBold}"/>
                                     <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding ProductName}" IsReadOnly="True" Width="2*" ElementStyle="{StaticResource ColLeftBold}"/>
-                                    <DataGridTextColumn Header="สั่งซื้อ" Binding="{Binding OrderedQty}" IsReadOnly="True" Width="0.6*" ElementStyle="{StaticResource ColCenterBold}"/>
+                                    <DataGridTextColumn Header="สั่งซื้อ" Binding="{Binding OrderedQty}" IsReadOnly="True" Width="0.6*" ElementStyle="{StaticResource ColRightBold}"/>
                                     <DataGridTextColumn Header="ต้นทุน/หน่วย" Binding="{Binding CostPrice, StringFormat='{}{0:N2}'}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ColRightBold}"/>
 
                                     <!-- Editable Received Qty Column -->

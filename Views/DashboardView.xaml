@@ -39,7 +39,7 @@
              MINIMAL SOFT PINK (LIGHT MODE) PALETTE & RESOURCES
              ══════════════════════════════════════════════════════════ -->
         <!-- Theme Colors -->
-        <SolidColorBrush x:Key="LtBg"           Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="LtBg" Color="#F4F7FB"/>
         <SolidColorBrush x:Key="LtCard"         Color="#FFFFFF"/>
         <SolidColorBrush x:Key="LtCard2"        Color="#FFFFFF"/>
         <SolidColorBrush x:Key="LtBorder"       Color="#E2E8F0"/>
@@ -157,7 +157,7 @@
     <!-- ══════════════════════════════════════════════════════════
          ROOT GRID (No ScrollViewer Wrapper — Proportional Rows)
          ══════════════════════════════════════════════════════════ -->
-    <Grid Background="#E0F2FE"
+    <Grid Background="#F4F7FB"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -187,10 +187,10 @@
                     <TextBlock Text="ภาพรวมร้านค้า"
                                FontSize="24" FontWeight="SemiBold"
                                Foreground="{StaticResource LtText}"
-                               FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                               FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                     <TextBlock Text="ยินดีต้อนรับสู่ระบบบริหารจัดการร้าน พอใจ ทุกอย่าง 20 บาท"
                                FontSize="15" FontWeight="Normal" Foreground="{StaticResource LtMuted}"
-                               FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" Margin="0,4,0,0"/>
+                               FontFamily="Noto Sans Thai, Segoe UI, sans-serif" Margin="0,4,0,0"/>
                 </StackPanel>
             </Grid>
 
@@ -214,15 +214,15 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="ยอดขายวันนี้" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="ยอดขายวันนี้" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                             <Border Grid.Column="1" Background="#00A3E0" CornerRadius="8" Width="32" Height="32" HorizontalAlignment="Right">
                                 <TextBlock Text="&#xE1FA;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding TodaySales}" FontSize="30" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                        <TextBlock Grid.Row="2" Text="{Binding TodaySales}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding TodaySalesArrow}" FontSize="14" Foreground="{Binding TodaySalesColor}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding TodaySalesChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodaySalesColor}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding TodaySalesChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodaySalesColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -242,15 +242,15 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="คำสั่งซื้อวันนี้" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="คำสั่งซื้อวันนี้" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                             <Border Grid.Column="1" Background="#0284C7" CornerRadius="8" Width="32" Height="32" HorizontalAlignment="Right">
                                 <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding TodayOrders}" FontSize="30" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                        <TextBlock Grid.Row="2" Text="{Binding TodayOrders}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding TodayOrdersArrow}" FontSize="14" Foreground="{Binding TodayOrdersColor}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding TodayOrdersChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodayOrdersColor}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding TodayOrdersChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodayOrdersColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -270,15 +270,15 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="สินค้าคงคลัง" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="สินค้าคงคลัง" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                             <Border Grid.Column="1" Background="#15803D" CornerRadius="8" Width="32" Height="32" HorizontalAlignment="Right">
                                 <TextBlock Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding TodayStock}" FontSize="30" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                        <TextBlock Grid.Row="2" Text="{Binding TodayStock}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding TodayStockArrow}" FontSize="14" Foreground="{Binding TodayStockColor}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding TodayStockChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodayStockColor}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding TodayStockChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodayStockColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -298,15 +298,15 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="ลูกค้าใหม่" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="ลูกค้าใหม่" FontSize="15" FontWeight="Bold" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                             <Border Grid.Column="1" Background="#B45309" CornerRadius="8" Width="32" Height="32" HorizontalAlignment="Right">
                                 <TextBlock Text="&#xE136;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding NewCustomers}" FontSize="30" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                        <TextBlock Grid.Row="2" Text="{Binding NewCustomers}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding NewCustomersArrow}" FontSize="14" Foreground="{Binding NewCustomersColor}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding NewCustomersChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding NewCustomersColor}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding NewCustomersChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding NewCustomersColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -332,17 +332,17 @@
 
                         <DockPanel Grid.Row="0" Margin="0,0,0,10">
                             <StackPanel>
-                                <TextBlock Text="ยอดขายรายเดือน" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                <TextBlock Text="{Binding MonthlyYearText}" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                <TextBlock Text="ยอดขายรายเดือน" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
+                                <TextBlock Text="{Binding MonthlyYearText}" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                             </StackPanel>
                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
                                     <Ellipse Width="8" Height="8" Fill="{StaticResource LtPinkAccent}" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="รายรับ" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                                    <TextBlock Text="รายรับ" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Ellipse Width="8" Height="8" Fill="{StaticResource LtCyanAccent}" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="ยอดสุทธิ" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI" VerticalAlignment="Center"/>
+                                    <TextBlock Text="ยอดสุทธิ" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </StackPanel>
                         </DockPanel>
@@ -379,8 +379,8 @@
 
                         <DockPanel Grid.Row="0" Margin="0,0,0,10">
                             <StackPanel>
-                                <TextBlock Text="ยอดขายสัปดาห์นี้" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                <TextBlock Text="{Binding WeeklyDateRangeText}" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                <TextBlock Text="ยอดขายสัปดาห์นี้" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
+                                <TextBlock Text="{Binding WeeklyDateRangeText}" FontSize="13" Foreground="{StaticResource LtMuted}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                             </StackPanel>
                             <TextBlock DockPanel.Dock="Right" Text="↗" FontSize="16" Foreground="{StaticResource LtPinkAccent}" VerticalAlignment="Center"/>
                         </DockPanel>
@@ -428,11 +428,11 @@
                         </Grid.RowDefinitions>
 
                         <DockPanel Grid.Row="0">
-                            <TextBlock Text="คำสั่งซื้อล่าสุด" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                            <TextBlock Text="คำสั่งซื้อล่าสุด" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                             <Button DockPanel.Dock="Right" Command="{Binding GoToSalesHistoryCommand}" Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand" VerticalAlignment="Center">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <TextBlock Text="ดูทั้งหมด ›" FontSize="14" Foreground="{StaticResource LtPinkAccent}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                        <TextBlock Text="ดูทั้งหมด ›" FontSize="14" Foreground="{StaticResource LtPinkAccent}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
@@ -467,7 +467,7 @@
                                                               FontSize="16" 
                                                               FontWeight="SemiBold" 
                                                               HorizontalAlignment="Center"
-                                                              FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                                              FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                                                 </DataTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -583,7 +583,7 @@
                                                             </Style.Triggers>
                                                         </Style>
                                                     </Border.Style>
-                                                    <TextBlock Text="{Binding Status}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI">
+                                                    <TextBlock Text="{Binding Status}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Noto Sans Thai, Segoe UI, sans-serif">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
                                                                 <Setter Property="Foreground" Value="#4A5568"/>
@@ -629,11 +629,11 @@
                         </Grid.RowDefinitions>
 
                         <DockPanel Grid.Row="0">
-                            <TextBlock Text="สินค้าขายดี" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                            <TextBlock Text="สินค้าขายดี" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource LtText}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                             <Button DockPanel.Dock="Right" Command="{Binding GoToSalesHistoryCommand}" Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand" VerticalAlignment="Center">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <TextBlock Text="ดูทั้งหมด ›" FontSize="14" Foreground="{StaticResource LtPinkAccent}" FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                        <TextBlock Text="ดูทั้งหมด ›" FontSize="14" Foreground="{StaticResource LtPinkAccent}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
@@ -668,7 +668,7 @@
                                                            FontSize="16" 
                                                            FontWeight="SemiBold" 
                                                            HorizontalAlignment="Center"
-                                                           FontFamily="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                                           FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                                             </DataTemplate>
                                         </Setter.Value>
                                     </Setter>

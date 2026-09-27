@@ -6,15 +6,15 @@
              xmlns:local="clr-namespace:Porjai20"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
-             FontFamily="Noto Sans Thai, Leelawadee UI, Microsoft Sans Serif, Tahoma"
-              Background="#F4F7FA">
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+              Background="#F4F7FB">
 
     <UserControl.Resources>
 
         <!-- ══════════════════════════════════════════════════════════ -->
         <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
         <!-- ══════════════════════════════════════════════════════════ -->
-        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FA"/>
+        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FB"/>
         <SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
         <SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
@@ -336,18 +336,18 @@
             </Setter>
         </Style>
 
-        <!-- View Details Outline Button Style -->
+        <!-- View Details Soft Pill Button Style -->
         <Style x:Key="ViewDetailsButtonStyle" TargetType="Button">
-            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Segoe UI, sans-serif"/>
             <Setter Property="Background"      Value="#E0F2FE"/>
-            <Setter Property="Foreground"      Value="#0B2545"/>
-            <Setter Property="BorderBrush"     Value="#00A3E0"/>
+            <Setter Property="Foreground"      Value="#0284C7"/>
+            <Setter Property="BorderBrush"     Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontSize"        Value="13.5"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="Height"          Value="36"/>
-            <Setter Property="Padding"         Value="10,2"/>
+            <Setter Property="Height"          Value="32"/>
+            <Setter Property="Padding"         Value="12,0"/>
             <Setter Property="MinWidth"        Value="110"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -356,18 +356,25 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="16"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#00A3E0"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0284C7"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#0284C7"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#0B2545"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0369A1"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#0369A1"/>
                                 <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#F1F5F9"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#E2E8F0"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -489,7 +496,7 @@
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!--  OUTER ROOT GRID: Full 100% canvas for main page and modals     -->
     <!-- ════════════════════════════════════════════════════════════════ -->
-    <Grid Visibility="{Binding IsClaimMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
+    <Grid Visibility="{Binding IsClaimMode, Converter={StaticResource BoolToVis}}" Background="#F4F7FB">
 
         <!-- ════════════════════════════════════════════════════════════ -->
         <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
@@ -871,7 +878,7 @@
                             <!-- #2: Date (วันที่บันทึก) -->
                             <DataGridTextColumn Header="วันที่แจ้งเคลม"
                                                 Binding="{Binding CreatedDate, StringFormat=dd/MM/yy HH:mm}"
-                                                Width="1.1*"
+                                                Width="160"
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #3: Claim Type (ประเภทเคลม) -->
@@ -914,11 +921,57 @@
                                                 Width="0.6*"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
-                            <!-- #7: Status (สถานะเคลม) -->
-                            <DataGridTextColumn Header="สถานะเคลม"
-                                                Binding="{Binding Status}"
-                                                Width="1.1*"
-                                                ElementStyle="{StaticResource ColCenter}"/>
+                            <!-- #7: Status (สถานะเคลม) - Rounded Status Badge -->
+                            <DataGridTemplateColumn Header="สถานะเคลม" Width="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="StatusBadge"
+                                                CornerRadius="12"
+                                                Padding="12,4"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="#FEF3C7">
+                                            <TextBlock x:Name="StatusText"
+                                                       Text="{Binding Status}"
+                                                       FontSize="13.5"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#B45309"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="อนุมัติแล้ว">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#15803D"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="เคลมสำเร็จ">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#15803D"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="เสร็จสิ้น">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#15803D"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="รอดำเนินการ">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B45309"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="ปฏิเสธ">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="ปฏิเสธการเคลม">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="ยกเลิก">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                             <!-- #8: Claim Action (รูปแบบการเคลม) -->
                             <DataGridTextColumn Header="รูปแบบการเคลม"
