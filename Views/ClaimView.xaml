@@ -833,7 +833,8 @@
                             <!-- #1: Claim No (เลขที่เคลม) -->
                             <DataGridTextColumn Header="เลขที่เคลม"
                                                 Binding="{Binding ClaimNo}"
-                                                Width="140"
+                                                Width="165"
+                                                MinWidth="160"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #2: Date (วันที่บันทึก) -->
@@ -849,7 +850,7 @@
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #4: Customer / Ref No -->
-                            <DataGridTemplateColumn Header="ผู้แจ้ง / เลขที่บิลอ้างอิง" Width="*">
+                            <DataGridTemplateColumn Header="ผู้แจ้ง / เลขที่บิลอ้างอิง" Width="220">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center" Margin="4,0">
@@ -864,8 +865,8 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <!-- #5: Product Name -->
-                            <DataGridTemplateColumn Header="สินค้าที่เคลม" Width="180">
+                            <!-- #5: Product Name (ยืดหยุ่นตามขนาดหน้าจอ) -->
+                            <DataGridTemplateColumn Header="สินค้าที่เคลม" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center" Margin="4,0">
