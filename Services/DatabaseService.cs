@@ -604,6 +604,52 @@ namespace Porjai20.Services
             }
         }
 
+        // --- Employee / Staff Management Methods ---
+        public System.Collections.Generic.IEnumerable<Models.User> GetEmployees()
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = "SELECT Emp_ID AS Emp_ID, Emp_ID AS Id, Emp_Name AS Emp_Name, Emp_Name AS Name, Emp_Username AS Username, Emp_Password AS Password, Emp_Role AS Role, Emp_Tel AS Tel, Emp_Tel AS Phone FROM tblEmployee ORDER BY Emp_ID ASC";
+                return connection.Query<Models.User>(sql);
+            }
+        }
+
+        public async Task<System.Collections.Generic.IEnumerable<Models.User>> GetEmployeesAsync()
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = "SELECT Emp_ID AS Emp_ID, Emp_ID AS Id, Emp_Name AS Emp_Name, Emp_Name AS Name, Emp_Username AS Username, Emp_Password AS Password, Emp_Role AS Role, Emp_Tel AS Tel, Emp_Tel AS Phone FROM tblEmployee ORDER BY Emp_ID ASC";
+                return await connection.QueryAsync<Models.User>(sql);
+            }
+        }
+
+        public void SaveEmployee(Models.User user)
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = "INSERT INTO tblEmployee (Emp_Name, Emp_Tel, Emp_Username, Emp_Password, Emp_Role) VALUES (@Name, @Phone, @Username, @Password, @Role)";
+                connection.Execute(sql, user);
+            }
+        }
+
+        public void UpdateEmployee(Models.User user)
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = "UPDATE tblEmployee SET Emp_Name = @Name, Emp_Tel = @Phone, Emp_Username = @Username, Emp_Password = @Password, Emp_Role = @Role WHERE Emp_ID = @Id";
+                connection.Execute(sql, user);
+            }
+        }
+
+        public void DeleteEmployee(int empId)
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = "DELETE FROM tblEmployee WHERE Emp_ID = @Id";
+                connection.Execute(sql, new { Id = empId });
+            }
+        }
+
         // --- Customer Management Methods ---
         public System.Collections.Generic.IEnumerable<Models.Customer> GetCustomers(string searchKeyword = "")
         {
@@ -636,6 +682,17 @@ namespace Porjai20.Services
             }
         }
 
+        public async Task<System.Collections.Generic.IEnumerable<Models.Customer>> GetCustomersForPosAsync()
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, 
+                                      Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
+                               FROM tblCustomer";
+                return await conn.QueryAsync<Models.Customer>(sql);
+            }
+        }
+
         public void SaveCustomer(Models.Customer customer)
         {
             using (var connection = GetConnection())
@@ -656,6 +713,15 @@ namespace Porjai20.Services
                     SET Cus_Code = @Code, Cus_Name = @Cus_Name, Cus_Address = @Cus_Address, Cus_Tel = @Cus_Tel, Cus_Points = @Cus_Points 
                     WHERE Cus_ID = @Cus_ID";
                 connection.Execute(sql, customer);
+
+                try
+                {
+                    string delivSql = @"UPDATE tblDelivery 
+                                       SET Recipient_Name = @Name, Recipient_Tel = @Phone, Recipient_Address = @Address 
+                                       WHERE Sales_ID IN (SELECT Sales_ID FROM tblSales_H WHERE Cus_ID = @CusId)";
+                    connection.Execute(delivSql, new { Name = customer.Name, Phone = customer.Phone, Address = customer.Address, CusId = customer.Id });
+                }
+                catch { }
             }
         }
 
@@ -748,14 +814,20 @@ namespace Porjai20.Services
         }
 
         // --- Supplier Management Methods ---
-        public System.Collections.Generic.IEnumerable<Models.Supplier> GetSuppliers()
+        public System.Collections.Generic.IEnumerable<Models.Partner> GetSuppliers()
         {
             using (var connection = GetConnection())
             {
-                string sql = "SELECT SupplierID, SupplierName, ContactPerson, PhoneNumber FROM tblSupplier ORDER BY SupplierName ASC";
+                string sql = @"
+                    SELECT 
+                        SupplierID AS Partner_ID, SupplierID AS Id, SupplierID,
+                        SupplierName AS Partner_Name, SupplierName AS Name, SupplierName,
+                        ContactPerson AS Partner_Contact, ContactPerson,
+                        PhoneNumber AS Partner_Tel, PhoneNumber AS Phone, PhoneNumber
+                    FROM tblSupplier ORDER BY SupplierName ASC";
                 try
                 {
-                    return connection.Query<Models.Supplier>(sql);
+                    return connection.Query<Models.Partner>(sql);
                 }
                 catch
                 {
@@ -766,7 +838,7 @@ namespace Porjai20.Services
                             ContactPerson TEXT,
                             PhoneNumber TEXT
                         );");
-                    return connection.Query<Models.Supplier>(sql);
+                    return connection.Query<Models.Partner>(sql);
                 }
             }
         }
@@ -1393,6 +1465,27 @@ namespace Porjai20.Services
             }
         }
 
+        public System.Collections.Generic.IEnumerable<Models.SalesOrderItem> GetSalesOrderItems(int salesId)
+        {
+            using (var connection = GetConnection())
+            {
+                string sql = @"
+                    SELECT 
+                        d.Detail_ID AS Detail_ID, 
+                        d.Detail_ID AS Id, 
+                        d.Sales_ID, 
+                        d.Pro_ID, 
+                        COALESCE(p.Pro_Name, CAST(d.Pro_ID AS TEXT)) AS ProductName, 
+                        d.Pro_Price AS UnitPrice, 
+                        d.Sales_Qty AS Quantity, 
+                        d.Sales_Subtotal AS Total 
+                    FROM tblSalesDetail d
+                    LEFT JOIN tblProduct p ON d.Pro_ID = p.Pro_ID
+                    WHERE d.Sales_ID = @OrderId";
+                return connection.Query<Models.SalesOrderItem>(sql, new { OrderId = salesId });
+            }
+        }
+
         private int? ResolvePartnerId(IDbConnection connection, string supplierName, int partnerId = 0)
         {
             if (partnerId > 0)
@@ -1801,5 +1894,491 @@ namespace Porjai20.Services
                 connection.Execute(sql, new { Id = id });
             }
         }
+
+        #region Reports & Analytics Typed Methods
+
+        public async Task<System.Collections.Generic.IEnumerable<Models.BestSellerItem>> GetBestSellersAsync(int limit = 5)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = @"
+                    SELECT p.Pro_Name AS ProductName, SUM(d.Sales_Qty) AS TotalQuantity 
+                    FROM tblSalesDetail d 
+                    JOIN tblProduct p ON d.Pro_ID = p.Pro_ID 
+                    GROUP BY p.Pro_Name 
+                    ORDER BY TotalQuantity DESC 
+                    LIMIT @Limit";
+                return await conn.QueryAsync<Models.BestSellerItem>(sql, new { Limit = limit });
+            }
+        }
+
+        public async Task<System.Collections.Generic.IEnumerable<Models.Product>> GetDeadStockAsync(int limit = 10)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = @"
+                    SELECT Pro_ID AS Pro_ID, Pro_ID AS Id, Pro_Barcode AS Code, Pro_Name AS Name, Pro_Price AS Price, Pro_Cost AS Cost, Pro_Qty AS Stock 
+                    FROM tblProduct 
+                    WHERE Pro_Qty > 0 
+                    AND Pro_ID NOT IN (
+                        SELECT DISTINCT Pro_ID FROM tblSalesDetail
+                    )
+                    ORDER BY Pro_Qty DESC
+                    LIMIT @Limit";
+                return await conn.QueryAsync<Models.Product>(sql, new { Limit = limit });
+            }
+        }
+
+        public async Task<decimal> GetReportTotalRevenueAsync(bool isAllPeriod, object dateParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL"
+                    : "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE (Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL) AND ((Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE))";
+                var res = await conn.QueryAsync<decimal>(sql, dateParams);
+                return res.FirstOrDefault();
+            }
+        }
+
+        public async Task<decimal> GetReportTotalExpensesAsync(bool isAllPeriod, object dateParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense"
+                    : "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
+                var res = await conn.QueryAsync<decimal>(sql, dateParams);
+                return res.FirstOrDefault();
+            }
+        }
+
+        public async Task<(IEnumerable<Models.ReportRow> Rows, int TotalCount, decimal TotalAmount, string SummaryText)> GetReportDataAsync(string reportType, bool isAllPeriod, object dateParams, DateTime start, DateTime end)
+        {
+            using (var conn = GetConnection())
+            {
+                IEnumerable<Models.ReportRow> rows = new List<Models.ReportRow>();
+                int totalCount = 0;
+                decimal totalAmount = 0;
+                string summaryText = string.Empty;
+
+                switch (reportType)
+                {
+                    case "รายงานข้อมูลพนักงาน":
+                        var staff = await conn.QueryAsync("SELECT CAST(Emp_ID AS TEXT) as col1, Emp_Username as col2, Emp_Role as col3, Emp_Tel as col4, '' as col5 FROM tblEmployee ORDER BY Emp_Username");
+                        rows = staff.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4 ?? "-", Col5 = r.col5 }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = $"จำนวนพนักงานทั้งหมด: {totalCount} คน";
+                        break;
+
+                    case "รายงานข้อมูลลูกค้า":
+                        var customers = await conn.QueryAsync("SELECT Cus_Name as col1, Cus_Tel as col2, Cus_Address as col3 FROM tblCustomer ORDER BY Cus_Name");
+                        rows = customers.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3 }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = $"จำนวนลูกค้าทั้งหมด: {totalCount} ราย";
+                        break;
+
+                    case "รายงานข้อมูลสินค้า":
+                        var products = await conn.QueryAsync("SELECT Pro_Name as col1, CAST(Pro_Price as TEXT) as col2, CAST(Pro_Qty as TEXT) as col3, Pro_Category as col4 FROM tblProduct ORDER BY Pro_Name");
+                        rows = products.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4 }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = $"จำนวนสินค้าทั้งหมด: {totalCount} รายการ";
+                        break;
+
+                    case "รายงานข้อมูลบริษัทคู่ค้า":
+                        var partners = await conn.QueryAsync("SELECT Partner_Name as col1, Partner_Contact as col2, Partner_Tel as col3, Partner_Address as col4 FROM tblPartner ORDER BY Partner_Name");
+                        rows = partners.Select(r => new Models.ReportRow { Col1 = r.col1 ?? "-", Col2 = r.col2 ?? "-", Col3 = r.col3 ?? "-", Col4 = r.col4 ?? "-" }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = $"จำนวนบริษัทคู่ค้าทั้งหมด: {totalCount} บริษัท";
+                        break;
+
+                    case "รายงานข้อมูลประเภทสินค้า":
+                        var prods = await conn.QueryAsync("SELECT CAST(p.Pro_ID as TEXT) as col1, p.Pro_Category as col2, p.Pro_Name as col3, COALESCE(p.Pro_Image, '-') as col4 FROM tblProduct p ORDER BY p.Pro_Category, p.Pro_Name");
+                        rows = prods.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2 ?? "-", Col3 = r.col3 ?? "-", Col4 = r.col4 ?? "-" }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = $"จำนวนสินค้าทั้งหมด: {totalCount} รายการ";
+                        break;
+
+                    case "รายงานข้อมูลการสั่งซื้อสินค้า":
+                        string sqlPO = isAllPeriod
+                            ? "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H ORDER BY PO_Date DESC"
+                            : "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H WHERE (PO_Date >= @S AND PO_Date <= @E) OR (PO_Date >= @S_BE AND PO_Date <= @E_BE) ORDER BY PO_Date DESC";
+                        var pos = await conn.QueryAsync(sqlPO, dateParams);
+                        rows = pos.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = "-", Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = isAllPeriod ? $"จำนวนใบสั่งซื้อทั้งหมด: {totalCount} ใบ" : $"จำนวนใบสั่งซื้อ: {totalCount} ใบ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
+                        break;
+
+                    case "รายงานข้อมูลการรับเข้าสินค้า":
+                        string sqlStockIn = isAllPeriod
+                            ? "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H ORDER BY StockIn_Date DESC"
+                            : "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H WHERE (StockIn_Date >= @S AND StockIn_Date <= @E) OR (StockIn_Date >= @S_BE AND StockIn_Date <= @E_BE) ORDER BY StockIn_Date DESC";
+                        var stockIns = await conn.QueryAsync(sqlStockIn, dateParams);
+                        rows = stockIns.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2 ?? "-", Col3 = "-", Col4 = "-", Col5 = r.col5 }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = isAllPeriod ? $"จำนวนรายการรับเข้าทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการรับเข้า: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
+                        break;
+
+                    case "รายงานข้อมูลการขายหน้าร้าน":
+                        string sqlSales = isAllPeriod
+                            ? "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H ORDER BY Sales_Date DESC"
+                            : "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H WHERE (Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE) ORDER BY Sales_Date DESC";
+                        var sales = await conn.QueryAsync(sqlSales, dateParams);
+                        rows = sales.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 }).ToList();
+                        totalCount = rows.Count();
+                        totalAmount = rows.Sum(r => { decimal.TryParse(r.Col2, out decimal v); return v; });
+                        summaryText = isAllPeriod ? $"จำนวนบิลทั้งหมด: {totalCount} ใบ  |  ยอดขายรวม: {totalAmount:N2} บาท" : $"จำนวนบิล: {totalCount} ใบ  |  ยอดขายรวม: {totalAmount:N2} บาท  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
+                        break;
+
+                    case "รายงานข้อมูลรายรับ-รายจ่าย":
+                        string sqlSalesInc = isAllPeriod
+                            ? "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H"
+                            : "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H WHERE (Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE)";
+                        string sqlExpRows = isAllPeriod
+                            ? "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense"
+                            : "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
+                        var salesInc = (await conn.QueryAsync(sqlSalesInc, dateParams)).ToList();
+                        var expRows = (await conn.QueryAsync(sqlExpRows, dateParams)).ToList();
+                        rows = salesInc.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 })
+                               .Concat(expRows.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 })).ToList();
+                        var incSum = salesInc.Sum(r => { decimal.TryParse((string)r.col3, out decimal v); return v; });
+                        var expSum = expRows.Sum(r => { decimal.TryParse((string)r.col3, out decimal v); return v; });
+                        summaryText = $"รายรับ: {incSum:N2} บาท  |  รายจ่าย: {expSum:N2} บาท  |  กำไรสุทธิ: {(incSum - expSum):N2} บาท";
+                        break;
+
+                    case "รายงานข้อมูลการจัดส่งสินค้า":
+                        var deliveries = await conn.QueryAsync("SELECT Tracking_No as col1, Recipient_Name as col2, Recipient_Tel as col3, Delivery_Status as col4 FROM tblDelivery");
+                        rows = deliveries.Select(r => new Models.ReportRow { Col1 = r.col1 ?? "-", Col2 = r.col2 ?? "-", Col3 = r.col3 ?? "-", Col4 = r.col4 ?? "-", Col5 = "-" }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = isAllPeriod ? $"จำนวนรายการจัดส่งทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการจัดส่ง: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
+                        break;
+
+                    case "รายงานข้อมูลการเคลม":
+                        string sqlClaims = isAllPeriod
+                            ? @"SELECT CAST(c.Claim_ID as TEXT) as col1, 
+                                       (p.Pro_Name || ' / ' || COALESCE(c.Claim_Reason, 'ไม่ระบุสาเหตุ')) as col2, 
+                                       c.Claim_Status as col3, 
+                                       COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') as col4, 
+                                       c.Claim_Date as col5 
+                                FROM tblClaim c 
+                                LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID 
+                                ORDER BY c.Claim_ID DESC"
+                            : @"SELECT CAST(c.Claim_ID as TEXT) as col1, 
+                                       (p.Pro_Name || ' / ' || COALESCE(c.Claim_Reason, 'ไม่ระบุสาเหตุ')) as col2, 
+                                       c.Claim_Status as col3, 
+                                       COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') as col4, 
+                                       c.Claim_Date as col5 
+                                FROM tblClaim c 
+                                LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID 
+                                WHERE (c.Claim_Date >= @S AND c.Claim_Date <= @E) OR (c.Claim_Date >= @S_BE AND c.Claim_Date <= @E_BE) 
+                                 ORDER BY c.Claim_ID DESC";
+                        var claims = await conn.QueryAsync(sqlClaims, dateParams);
+                        rows = claims.Select(r => new Models.ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 }).ToList();
+                        totalCount = rows.Count();
+                        summaryText = isAllPeriod ? $"จำนวนรายการเคลมสินค้าทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการเคลมสินค้า: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
+                        break;
+
+                    default:
+                        summaryText = "กรุณาเลือกประเภทรายงาน";
+                        break;
+                }
+
+                return (rows, totalCount, totalAmount, summaryText);
+            }
+        }
+
+        // --- Chart Report Methods ---
+        public async Task<List<(string Name, string Tel, decimal Total, int Count)>> GetTopCustomerSpendersReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
+                               COALESCE(c.Cus_Tel, '-') as Tel, 
+                               COALESCE(SUM(s.Sales_Total), 0) as Total, 
+                               COUNT(s.Sales_ID) as Count
+                        FROM tblSales_H s
+                        LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                        GROUP BY s.Cus_ID
+                        ORDER BY Total DESC
+                        LIMIT 7"
+                    : @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
+                               COALESCE(c.Cus_Tel, '-') as Tel, 
+                               COALESCE(SUM(s.Sales_Total), 0) as Total, 
+                               COUNT(s.Sales_ID) as Count
+                        FROM tblSales_H s
+                        LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                        WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
+                        GROUP BY s.Cus_ID
+                        ORDER BY Total DESC
+                        LIMIT 7";
+                var res = await conn.QueryAsync<(string Name, string Tel, decimal Total, int Count)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Username, string Role, decimal Total, int Count)>> GetStaffPerformanceReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT e.Emp_Username as Username, 
+                               COALESCE(e.Emp_Role, 'พนักงาน') as Role, 
+                               COALESCE(SUM(s.Sales_Total), 0) as Total, 
+                               COUNT(s.Sales_ID) as Count
+                        FROM tblEmployee e
+                        LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID
+                        GROUP BY e.Emp_ID
+                        ORDER BY Total DESC"
+                    : @"SELECT e.Emp_Username as Username, 
+                               COALESCE(e.Emp_Role, 'พนักงาน') as Role, 
+                               COALESCE(SUM(s.Sales_Total), 0) as Total, 
+                               COUNT(s.Sales_ID) as Count
+                        FROM tblEmployee e
+                        LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID AND ((s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE))
+                        GROUP BY e.Emp_ID
+                        ORDER BY Total DESC";
+                var res = await conn.QueryAsync<(string Username, string Role, decimal Total, int Count)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Name, int Qty, decimal Total)>> GetBestSellingProductsReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT p.Pro_Name as Name, 
+                               COALESCE(SUM(d.Sales_Qty), 0) as Qty, 
+                               COALESCE(SUM(d.Sales_Subtotal), 0) as Total
+                        FROM tblProduct p
+                        JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
+                        JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                        GROUP BY p.Pro_ID
+                        ORDER BY Qty DESC
+                        LIMIT 5"
+                    : @"SELECT p.Pro_Name as Name, 
+                               COALESCE(SUM(d.Sales_Qty), 0) as Qty, 
+                               COALESCE(SUM(d.Sales_Subtotal), 0) as Total
+                        FROM tblProduct p
+                        JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
+                        JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                        WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
+                        GROUP BY p.Pro_ID
+                        ORDER BY Qty DESC
+                        LIMIT 5";
+                var res = await conn.QueryAsync<(string Name, int Qty, decimal Total)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Name, decimal Total, int Count)>> GetSupplierOrderVolumeReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT COALESCE(p.Partner_Name, 'ซัพพลายเออร์ทั่วไป') as Name, 
+                               COALESCE(SUM(po.PO_Total), 0) as Total, 
+                               COUNT(po.PO_ID) as Count
+                        FROM tblPartner p
+                        LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID
+                        GROUP BY p.Partner_ID
+                        ORDER BY Total DESC"
+                    : @"SELECT COALESCE(p.Partner_Name, 'ซัพพลายเออร์ทั่วไป') as Name, 
+                               COALESCE(SUM(po.PO_Total), 0) as Total, 
+                               COUNT(po.PO_ID) as Count
+                        FROM tblPartner p
+                        LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID AND ((po.PO_Date >= @startStr AND po.PO_Date <= @endStr) OR (po.PO_Date >= @startStrBE AND po.PO_Date <= @endStrBE))
+                        GROUP BY p.Partner_ID
+                        ORDER BY Total DESC";
+                var res = await conn.QueryAsync<(string Name, decimal Total, int Count)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Category, decimal Total)>> GetCategorySalesDistributionReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT COALESCE(p.Pro_Category, 'ทั่วไป') as Category, 
+                               COALESCE(SUM(d.Sales_Subtotal), 0) as Total
+                        FROM tblProduct p
+                        JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
+                        JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                        GROUP BY p.Pro_Category
+                        ORDER BY Total DESC"
+                    : @"SELECT COALESCE(p.Pro_Category, 'ทั่วไป') as Category, 
+                               COALESCE(SUM(d.Sales_Subtotal), 0) as Total
+                        FROM tblProduct p
+                        JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
+                        JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                        WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
+                        GROUP BY p.Pro_Category
+                        ORDER BY Total DESC";
+                var res = await conn.QueryAsync<(string Category, decimal Total)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Status, int Count, decimal Total)>> GetPurchaseOrderStatusReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT COALESCE(PO_Status, 'รอดำเนินการ') as Status, 
+                               COUNT(PO_ID) as Count, 
+                               COALESCE(SUM(PO_Total), 0) as Total
+                        FROM tblPO_H
+                        GROUP BY PO_Status
+                        ORDER BY Count DESC"
+                    : @"SELECT COALESCE(PO_Status, 'รอดำเนินการ') as Status, 
+                               COUNT(PO_ID) as Count, 
+                               COALESCE(SUM(PO_Total), 0) as Total
+                        FROM tblPO_H
+                        WHERE (PO_Date >= @startStr AND PO_Date <= @endStr) OR (PO_Date >= @startStrBE AND PO_Date <= @endStrBE)
+                        GROUP BY PO_Status
+                        ORDER BY Count DESC";
+                var res = await conn.QueryAsync<(string Status, int Count, decimal Total)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Date, int Qty)>> GetStockInDailyReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT SUBSTR(h.StockIn_Date, 1, 10) as Date, 
+                               COALESCE(SUM(d.StockIn_Qty), 0) as Qty
+                        FROM tblStockIn_H h
+                        JOIN tblStockInDetail d ON h.StockIn_ID = d.StockIn_ID
+                        GROUP BY SUBSTR(h.StockIn_Date, 1, 10)
+                        ORDER BY Date DESC
+                        LIMIT 10"
+                    : @"SELECT SUBSTR(h.StockIn_Date, 1, 10) as Date, 
+                               COALESCE(SUM(d.StockIn_Qty), 0) as Qty
+                        FROM tblStockIn_H h
+                        JOIN tblStockInDetail d ON h.StockIn_ID = d.StockIn_ID
+                        WHERE (h.StockIn_Date >= @startStr AND h.StockIn_Date <= @endStr) OR (h.StockIn_Date >= @startStrBE AND h.StockIn_Date <= @endStrBE)
+                        GROUP BY SUBSTR(h.StockIn_Date, 1, 10)
+                        ORDER BY Date DESC
+                        LIMIT 10";
+                var res = await conn.QueryAsync<(string Date, int Qty)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Date, decimal Total, int Count)>> GetDailySalesTrendReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT SUBSTR(Sales_Date, 1, 10) as Date, 
+                               SUM(Sales_Total) as Total, 
+                               COUNT(Sales_ID) as Count
+                        FROM tblSales_H
+                        GROUP BY SUBSTR(Sales_Date, 1, 10)
+                        ORDER BY Date DESC
+                        LIMIT 10"
+                    : @"SELECT SUBSTR(Sales_Date, 1, 10) as Date, 
+                               SUM(Sales_Total) as Total, 
+                               COUNT(Sales_ID) as Count
+                        FROM tblSales_H
+                        WHERE (Sales_Date >= @startStr AND Sales_Date <= @endStr) OR (Sales_Date >= @startStrBE AND Sales_Date <= @endStrBE)
+                        GROUP BY SUBSTR(Sales_Date, 1, 10)
+                        ORDER BY Date DESC
+                        LIMIT 10";
+                var res = await conn.QueryAsync<(string Date, decimal Total, int Count)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Reason, int Count)>> GetClaimReasonDistributionReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT COALESCE(Claim_Reason, 'ไม่ระบุสาเหตุ') as Reason, 
+                               COUNT(Claim_ID) as Count
+                        FROM tblClaim
+                        GROUP BY Claim_Reason
+                        ORDER BY Count DESC"
+                    : @"SELECT COALESCE(Claim_Reason, 'ไม่ระบุสาเหตุ') as Reason, 
+                               COUNT(Claim_ID) as Count
+                        FROM tblClaim
+                        WHERE (Claim_Date >= @startStr AND Claim_Date <= @endStr) OR (Claim_Date >= @startStrBE AND Claim_Date <= @endStrBE)
+                        GROUP BY Claim_Reason
+                        ORDER BY Count DESC";
+                var res = await conn.QueryAsync<(string Reason, int Count)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<List<(string Date, int Count)>> GetDailyDeliveryReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = isAllPeriod
+                    ? @"SELECT SUBSTR(s.Sales_Date, 1, 10) as Date, 
+                               COUNT(d.Delivery_ID) as Count
+                        FROM tblDelivery d
+                        JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                        WHERE d.Delivery_Status = 'จัดส่งสำเร็จ' OR d.Delivery_Status = 'สำเร็จ' OR d.Delivery_Status IS NOT NULL
+                        GROUP BY SUBSTR(s.Sales_Date, 1, 10)
+                        ORDER BY Date DESC
+                        LIMIT 10"
+                    : @"SELECT SUBSTR(s.Sales_Date, 1, 10) as Date, 
+                               COUNT(d.Delivery_ID) as Count
+                        FROM tblDelivery d
+                        JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
+                        WHERE (d.Delivery_Status = 'จัดส่งสำเร็จ' OR d.Delivery_Status = 'สำเร็จ' OR d.Delivery_Status IS NOT NULL)
+                          AND ((s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE))
+                        GROUP BY SUBSTR(s.Sales_Date, 1, 10)
+                        ORDER BY Date DESC
+                        LIMIT 10";
+                var res = await conn.QueryAsync<(string Date, int Count)>(sql, chartParams);
+                return res.ToList();
+            }
+        }
+
+        public async Task<(List<(string Month, decimal Total)> Revenue, List<(string Month, decimal Total)> Expenses)> GetMonthlyIncomeExpenseReportAsync(bool isAllPeriod, object chartParams)
+        {
+            using (var conn = GetConnection())
+            {
+                string sqlMonthlyRev = isAllPeriod
+                    ? @"SELECT SUBSTR(Sales_Date, 1, 7) as Month, SUM(Sales_Total) as Total
+                        FROM tblSales_H
+                        GROUP BY SUBSTR(Sales_Date, 1, 7)
+                        ORDER BY Month DESC
+                        LIMIT 12"
+                    : @"SELECT SUBSTR(Sales_Date, 1, 7) as Month, SUM(Sales_Total) as Total
+                        FROM tblSales_H
+                        WHERE (Sales_Date >= @startStr AND Sales_Date <= @endStr) OR (Sales_Date >= @startStrBE AND Sales_Date <= @endStrBE)
+                        GROUP BY SUBSTR(Sales_Date, 1, 7)
+                        ORDER BY Month DESC
+                        LIMIT 12";
+
+                string sqlMonthlyExp = isAllPeriod
+                    ? @"SELECT SUBSTR(Expense_Date, 1, 7) as Month, SUM(Expense_Amount) as Total
+                        FROM tblExpense
+                        GROUP BY SUBSTR(Expense_Date, 1, 7)
+                        ORDER BY Month DESC
+                        LIMIT 12"
+                    : @"SELECT SUBSTR(Expense_Date, 1, 7) as Month, SUM(Expense_Amount) as Total
+                        FROM tblExpense
+                        WHERE (Expense_Date >= @startStr AND Expense_Date <= @endStr) OR (Expense_Date >= @startStrBE AND Expense_Date <= @endStrBE)
+                        GROUP BY SUBSTR(Expense_Date, 1, 7)
+                        ORDER BY Month DESC
+                        LIMIT 12";
+
+                var revRaw = await conn.QueryAsync<(string Month, decimal Total)>(sqlMonthlyRev, chartParams);
+                var expRaw = await conn.QueryAsync<(string Month, decimal Total)>(sqlMonthlyExp, chartParams);
+
+                return (revRaw.ToList(), expRaw.ToList());
+            }
+        }
+
+        #endregion
     }
 }

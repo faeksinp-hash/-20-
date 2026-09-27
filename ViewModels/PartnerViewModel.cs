@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using Dapper;
 using Porjai20.Models;
 using Porjai20.Services;
 using Porjai20.Views;

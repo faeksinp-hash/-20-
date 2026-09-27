@@ -812,22 +812,16 @@ namespace Porjai20.ViewModels
         {
             try
             {
-                using (var conn = _databaseService.GetConnection())
+                var results = await _databaseService.GetCustomersForPosAsync();
+                _allCustomers = results.ToList();
+                CustomerList.Clear();
+                foreach (var c in _allCustomers)
                 {
-                    string sql = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, 
-                                          Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
-                                   FROM tblCustomer";
-                    var results = await conn.QueryAsync<Customer>(sql);
-                    _allCustomers = results.ToList();
-                    CustomerList.Clear();
-                    foreach (var c in _allCustomers)
-                    {
-                        CustomerList.Add(c);
-                    }
-                    OnPropertyChanged(nameof(CustomerList));
-                    OnPropertyChanged(nameof(FilteredCustomerList));
-                    OnPropertyChanged(nameof(CustomerSearchResults));
+                    CustomerList.Add(c);
                 }
+                OnPropertyChanged(nameof(CustomerList));
+                OnPropertyChanged(nameof(FilteredCustomerList));
+                OnPropertyChanged(nameof(CustomerSearchResults));
             }
             catch (Exception ex)
             {
@@ -944,30 +938,24 @@ namespace Porjai20.ViewModels
 
             try
             {
-                using (var conn = _databaseService.GetConnection())
+                var results = await _databaseService.GetCustomersForPosAsync();
+                _allCustomers = results.ToList();
+
+                var kw = keyword.Trim().ToLower();
+                var matches = _allCustomers.Where(c => 
+                    (!string.IsNullOrEmpty(c.Phone) && c.Phone.ToLower().Contains(kw)) ||
+                    (!string.IsNullOrEmpty(c.Name) && c.Name.ToLower().Contains(kw)) ||
+                    (!string.IsNullOrEmpty(c.Code) && c.Code.ToLower().Contains(kw))
+                ).ToList();
+
+                FilteredCustomers.Clear();
+                foreach (var c in matches)
                 {
-                    string sql = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, 
-                                          Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
-                                   FROM tblCustomer";
-                    var results = await conn.QueryAsync<Customer>(sql);
-                    _allCustomers = results.ToList();
-
-                    var kw = keyword.Trim().ToLower();
-                    var matches = _allCustomers.Where(c => 
-                        (!string.IsNullOrEmpty(c.Phone) && c.Phone.ToLower().Contains(kw)) ||
-                        (!string.IsNullOrEmpty(c.Name) && c.Name.ToLower().Contains(kw)) ||
-                        (!string.IsNullOrEmpty(c.Code) && c.Code.ToLower().Contains(kw))
-                    ).ToList();
-
-                    FilteredCustomers.Clear();
-                    foreach (var c in matches)
-                    {
-                        FilteredCustomers.Add(c);
-                    }
-
-                    IsCustomerSearchOpen = FilteredCustomers.Any() && !string.IsNullOrWhiteSpace(keyword);
-                    OnPropertyChanged(nameof(CustomerSearchResults));
+                    FilteredCustomers.Add(c);
                 }
+
+                IsCustomerSearchOpen = FilteredCustomers.Any() && !string.IsNullOrWhiteSpace(keyword);
+                OnPropertyChanged(nameof(CustomerSearchResults));
             }
             catch (Exception ex)
             {

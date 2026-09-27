@@ -3377,8 +3377,8 @@ namespace Porjai20.ViewModels
             }
         }
 
-        private Supplier? _selectedSupplier;
-        public Supplier? SelectedSupplier
+        private Partner? _selectedSupplier;
+        public Partner? SelectedSupplier
         {
             get => _selectedSupplier;
             set
@@ -3421,8 +3421,8 @@ namespace Porjai20.ViewModels
             }
         }
 
-        private ObservableCollection<Supplier> _suppliersList = new ObservableCollection<Supplier>();
-        public ObservableCollection<Supplier> SuppliersList => _suppliersList;
+        private ObservableCollection<Partner> _suppliersList = new ObservableCollection<Partner>();
+        public ObservableCollection<Partner> SuppliersList => _suppliersList;
 
         public async Task LoadSuppliersAsync()
         {
@@ -5585,37 +5585,15 @@ namespace Porjai20.ViewModels
         {
             // 1. Total Inventory Value & Cost
             ReportTotalValue = _allProducts.Sum(p => p.Price * p.Stock);
-            ReportTotalCost = _allProducts.Sum(p => p.Cost * p.Stock); // Assuming 'Cost' property exists on Product
+            ReportTotalCost = _allProducts.Sum(p => p.Cost * p.Stock);
 
-            using (var conn = _databaseService.GetConnection())
-            {
-                // 2. Best Sellers (Top 5 by Quantity Sold)
-                // Assuming 'SALE-%' RefNo pattern for sales
-                string sqlBestSellers = @"
-                    SELECT p.Pro_Name AS ProductName, SUM(d.Sales_Qty) AS TotalQuantity 
-                    FROM tblSalesDetail d 
-                    JOIN tblProduct p ON d.Pro_ID = p.Pro_ID 
-                    GROUP BY p.Pro_Name 
-                    ORDER BY TotalQuantity DESC 
-                    LIMIT 5";
-                
-                var bestSellers = await conn.QueryAsync<BestSellerItem>(sqlBestSellers);
-                ReportBestSellers.Clear();
-                foreach (var item in bestSellers) ReportBestSellers.Add(item);
+            var bestSellers = await _databaseService.GetBestSellersAsync(5);
+            ReportBestSellers.Clear();
+            foreach (var item in bestSellers) ReportBestSellers.Add(item);
 
-                string sqlDeadStock = @"
-                    SELECT Pro_ID AS Pro_ID, Pro_ID AS Id, Pro_Barcode AS Code, Pro_Name AS Name, Pro_Price AS Price, Pro_Cost AS Cost, Pro_Qty AS Stock FROM tblProduct 
-                    WHERE Pro_Qty > 0 
-                    AND Pro_ID NOT IN (
-                        SELECT DISTINCT Pro_ID FROM tblSalesDetail
-                    )
-                    ORDER BY Pro_Qty DESC
-                    LIMIT 10";
-
-                var deadStock = await conn.QueryAsync<Product>(sqlDeadStock);
-                ReportDeadStock.Clear();
-                foreach (var item in deadStock) ReportDeadStock.Add(item);
-            }
+            var deadStock = await _databaseService.GetDeadStockAsync(10);
+            ReportDeadStock.Clear();
+            foreach (var item in deadStock) ReportDeadStock.Add(item);
         }
 
         private void ApplyPeriodFilter()
@@ -5648,7 +5626,7 @@ namespace Porjai20.ViewModels
             }
         }
 
-        private void RenderReportCharts(string reportType, List<ReportRow> rows, bool isAllPeriod, DateTime start, DateTime end)
+        private async Task RenderReportChartsAsync(string reportType, List<ReportRow> rows, bool isAllPeriod, DateTime start, DateTime end)
         {
             var newCartesianSeries = new SeriesCollection();
             var newPieSeries = new SeriesCollection();
@@ -5670,682 +5648,478 @@ namespace Porjai20.ViewModels
 
             try
             {
-                using (var conn = _databaseService.GetConnection())
+                switch (reportType)
                 {
-                    switch (reportType)
-                    {
-                        case "รายงานข้อมูลลูกค้า":
-                            chartTitle = "📊 ลูกค้าที่มียอดซื้อสะสมสูงสุด (Top Customer Spenders)";
-                            displayMode = 0;
-                            summaryTitle = "👥 สรุปรายชื่อลูกค้ายอดซื้อสูงสุด";
-                            newFormatter = val => val.ToString("N0");
+                    case "รายงานข้อมูลลูกค้า":
+                        chartTitle = "📊 ลูกค้าที่มียอดซื้อสะสมสูงสุด (Top Customer Spenders)";
+                        displayMode = 0;
+                        summaryTitle = "👥 สรุปรายชื่อลูกค้ายอดซื้อสูงสุด";
+                        newFormatter = val => val.ToString("N0");
 
-                            string sqlCust = isAllPeriod
-                                ? @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
-                                           COALESCE(c.Cus_Tel, '-') as Tel, 
-                                           COALESCE(SUM(s.Sales_Total), 0) as Total, 
-                                           COUNT(s.Sales_ID) as Count
-                                    FROM tblSales_H s
-                                    LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
-                                    GROUP BY s.Cus_ID
-                                    ORDER BY Total DESC
-                                    LIMIT 7"
-                                : @"SELECT COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') as Name, 
-                                           COALESCE(c.Cus_Tel, '-') as Tel, 
-                                           COALESCE(SUM(s.Sales_Total), 0) as Total, 
-                                           COUNT(s.Sales_ID) as Count
-                                    FROM tblSales_H s
-                                    LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
-                                    WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
-                                    GROUP BY s.Cus_ID
-                                    ORDER BY Total DESC
-                                    LIMIT 7";
-
-                            var topCustomers = conn.Query<(string Name, string Tel, decimal Total, int Count)>(sqlCust, chartParams).ToList();
-                            if (topCustomers.Any())
+                        var topCustomers = await _databaseService.GetTopCustomerSpendersReportAsync(isAllPeriod, chartParams);
+                        if (topCustomers.Any())
+                        {
+                            var values = new ChartValues<double>();
+                            int rank = 1;
+                            foreach (var item in topCustomers)
                             {
-                                var values = new ChartValues<double>();
-                                int rank = 1;
-                                foreach (var item in topCustomers)
+                                newLabels.Add(item.Name);
+                                values.Add((double)item.Total);
+                                newSummary.Add(new ReportSummaryItem
                                 {
-                                    newLabels.Add(item.Name);
-                                    values.Add((double)item.Total);
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Name,
-                                        Subtitle = $"ซื้อ {item.Count} บิล | โทร: {item.Tel}",
-                                        ValueText = $"{item.Total:N2}",
-                                        Tag = "ลูกค้ายอดซื้อสูงสุด",
-                                        Color = "#0284C7"
-                                    });
-                                }
-
-                                newCartesianSeries.Add(new ColumnSeries
-                                {
-                                    Title = "ยอดซื้อสะสม (บาท)",
-                                    Values = values,
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
-                                    MaxColumnWidth = 36
+                                    Rank = rank++,
+                                    Title = item.Name,
+                                    Subtitle = $"ซื้อ {item.Count} บิล | โทร: {item.Tel}",
+                                    ValueText = $"{item.Total:N2}",
+                                    Tag = "ลูกค้ายอดซื้อสูงสุด",
+                                    Color = "#0284C7"
                                 });
-                            }
-                            totalCountText = $"ลูกค้ายอดซื้อสูงสุด {newSummary.Count} ราย";
-                            break;
-
-                        case "รายงานข้อมูลพนักงาน":
-                            chartTitle = "📊 ยอดขายต่อคน เทียบผลงานบุคคล (Staff Performance)";
-                            displayMode = 0;
-                            summaryTitle = "🧑‍💼 สรุปพนักงานยอดขายสูงสุด";
-                            newFormatter = val => val.ToString("N0");
-
-                            string sqlStaff = isAllPeriod
-                                ? @"SELECT e.Emp_Username as Username, 
-                                           COALESCE(e.Emp_Role, 'พนักงาน') as Role, 
-                                           COALESCE(SUM(s.Sales_Total), 0) as Total, 
-                                           COUNT(s.Sales_ID) as Count
-                                    FROM tblEmployee e
-                                    LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID
-                                    GROUP BY e.Emp_ID
-                                    ORDER BY Total DESC"
-                                : @"SELECT e.Emp_Username as Username, 
-                                           COALESCE(e.Emp_Role, 'พนักงาน') as Role, 
-                                           COALESCE(SUM(s.Sales_Total), 0) as Total, 
-                                           COUNT(s.Sales_ID) as Count
-                                    FROM tblEmployee e
-                                    LEFT JOIN tblSales_H s ON e.Emp_ID = s.Emp_ID AND ((s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE))
-                                    GROUP BY e.Emp_ID
-                                    ORDER BY Total DESC";
-
-                            var staffSales = conn.Query<(string Username, string Role, decimal Total, int Count)>(sqlStaff, chartParams).ToList();
-                            if (staffSales.Any())
-                            {
-                                var values = new ChartValues<double>();
-                                int rank = 1;
-                                foreach (var item in staffSales)
-                                {
-                                    newLabels.Add(item.Username);
-                                    values.Add((double)item.Total);
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Username,
-                                        Subtitle = $"{item.Role} | {item.Count} บิลที่ขายได้",
-                                        ValueText = $"{item.Total:N2}",
-                                        Tag = "พนักงานขายยอดเยี่ยม",
-                                        Color = "#10B981"
-                                    });
-                                }
-
-                                newCartesianSeries.Add(new ColumnSeries
-                                {
-                                    Title = "ยอดขายรวม (บาท)",
-                                    Values = values,
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#10B981"),
-                                    MaxColumnWidth = 36
-                                });
-                            }
-                            totalCountText = $"จำนวนพนักงานทั้งหมด {newSummary.Count} คน";
-                            break;
-
-                        case "รายงานข้อมูลสินค้า":
-                            chartTitle = "📊 สินค้าขายดี 5 อันดับแรก (Top 5 Best Sellers)";
-                            displayMode = 0;
-                            summaryTitle = "📦 สรุปสินค้าขายดีที่สุด";
-
-                            string sqlProd = isAllPeriod
-                                ? @"SELECT p.Pro_Name as Name, 
-                                           COALESCE(SUM(d.Sales_Qty), 0) as Qty, 
-                                           COALESCE(SUM(d.Sales_Subtotal), 0) as Total
-                                    FROM tblProduct p
-                                    JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
-                                    JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    GROUP BY p.Pro_ID
-                                    ORDER BY Qty DESC
-                                    LIMIT 5"
-                                : @"SELECT p.Pro_Name as Name, 
-                                           COALESCE(SUM(d.Sales_Qty), 0) as Qty, 
-                                           COALESCE(SUM(d.Sales_Subtotal), 0) as Total
-                                    FROM tblProduct p
-                                    JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
-                                    JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
-                                    GROUP BY p.Pro_ID
-                                    ORDER BY Qty DESC
-                                    LIMIT 5";
-
-                            var bestSelling = conn.Query<(string Name, int Qty, decimal Total)>(sqlProd, chartParams).ToList();
-                            if (bestSelling.Any())
-                            {
-                                var values = new ChartValues<double>();
-                                int rank = 1;
-                                foreach (var item in bestSelling)
-                                {
-                                    newLabels.Add(item.Name);
-                                    values.Add(item.Qty);
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Name,
-                                        Subtitle = $"ยอดขายรวม {item.Total:N2}",
-                                        ValueText = $"{item.Qty} ชิ้น",
-                                        Tag = $"อันดับที่ {rank - 1}",
-                                        Color = "#0EA5E9"
-                                    });
-                                }
-
-                                newCartesianSeries.Add(new ColumnSeries
-                                {
-                                    Title = "จำนวนชิ้นที่ขายได้ (ชิ้น)",
-                                    Values = values,
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0EA5E9"),
-                                    MaxColumnWidth = 36
-                                });
-                            }
-                            totalCountText = $"แสดงสินค้าขายดี {newSummary.Count} อันดับแรก";
-                            break;
-
-                        case "รายงานข้อมูลบริษัทคู่ค้า":
-                            chartTitle = "📊 มูลค่าการสั่งซื้อต่อคู่ค้า (Supplier Order Volume)";
-                            displayMode = 0;
-                            summaryTitle = "🏢 สรุปคู่ค้ามูลค่าสูงสุด";
-                            newFormatter = val => val.ToString("N0");
-
-                            string sqlPartner = isAllPeriod
-                                ? @"SELECT COALESCE(p.Partner_Name, 'ซัพพลายเออร์ทั่วไป') as Name, 
-                                           COALESCE(SUM(po.PO_Total), 0) as Total, 
-                                           COUNT(po.PO_ID) as Count
-                                    FROM tblPartner p
-                                    LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID
-                                    GROUP BY p.Partner_ID
-                                    ORDER BY Total DESC"
-                                : @"SELECT COALESCE(p.Partner_Name, 'ซัพพลายเออร์ทั่วไป') as Name, 
-                                           COALESCE(SUM(po.PO_Total), 0) as Total, 
-                                           COUNT(po.PO_ID) as Count
-                                    FROM tblPartner p
-                                    LEFT JOIN tblPO_H po ON p.Partner_ID = po.Partner_ID AND ((po.PO_Date >= @startStr AND po.PO_Date <= @endStr) OR (po.PO_Date >= @startStrBE AND po.PO_Date <= @endStrBE))
-                                    GROUP BY p.Partner_ID
-                                    ORDER BY Total DESC";
-
-                            var supplierPOs = conn.Query<(string Name, decimal Total, int Count)>(sqlPartner, chartParams).ToList();
-                            if (supplierPOs.Any())
-                            {
-                                var values = new ChartValues<double>();
-                                int rank = 1;
-                                foreach (var item in supplierPOs)
-                                {
-                                    newLabels.Add(item.Name);
-                                    values.Add((double)item.Total);
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Name,
-                                        Subtitle = $"สั่งซื้อ {item.Count} ใบสั่งซื้อ",
-                                        ValueText = $"{item.Total:N2}",
-                                        Tag = "คู่ค้าสำคัญ",
-                                        Color = "#0284C7"
-                                    });
-                                }
-
-                                newCartesianSeries.Add(new ColumnSeries
-                                {
-                                    Title = "มูลค่าการสั่งซื้อสะสม (บาท)",
-                                    Values = values,
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
-                                    MaxColumnWidth = 36
-                                });
-                            }
-                            totalCountText = $"จำนวนบริษัทคู่ค้า {newSummary.Count} บริษัท";
-                            break;
-
-                        case "รายงานข้อมูลประเภทสินค้า":
-                            chartTitle = "🍩 สัดส่วนยอดขายตามประเภทสินค้า (Category Share)";
-                            displayMode = 1;
-                            summaryTitle = "🏷️ สรุปสัดส่วนตามหมวดหมู่ (%)";
-
-                            string sqlCat = isAllPeriod
-                                ? @"SELECT COALESCE(p.Pro_Category, 'ทั่วไป') as Category, 
-                                           COALESCE(SUM(d.Sales_Subtotal), 0) as Total
-                                    FROM tblProduct p
-                                    JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
-                                    JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    GROUP BY p.Pro_Category
-                                    ORDER BY Total DESC"
-                                : @"SELECT COALESCE(p.Pro_Category, 'ทั่วไป') as Category, 
-                                           COALESCE(SUM(d.Sales_Subtotal), 0) as Total
-                                    FROM tblProduct p
-                                    JOIN tblSalesDetail d ON p.Pro_ID = d.Pro_ID
-                                    JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    WHERE (s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE)
-                                    GROUP BY p.Pro_Category
-                                    ORDER BY Total DESC";
-
-                            var catSales = conn.Query<(string Category, decimal Total)>(sqlCat, chartParams).ToList();
-                            if (catSales.Any())
-                            {
-                                decimal grandTotal = catSales.Sum(c => c.Total);
-                                string[] colors = { "#0284C7", "#38BDF8", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#64748B" };
-                                int rank = 1;
-                                int cIdx = 0;
-                                foreach (var item in catSales)
-                                {
-                                    string c = colors[cIdx % colors.Length];
-                                    cIdx++;
-                                    double pct = grandTotal > 0 ? (double)(item.Total / grandTotal * 100) : 0;
-
-                                    newPieSeries.Add(new PieSeries
-                                    {
-                                        Title = item.Category,
-                                        Values = new ChartValues<double> { (double)(item.Total > 0 ? item.Total : 1) },
-                                        DataLabels = true,
-                                        Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(c)
-                                    });
-
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Category,
-                                        Subtitle = $"สัดส่วน {pct:0.1f}% ของยอดรวม",
-                                        ValueText = $"{item.Total:N2}",
-                                        Tag = "หมวดหมู่",
-                                        Color = c
-                                    });
-                                }
-                            }
-                            totalCountText = $"จำนวนหมวดหมู่สินค้า {newSummary.Count} ประเภท";
-                            break;
-
-                        case "รายงานข้อมูลการสั่งซื้อสินค้า":
-                            chartTitle = "🍩 สถานะใบสั่งซื้อสินค้า (PO Status Breakdown)";
-                            displayMode = 1;
-                            summaryTitle = "📋 สรุปแยกตามสถานะใบสั่งซื้อ";
-
-                            string sqlPO = isAllPeriod
-                                ? @"SELECT COALESCE(PO_Status, 'รอดำเนินการ') as Status, 
-                                           COUNT(PO_ID) as Count, 
-                                           COALESCE(SUM(PO_Total), 0) as Total
-                                    FROM tblPO_H
-                                    GROUP BY PO_Status
-                                    ORDER BY Count DESC"
-                                : @"SELECT COALESCE(PO_Status, 'รอดำเนินการ') as Status, 
-                                           COUNT(PO_ID) as Count, 
-                                           COALESCE(SUM(PO_Total), 0) as Total
-                                    FROM tblPO_H
-                                    WHERE (PO_Date >= @startStr AND PO_Date <= @endStr) OR (PO_Date >= @startStrBE AND PO_Date <= @endStrBE)
-                                    GROUP BY PO_Status
-                                    ORDER BY Count DESC";
-
-                            var poStatus = conn.Query<(string Status, int Count, decimal Total)>(sqlPO, chartParams).ToList();
-                            if (poStatus.Any())
-                            {
-                                int rank = 1;
-                                foreach (var item in poStatus)
-                                {
-                                    string color = item.Status == "ได้รับสินค้าแล้ว" ? "#10B981" : (item.Status == "ยกเลิก" ? "#EF4444" : "#F59E0B");
-                                    newPieSeries.Add(new PieSeries
-                                    {
-                                        Title = item.Status,
-                                        Values = new ChartValues<double> { item.Count },
-                                        DataLabels = true,
-                                        Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(color)
-                                    });
-
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Status,
-                                        Subtitle = $"มูลค่ารวม {item.Total:N2}",
-                                        ValueText = $"{item.Count} ใบ",
-                                        Tag = item.Status,
-                                        Color = color
-                                    });
-                                }
-                            }
-                            totalCountText = $"จำนวนสถานะใบสั่งซื้อทั้งหมด {newSummary.Count} กลุ่ม";
-                            break;
-
-                        case "รายงานข้อมูลการรับเข้าสินค้า":
-                            chartTitle = "📈 ปริมาณรับเข้าสินค้ารายวัน (Daily Stock Inflow)";
-                            displayMode = 0;
-                            summaryTitle = "📥 สรุปวันที่รับเข้าสินค้าสูงสุด";
-
-                            string sqlStock = isAllPeriod
-                                ? @"SELECT SUBSTR(h.StockIn_Date, 1, 10) as Date, 
-                                           COALESCE(SUM(d.StockIn_Qty), 0) as Qty
-                                    FROM tblStockIn_H h
-                                    JOIN tblStockInDetail d ON h.StockIn_ID = d.StockIn_ID
-                                    GROUP BY SUBSTR(h.StockIn_Date, 1, 10)
-                                    ORDER BY Date DESC
-                                    LIMIT 10"
-                                : @"SELECT SUBSTR(h.StockIn_Date, 1, 10) as Date, 
-                                           COALESCE(SUM(d.StockIn_Qty), 0) as Qty
-                                    FROM tblStockIn_H h
-                                    JOIN tblStockInDetail d ON h.StockIn_ID = d.StockIn_ID
-                                    WHERE (h.StockIn_Date >= @startStr AND h.StockIn_Date <= @endStr) OR (h.StockIn_Date >= @startStrBE AND h.StockIn_Date <= @endStrBE)
-                                    GROUP BY SUBSTR(h.StockIn_Date, 1, 10)
-                                    ORDER BY Date DESC
-                                    LIMIT 10";
-
-                            var stockIns = conn.Query<(string Date, int Qty)>(sqlStock, chartParams).ToList();
-                            if (stockIns.Any())
-                            {
-                                var chartList = stockIns.OrderBy(x => x.Date).ToList();
-                                var values = new ChartValues<double>();
-                                foreach (var item in chartList)
-                                {
-                                    newLabels.Add(item.Date);
-                                    values.Add(item.Qty);
-                                }
-
-                                newCartesianSeries.Add(new LineSeries
-                                {
-                                    Title = "จำนวนสินค้าที่รับเข้า (ชิ้น)",
-                                    Values = values,
-                                    PointGeometrySize = 10,
-                                    Stroke = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#200284C7")
-                                });
-
-                                var summaryList = stockIns.OrderByDescending(x => x.Qty).ToList();
-                                int rank = 1;
-                                foreach (var item in summaryList)
-                                {
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = $"วันที่ {item.Date}",
-                                        Subtitle = "ปริมาณรับเข้าสต็อกสินค้า",
-                                        ValueText = $"{item.Qty} ชิ้น",
-                                        Tag = "รับเข้าสูงสุด",
-                                        Color = "#0284C7"
-                                    });
-                                }
-                            }
-                            totalCountText = $"บันทึกการรับเข้า {newSummary.Count} วันทำการ";
-                            break;
-
-                        case "รายงานข้อมูลการขายหน้าร้าน":
-                        case "รายงานข้อมูลขายหน้าร้าน":
-                            chartTitle = "📈 แนวโน้มยอดขายหน้าร้าน (Sales Trend)";
-                            displayMode = 0;
-                            summaryTitle = "💳 สรุปวันที่ขายดีที่สุด";
-                            newFormatter = val => val.ToString("N0");
-
-                            string sqlSales = isAllPeriod
-                                ? @"SELECT SUBSTR(Sales_Date, 1, 10) as Date, 
-                                           SUM(Sales_Total) as Total, 
-                                           COUNT(Sales_ID) as Count
-                                    FROM tblSales_H
-                                    GROUP BY SUBSTR(Sales_Date, 1, 10)
-                                    ORDER BY Date DESC
-                                    LIMIT 10"
-                                : @"SELECT SUBSTR(Sales_Date, 1, 10) as Date, 
-                                           SUM(Sales_Total) as Total, 
-                                           COUNT(Sales_ID) as Count
-                                    FROM tblSales_H
-                                    WHERE (Sales_Date >= @startStr AND Sales_Date <= @endStr) OR (Sales_Date >= @startStrBE AND Sales_Date <= @endStrBE)
-                                    GROUP BY SUBSTR(Sales_Date, 1, 10)
-                                    ORDER BY Date DESC
-                                    LIMIT 10";
-
-                            var dailySales = conn.Query<(string Date, decimal Total, int Count)>(sqlSales, chartParams).ToList();
-                            if (dailySales.Any())
-                            {
-                                var chartList = dailySales.OrderBy(x => x.Date).ToList();
-                                var values = new ChartValues<double>();
-                                foreach (var item in chartList)
-                                {
-                                    newLabels.Add(item.Date);
-                                    values.Add((double)item.Total);
-                                }
-
-                                newCartesianSeries.Add(new LineSeries
-                                {
-                                    Title = "ยอดขายรายวัน (บาท)",
-                                    Values = values,
-                                    PointGeometrySize = 10,
-                                    Stroke = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#200284C7")
-                                });
-
-                                var summaryList = dailySales.OrderByDescending(x => x.Total).ToList();
-                                int rank = 1;
-                                foreach (var item in summaryList)
-                                {
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = $"วันที่ {item.Date}",
-                                        Subtitle = $"จำนวน {item.Count} ธุรกรรมบิล",
-                                        ValueText = $"{item.Total:N2}",
-                                        Tag = "ยอดขายดีเด่น",
-                                        Color = "#0284C7"
-                                    });
-                                }
-                            }
-                            totalCountText = $"สรุปยอดขาย {newSummary.Count} วันทำการ";
-                            break;
-
-                        case "รายงานข้อมูลการเคลม":
-                            chartTitle = "📊 จำนวนเคลมตามสาเหตุ (Product Claims by Reason)";
-                            displayMode = 0;
-                            summaryTitle = "⚠️ สรุปสาเหตุที่พบบ่อย";
-
-                            string sqlClaim = isAllPeriod
-                                ? @"SELECT COALESCE(Claim_Reason, 'ไม่ระบุสาเหตุ') as Reason, 
-                                           COUNT(Claim_ID) as Count
-                                    FROM tblClaim
-                                    GROUP BY Claim_Reason
-                                    ORDER BY Count DESC"
-                                : @"SELECT COALESCE(Claim_Reason, 'ไม่ระบุสาเหตุ') as Reason, 
-                                           COUNT(Claim_ID) as Count
-                                    FROM tblClaim
-                                    WHERE (Claim_Date >= @startStr AND Claim_Date <= @endStr) OR (Claim_Date >= @startStrBE AND Claim_Date <= @endStrBE)
-                                    GROUP BY Claim_Reason
-                                    ORDER BY Count DESC";
-
-                            var claimReasons = conn.Query<(string Reason, int Count)>(sqlClaim, chartParams).ToList();
-                            if (claimReasons.Any())
-                            {
-                                var values = new ChartValues<double>();
-                                int rank = 1;
-                                foreach (var item in claimReasons)
-                                {
-                                    newLabels.Add(item.Reason);
-                                    values.Add(item.Count);
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = item.Reason,
-                                        Subtitle = "สาเหตุการเคลมสินค้า",
-                                        ValueText = $"{item.Count} รายการ",
-                                        Tag = "สาเหตุเคลม",
-                                        Color = "#EF4444"
-                                    });
-                                }
-
-                                newCartesianSeries.Add(new ColumnSeries
-                                {
-                                    Title = "จำนวนการเคลม (รายการ)",
-                                    Values = values,
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#EF4444"),
-                                    MaxColumnWidth = 36
-                                });
-                            }
-                            totalCountText = $"สาเหตุการเคลมทั้งหมด {newSummary.Count} ประเภท";
-                            break;
-
-                        case "รายงานข้อมูลการจัดส่งสินค้า":
-                            chartTitle = "📈 การจัดส่งสำเร็จรายวัน (Daily Successful Deliveries)";
-                            displayMode = 0;
-                            summaryTitle = "🚚 สรุปวันที่จัดส่งมากที่สุด";
-
-                            string sqlDeliv = isAllPeriod
-                                ? @"SELECT SUBSTR(s.Sales_Date, 1, 10) as Date, 
-                                           COUNT(d.Delivery_ID) as Count
-                                    FROM tblDelivery d
-                                    JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    WHERE d.Delivery_Status = 'จัดส่งสำเร็จ' OR d.Delivery_Status = 'สำเร็จ' OR d.Delivery_Status IS NOT NULL
-                                    GROUP BY SUBSTR(s.Sales_Date, 1, 10)
-                                    ORDER BY Date DESC
-                                    LIMIT 10"
-                                : @"SELECT SUBSTR(s.Sales_Date, 1, 10) as Date, 
-                                           COUNT(d.Delivery_ID) as Count
-                                    FROM tblDelivery d
-                                    JOIN tblSales_H s ON d.Sales_ID = s.Sales_ID
-                                    WHERE (d.Delivery_Status = 'จัดส่งสำเร็จ' OR d.Delivery_Status = 'สำเร็จ' OR d.Delivery_Status IS NOT NULL)
-                                      AND ((s.Sales_Date >= @startStr AND s.Sales_Date <= @endStr) OR (s.Sales_Date >= @startStrBE AND s.Sales_Date <= @endStrBE))
-                                    GROUP BY SUBSTR(s.Sales_Date, 1, 10)
-                                    ORDER BY Date DESC
-                                    LIMIT 10";
-
-                            var deliveryDays = conn.Query<(string Date, int Count)>(sqlDeliv, chartParams).ToList();
-                            if (deliveryDays.Any())
-                            {
-                                var chartList = deliveryDays.OrderBy(x => x.Date).ToList();
-                                var values = new ChartValues<double>();
-                                foreach (var item in chartList)
-                                {
-                                    newLabels.Add(item.Date);
-                                    values.Add(item.Count);
-                                }
-
-                                newCartesianSeries.Add(new LineSeries
-                                {
-                                    Title = "จำนวนจัดส่งสำเร็จ (รายการ)",
-                                    Values = values,
-                                    PointGeometrySize = 10,
-                                    Stroke = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
-                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#200284C7")
-                                });
-
-                                var summaryList = deliveryDays.OrderByDescending(x => x.Count).ToList();
-                                int rank = 1;
-                                foreach (var item in summaryList)
-                                {
-                                    newSummary.Add(new ReportSummaryItem
-                                    {
-                                        Rank = rank++,
-                                        Title = $"วันที่ {item.Date}",
-                                        Subtitle = "จัดส่งพัสดุสำเร็จ",
-                                        ValueText = $"{item.Count} รายการ",
-                                        Tag = "จัดส่งสูงสุด",
-                                        Color = "#10B981"
-                                    });
-                                }
-                            }
-                            totalCountText = $"สถิติการจัดส่ง {newSummary.Count} วันทำการ";
-                            break;
-
-                        case "รายงานข้อมูลรายรับ-รายจ่าย":
-                            chartTitle = "📊 รายรับ vs รายจ่ายรายเดือน (Monthly Income vs Expense)";
-                            displayMode = 0;
-                            summaryTitle = "💰 สรุปกำไรสุทธิรายเดือน";
-                            newFormatter = val => val.ToString("N0");
-
-                            string sqlMonthlyRev = isAllPeriod
-                                ? @"SELECT SUBSTR(Sales_Date, 1, 7) as Month, SUM(Sales_Total) as Total
-                                    FROM tblSales_H
-                                    GROUP BY SUBSTR(Sales_Date, 1, 7)
-                                    ORDER BY Month DESC
-                                    LIMIT 12"
-                                : @"SELECT SUBSTR(Sales_Date, 1, 7) as Month, SUM(Sales_Total) as Total
-                                    FROM tblSales_H
-                                    WHERE (Sales_Date >= @startStr AND Sales_Date <= @endStr) OR (Sales_Date >= @startStrBE AND Sales_Date <= @endStrBE)
-                                    GROUP BY SUBSTR(Sales_Date, 1, 7)
-                                    ORDER BY Month DESC
-                                    LIMIT 12";
-
-                            string sqlMonthlyExp = isAllPeriod
-                                ? @"SELECT SUBSTR(Expense_Date, 1, 7) as Month, SUM(Expense_Amount) as Total
-                                    FROM tblExpense
-                                    GROUP BY SUBSTR(Expense_Date, 1, 7)
-                                    ORDER BY Month DESC
-                                    LIMIT 12"
-                                : @"SELECT SUBSTR(Expense_Date, 1, 7) as Month, SUM(Expense_Amount) as Total
-                                    FROM tblExpense
-                                    WHERE (Expense_Date >= @startStr AND Expense_Date <= @endStr) OR (Expense_Date >= @startStrBE AND Expense_Date <= @endStrBE)
-                                    GROUP BY SUBSTR(Expense_Date, 1, 7)
-                                    ORDER BY Month DESC
-                                    LIMIT 12";
-
-                            var revRaw = conn.Query<(string Month, decimal Total)>(sqlMonthlyRev, chartParams);
-                            var expRaw = conn.Query<(string Month, decimal Total)>(sqlMonthlyExp, chartParams);
-
-                            string NormalizeMonth(string m)
-                            {
-                                if (string.IsNullOrEmpty(m) || m.Length < 7) return m;
-                                if (int.TryParse(m.Substring(0, 4), out int y) && y > 2400)
-                                {
-                                    return $"{(y - 543):D4}{m.Substring(4)}";
-                                }
-                                return m;
-                            }
-
-                            var revList = revRaw
-                                .GroupBy(x => NormalizeMonth(x.Month))
-                                .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
-
-                            var expList = expRaw
-                                .GroupBy(x => NormalizeMonth(x.Month))
-                                .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
-
-                            var allMonths = revList.Keys.Union(expList.Keys).OrderBy(m => m).ToList();
-                            if (!allMonths.Any())
-                            {
-                                allMonths.Add(DateTime.Today.ToString("yyyy-MM"));
-                            }
-
-                            var revValues = new ChartValues<double>();
-                            var expValues = new ChartValues<double>();
-
-                            foreach (var m in allMonths)
-                            {
-                                newLabels.Add(m);
-                                decimal r = revList.ContainsKey(m) ? revList[m] : 0;
-                                decimal e = expList.ContainsKey(m) ? expList[m] : 0;
-                                revValues.Add((double)r);
-                                expValues.Add((double)e);
                             }
 
                             newCartesianSeries.Add(new ColumnSeries
                             {
-                                Title = "รายรับ (บาท)",
-                                Values = revValues,
+                                Title = "ยอดซื้อสะสม (บาท)",
+                                Values = values,
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
+                                MaxColumnWidth = 36
+                            });
+                        }
+                        totalCountText = $"ลูกค้ายอดซื้อสูงสุด {newSummary.Count} ราย";
+                        break;
+
+                    case "รายงานข้อมูลพนักงาน":
+                        chartTitle = "📊 ยอดขายต่อคน เทียบผลงานบุคคล (Staff Performance)";
+                        displayMode = 0;
+                        summaryTitle = "🧑‍💼 สรุปพนักงานยอดขายสูงสุด";
+                        newFormatter = val => val.ToString("N0");
+
+                        var staffSales = await _databaseService.GetStaffPerformanceReportAsync(isAllPeriod, chartParams);
+                        if (staffSales.Any())
+                        {
+                            var values = new ChartValues<double>();
+                            int rank = 1;
+                            foreach (var item in staffSales)
+                            {
+                                newLabels.Add(item.Username);
+                                values.Add((double)item.Total);
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = item.Username,
+                                    Subtitle = $"{item.Role} | {item.Count} บิลที่ขายได้",
+                                    ValueText = $"{item.Total:N2}",
+                                    Tag = "พนักงานขายยอดเยี่ยม",
+                                    Color = "#10B981"
+                                });
+                            }
+
+                            newCartesianSeries.Add(new ColumnSeries
+                            {
+                                Title = "ยอดขายรวม (บาท)",
+                                Values = values,
                                 Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#10B981"),
-                                MaxColumnWidth = 32
+                                MaxColumnWidth = 36
                             });
+                        }
+                        totalCountText = $"จำนวนพนักงานทั้งหมด {newSummary.Count} คน";
+                        break;
+
+                    case "รายงานข้อมูลสินค้า":
+                        chartTitle = "📊 สินค้าขายดี 5 อันดับแรก (Top 5 Best Sellers)";
+                        displayMode = 0;
+                        summaryTitle = "📦 สรุปสินค้าขายดีที่สุด";
+
+                        var bestSelling = await _databaseService.GetBestSellingProductsReportAsync(isAllPeriod, chartParams);
+                        if (bestSelling.Any())
+                        {
+                            var values = new ChartValues<double>();
+                            int rank = 1;
+                            foreach (var item in bestSelling)
+                            {
+                                newLabels.Add(item.Name);
+                                values.Add(item.Qty);
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = item.Name,
+                                    Subtitle = $"ยอดขายรวม {item.Total:N2}",
+                                    ValueText = $"{item.Qty} ชิ้น",
+                                    Tag = $"อันดับที่ {rank - 1}",
+                                    Color = "#0EA5E9"
+                                });
+                            }
+
                             newCartesianSeries.Add(new ColumnSeries
                             {
-                                Title = "รายจ่าย (บาท)",
-                                Values = expValues,
-                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#EF4444"),
-                                MaxColumnWidth = 32
+                                Title = "จำนวนชิ้นที่ขายได้ (ชิ้น)",
+                                Values = values,
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0EA5E9"),
+                                MaxColumnWidth = 36
                             });
+                        }
+                        totalCountText = $"แสดงสินค้าขายดี {newSummary.Count} อันดับแรก";
+                        break;
 
-                            var descMonths = allMonths.OrderByDescending(m => m).ToList();
-                            int pRank = 1;
-                            decimal totalNetAll = 0;
-                            foreach (var m in descMonths)
+                    case "รายงานข้อมูลบริษัทคู่ค้า":
+                        chartTitle = "📊 มูลค่าการสั่งซื้อต่อคู่ค้า (Supplier Order Volume)";
+                        displayMode = 0;
+                        summaryTitle = "🏢 สรุปคู่ค้ามูลค่าสูงสุด";
+                        newFormatter = val => val.ToString("N0");
+
+                        var supplierPOs = await _databaseService.GetSupplierOrderVolumeReportAsync(isAllPeriod, chartParams);
+                        if (supplierPOs.Any())
+                        {
+                            var values = new ChartValues<double>();
+                            int rank = 1;
+                            foreach (var item in supplierPOs)
                             {
-                                decimal r = revList.ContainsKey(m) ? revList[m] : 0;
-                                decimal e = expList.ContainsKey(m) ? expList[m] : 0;
-                                decimal net = r - e;
-                                totalNetAll += net;
+                                newLabels.Add(item.Name);
+                                values.Add((double)item.Total);
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = item.Name,
+                                    Subtitle = $"สั่งซื้อ {item.Count} ใบสั่งซื้อ",
+                                    ValueText = $"{item.Total:N2}",
+                                    Tag = "คู่ค้าสำคัญ",
+                                    Color = "#0284C7"
+                                });
+                            }
+
+                            newCartesianSeries.Add(new ColumnSeries
+                            {
+                                Title = "มูลค่าการสั่งซื้อสะสม (บาท)",
+                                Values = values,
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
+                                MaxColumnWidth = 36
+                            });
+                        }
+                        totalCountText = $"จำนวนบริษัทคู่ค้า {newSummary.Count} บริษัท";
+                        break;
+
+                    case "รายงานข้อมูลประเภทสินค้า":
+                        chartTitle = "🍩 สัดส่วนยอดขายตามประเภทสินค้า (Category Share)";
+                        displayMode = 1;
+                        summaryTitle = "🏷️ สรุปสัดส่วนตามหมวดหมู่ (%)";
+
+                        var catSales = await _databaseService.GetCategorySalesDistributionReportAsync(isAllPeriod, chartParams);
+                        if (catSales.Any())
+                        {
+                            decimal grandTotal = catSales.Sum(c => c.Total);
+                            string[] colors = { "#0284C7", "#38BDF8", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#64748B" };
+                            int rank = 1;
+                            int cIdx = 0;
+                            foreach (var item in catSales)
+                            {
+                                string c = colors[cIdx % colors.Length];
+                                cIdx++;
+                                double pct = grandTotal > 0 ? (double)(item.Total / grandTotal * 100) : 0;
+
+                                newPieSeries.Add(new PieSeries
+                                {
+                                    Title = item.Category,
+                                    Values = new ChartValues<double> { (double)(item.Total > 0 ? item.Total : 1) },
+                                    DataLabels = true,
+                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(c)
+                                });
 
                                 newSummary.Add(new ReportSummaryItem
                                 {
-                                    Rank = pRank++,
-                                    Title = $"เดือน {m}",
-                                    Subtitle = $"รายรับ: {r:N2} | รายจ่าย: {e:N2}",
-                                    ValueText = $"{net:N2}",
-                                    Tag = net >= 0 ? "กำไรสุทธิ" : "ขาดทุนสุทธิ",
-                                    Color = net >= 0 ? "#10B981" : "#EF4444"
+                                    Rank = rank++,
+                                    Title = item.Category,
+                                    Subtitle = $"สัดส่วน {pct:0.1f}% ของยอดรวม",
+                                    ValueText = $"{item.Total:N2}",
+                                    Tag = "หมวดหมู่",
+                                    Color = c
+                                });
+                            }
+                        }
+                        totalCountText = $"จำนวนหมวดหมู่สินค้า {newSummary.Count} ประเภท";
+                        break;
+
+                    case "รายงานข้อมูลการสั่งซื้อสินค้า":
+                        chartTitle = "🍩 สถานะใบสั่งซื้อสินค้า (PO Status Breakdown)";
+                        displayMode = 1;
+                        summaryTitle = "📋 สรุปแยกตามสถานะใบสั่งซื้อ";
+
+                        var poStatus = await _databaseService.GetPurchaseOrderStatusReportAsync(isAllPeriod, chartParams);
+                        if (poStatus.Any())
+                        {
+                            int rank = 1;
+                            foreach (var item in poStatus)
+                            {
+                                string color = item.Status == "ได้รับสินค้าแล้ว" ? "#10B981" : (item.Status == "ยกเลิก" ? "#EF4444" : "#F59E0B");
+                                newPieSeries.Add(new PieSeries
+                                {
+                                    Title = item.Status,
+                                    Values = new ChartValues<double> { item.Count },
+                                    DataLabels = true,
+                                    Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(color)
+                                });
+
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = item.Status,
+                                    Subtitle = $"มูลค่ารวม {item.Total:N2}",
+                                    ValueText = $"{item.Count} ใบ",
+                                    Tag = item.Status,
+                                    Color = color
+                                });
+                            }
+                        }
+                        totalCountText = $"จำนวนสถานะใบสั่งซื้อทั้งหมด {newSummary.Count} กลุ่ม";
+                        break;
+
+                    case "รายงานข้อมูลการรับเข้าสินค้า":
+                        chartTitle = "📈 ปริมาณรับเข้าสินค้ารายวัน (Daily Stock Inflow)";
+                        displayMode = 0;
+                        summaryTitle = "📥 สรุปวันที่รับเข้าสินค้าสูงสุด";
+
+                        var stockIns = await _databaseService.GetStockInDailyReportAsync(isAllPeriod, chartParams);
+                        if (stockIns.Any())
+                        {
+                            var chartList = stockIns.OrderBy(x => x.Date).ToList();
+                            var values = new ChartValues<double>();
+                            foreach (var item in chartList)
+                            {
+                                newLabels.Add(item.Date);
+                                values.Add(item.Qty);
+                            }
+
+                            newCartesianSeries.Add(new LineSeries
+                            {
+                                Title = "จำนวนสินค้าที่รับเข้า (ชิ้น)",
+                                Values = values,
+                                PointGeometrySize = 10,
+                                Stroke = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#200284C7")
+                            });
+
+                            var summaryList = stockIns.OrderByDescending(x => x.Qty).ToList();
+                            int rank = 1;
+                            foreach (var item in summaryList)
+                            {
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = $"วันที่ {item.Date}",
+                                    Subtitle = "ปริมาณรับเข้าสต็อกสินค้า",
+                                    ValueText = $"{item.Qty} ชิ้น",
+                                    Tag = "รับเข้าสูงสุด",
+                                    Color = "#0284C7"
+                                });
+                            }
+                        }
+                        totalCountText = $"บันทึกการรับเข้า {newSummary.Count} วันทำการ";
+                        break;
+
+                    case "รายงานข้อมูลการขายหน้าร้าน":
+                    case "รายงานข้อมูลขายหน้าร้าน":
+                        chartTitle = "📈 แนวโน้มยอดขายหน้าร้าน (Sales Trend)";
+                        displayMode = 0;
+                        summaryTitle = "💳 สรุปวันที่ขายดีที่สุด";
+                        newFormatter = val => val.ToString("N0");
+
+                        var dailySales = await _databaseService.GetDailySalesTrendReportAsync(isAllPeriod, chartParams);
+                        if (dailySales.Any())
+                        {
+                            var chartList = dailySales.OrderBy(x => x.Date).ToList();
+                            var values = new ChartValues<double>();
+                            foreach (var item in chartList)
+                            {
+                                newLabels.Add(item.Date);
+                                values.Add((double)item.Total);
+                            }
+
+                            newCartesianSeries.Add(new LineSeries
+                            {
+                                Title = "ยอดขายรายวัน (บาท)",
+                                Values = values,
+                                PointGeometrySize = 10,
+                                Stroke = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#200284C7")
+                            });
+
+                            var summaryList = dailySales.OrderByDescending(x => x.Total).ToList();
+                            int rank = 1;
+                            foreach (var item in summaryList)
+                            {
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = $"วันที่ {item.Date}",
+                                    Subtitle = $"จำนวน {item.Count} ธุรกรรมบิล",
+                                    ValueText = $"{item.Total:N2}",
+                                    Tag = "ยอดขายดีเด่น",
+                                    Color = "#0284C7"
+                                });
+                            }
+                        }
+                        totalCountText = $"สรุปยอดขาย {newSummary.Count} วันทำการ";
+                        break;
+
+                    case "รายงานข้อมูลการเคลม":
+                        chartTitle = "📊 จำนวนเคลมตามสาเหตุ (Product Claims by Reason)";
+                        displayMode = 0;
+                        summaryTitle = "⚠️ สรุปสาเหตุที่พบบ่อย";
+
+                        var claimReasons = await _databaseService.GetClaimReasonDistributionReportAsync(isAllPeriod, chartParams);
+                        if (claimReasons.Any())
+                        {
+                            var values = new ChartValues<double>();
+                            int rank = 1;
+                            foreach (var item in claimReasons)
+                            {
+                                newLabels.Add(item.Reason);
+                                values.Add(item.Count);
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = item.Reason,
+                                    Subtitle = "สาเหตุการเคลมสินค้า",
+                                    ValueText = $"{item.Count} รายการ",
+                                    Tag = "สาเหตุเคลม",
+                                    Color = "#EF4444"
                                 });
                             }
 
-                            totalCountText = $"กำไรสุทธิรวม: {totalNetAll:N2}";
-                            break;
-                    }
+                            newCartesianSeries.Add(new ColumnSeries
+                            {
+                                Title = "จำนวนการเคลม (รายการ)",
+                                Values = values,
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#EF4444"),
+                                MaxColumnWidth = 36
+                            });
+                        }
+                        totalCountText = $"สาเหตุการเคลมทั้งหมด {newSummary.Count} ประเภท";
+                        break;
+
+                    case "รายงานข้อมูลการจัดส่งสินค้า":
+                        chartTitle = "📈 การจัดส่งสำเร็จรายวัน (Daily Successful Deliveries)";
+                        displayMode = 0;
+                        summaryTitle = "🚚 สรุปวันที่จัดส่งมากที่สุด";
+
+                        var deliveryDays = await _databaseService.GetDailyDeliveryReportAsync(isAllPeriod, chartParams);
+                        if (deliveryDays.Any())
+                        {
+                            var chartList = deliveryDays.OrderBy(x => x.Date).ToList();
+                            var values = new ChartValues<double>();
+                            foreach (var item in chartList)
+                            {
+                                newLabels.Add(item.Date);
+                                values.Add(item.Count);
+                            }
+
+                            newCartesianSeries.Add(new LineSeries
+                            {
+                                Title = "จำนวนจัดส่งสำเร็จ (รายการ)",
+                                Values = values,
+                                PointGeometrySize = 10,
+                                Stroke = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#0284C7"),
+                                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#200284C7")
+                            });
+
+                            var summaryList = deliveryDays.OrderByDescending(x => x.Count).ToList();
+                            int rank = 1;
+                            foreach (var item in summaryList)
+                            {
+                                newSummary.Add(new ReportSummaryItem
+                                {
+                                    Rank = rank++,
+                                    Title = $"วันที่ {item.Date}",
+                                    Subtitle = "จัดส่งพัสดุสำเร็จ",
+                                    ValueText = $"{item.Count} รายการ",
+                                    Tag = "จัดส่งสูงสุด",
+                                    Color = "#10B981"
+                                });
+                            }
+                        }
+                        totalCountText = $"สถิติการจัดส่ง {newSummary.Count} วันทำการ";
+                        break;
+
+                    case "รายงานข้อมูลรายรับ-รายจ่าย":
+                        chartTitle = "📊 รายรับ vs รายจ่ายรายเดือน (Monthly Income vs Expense)";
+                        displayMode = 0;
+                        summaryTitle = "💰 สรุปกำไรสุทธิรายเดือน";
+                        newFormatter = val => val.ToString("N0");
+
+                        var (revRaw, expRaw) = await _databaseService.GetMonthlyIncomeExpenseReportAsync(isAllPeriod, chartParams);
+
+                        string NormalizeMonth(string m)
+                        {
+                            if (string.IsNullOrEmpty(m) || m.Length < 7) return m;
+                            if (int.TryParse(m.Substring(0, 4), out int y) && y > 2400)
+                            {
+                                return $"{(y - 543):D4}{m.Substring(4)}";
+                            }
+                            return m;
+                        }
+
+                        var revList = revRaw
+                            .GroupBy(x => NormalizeMonth(x.Month))
+                            .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
+
+                        var expList = expRaw
+                            .GroupBy(x => NormalizeMonth(x.Month))
+                            .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
+
+                        var allMonths = revList.Keys.Union(expList.Keys).OrderBy(m => m).ToList();
+                        if (!allMonths.Any())
+                        {
+                            allMonths.Add(DateTime.Today.ToString("yyyy-MM"));
+                        }
+
+                        var revValues = new ChartValues<double>();
+                        var expValues = new ChartValues<double>();
+
+                        foreach (var m in allMonths)
+                        {
+                            newLabels.Add(m);
+                            decimal r = revList.ContainsKey(m) ? revList[m] : 0;
+                            decimal e = expList.ContainsKey(m) ? expList[m] : 0;
+                            revValues.Add((double)r);
+                            expValues.Add((double)e);
+                        }
+
+                        newCartesianSeries.Add(new ColumnSeries
+                        {
+                            Title = "รายรับ (บาท)",
+                            Values = revValues,
+                            Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#10B981"),
+                            MaxColumnWidth = 32
+                        });
+                        newCartesianSeries.Add(new ColumnSeries
+                        {
+                            Title = "รายจ่าย (บาท)",
+                            Values = expValues,
+                            Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#EF4444"),
+                            MaxColumnWidth = 32
+                        });
+
+                        var descMonths = allMonths.OrderByDescending(m => m).ToList();
+                        int pRank = 1;
+                        decimal totalNetAll = 0;
+                        foreach (var m in descMonths)
+                        {
+                            decimal r = revList.ContainsKey(m) ? revList[m] : 0;
+                            decimal e = expList.ContainsKey(m) ? expList[m] : 0;
+                            decimal net = r - e;
+                            totalNetAll += net;
+
+                            newSummary.Add(new ReportSummaryItem
+                            {
+                                Rank = pRank++,
+                                Title = $"เดือน {m}",
+                                Subtitle = $"รายรับ: {r:N2} | รายจ่าย: {e:N2}",
+                                ValueText = $"{net:N2}",
+                                Tag = net >= 0 ? "กำไรสุทธิ" : "ขาดทุนสุทธิ",
+                                Color = net >= 0 ? "#10B981" : "#EF4444"
+                            });
+                        }
+
+                        totalCountText = $"กำไรสุทธิรวม: {totalNetAll:N2}";
+                        break;
                 }
             }
             catch { }
@@ -6401,155 +6175,21 @@ namespace Porjai20.ViewModels
 
             try
             {
-                using (var conn = _databaseService.GetConnection())
-                {
-                    IEnumerable<ReportRow> rows = new List<ReportRow>();
-                    int totalCount = 0;
-                    decimal totalAmount = 0;
+                var (rows, totalCount, totalAmount, summaryText) = await _databaseService.GetReportDataAsync(SelectedReportType, isAllPeriod, dateParams, startCE, endCE);
 
-                    switch (SelectedReportType)
-                    {
-                        case "รายงานข้อมูลพนักงาน":
-                            var staff = await conn.QueryAsync("SELECT CAST(Emp_ID AS TEXT) as col1, Emp_Username as col2, Emp_Role as col3, Emp_Tel as col4, '' as col5 FROM tblEmployee ORDER BY Emp_Username");
-                            rows = staff.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4 ?? "-", Col5 = r.col5 });
-                            totalCount = rows.Count();
-                            ReportSummaryText = $"จำนวนพนักงานทั้งหมด: {totalCount} คน";
-                            break;
+                foreach (var row in rows)
+                    ReportRows.Add(row);
 
-                        case "รายงานข้อมูลลูกค้า":
-                            var customers = await conn.QueryAsync("SELECT Cus_Name as col1, Cus_Tel as col2, Cus_Address as col3 FROM tblCustomer ORDER BY Cus_Name");
-                            rows = customers.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3 });
-                            totalCount = rows.Count();
-                            ReportSummaryText = $"จำนวนลูกค้าทั้งหมด: {totalCount} ราย";
-                            break;
+                ReportSummaryText = summaryText;
 
-                        case "รายงานข้อมูลสินค้า":
-                            var products = await conn.QueryAsync("SELECT Pro_Name as col1, CAST(Pro_Price as TEXT) as col2, CAST(Pro_Qty as TEXT) as col3, Pro_Category as col4 FROM tblProduct ORDER BY Pro_Name");
-                            rows = products.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4 });
-                            totalCount = rows.Count();
-                            ReportSummaryText = $"จำนวนสินค้าทั้งหมด: {totalCount} รายการ";
-                            break;
+                ReportTotalRevenue = await _databaseService.GetReportTotalRevenueAsync(isAllPeriod, dateParams);
+                ReportTotalExpenses = await _databaseService.GetReportTotalExpensesAsync(isAllPeriod, dateParams);
+                ReportNetProfit = ReportTotalRevenue - ReportTotalExpenses;
 
-                        case "รายงานข้อมูลบริษัทคู่ค้า":
-                            var partners = await conn.QueryAsync("SELECT Partner_Name as col1, Partner_Contact as col2, Partner_Tel as col3, Partner_Address as col4 FROM tblPartner ORDER BY Partner_Name");
-                            rows = partners.Select(r => new ReportRow { Col1 = r.col1 ?? "-", Col2 = r.col2 ?? "-", Col3 = r.col3 ?? "-", Col4 = r.col4 ?? "-" });
-                            totalCount = rows.Count();
-                            ReportSummaryText = $"จำนวนบริษัทคู่ค้าทั้งหมด: {totalCount} บริษัท";
-                            break;
+                await RenderReportChartsAsync(SelectedReportType, ReportRows.ToList(), isAllPeriod, startCE, endCE);
 
-                        case "รายงานข้อมูลประเภทสินค้า":
-                            var prods = await conn.QueryAsync("SELECT CAST(p.Pro_ID as TEXT) as col1, p.Pro_Category as col2, p.Pro_Name as col3, COALESCE(p.Pro_Image, '-') as col4 FROM tblProduct p ORDER BY p.Pro_Category, p.Pro_Name");
-                            rows = prods.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2 ?? "-", Col3 = r.col3 ?? "-", Col4 = r.col4 ?? "-" });
-                            totalCount = rows.Count();
-                            ReportSummaryText = $"จำนวนสินค้าทั้งหมด: {totalCount} รายการ";
-                            break;
-
-                        case "รายงานข้อมูลการสั่งซื้อสินค้า":
-                            string sqlPO = isAllPeriod
-                                ? "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H ORDER BY PO_Date DESC"
-                                : "SELECT CAST(PO_ID as TEXT) as col1, CAST(PO_Total as TEXT) as col3, PO_Status as col4, PO_Date as col5 FROM tblPO_H WHERE (PO_Date >= @S AND PO_Date <= @E) OR (PO_Date >= @S_BE AND PO_Date <= @E_BE) ORDER BY PO_Date DESC";
-                            var pos = await conn.QueryAsync(sqlPO, dateParams);
-                            rows = pos.Select(r => new ReportRow { Col1 = r.col1, Col2 = "-", Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 });
-                            totalCount = rows.Count();
-                            ReportSummaryText = isAllPeriod ? $"จำนวนใบสั่งซื้อทั้งหมด: {totalCount} ใบ" : $"จำนวนใบสั่งซื้อ: {totalCount} ใบ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
-                            break;
-
-                        case "รายงานข้อมูลการรับเข้าสินค้า":
-                            string sqlStockIn = isAllPeriod
-                                ? "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H ORDER BY StockIn_Date DESC"
-                                : "SELECT CAST(StockIn_ID as TEXT) as col1, Note as col2, StockIn_Date as col5 FROM tblStockIn_H WHERE (StockIn_Date >= @S AND StockIn_Date <= @E) OR (StockIn_Date >= @S_BE AND StockIn_Date <= @E_BE) ORDER BY StockIn_Date DESC";
-                            var stockIns = await conn.QueryAsync(sqlStockIn, dateParams);
-                            rows = stockIns.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2 ?? "-", Col3 = "-", Col4 = "-", Col5 = r.col5 });
-                            totalCount = rows.Count();
-                            ReportSummaryText = isAllPeriod ? $"จำนวนรายการรับเข้าทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการรับเข้า: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
-                            break;
-
-                        case "รายงานข้อมูลการขายหน้าร้าน":
-                            string sqlSales = isAllPeriod
-                                ? "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H ORDER BY Sales_Date DESC"
-                                : "SELECT RefNo as col1, CAST(Sales_Total as TEXT) as col2, Sales_PaymentType as col3, Sales_Status as col4, Sales_Date as col5 FROM tblSales_H WHERE (Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE) ORDER BY Sales_Date DESC";
-                            var sales = await conn.QueryAsync(sqlSales, dateParams);
-                            rows = sales.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 });
-                            totalCount = rows.Count();
-                            totalAmount = rows.Sum(r => { decimal.TryParse(r.Col2, out decimal v); return v; });
-                            ReportSummaryText = isAllPeriod ? $"จำนวนบิลทั้งหมด: {totalCount} ใบ  |  ยอดขายรวม: {totalAmount:N2} บาท" : $"จำนวนบิล: {totalCount} ใบ  |  ยอดขายรวม: {totalAmount:N2} บาท  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
-                            break;
-
-                        case "รายงานข้อมูลรายรับ-รายจ่าย":
-                            string sqlSalesInc = isAllPeriod
-                                ? "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H"
-                                : "SELECT 'รายรับ (ขาย)' as col1, RefNo as col2, CAST(Sales_Total as TEXT) as col3, Sales_PaymentType as col4, Sales_Date as col5 FROM tblSales_H WHERE (Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE)";
-                            string sqlExpRows = isAllPeriod
-                                ? "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense"
-                                : "SELECT 'รายจ่าย' as col1, Expense_Category as col2, CAST(Expense_Amount as TEXT) as col3, Expense_Note as col4, Expense_Date as col5 FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
-                            var salesInc = await conn.QueryAsync(sqlSalesInc, dateParams);
-                            var expRows = await conn.QueryAsync(sqlExpRows, dateParams);
-                            rows = salesInc.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 })
-                                   .Concat(expRows.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 }));
-                            var incomeTotal = salesInc.Sum(r => { decimal.TryParse((string)r.col3, out decimal v); return v; });
-                            var expTotal = expRows.Sum(r => { decimal.TryParse((string)r.col3, out decimal v); return v; });
-                            ReportSummaryText = $"รายรับ: {incomeTotal:N2} บาท  |  รายจ่าย: {expTotal:N2} บาท  |  กำไรสุทธิ: {(incomeTotal - expTotal):N2} บาท";
-                            break;
-
-                        case "รายงานข้อมูลการจัดส่งสินค้า":
-                            var deliveries = await conn.QueryAsync("SELECT Tracking_No as col1, Recipient_Name as col2, Recipient_Tel as col3, Delivery_Status as col4 FROM tblDelivery");
-                            rows = deliveries.Select(r => new ReportRow { Col1 = r.col1 ?? "-", Col2 = r.col2 ?? "-", Col3 = r.col3 ?? "-", Col4 = r.col4 ?? "-", Col5 = "-" });
-                            totalCount = rows.Count();
-                            ReportSummaryText = isAllPeriod ? $"จำนวนรายการจัดส่งทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการจัดส่ง: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
-                            break;
-
-                        case "รายงานข้อมูลการเคลม":
-                            string sqlClaims = isAllPeriod
-                                ? @"SELECT CAST(c.Claim_ID as TEXT) as col1, 
-                                           (p.Pro_Name || ' / ' || COALESCE(c.Claim_Reason, 'ไม่ระบุสาเหตุ')) as col2, 
-                                           c.Claim_Status as col3, 
-                                           COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') as col4, 
-                                           c.Claim_Date as col5 
-                                    FROM tblClaim c 
-                                    LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID 
-                                    ORDER BY c.Claim_ID DESC"
-                                : @"SELECT CAST(c.Claim_ID as TEXT) as col1, 
-                                           (p.Pro_Name || ' / ' || COALESCE(c.Claim_Reason, 'ไม่ระบุสาเหตุ')) as col2, 
-                                           c.Claim_Status as col3, 
-                                           COALESCE(c.Claim_Action, 'เปลี่ยนสินค้าใหม่') as col4, 
-                                           c.Claim_Date as col5 
-                                    FROM tblClaim c 
-                                    LEFT JOIN tblProduct p ON c.Pro_ID = p.Pro_ID 
-                                    WHERE (c.Claim_Date >= @S AND c.Claim_Date <= @E) OR (c.Claim_Date >= @S_BE AND c.Claim_Date <= @E_BE) 
-                                     ORDER BY c.Claim_ID DESC";
-                            var claims = await conn.QueryAsync(sqlClaims, dateParams);
-                            rows = claims.Select(r => new ReportRow { Col1 = r.col1, Col2 = r.col2, Col3 = r.col3, Col4 = r.col4, Col5 = r.col5 });
-                            totalCount = rows.Count();
-                            ReportSummaryText = isAllPeriod ? $"จำนวนรายการเคลมสินค้าทั้งหมด: {totalCount} รายการ" : $"จำนวนรายการเคลมสินค้า: {totalCount} รายการ  |  ช่วงเวลา: {start:dd/MM/yyyy} - {end:dd/MM/yyyy}";
-                            break;
-
-                        default:
-                            ReportSummaryText = "กรุณาเลือกประเภทรายงาน";
-                            break;
-                    }
-
-                    foreach (var row in rows)
-                        ReportRows.Add(row);
-
-                    string salesKpiSql = isAllPeriod
-                        ? "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL"
-                        : "SELECT COALESCE(SUM(Sales_Total), 0) FROM tblSales_H WHERE (Sales_Status != 'ยกเลิก' OR Sales_Status IS NULL) AND ((Sales_Date >= @S AND Sales_Date <= @E) OR (Sales_Date >= @S_BE AND Sales_Date <= @E_BE))";
-                    var salesQuery = await conn.QueryAsync<decimal>(salesKpiSql, dateParams);
-                    ReportTotalRevenue = salesQuery.FirstOrDefault();
-
-                    string expKpiSql = isAllPeriod
-                        ? "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense"
-                        : "SELECT COALESCE(SUM(Expense_Amount), 0) FROM tblExpense WHERE (Expense_Date >= @S AND Expense_Date <= @E) OR (Expense_Date >= @S_BE AND Expense_Date <= @E_BE)";
-                    var expQuery = await conn.QueryAsync<decimal>(expKpiSql, dateParams);
-                    ReportTotalExpenses = expQuery.FirstOrDefault();
-
-                    ReportNetProfit = ReportTotalRevenue - ReportTotalExpenses;
-                    RenderReportCharts(SelectedReportType, ReportRows.ToList(), isAllPeriod, startCE, endCE);
-
-
-                    if (!rows.Any())
-                        ReportSummaryText = "ไม่พบข้อมูลในช่วงเวลาที่เลือก";
-                }
+                if (!rows.Any())
+                    ReportSummaryText = "ไม่พบข้อมูลในช่วงเวลาที่เลือก";
             }
             catch (Exception ex)
             {
@@ -8389,10 +8029,5 @@ namespace Porjai20.ViewModels
                     "ยืนยันการกู้คืนข้อมูล");
             }
         }
-    }
-    public class BestSellerItem
-    {
-        public string ProductName { get; set; }
-        public int TotalQuantity { get; set; }
     }
 }

@@ -47,7 +47,29 @@ namespace Porjai20.Models
         }
 
         public string Email { get; set; } = string.Empty;
+        public string BankAccount { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
         public DateTime RegisteredDate { get; set; } = DateTime.Now;
+
+        // Backward compatibility aliases for Supplier consolidation
+        public int SupplierID
+        {
+            get => Partner_ID;
+            set => Partner_ID = value;
+        }
+
+        public string SupplierName
+        {
+            get => Partner_Name;
+            set => Partner_Name = value;
+        }
+
+        public string? PhoneNumber
+        {
+            get => Partner_Tel;
+            set => Partner_Tel = value ?? string.Empty;
+        }
+
+        public override string ToString() => !string.IsNullOrEmpty(Partner_Name) ? Partner_Name : Name;
     }
 }

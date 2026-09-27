@@ -1,4 +1,3 @@
-using Dapper;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -150,17 +149,6 @@ namespace Porjai20.ViewModels
                 SelectedCustomer.Address = CustomerAddress;
 
                 _databaseService.UpdateCustomer(SelectedCustomer);
-                
-                // Also update any delivery records for this customer
-                try
-                {
-                    using (var conn = _databaseService.GetConnection())
-                    {
-                        conn.Execute("UPDATE tblDelivery SET Recipient_Name = @Name, Recipient_Tel = @Phone, Recipient_Address = @Address WHERE Sales_ID IN (SELECT Sales_ID FROM tblSales_H WHERE Cus_ID = @CusId)",
-                            new { Name = SelectedCustomer.Name, Phone = SelectedCustomer.Phone, Address = SelectedCustomer.Address, CusId = SelectedCustomer.Id });
-                    }
-                }
-                catch { }
 
                 ClearCustomerForm();
                 SetCustomerModalsClosed();

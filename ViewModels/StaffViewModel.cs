@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using Dapper;
 using Porjai20.Models;
 using Porjai20.Services;
 using Porjai20.Views;
@@ -498,11 +497,8 @@ namespace Porjai20.ViewModels
         public void LoadStaffs()
         {
             UsersList.Clear();
-            using (var conn = _databaseService.GetConnection())
-            {
-                var users = conn.Query<User>("SELECT Emp_ID AS Emp_ID, Emp_ID AS Id, Emp_Name AS Emp_Name, Emp_Name AS Name, Emp_Username AS Username, Emp_Password AS Password, Emp_Role AS Role, Emp_Tel AS Tel, Emp_Tel AS Phone FROM tblEmployee");
-                foreach (var u in users) UsersList.Add(u);
-            }
+            var users = _databaseService.GetEmployees();
+            foreach (var u in users) UsersList.Add(u);
             FilteredStaffs?.Refresh();
 
             OnPropertyChanged(nameof(TotalStaffCount));
@@ -559,46 +555,41 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            using (var conn = _databaseService.GetConnection())
+            if (IsEditMode && SelectedStaff != null && SelectedStaff.Id > 0)
             {
-                if (IsEditMode && SelectedStaff != null && SelectedStaff.Id > 0)
+                SelectedStaff.Username = StaffUsername;
+                SelectedStaff.Password = StaffPassword;
+                SelectedStaff.Name = StaffName;
+                SelectedStaff.Phone = StaffPhone;
+                SelectedStaff.Role = StaffRole;
+
+                _databaseService.UpdateEmployee(SelectedStaff);
+                ClearStaffForm();
+                IsModalOpen = false;
+                LoadStaffs();
+            }
+            else
+            {
+                // Check duplicate username
+                if (UsersList.Any(u => string.Equals(u.Username, StaffUsername, StringComparison.OrdinalIgnoreCase)))
                 {
-                    SelectedStaff.Username = StaffUsername;
-                    SelectedStaff.Password = StaffPassword;
-                    SelectedStaff.Name = StaffName;
-                    SelectedStaff.Phone = StaffPhone;
-                    SelectedStaff.Role = StaffRole;
-
-                    string sql = "UPDATE tblEmployee SET Emp_Name = @Name, Emp_Tel = @Phone, Emp_Username = @Username, Emp_Password = @Password, Emp_Role = @Role WHERE Emp_ID = @Id";
-                    conn.Execute(sql, SelectedStaff);
-                    ClearStaffForm();
-                    IsModalOpen = false;
-                    LoadStaffs();
+                    StaffValidationMessage = "ชื่อผู้ใช้/รหัสพนักงานนี้มีอยู่แล้วในระบบ";
+                    return;
                 }
-                else
+
+                var user = new User
                 {
-                    // Check duplicate username
-                    if (UsersList.Any(u => string.Equals(u.Username, StaffUsername, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        StaffValidationMessage = "ชื่อผู้ใช้/รหัสพนักงานนี้มีอยู่แล้วในระบบ";
-                        return;
-                    }
+                    Username = StaffUsername,
+                    Password = StaffPassword,
+                    Name = StaffName,
+                    Phone = StaffPhone,
+                    Role = StaffRole
+                };
 
-                    var user = new User
-                    {
-                        Username = StaffUsername,
-                        Password = StaffPassword,
-                        Name = StaffName,
-                        Phone = StaffPhone,
-                        Role = StaffRole
-                    };
-
-                    string sql = "INSERT INTO tblEmployee (Emp_Name, Emp_Tel, Emp_Username, Emp_Password, Emp_Role) VALUES (@Name, @Phone, @Username, @Password, @Role)";
-                    conn.Execute(sql, user);
-                    ClearStaffForm();
-                    IsModalOpen = false;
-                    LoadStaffs();
-                }
+                _databaseService.SaveEmployee(user);
+                ClearStaffForm();
+                IsModalOpen = false;
+                LoadStaffs();
             }
         }
 
@@ -616,11 +607,7 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            using (var conn = _databaseService.GetConnection())
-            {
-                string sql = "DELETE FROM tblEmployee WHERE Emp_ID = @Id";
-                conn.Execute(sql, new { Id = SelectedStaff.Id });
-            }
+            _databaseService.DeleteEmployee(SelectedStaff.Id);
             ClearStaffForm();
             IsModalOpen = false;
             LoadStaffs();
