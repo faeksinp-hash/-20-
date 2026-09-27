@@ -40,7 +40,7 @@
             <Setter Property="BorderBrush"     Value="#BAE6FD"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius"    Value="12"/>
-            <Setter Property="Padding"         Value="16"/>
+            <Setter Property="Padding"         Value="16,14"/>
             <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
         </Style>
 
@@ -477,7 +477,7 @@
                         </StackPanel>
                         <TextBlock Grid.Row="1"
                                    Text="{Binding TotalStaffCount}"
-                                   FontSize="28" FontWeight="Bold"
+                                   FontSize="24" FontWeight="Bold"
                                    Foreground="#0B2545"
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
@@ -514,7 +514,7 @@
                         </StackPanel>
                         <TextBlock Grid.Row="1"
                                    Text="{Binding ActiveStaffCount}"
-                                   FontSize="28" FontWeight="Bold"
+                                   FontSize="24" FontWeight="Bold"
                                    Foreground="#2B6CB0"
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
@@ -629,70 +629,32 @@
                     </Border>
 
                     <!-- Search Button -->
-                    <Button Grid.Column="2"
-                            Content="ค้นหา"
-                            Command="{Binding SearchStaffCommand}"
-                            Background="#1E88E5"
-                            Cursor="Hand"
-                            Padding="22,0"
-                            Height="44" FontSize="16">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bd"
-                                                    Background="{TemplateBinding Background}"
-                                                    CornerRadius="8"
-                                                    Padding="{TemplateBinding Padding}">
-                                                <TextBlock Text="ค้นหา"
-                                                           Foreground="#FFFFFF"
-                                                           FontWeight="Bold"
-                                                           FontSize="14"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#42A5F5"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#1565C0"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                        <Button.Effect>
-                            <DropShadowEffect Color="#1E88E5" BlurRadius="10" ShadowDepth="2" Direction="270" Opacity="0.35"/>
-                        </Button.Effect>
-                    </Button>
+                    <Button Grid.Column="2" Content="ค้นหา" Command="{Binding SearchStaffCommand}" Style="{StaticResource PrimaryBtnStyle}" Padding="22,0" Height="42"/>
 
                     <!-- Clear Search Button (ล้าง) -->
                     <Button Grid.Column="4"
                             Content="ล้าง"
                             Command="{Binding ClearStaffFilterCommand}"
-                            Style="{StaticResource SecondaryBtnStyle}"
+                            Style="{StaticResource ClearBtnStyle}"
                             Padding="16,0"
-                            Height="40"/>
-
-                    <!-- Add Staff Action Button (➕ เพิ่มข้อมูลพนักงาน) -->
-                    <Button Grid.Column="6"
-                            Content="➕ เพิ่มข้อมูลพนักงาน"
-                            Command="{Binding OpenAddStaffModalCommand}"
-                            Style="{StaticResource PrimaryBtnStyle}"
-                            Padding="18,0"
-                            Height="40"/>
+                            Height="42"/>
 
                     <!-- Manage Staff Action Button (⚙️ จัดการข้อมูล) -->
-                    <Button Grid.Column="8"
+                    <Button Grid.Column="6"
                             Content="⚙️ จัดการข้อมูล"
                             Command="{Binding OpenStaffManageModalCommand}"
                             Style="{StaticResource PrimaryBtnStyle}"
                             Padding="18,0"
-                            Height="40"/>
+                            Height="42"
+                            Margin="0,0,10,0"/>
+
+                    <!-- Add Staff Action Button (➕ เพิ่มข้อมูลพนักงาน) -->
+                    <Button Grid.Column="8"
+                            Content="➕ เพิ่มข้อมูลพนักงาน"
+                            Command="{Binding OpenAddStaffModalCommand}"
+                            Style="{StaticResource AddBtnStyle}"
+                            Padding="18,0"
+                            Height="42"/>
                 </Grid>
             </Border>
 
@@ -720,7 +682,8 @@
                           HorizontalScrollBarVisibility="Disabled"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           RowHeight="50"
-                          GridLinesVisibility="None"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#F1F5F9"
                           BorderThickness="0"
                           Background="Transparent"
                           ColumnHeaderStyle="{StaticResource StaffColumnHeaderStyle}"

@@ -81,7 +81,7 @@
 
         <Style x:Key="StatCard" TargetType="Border">
             <Setter Property="CornerRadius"      Value="12"/>
-            <Setter Property="Padding"           Value="18,14"/>
+            <Setter Property="Padding"           Value="16,14"/>
             <Setter Property="Margin"            Value="0,0,12,0"/>
             <Setter Property="BorderThickness"   Value="1"/>
             <Setter Property="BorderBrush"       Value="{StaticResource LtBorder}"/>
@@ -102,7 +102,8 @@
         <Style x:Key="DkDataGrid" TargetType="DataGrid">
             <Setter Property="Background"             Value="Transparent"/>
             <Setter Property="BorderThickness"        Value="0"/>
-            <Setter Property="GridLinesVisibility"    Value="None"/>
+            <Setter Property="GridLinesVisibility"    Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#F1F5F9"/>
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
             <Setter Property="VerticalScrollBarVisibility"   Value="Disabled"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
@@ -117,11 +118,12 @@
         </Style>
 
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#F1F5F9"/>
-            <Setter Property="Foreground" Value="#000000"/>
-            <Setter Property="FontSize" Value="17"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="Padding" Value="12,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
         </Style>
@@ -148,7 +150,7 @@
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#E0F2FE"/>
+                    <Setter Property="Background" Value="#F0F9FF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -200,7 +202,7 @@
             <UniformGrid Grid.Row="2" Columns="4" Rows="1">
 
                 <!-- Card 1: ยอดขายวันนี้ -->
-                <Border Style="{StaticResource StatCard}" Background="{StaticResource CardPurple}">
+                <Border Style="{StaticResource StatCard}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -219,7 +221,7 @@
                                 <TextBlock Text="&#xE1FA;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding TodaySales}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <TextBlock Grid.Row="2" Text="{Binding TodaySales}" FontSize="24" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding TodaySalesArrow}" FontSize="14" Foreground="{Binding TodaySalesColor}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding TodaySalesChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodaySalesColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
@@ -247,7 +249,7 @@
                                 <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding TodayOrders}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <TextBlock Grid.Row="2" Text="{Binding TodayOrders}" FontSize="24" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding TodayOrdersArrow}" FontSize="14" Foreground="{Binding TodayOrdersColor}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding TodayOrdersChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodayOrdersColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
@@ -275,7 +277,7 @@
                                 <TextBlock Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding TodayStock}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <TextBlock Grid.Row="2" Text="{Binding TodayStock}" FontSize="24" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding TodayStockArrow}" FontSize="14" Foreground="{Binding TodayStockColor}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding TodayStockChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding TodayStockColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
@@ -303,7 +305,7 @@
                                 <TextBlock Text="&#xE136;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
-                        <TextBlock Grid.Row="2" Text="{Binding NewCustomers}" FontSize="26" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <TextBlock Grid.Row="2" Text="{Binding NewCustomers}" FontSize="24" FontWeight="Bold" Foreground="#0B2545" FontFamily="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <TextBlock Text="{Binding NewCustomersArrow}" FontSize="14" Foreground="{Binding NewCustomersColor}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding NewCustomersChange}" FontSize="14" FontWeight="Bold" Foreground="{Binding NewCustomersColor}" FontFamily="Noto Sans Thai, Segoe UI, sans-serif" VerticalAlignment="Center"/>
@@ -442,7 +444,9 @@
                         <DataGrid Grid.Row="2"
                                   ItemsSource="{Binding RecentOrders}"
                                   Style="{StaticResource DkDataGrid}"
-                                  RowHeight="44"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#F1F5F9"
+                                  RowHeight="48"
                                   HeadersVisibility="Column"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
@@ -643,7 +647,9 @@
                         <DataGrid Grid.Row="2"
                                   ItemsSource="{Binding TopProducts}"
                                   Style="{StaticResource DkDataGrid}"
-                                  RowHeight="44"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#F1F5F9"
+                                  RowHeight="48"
                                   HeadersVisibility="Column"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"

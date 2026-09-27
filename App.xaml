@@ -343,7 +343,7 @@
             <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="Padding" Value="0,0,16,0"/>
+            <Setter Property="Padding" Value="0,0,14,0"/>
             <Setter Property="Foreground" Value="#0F172A"/>
         </Style>
         <Style x:Key="ColRightBold" TargetType="TextBlock" BasedOn="{StaticResource ColRight}">
@@ -549,7 +549,7 @@
             <Setter Property="MinRowHeight" Value="48"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="AlternatingRowBackground" Value="#F8FAFC"/>
-            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
             <Setter Property="HorizontalGridLinesBrush" Value="#F1F5F9"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HeadersVisibility" Value="Column"/>

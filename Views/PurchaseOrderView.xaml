@@ -74,8 +74,8 @@ VerticalAlignment="Center"/>
 <!-- ══════════════════════════════════════════════════════════ -->
 <Style x:Key="KpiCardStyle" TargetType="Border">
 <Setter Property="Background"      Value="#FFFFFF"/>
-<Setter Property="CornerRadius"    Value="16"/>
-<Setter Property="Padding"         Value="16"/>
+<Setter Property="CornerRadius"    Value="12"/>
+<Setter Property="Padding"         Value="16,14"/>
 <Setter Property="BorderBrush"     Value="#BAE6FD"/>
 <Setter Property="BorderThickness" Value="1"/>
 <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
@@ -657,7 +657,7 @@ Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
 </StackPanel>
 <TextBlock Grid.Row="1"
 Text="{Binding TotalPOCount}"
-FontSize="28" FontWeight="Bold"
+FontSize="24" FontWeight="Bold"
 Foreground="#0B2545"
 Margin="0,0,0,4"/>
 <TextBlock Grid.Row="2"
@@ -1493,8 +1493,9 @@ Margin="0"/>
                                   IsReadOnly="False"
                                   CanUserAddRows="False"
                                   HeadersVisibility="Column"
-                                  RowHeight="46"
-                                  GridLinesVisibility="None"
+                                  RowHeight="48"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#F1F5F9"
                                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                   ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                   BorderThickness="0"
@@ -1506,7 +1507,7 @@ Margin="0"/>
                                 <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" Width="*" IsReadOnly="True" ElementStyle="{StaticResource ColCenterBold}"/>
                                 <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding ProductName}" Width="2*" ElementStyle="{StaticResource ColLeftBold}"/>
                                 <DataGridTextColumn Header="จำนวน" Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColRightBold}"/>
-                                <DataGridTextColumn Header="ต้นทุน" Binding="{Binding CostPrice, StringFormat={}{0:N2}, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColRight}"/>
+                                <DataGridTextColumn Header="ต้นทุน" Binding="{Binding CostPrice, StringFormat={}{0:N2}, UpdateSourceTrigger=PropertyChanged}" Width="*" ElementStyle="{StaticResource ColRightBold}"/>
                                 <DataGridTextColumn Header="ราคารวม" Binding="{Binding TotalPrice, StringFormat={}{0:N2}}" Width="*" IsReadOnly="True" ElementStyle="{StaticResource ColRightBold}"/>
                                 
                                 <!-- Delete Action Button (Circle Red Button '➖') -->

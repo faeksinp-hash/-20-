@@ -9,8 +9,8 @@
     <Border Background="#FFFFFF"
             BorderBrush="#BAE6FD"
             BorderThickness="1"
-            CornerRadius="16"
-            Padding="20,18"
+            CornerRadius="12"
+            Padding="16,14"
             Effect="{DynamicResource CardShadow}">
         <Grid>
             <Grid.RowDefinitions>
@@ -49,7 +49,7 @@
             <!-- Row 1: KPI Value -->
             <TextBlock Grid.Row="1"
                        Text="{Binding Value, ElementName=kpiCardRoot}"
-                       FontSize="28"
+                       FontSize="24"
                        FontWeight="Bold"
                        Foreground="{Binding ValueBrush, ElementName=kpiCardRoot}"
                        Margin="0,0,0,6"

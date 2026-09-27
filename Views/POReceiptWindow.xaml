@@ -59,7 +59,7 @@
 
             <!-- Items -->
             <DataGrid Grid.Row="2" x:Name="ItemsGrid" AutoGenerateColumns="False" IsReadOnly="True" 
-                      HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderThickness="0" Background="Transparent"
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" BorderThickness="0" Background="Transparent"
                       RowHeight="40">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" Width="100"/>

@@ -77,9 +77,9 @@
         <!-- ══════════════════════════════════════════════════════════ -->
         <Style x:Key="KpiCardStyle" TargetType="Border">
             <Setter Property="Background"      Value="#FFFFFF"/>
-            <Setter Property="CornerRadius"    Value="16"/>
-            <Setter Property="Padding"         Value="16"/>
-            <Setter Property="BorderBrush"     Value="#BAE6FD"/>
+            <Setter Property="CornerRadius"    Value="12"/>
+            <Setter Property="Padding"         Value="16,14"/>
+            <Setter Property="BorderBrush"     Value="#E2E8F0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
         </Style>
@@ -551,15 +551,6 @@
 
                 <!-- KPI Card 1: Pending Claims -->
                 <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#FEF3C7" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#FDE68A"/>
-                    </Border.BorderBrush>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -577,7 +568,7 @@
                         <!-- Value -->
                         <TextBlock Grid.Row="1"
                                    Text="{Binding PendingClaimsCount}"
-                                   FontSize="28" FontWeight="Bold"
+                                   FontSize="24" FontWeight="Bold"
                                    Foreground="#D69E2E"
                                    Margin="0,0,0,6"/>
                         <!-- Sub-label -->
@@ -591,15 +582,6 @@
 
                 <!-- KPI Card 2: Approved Claims -->
                 <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#EBF8FF" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#E2E8F0"/>
-                    </Border.BorderBrush>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -615,7 +597,7 @@
                         </StackPanel>
                         <TextBlock Grid.Row="1"
                                    Text="{Binding ApprovedClaimsCount}"
-                                   FontSize="28" FontWeight="Bold"
+                                   FontSize="24" FontWeight="Bold"
                                    Foreground="#2B6CB0"
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
@@ -628,15 +610,6 @@
 
                 <!-- KPI Card 3: Completed Claims -->
                 <Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#D1FAE5" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#A7F3D0"/>
-                    </Border.BorderBrush>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -652,7 +625,7 @@
                         </StackPanel>
                         <TextBlock Grid.Row="1"
                                    Text="{Binding CompletedClaimsCount}"
-                                   FontSize="28" FontWeight="Bold"
+                                   FontSize="24" FontWeight="Bold"
                                    Foreground="#059669"
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
@@ -765,65 +738,24 @@
                     </Border>
 
                     <!-- Search Button -->
-                    <Button Grid.Column="6"
-                            Content="ค้นหา"
-                            Command="{Binding SearchClaimCommand}"
-                            Background="#1E88E5"
-                            Cursor="Hand"
-                            Padding="22,0"
-                            Height="44">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bd"
-                                                    Background="{TemplateBinding Background}"
-                                                    CornerRadius="8"
-                                                    Padding="{TemplateBinding Padding}">
-                                                <TextBlock Text="ค้นหา"
-                                                           Foreground="#FFFFFF"
-                                                           FontWeight="Bold"
-                                                           FontSize="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#42A5F5"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#1565C0"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                        <Button.Effect>
-                            <DropShadowEffect Color="#1E88E5" BlurRadius="10" ShadowDepth="2" Direction="270" Opacity="0.35"/>
-                        </Button.Effect>
-                    </Button>
-
-                    <!-- Add Claim Button -->
-                    <Button Grid.Column="8"
-                            Content="➕ บันทึกเคลม"
-                            Command="{Binding OpenAddModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource RoseBtnStyle}"
-                            Background="#00A6E6"
-                            Foreground="White"
-                            Padding="16,0"
-                            Height="44"/>
+                    <Button Grid.Column="6" Content="ค้นหา" Command="{Binding SearchCommand}" Style="{StaticResource PrimaryBtnStyle}" Padding="22,0" Height="42"/>
 
                     <!-- Clear / Reset Button -->
-                    <Button Grid.Column="10"
+                    <Button Grid.Column="8"
                             Content="ล้าง"
                             Command="{Binding ClearClaimFilterCommand}"
-                            Style="{StaticResource SecondaryBtnStyle}"
-                            FontSize="16"
-                            Padding="14,0"
-                            Height="44"/>
+                            Style="{StaticResource ClearBtnStyle}"
+                            Padding="16,0"
+                            Height="42"
+                            Margin="0,0,10,0"/>
+
+                    <!-- Add Claim Button -->
+                    <Button Grid.Column="10"
+                            Content="➕ บันทึกเคลม"
+                            Command="{Binding OpenAddModalCommand}" IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource AddBtnStyle}"
+                            Padding="18,0"
+                            Height="42"/>
                 </Grid>
             </Border>
 
@@ -858,7 +790,8 @@
                               CanUserResizeColumns="False"
                               CanUserSortColumns="True"
                               RowHeight="50"
-                              GridLinesVisibility="None"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#F1F5F9"
                               BorderThickness="0"
                               Background="Transparent"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -919,7 +852,7 @@
                             <DataGridTextColumn Header="จำนวน"
                                                 Binding="{Binding Quantity}"
                                                 Width="0.6*"
-                                                ElementStyle="{StaticResource ColCenterBold}"/>
+                                                ElementStyle="{StaticResource ColRightBold}"/>
 
                             <!-- #7: Status (สถานะเคลม) - Rounded Status Badge -->
                             <DataGridTemplateColumn Header="สถานะเคลม" Width="130">
