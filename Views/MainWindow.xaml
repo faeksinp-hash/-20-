@@ -16,12 +16,6 @@
         ScrollViewer.VerticalScrollBarVisibility="Disabled">
 
     <Window.Resources>
-        <!-- Value Converters -->
-        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisConverter"/>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis"/>
-
         <!-- Soft Shadow Effect -->
         <DropShadowEffect x:Key="SoftShadow" BlurRadius="15" Opacity="0.15" ShadowDepth="4" Direction="270" Color="#000000"/>
 

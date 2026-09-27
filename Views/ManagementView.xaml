@@ -13,12 +13,6 @@
 
     <UserControl.Resources>
 
-        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisConverter"/>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis"/>
-        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
-
         <Style x:Key="PrimaryRedButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryBtnStyle}"/>
         <Style x:Key="SecondaryLightButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryBtnStyle}"/>
         <Style x:Key="SecondaryGrayButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryBtnStyle}"/>

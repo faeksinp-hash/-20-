@@ -20,6 +20,7 @@ namespace Porjai20.ViewModels
     {
         // ── Services ─────────────────────────────────────────────────────
         private readonly DatabaseService _db;
+        private readonly IDialogService _dialogService;
 
         // ── Collections ──────────────────────────────────────────────────
         /// <summary>Master list bound to the main DataGrid.</summary>
@@ -225,6 +226,19 @@ namespace Porjai20.ViewModels
             MainAlertMessage = message;
             MainAlertIcon = icon;
             IsMainAlertOpen = true;
+
+            if (icon == "❌")
+            {
+                _dialogService.ShowError(title, message);
+            }
+            else if (icon == "✅")
+            {
+                _dialogService.ShowSuccess(title, message);
+            }
+            else
+            {
+                _dialogService.ShowWarning(title, message);
+            }
         }
 
         // ── Universal In-Page Confirm Modal Properties ────────────────────────
@@ -260,12 +274,31 @@ namespace Porjai20.ViewModels
             MainConfirmMessage = message;
             _pendingConfirmAction = onConfirm;
             IsMainConfirmOpen = true;
+
+            if (_dialogService.ShowConfirm(title, message))
+            {
+                _pendingConfirmAction?.Invoke();
+                _pendingConfirmAction = null;
+                IsMainConfirmOpen = false;
+            }
         }
 
-        // ── Constructor ──────────────────────────────────────────────────
-        public SalesHistoryViewModel()
+        // ── Constructors ──────────────────────────────────────────────────
+        /// <summary>
+        /// Parameterless constructor required by WPF XAML parser.
+        /// </summary>
+        public SalesHistoryViewModel() : this(new DatabaseService(), DialogService.Instance)
         {
-            _db = new DatabaseService();
+        }
+
+        public SalesHistoryViewModel(IDialogService dialogService) : this(new DatabaseService(), dialogService)
+        {
+        }
+
+        public SalesHistoryViewModel(DatabaseService? db, IDialogService? dialogService)
+        {
+            _db = db ?? new DatabaseService();
+            _dialogService = dialogService ?? DialogService.Instance;
 
             CloseMainAlertCommand = new RelayCommand(_ => IsMainAlertOpen = false);
             ConfirmMainActionCommand = new RelayCommand(_ =>
@@ -279,6 +312,7 @@ namespace Porjai20.ViewModels
                 IsMainConfirmOpen = false;
                 _pendingConfirmAction = null;
             });
+
 
             // Wire up commands
             SearchCommand           = new RelayCommand(_ => ExecuteSearch());

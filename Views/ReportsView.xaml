@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Porjai20"
+             xmlns:controls="clr-namespace:Porjai20.Views.Controls"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"
@@ -463,142 +464,31 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- KPI Card 1: Total Sales Revenue -->
-                <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#E0F2FE" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Row 0: Icon + Title Grid -->
-                        <Grid Grid.Row="0" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="36"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Height="36" CornerRadius="10" Background="#E0F2FE">
-                                <TextBlock Text="💰" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Grid.Column="2" Text="ยอดขายรวม" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="#718096" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                        </Grid>
-
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding ReportTotalRevenue, StringFormat={}{0:N2}}"
-                                   FontSize="26" FontWeight="Bold"
-                                   Foreground="#0B2545"
-                                   Margin="0,0,0,6"
-                                   TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Row="2"
-                                   Text="ยอดรวมรายรับจากการขายในช่วงเวลาที่เลือก"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
-                                   Margin="0"
-                                   TextTrimming="CharacterEllipsis"/>
-                    </Grid>
-                </Border>
+                <controls:KpiSummaryCard Grid.Column="0"
+                                         Title="ยอดขายรวม"
+                                         Value="{Binding ReportTotalRevenue, StringFormat={}{0:N2}}"
+                                         Subtitle="ยอดรวมรายรับจากการขายในช่วงเวลาที่เลือก"
+                                         IconGlyph="💰"
+                                         IconBackground="#E0F2FE"
+                                         ValueBrush="#0B2545"/>
 
                 <!-- KPI Card 2: Net Profit -->
-                <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#E6FFFA" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#B2F5EA"/>
-                    </Border.BorderBrush>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Row 0: Icon + Title Grid -->
-                        <Grid Grid.Row="0" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="36"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Height="36" CornerRadius="10" Background="#E6FFFA">
-                                <TextBlock Text="📈" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Grid.Column="2" Text="กำไรสุทธิ" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="#718096" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                        </Grid>
-
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding ReportNetProfit, StringFormat={}{0:N2}}"
-                                   FontSize="26" FontWeight="Bold"
-                                   Foreground="#2C7A7B"
-                                   Margin="0,0,0,6"
-                                   TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Row="2"
-                                   Text="กำไรสุทธิคำนวณจากรายรับหักรายจ่ายรวม"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
-                                   Margin="0"
-                                   TextTrimming="CharacterEllipsis"/>
-                    </Grid>
-                </Border>
+                <controls:KpiSummaryCard Grid.Column="2"
+                                         Title="กำไรสุทธิ"
+                                         Value="{Binding ReportNetProfit, StringFormat={}{0:N2}}"
+                                         Subtitle="กำไรสุทธิคำนวณจากรายรับหักรายจ่ายรวม"
+                                         IconGlyph="📈"
+                                         IconBackground="#D1FAE5"
+                                         ValueBrush="#059669"/>
 
                 <!-- KPI Card 3: Total Expenses -->
-                <Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#FEF3C7" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#FDE68A"/>
-                    </Border.BorderBrush>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Row 0: Icon + Title Grid -->
-                        <Grid Grid.Row="0" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="36"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Height="36" CornerRadius="10" Background="#FEF3C7">
-                                <TextBlock Text="💸" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Grid.Column="2" Text="รายจ่ายรวม" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="#718096" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                        </Grid>
-
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding ReportTotalExpenses, StringFormat={}{0:N2}}"
-                                   FontSize="26" FontWeight="Bold"
-                                   Foreground="#D69E2E"
-                                   Margin="0,0,0,6"
-                                   TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Row="2"
-                                   Text="ยอดรวมค่าใช้จ่ายและรายจ่ายของร้าน"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
-                                   Margin="0"
-                                   TextTrimming="CharacterEllipsis"/>
-                    </Grid>
-                </Border>
+                <controls:KpiSummaryCard Grid.Column="4"
+                                         Title="รายจ่ายรวม"
+                                         Value="{Binding ReportTotalExpenses, StringFormat={}{0:N2}}"
+                                         Subtitle="ยอดรวมค่าใช้จ่ายและรายจ่ายของร้าน"
+                                         IconGlyph="💸"
+                                         IconBackground="#FEF3C7"
+                                         ValueBrush="#D97706"/>
             </Grid>
 
             <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->

@@ -11,9 +11,6 @@
              Background="#F4F7FA">
 
     <UserControl.Resources>
-        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
         <!-- ══════════════════════════════════════════════════════════ -->
         <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->

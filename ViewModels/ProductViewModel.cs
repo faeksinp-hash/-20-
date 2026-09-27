@@ -1711,7 +1711,7 @@ namespace Porjai20.ViewModels
             });
 
 
-            SearchDeliveriesCommand = new RelayCommand(_ => LoadDeliveries());
+            SearchDeliveriesCommand = new RelayCommand(_ => _ = LoadDeliveries());
             PrintDeliverySlipCommand = new RelayCommand(param => PrintDeliverySlip((param as SalesOrder) ?? SelectedDeliveryOrder));
             UpdateDeliveryStatusCommand = new RelayCommand(_ =>
             {
@@ -1987,7 +1987,7 @@ namespace Porjai20.ViewModels
             HomeGroupedMenuItems = view;
         }
 
-        private void CartItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void CartItems_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -2008,7 +2008,7 @@ namespace Porjai20.ViewModels
             CalculateTotal();
         }
 
-        private void CartItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void CartItem_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(CartItem.Quantity))
             {
@@ -2930,6 +2930,7 @@ namespace Porjai20.ViewModels
 
         public async Task ExecuteDeleteProduct()
         {
+            await Task.CompletedTask;
             if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
             {
                 ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
@@ -7742,6 +7743,7 @@ namespace Porjai20.ViewModels
 
         private async Task DeleteUser()
         {
+            await Task.CompletedTask;
             if (SelectedUser == null || SelectedUser.Id == 0) return;
 
             ShowConfirm($"คุณแน่ใจหรือไม่ที่จะลบบัญชีพนักงาน {SelectedUser.Name}?", async () =>

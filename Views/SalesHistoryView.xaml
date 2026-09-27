@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Porjai20"
+             xmlns:controls="clr-namespace:Porjai20.Views.Controls"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200"
              FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, Tahoma, sans-serif"
@@ -148,54 +149,6 @@
             <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
         </Style>
 
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  TEXTBOX STYLE                                             -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <Style x:Key="DarkTextBoxStyle" TargetType="TextBox">
-            <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="Background"             Value="Transparent"/>
-            <Setter Property="Foreground"             Value="#2D3748"/>
-            <Setter Property="CaretBrush"             Value="#2D3748"/>
-            <Setter Property="BorderThickness"        Value="0"/>
-            <Setter Property="FontSize"               Value="16"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <ScrollViewer x:Name="PART_ContentHost"
-                                      BorderThickness="0" IsTabStop="False"
-                                      VerticalAlignment="Center"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  DATEPICKER STYLE                                          -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <Style x:Key="DarkDatePickerStyle" TargetType="DatePicker">
-            <Setter Property="Background"   Value="#E0F2FE"/>
-            <Setter Property="Foreground"   Value="#2D3748"/>
-            <Setter Property="BorderBrush"  Value="#BAE6FD"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Height"       Value="44"/>
-            <Setter Property="FontFamily"   Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="FontSize"     Value="16"/>
-            <Setter Property="Padding"      Value="8,0"/>
-        </Style>
-
-        <Style TargetType="DatePickerTextBox">
-            <Setter Property="Background"           Value="Transparent"/>
-            <Setter Property="BorderThickness"      Value="0"/>
-            <Setter Property="Foreground"           Value="#2D3748"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontFamily"           Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-        </Style>
-
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <!--  COMBOBOX STYLE                                            -->
-        <!-- ══════════════════════════════════════════════════════════ -->
-        <Style x:Key="DkComboBoxStyle" BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox"/>
 
         <!-- ComboBoxItem Style -->
         <Style TargetType="ComboBoxItem">
@@ -543,118 +496,31 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- KPI Card 1: Total Revenue -->
-                <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#E0F2FE" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#BAE6FD"/>
-                    </Border.BorderBrush>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <!-- Icon + Label -->
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="40" Height="40" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
-                                <TextBlock Text="💰" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
-                            </Border>
-                            <TextBlock Text="ยอดขายรวม" FontSize="16" FontWeight="SemiBold"
-                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
-                        <!-- Value -->
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding TotalRevenue, StringFormat={}{0:N2}}"
-                                   FontSize="28" FontWeight="Bold"
-                                   Foreground="#0B2545"
-                                   Margin="0,0,0,6"/>
-                        <!-- Sub-label -->
-                        <TextBlock Grid.Row="2"
-                                   Text="{Binding RevenueSubLabel}"
-                                   FontSize="14"
-                                   Foreground="#A0AEC0"
-                                   Margin="0"/>
-                    </Grid>
-                </Border>
+                <controls:KpiSummaryCard Grid.Column="0"
+                                         Title="ยอดขายรวม"
+                                         Value="{Binding TotalRevenue, StringFormat={}{0:N2}}"
+                                         Subtitle="{Binding RevenueSubLabel}"
+                                         IconGlyph="💰"
+                                         IconBackground="#E0F2FE"
+                                         ValueBrush="#0B2545"/>
 
                 <!-- KPI Card 2: Total Transactions -->
-                <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#EBF8FF" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#E2E8F0"/>
-                    </Border.BorderBrush>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="40" Height="40" CornerRadius="10" Background="#EBF8FF" Margin="0,0,10,0">
-                                <TextBlock Text="🧾" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
-                            </Border>
-                            <TextBlock Text="จำนวนออเดอร์" FontSize="16" FontWeight="SemiBold"
-                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding TotalOrders}"
-                                   FontSize="28" FontWeight="Bold"
-                                   Foreground="#2B6CB0"
-                                   Margin="0,0,0,6"/>
-                        <TextBlock Grid.Row="2"
-                                   Text="{Binding OrdersSubLabel}"
-                                   FontSize="14"
-                                   Foreground="#A0AEC0"
-                                   Margin="0"/>
-                    </Grid>
-                </Border>
+                <controls:KpiSummaryCard Grid.Column="2"
+                                         Title="จำนวนออเดอร์"
+                                         Value="{Binding TotalOrders}"
+                                         Subtitle="{Binding OrdersSubLabel}"
+                                         IconGlyph="🧾"
+                                         IconBackground="#EBF8FF"
+                                         ValueBrush="#0284C7"/>
 
                 <!-- KPI Card 3: Average Ticket -->
-                <Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FFFFFF" Offset="0"/>
-                            <GradientStop Color="#FEFCBF" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="#FEFCBF"/>
-                    </Border.BorderBrush>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Border Width="40" Height="40" CornerRadius="10" Background="#FEFCBF" Margin="0,0,10,0">
-                                <TextBlock Text="📈" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
-                            </Border>
-                            <TextBlock Text="ยอดเฉลี่ยต่อบิล" FontSize="16" FontWeight="SemiBold"
-                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding AverageTicket, StringFormat={}{0:N2}}"
-                                   FontSize="28" FontWeight="Bold"
-                                   Foreground="#D69E2E"
-                                   Margin="0,0,0,6"/>
-                        <TextBlock Grid.Row="2"
-                                   Text="{Binding AverageSubLabel}"
-                                   FontSize="14"
-                                   Foreground="#A0AEC0"
-                                   Margin="0"/>
-                    </Grid>
-                </Border>
+                <controls:KpiSummaryCard Grid.Column="4"
+                                         Title="ยอดเฉลี่ยต่อบิล"
+                                         Value="{Binding AverageTicket, StringFormat={}{0:N2}}"
+                                         Subtitle="{Binding AverageSubLabel}"
+                                         IconGlyph="📈"
+                                         IconBackground="#FEF3C7"
+                                         ValueBrush="#D97706"/>
             </Grid>
 
             <!-- ══════════════════════════════════════════════════════════ -->

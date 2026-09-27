@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj": {}
+    "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj": {}
   },
   "projects": {
-    "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj": {
+    "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
+        "projectUniqueName": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
         "projectName": "MatchaShop",
-        "projectPath": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
+        "projectPath": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "D:\\ShopManagement-หลัก\\MatchaShop\\obj\\",
+        "outputPath": "D:\\ShopManagement_หลัก\\MatchaShop\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -35,6 +35,9 @@
           }
         },
         "warningProperties": {
+          "noWarn": [
+            "NU1701"
+          ],
           "warnAsError": [
             "NU1605"
           ]
@@ -58,9 +61,13 @@
               "target": "Package",
               "version": "[0.105.1, )"
             },
+            "ClosedXML.Parser": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
             "Dapper": {
               "target": "Package",
-              "version": "[2.1.86, )"
+              "version": "[2.1.89, )"
             },
             "LiveCharts.Wpf": {
               "target": "Package",
@@ -68,7 +75,15 @@
             },
             "Microsoft.Data.Sqlite": {
               "target": "Package",
-              "version": "[10.0.12, )"
+              "version": "[9.0.2, )"
+            },
+            "Microsoft.Data.Sqlite.Core": {
+              "target": "Package",
+              "version": "[9.0.2, )"
+            },
+            "System.Xml.ReaderWriter": {
+              "target": "Package",
+              "version": "[4.3.0, )"
             },
             "System.Xml.XDocument": {
               "target": "Package",

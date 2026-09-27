@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\
+D:\ShopManagement_หลัก\MatchaShop\obj\Debug\net9.0-windows\
 MatchaShop
 none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-D:\ShopManagement-หลัก\MatchaShop\App.xaml
-18-1206354927
+D:\ShopManagement_หลัก\MatchaShop\App.xaml
+191431199330
 
-65-162287552
-215483462003
-Views\ClaimView.xaml;Views\CustomerView.xaml;Views\CustomMessageBox.xaml;Views\DashboardView.xaml;Views\DeliverySlipWindow.xaml;Views\DeliveryView.xaml;Views\ExpenseView.xaml;Views\MainWindow.xaml;Views\ManagementView.xaml;Views\PartnerView.xaml;Views\POReceiptWindow.xaml;Views\PosView.xaml;Views\PurchaseOrderView.xaml;Views\ReceiptWindow.xaml;Views\ReportsView.xaml;Views\SalesHistoryView.xaml;Views\StaffView.xaml;Views\StockInView.xaml;
+67-962426276
+215709309663
+Views\ClaimView.xaml;Views\Controls\KpiSummaryCard.xaml;Views\CustomerView.xaml;Views\CustomMessageBox.xaml;Views\DashboardView.xaml;Views\DeliverySlipWindow.xaml;Views\DeliveryView.xaml;Views\ExpenseView.xaml;Views\MainWindow.xaml;Views\ManagementView.xaml;Views\PartnerView.xaml;Views\POReceiptWindow.xaml;Views\PosView.xaml;Views\PurchaseOrderView.xaml;Views\ReceiptWindow.xaml;Views\ReportsView.xaml;Views\SalesHistoryView.xaml;Views\StaffView.xaml;Views\StockInView.xaml;
 
 False
 
