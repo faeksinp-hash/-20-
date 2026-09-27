@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rTDf49Zkiy0=",
+  "dgSpecHash": "Z6gCEJYTQj0=",
   "success": true,
-  "projectFilePath": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
+  "projectFilePath": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\closedxml\\0.105.1\\closedxml.0.105.1.nupkg.sha512",
@@ -53,9 +53,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "Package 'LiveCharts 0.9.7' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
+      "projectPath": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
+      "filePath": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
       "libraryId": "LiveCharts",
       "targetGraphs": [
         "net9.0-windows7.0"
@@ -65,9 +65,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "Package 'LiveCharts.Wpf 0.9.7' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
+      "projectPath": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\ShopManagement_หลัก\\MatchaShop\\MatchaShop.csproj",
+      "filePath": "D:\\ShopManagement-หลัก\\MatchaShop\\MatchaShop.csproj",
       "libraryId": "LiveCharts.Wpf",
       "targetGraphs": [
         "net9.0-windows7.0"
