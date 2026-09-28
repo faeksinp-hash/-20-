@@ -447,6 +447,7 @@ namespace Porjai20.ViewModels
         public ObservableCollection<SalesOrderItem> SelectedOrderItems { get; set; } = new ObservableCollection<SalesOrderItem>();
         public ObservableCollection<SalesOrder> Deliveries { get; set; } = new ObservableCollection<SalesOrder>();
         public ObservableCollection<Customer> Customers { get; set; } = new ObservableCollection<Customer>();
+        public ObservableCollection<Customer> FilteredCustomers => Customers;
         public ObservableCollection<Partner> Partners { get; set; } = new ObservableCollection<Partner>();
         public ObservableCollection<Claim> Claims { get; set; } = new ObservableCollection<Claim>();
         public System.Collections.ObjectModel.ObservableCollection<string> ClaimStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "ทั้งหมด", "รอดำเนินการ", "เคลมสำเร็จ", "ปฏิเสธ" };
@@ -4777,6 +4778,8 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(TotalCustomersCount));
             OnPropertyChanged(nameof(NewCustomersThisMonthCount));
             OnPropertyChanged(nameof(TotalCumulativeSpent));
+            OnPropertyChanged(nameof(Customers));
+            OnPropertyChanged(nameof(FilteredCustomers));
         }
 
         private bool _isCustomerAlertOpen;

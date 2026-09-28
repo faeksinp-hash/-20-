@@ -236,6 +236,7 @@ namespace Porjai20.ViewModels
         private readonly DatabaseService _databaseService;
 
         public ObservableCollection<Customer> Customers { get; } = new ObservableCollection<Customer>();
+        public ObservableCollection<Customer> FilteredCustomers => Customers;
 
         private Customer? _selectedCustomer;
         public Customer? SelectedCustomer

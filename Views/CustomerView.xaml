@@ -135,6 +135,44 @@
 
         <Style x:Key="RoseBtnStyle" BasedOn="{StaticResource PrimaryBtnStyle}" TargetType="Button"/>
 
+        <!-- Add Customer Action Button Style (System Standard Blue) -->
+        <Style x:Key="AddCustomerBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background"      Value="#0284C7"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="Bold"/>
+            <Setter Property="FontSize"        Value="15"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0369A1"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Danger Action Button Style -->
         <Style x:Key="DangerBtnStyle" TargetType="Button">
             <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
@@ -333,12 +371,17 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#000000"/>
             <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <EventSetter Event="MouseDoubleClick" Handler="CustomerRow_MouseDoubleClick"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
                         <Border x:Name="RowBorder"
                                 CornerRadius="8" Margin="4,2" Padding="4,0"
-                                Background="Transparent">
+                                Background="Transparent"
+                                BorderThickness="0">
                             <DataGridCellsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -349,6 +392,7 @@
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
                                 <Setter Property="Foreground" Value="#000000"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -368,6 +412,8 @@
             <Setter Property="Background"      Value="Transparent"/>
             <Setter Property="Foreground"      Value="#000000"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Padding"         Value="8,0"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -401,6 +447,7 @@
 
         <Style x:Key="ColCenter" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment"        Value="Center"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
             <Setter Property="Foreground"          Value="#000000"/>
@@ -420,6 +467,7 @@
         </Style>
         <Style x:Key="ColAmountStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="TextAlignment"        Value="Right"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontWeight"          Value="SemiBold"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, sans-serif"/>
@@ -429,6 +477,7 @@
         </Style>
         <Style x:Key="ColRightBold" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="TextAlignment"        Value="Right"/>
             <Setter Property="VerticalAlignment"   Value="Center"/>
             <Setter Property="FontWeight"          Value="SemiBold"/>
             <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, sans-serif"/>
@@ -616,15 +665,13 @@
                     Effect="{StaticResource SoftShadow}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>     <!-- Search Input Box -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Search Button -->
                         <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Clear Search Button -->
                         <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Add Customer Action Button -->
                     </Grid.ColumnDefinitions>
 
                     <!-- Search Input Box -->
@@ -644,10 +691,10 @@
                             <TextBox x:Name="CustomerSearchBox"
                                      Text="{Binding CustomerSearchKeyword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                                      Style="{StaticResource LightTextBoxStyle}"
-                                     Height="44"
+                                     Height="42"
                                      Padding="38,0,12,0"
                                      VerticalContentAlignment="Center"
-                                     FontSize="16"/>
+                                     FontSize="15"/>
                             <TextBlock Text="ค้นหาด้วยรหัสลูกค้า หรือ ชื่อลูกค้า..."
                                        Foreground="#A0AEC0"
                                        FontSize="15"
@@ -679,23 +726,13 @@
                             Padding="16,0"
                             Height="42"/>
 
-                    <!-- Manage Customer Action Button (⚙️ จัดการข้อมูล) -->
-                    <Button Grid.Column="6"
-                            Content="⚙️ จัดการข้อมูล"
-                            Command="{Binding OpenManageModalCommand}"
-                            IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource PrimaryBtnStyle}"
-                            Padding="18,0"
-                            Height="42"
-                            Margin="0,0,10,0"/>
-
                     <!-- Add Customer Action Button (➕ เพิ่มข้อมูลลูกค้า) -->
-                    <Button Grid.Column="8"
+                    <Button Grid.Column="6"
                             Content="➕ เพิ่มข้อมูลลูกค้า"
                             Command="{Binding OpenAddCustomerModalCommand}"
                             IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource AddBtnStyle}"
-                            Padding="18,0"
+                            Style="{StaticResource AddCustomerBtnStyle}"
+                            Padding="20,0"
                             Height="42"/>
                 </Grid>
             </Border>
@@ -711,72 +748,99 @@
                     Padding="16"
                     Effect="{StaticResource SoftShadow}">
 
-                <DataGrid ItemsSource="{Binding Customers}"
-                          SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                          IsSynchronizedWithCurrentItem="True"
-                          SelectionMode="Single"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          HeadersVisibility="Column"
-                          CanUserReorderColumns="False"
-                          CanUserResizeColumns="False"
-                          CanUserSortColumns="True"
-                          HorizontalScrollBarVisibility="Disabled"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          RowHeight="50"
-                          GridLinesVisibility="Horizontal"
-                          HorizontalGridLinesBrush="#F1F5F9"
-                          BorderThickness="0"
-                          Background="Transparent"
-                          ColumnHeaderStyle="{StaticResource CustomerColumnHeaderStyle}"
-                          RowStyle="{StaticResource CustomerRowStyle}"
-                          CellStyle="{StaticResource CustomerCellStyle}">
-                    <DataGrid.Columns>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                        <!-- #1: Customer Code / Member Code -->
-                        <DataGridTextColumn Header="รหัสลูกค้า"
-                                            Binding="{Binding Code}"
-                                            Width="1.4*"
-                                            ElementStyle="{StaticResource ColCenterBold}"/>
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding Customers}"
+                              SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              IsSynchronizedWithCurrentItem="True"
+                              SelectionMode="Single"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              CanUserSortColumns="True"
+                              HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              RowHeight="50"
+                              GridLinesVisibility="None"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              ColumnHeaderStyle="{StaticResource CustomerColumnHeaderStyle}"
+                              RowStyle="{StaticResource CustomerRowStyle}"
+                              CellStyle="{StaticResource CustomerCellStyle}">
+                        <DataGrid.Columns>
 
-                        <!-- #2: Registration Date -->
-                        <DataGridTextColumn Header="วันที่สมัคร"
-                                            Binding="{Binding RegistrationDate, StringFormat=dd/MM/yyyy}"
-                                            Width="1.2*"
-                                            ElementStyle="{StaticResource ColCenter}"/>
+                            <!-- #1: Customer Code / Member Code -->
+                            <DataGridTextColumn Header="รหัสลูกค้า"
+                                                Binding="{Binding Code}"
+                                                Width="1.4*"
+                                                ElementStyle="{StaticResource ColCenterBold}"/>
 
-                        <!-- #3: Customer Name -->
-                        <DataGridTextColumn Header="ชื่อ-สกุล"
-                                            Binding="{Binding Name}"
-                                            Width="2.2*"
-                                            ElementStyle="{StaticResource ColLeftBold}"/>
+                            <!-- #2: Registration Date -->
+                            <DataGridTextColumn Header="วันที่สมัคร"
+                                                Binding="{Binding RegistrationDate, StringFormat=dd/MM/yyyy}"
+                                                Width="1.2*"
+                                                ElementStyle="{StaticResource ColCenter}"/>
 
-                        <!-- #4: Phone Number -->
-                        <DataGridTextColumn Header="เบอร์โทรศัพท์"
-                                            Binding="{Binding Phone}"
-                                            Width="1.4*"
-                                            ElementStyle="{StaticResource ColCenterBold}"/>
+                            <!-- #3: Customer Name -->
+                            <DataGridTextColumn Header="ชื่อ-สกุล"
+                                                Binding="{Binding Name}"
+                                                Width="2.2*"
+                                                ElementStyle="{StaticResource ColLeftBold}"/>
 
-                        <!-- #5: Address -->
-                        <DataGridTextColumn Header="ที่อยู่"
-                                            Binding="{Binding Address}"
-                                            Width="2.6*"
-                                            ElementStyle="{StaticResource ColLeftBold}"/>
+                            <!-- #4: Phone Number -->
+                            <DataGridTextColumn Header="เบอร์โทรศัพท์"
+                                                Binding="{Binding Phone}"
+                                                Width="1.4*"
+                                                ElementStyle="{StaticResource ColCenterBold}"/>
 
-                        <!-- #6: Total Purchases -->
-                        <DataGridTextColumn Header="รายการซื้อ"
-                                            Binding="{Binding TotalPurchases}"
-                                            Width="1*"
-                                            ElementStyle="{StaticResource ColRightBold}"/>
+                            <!-- #5: Address -->
+                            <DataGridTextColumn Header="ที่อยู่"
+                                                Binding="{Binding Address}"
+                                                Width="2.6*"
+                                                ElementStyle="{StaticResource ColLeftBold}"/>
 
-                        <!-- #7: Total Spent -->
-                        <DataGridTextColumn Header="ยอดซื้อสะสม"
-                                            Binding="{Binding TotalSpent, StringFormat={}{0:N2}}"
-                                            Width="1.6*"
-                                            ElementStyle="{StaticResource ColAmountStyle}"/>
+                            <!-- #6: Total Purchases -->
+                            <DataGridTextColumn Header="รายการซื้อ"
+                                                Binding="{Binding TotalPurchases}"
+                                                Width="1*"
+                                                ElementStyle="{StaticResource ColRightBold}"/>
 
-                    </DataGrid.Columns>
-                </DataGrid>
+                            <!-- #7: Total Spent -->
+                            <DataGridTextColumn Header="ยอดซื้อสะสม"
+                                                Binding="{Binding TotalSpent, StringFormat={}{0:N2}}"
+                                                Width="1.6*"
+                                                ElementStyle="{StaticResource ColAmountStyle}"/>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Status Bar / Footer (bottom of DataGrid panel) -->
+                    <DockPanel Grid.Row="1"
+                               LastChildFill="False"
+                               Margin="0,12,0,0">
+                        <TextBlock Text="{Binding FilteredCustomers.Count, StringFormat='แสดงทั้งหมด {0} รายการ'}"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Left"
+                                   Margin="4,0,0,0"/>
+
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                                   Foreground="#64748B"
+                                   FontSize="13.5"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
+                                   Margin="0,0,4,0"/>
+                    </DockPanel>
+                </Grid>
             </Border>
 
         </Grid>
