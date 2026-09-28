@@ -2292,6 +2292,8 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(FilteredStaffList));
                     FilteredPartners?.Refresh();
                     OnPropertyChanged(nameof(FilteredPartners));
+                    FilteredExpenses?.Refresh();
+                    OnPropertyChanged(nameof(FilteredExpenses));
                 }
             } 
         }

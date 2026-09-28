@@ -220,12 +220,17 @@ namespace Porjai20.ViewModels
             CloseExpenseModalCommand = new RelayCommand(_ => ExecuteCloseExpenseModal());
             ClearExpenseCommand = new RelayCommand(_ => ClearExpenseForm());
             
-            SearchExpenseCommand = new RelayCommand(_ => FilteredExpenses?.Refresh());
+            SearchExpenseCommand = new RelayCommand(_ =>
+            {
+                FilteredExpenses?.Refresh();
+                OnPropertyChanged(nameof(FilteredExpenses));
+            });
             ClearExpenseFilterCommand = new RelayCommand(_ =>
             {
                 ExpenseSearchKeyword = string.Empty;
                 SearchText = string.Empty;
                 FilteredExpenses?.Refresh();
+                OnPropertyChanged(nameof(FilteredExpenses));
             });
         }
 
@@ -567,6 +572,7 @@ namespace Porjai20.ViewModels
         public int MonthlyExpenseCount => Expenses?.Where(e => e.ExpenseDate.Month == DateTime.Today.Month && e.ExpenseDate.Year == DateTime.Today.Year).Count() ?? 0;
 
         public ICommand OpenManageModalCommand { get; }
+        public ICommand OpenManageExpenseModalCommand => OpenManageModalCommand;
         public ICommand OpenAddExpenseModalCommand { get; }
         public ICommand SaveExpenseCommand { get; }
         public ICommand DeleteExpenseCommand { get; }
@@ -604,11 +610,16 @@ namespace Porjai20.ViewModels
             DeleteExpenseCommand = new RelayCommand(_ => ExecuteDeleteExpense());
             CloseModalCommand = new RelayCommand(_ => ExecuteCloseModal());
             ClearExpenseCommand = new RelayCommand(_ => ClearExpenseForm());
-            SearchExpenseCommand = new RelayCommand(_ => FilteredExpenses?.Refresh());
+            SearchExpenseCommand = new RelayCommand(_ =>
+            {
+                FilteredExpenses?.Refresh();
+                OnPropertyChanged(nameof(FilteredExpenses));
+            });
             ClearExpenseFilterCommand = new RelayCommand(_ =>
             {
                 SearchText = string.Empty;
                 FilteredExpenses?.Refresh();
+                OnPropertyChanged(nameof(FilteredExpenses));
             });
 
             LoadExpenses();
