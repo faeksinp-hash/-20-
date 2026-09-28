@@ -78,12 +78,17 @@ namespace Porjai20.ViewModels
             ClosePartnerModalCommand = new RelayCommand(_ => ExecuteClosePartnerModal());
             ClearPartnerCommand = new RelayCommand(_ => ClearPartnerForm());
             
-            SearchPartnerCommand = new RelayCommand(_ => FilteredPartners?.Refresh());
+            SearchPartnerCommand = new RelayCommand(_ =>
+            {
+                FilteredPartners?.Refresh();
+                OnPropertyChanged(nameof(FilteredPartners));
+            });
             ClearPartnerFilterCommand = new RelayCommand(_ =>
             {
                 PartnerSearchKeyword = string.Empty;
                 SearchText = string.Empty;
                 FilteredPartners?.Refresh();
+                OnPropertyChanged(nameof(FilteredPartners));
             });
         }
 
@@ -426,11 +431,16 @@ namespace Porjai20.ViewModels
             DeletePartnerCommand = new RelayCommand(_ => ExecuteDeletePartner());
             CloseModalCommand = new RelayCommand(_ => ExecuteCloseModal());
             ClearPartnerCommand = new RelayCommand(_ => ClearPartnerForm());
-            SearchPartnerCommand = new RelayCommand(_ => FilteredPartners?.Refresh());
+            SearchPartnerCommand = new RelayCommand(_ =>
+            {
+                FilteredPartners?.Refresh();
+                OnPropertyChanged(nameof(FilteredPartners));
+            });
             ClearPartnerFilterCommand = new RelayCommand(_ =>
             {
                 SearchText = string.Empty;
                 FilteredPartners?.Refresh();
+                OnPropertyChanged(nameof(FilteredPartners));
             });
 
             LoadPartners();
