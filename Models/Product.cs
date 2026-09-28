@@ -87,6 +87,9 @@ namespace Porjai20.Models
             }
         }
 
+        public int StatusPriority => Stock <= 0 ? 1 : (Stock <= ReorderPoint ? 2 : 3);
+        public int ProductID => Pro_ID;
+
         public string Pro_Category { get; set; } = string.Empty;
         public string Category
         {

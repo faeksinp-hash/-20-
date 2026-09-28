@@ -2782,8 +2782,13 @@ namespace Porjai20.ViewModels
             CurrentModalContent = "product";
         }
 
-        public void ExecuteOpenEditProductModal()
+        public void ExecuteOpenEditProductModal(Product product = null)
         {
+            if (product != null)
+            {
+                SelectedProduct = product;
+            }
+
             if (SelectedProduct == null || (SelectedProduct.Id <= 0 && SelectedProduct.Pro_ID <= 0))
             {
                 ShowAlert("กรุณาคลิกเลือกรายการสินค้าในตารางก่อนดำเนินการ", "แจ้งเตือน", "⚠️");
@@ -3908,7 +3913,14 @@ namespace Porjai20.ViewModels
                         Pro_Image AS Pro_Image, 
                         Pro_Image AS ImagePath, 
                         '' AS Description 
-                    FROM tblProduct";
+                    FROM tblProduct
+                    ORDER BY 
+                        CASE 
+                            WHEN Pro_Qty <= 0 THEN 1
+                            WHEN Pro_Qty <= Pro_MinQty THEN 2
+                            ELSE 3
+                        END ASC,
+                        Pro_ID ASC";
                 var products = await conn.QueryAsync<Product>(sql);
                 _allProducts = products.ToList();
                 FilterProducts();
@@ -3955,6 +3967,10 @@ namespace Porjai20.ViewModels
                         break;
                 }
             }
+
+            query = query
+                .OrderBy(p => p.StatusPriority)
+                .ThenBy(p => p.ProductID);
 
             foreach (var p in query)
             {
