@@ -1160,8 +1160,7 @@
                                                                 <TextBlock Grid.Column="0" Text="👤" FontSize="24" VerticalAlignment="Center" Margin="0,0,12,0"/>
 
                                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                                    <TextBlock Text="สมาชิก (Member)" FontSize="17" FontWeight="Bold" Foreground="#0B2545"/>
-                                                                    <TextBlock Text="ค้นหาด้วยเบอร์โทรศัพท์เพื่อสะสมแต้ม" FontSize="14" Foreground="#64748B" Margin="0,2,0,0"/>
+                                                                    <TextBlock Text="สมาชิก" FontSize="17" FontWeight="Bold" Foreground="#0B2545"/>
                                                                 </StackPanel>
 
                                                                 <Border Grid.Column="2" Width="20" Height="20" CornerRadius="4" BorderThickness="2" BorderBrush="#BAE6FD" x:Name="chkBorder" VerticalAlignment="Center">
@@ -1179,232 +1178,263 @@
                                                     </CheckBox.Template>
                                                 </CheckBox>
 
-                                                <!-- Expandable Phone Search Area -->
+                                                <!-- Expandable Member Content Area -->
                                                 <StackPanel Visibility="{Binding IsMemberInputVisible, Converter={StaticResource BoolToVis}}" Margin="0,10,0,0">
                                                     
-                                                    <!-- Search Bar Row (Phone Icon + Placeholder + Search Button) -->
-                                                    <Grid Margin="0,2,0,0">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                        </Grid.ColumnDefinitions>
-
-                                                        <!-- Phone Input Box with Icon, Placeholder, and Autocomplete Dropdown Popup -->
-                                                        <Border x:Name="bdPhoneInput" Grid.Column="0" Background="#F8FAFC" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Height="42" Padding="10,0">
-                                                            <Grid VerticalAlignment="Center">
+                                                    <!-- CASE A: Linked Member Card (Shown when member is linked & NOT in manual search mode) -->
+                                                    <Border Visibility="{Binding IsLinkedMemberCardVisible, Converter={StaticResource BoolToVis}}"
+                                                            Background="#F0FDF4" BorderBrush="#86EFAC" BorderThickness="1.5" CornerRadius="12" Padding="14,12">
+                                                        <StackPanel>
+                                                            <Grid>
                                                                 <Grid.ColumnDefinitions>
                                                                     <ColumnDefinition Width="Auto"/>
                                                                     <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
                                                                 </Grid.ColumnDefinitions>
 
-                                                                <!-- Phone Icon -->
-                                                                <TextBlock Grid.Column="0" Text="📞" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#0284C7"/>
+                                                                <!-- Check Icon Badge -->
+                                                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="15" Background="#DCFCE7" Margin="0,0,10,0" VerticalAlignment="Center">
+                                                                    <TextBlock Text="✓" Foreground="#16A34A" FontWeight="ExtraBold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
 
-                                                                <!-- Input Field -->
-                                                                <Grid Grid.Column="1">
-                                                                    <TextBox x:Name="txtMemberSearchPhone"
-                                                                             Text="{Binding CustomerSearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                             Background="Transparent"
-                                                                             BorderThickness="0"
-                                                                             FontSize="14"
-                                                                             FontWeight="SemiBold"
-                                                                             Foreground="#0F172A"
-                                                                             VerticalContentAlignment="Center"
-                                                                             Height="36"
-                                                                             Padding="0"
-                                                                             IsEnabled="{Binding ElementName=chkEnableMember, Path=IsChecked}"/>
+                                                                <!-- Member Info -->
+                                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding LinkedMemberDisplayText}" FontSize="15" FontWeight="Bold" Foreground="#14532D"/>
+                                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                                        <TextBlock Text="แต้มสะสมปัจจุบัน: " FontSize="13" Foreground="#166534"/>
+                                                                        <TextBlock Text="{Binding SelectedCustomer.Points, StringFormat='{}{0:N0} แต้ม'}" FontSize="13" FontWeight="Bold" Foreground="#15803D"/>
+                                                                    </StackPanel>
+                                                                </StackPanel>
 
-                                                                    <!-- Placeholder (08X-XXX-XXXX) -->
-                                                                    <TextBlock Text="08X-XXX-XXXX" 
-                                                                               IsHitTestVisible="False" 
-                                                                               FontSize="14" 
-                                                                               Foreground="#94A3B8" 
-                                                                               VerticalAlignment="Center">
-                                                                        <TextBlock.Style>
-                                                                            <Style TargetType="TextBlock">
-                                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                                                <Style.Triggers>
-                                                                                    <DataTrigger Binding="{Binding CustomerSearchText}" Value="">
-                                                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                                                    </DataTrigger>
-                                                                                    <DataTrigger Binding="{Binding CustomerSearchText}" Value="{x:Null}">
-                                                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                                                    </DataTrigger>
-                                                                                </Style.Triggers>
+                                                                <!-- Action Button: Change Member -->
+                                                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                                    <Button Command="{Binding ChangeMemberCommand}" 
+                                                                            Background="#E0F2FE" Foreground="#0284C7" BorderThickness="0" 
+                                                                            Padding="14,6" Cursor="Hand" FontSize="12.5" FontWeight="Bold">
+                                                                        <Button.Resources>
+                                                                            <Style TargetType="Border">
+                                                                                <Setter Property="CornerRadius" Value="7"/>
                                                                             </Style>
-                                                                        </TextBlock.Style>
-                                                                    </TextBlock>
-
-                                                                    <!-- Autocomplete Dropdown Suggestions Popup (Aligned directly with Phone Input Container) -->
-                                                                    <Popup Placement="Bottom"
-                                                                           PlacementTarget="{Binding ElementName=bdPhoneInput}"
-                                                                           Width="{Binding ElementName=bdPhoneInput, Path=ActualWidth}"
-                                                                           IsOpen="{Binding IsCustomerDropDownOpen, Mode=TwoWay}"
-                                                                           StaysOpen="False"
-                                                                           AllowsTransparency="True"
-                                                                           PopupAnimation="Slide">
-                                                                        <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Margin="0,4,0,4">
-                                                                            <Border.Effect>
-                                                                                <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#0B2545" Opacity="0.15"/>
-                                                                            </Border.Effect>
-                                                                            <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" SnapsToDevicePixels="True">
-                                                                                <StackPanel Margin="4,4">
-                                                                                    <!-- Results List -->
-                                                                                    <ListBox ItemsSource="{Binding FilteredCustomerList}"
-                                                                                             SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
-                                                                                             BorderThickness="0"
-                                                                                             Background="Transparent"
-                                                                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                                                                        <ListBox.ItemTemplate>
-                                                                                            <DataTemplate>
-                                                                                                <Border Padding="10,7" Cursor="Hand" Background="Transparent">
-                                                                                                    <Grid>
-                                                                                                        <Grid.ColumnDefinitions>
-                                                                                                            <ColumnDefinition Width="*"/>
-                                                                                                            <ColumnDefinition Width="Auto"/>
-                                                                                                        </Grid.ColumnDefinitions>
-                                                                                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis" Margin="0,0,6,0"/>
-                                                                                                        <TextBlock Grid.Column="1" Text="{Binding Phone}" Foreground="#0284C7" FontWeight="SemiBold"/>
-                                                                                                    </Grid>
-                                                                                                </Border>
-                                                                                            </DataTemplate>
-                                                                                        </ListBox.ItemTemplate>
-                                                                                        <ListBox.ItemContainerStyle>
-                                                                                            <Style TargetType="ListBoxItem">
-                                                                                                <Setter Property="Template">
-                                                                                                    <Setter.Value>
-                                                                                                        <ControlTemplate TargetType="ListBoxItem">
-                                                                                                            <Border x:Name="bd" Background="Transparent" CornerRadius="6" Margin="2,1">
-                                                                                                                <ContentPresenter />
-                                                                                                            </Border>
-                                                                                                            <ControlTemplate.Triggers>
-                                                                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                                                                    <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
-                                                                                                                </Trigger>
-                                                                                                                <Trigger Property="IsSelected" Value="True">
-                                                                                                                    <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
-                                                                                                                </Trigger>
-                                                                                                            </ControlTemplate.Triggers>
-                                                                                                        </ControlTemplate>
-                                                                                                    </Setter.Value>
-                                                                                                </Setter>
-                                                                                            </Style>
-                                                                                        </ListBox.ItemContainerStyle>
-                                                                                    </ListBox>
-
-                                                                                    <!-- No Results Notice -->
-                                                                                    <TextBlock Text="ไม่พบข้อมูลสมาชิก" 
-                                                                                               FontSize="12.5" 
-                                                                                               Foreground="#94A3B8" 
-                                                                                               Padding="12,10" 
-                                                                                               HorizontalAlignment="Center">
-                                                                                        <TextBlock.Style>
-                                                                                            <Style TargetType="TextBlock">
-                                                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                                                                <Style.Triggers>
-                                                                                                    <DataTrigger Binding="{Binding FilteredCustomerList.Count}" Value="0">
-                                                                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                                                                    </DataTrigger>
-                                                                                                </Style.Triggers>
-                                                                                            </Style>
-                                                                                        </TextBlock.Style>
-                                                                                    </TextBlock>
-                                                                                </StackPanel>
-                                                                            </ScrollViewer>
-                                                                        </Border>
-                                                                    </Popup>
-                                                                </Grid>
+                                                                        </Button.Resources>
+                                                                        <TextBlock Text="เปลี่ยน"/>
+                                                                    </Button>
+                                                                </StackPanel>
                                                             </Grid>
-                                                        </Border>
 
-                                                        <!-- Search Button (Styled matching the reference image) -->
-                                                        <Button Grid.Column="1"
-                                                                x:Name="btnSearchCustomer"
-                                                                Click="BtnSearchCustomer_Click"
-                                                                Command="{Binding SearchCustomerCommand}"
-                                                                IsEnabled="{Binding ElementName=chkEnableMember, Path=IsChecked}"
-                                                                Margin="8,0,0,0"
-                                                                Height="42"
-                                                                Padding="18,0"
-                                                                Cursor="Hand">
-                                                            <Button.Style>
-                                                                <Style TargetType="Button">
-                                                                    <Setter Property="Background" Value="#1E88E5"/>
-                                                                    <Setter Property="Foreground" Value="White"/>
-                                                                    <Setter Property="FontWeight" Value="ExtraBold"/>
-                                                                    <Setter Property="FontSize" Value="14"/>
-                                                                    <Setter Property="Template">
-                                                                        <Setter.Value>
-                                                                            <ControlTemplate TargetType="Button">
-                                                                                <Border x:Name="border" 
-                                                                                        Background="{TemplateBinding Background}" 
-                                                                                        CornerRadius="13" 
-                                                                                        Padding="{TemplateBinding Padding}">
-                                                                                    <Border.Effect>
-                                                                                        <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Color="#1E88E5" Opacity="0.35"/>
-                                                                                    </Border.Effect>
-                                                                                    <TextBlock Text="ค้นหา" 
-                                                                                               FontWeight="ExtraBold" 
-                                                                                               Foreground="White" 
-                                                                                               FontSize="14.5" 
-                                                                                               HorizontalAlignment="Center" 
-                                                                                               VerticalAlignment="Center"/>
-                                                                                </Border>
-                                                                                <ControlTemplate.Triggers>
-                                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                                        <Setter TargetName="border" Property="Background" Value="#42A5F5"/>
-                                                                                    </Trigger>
-                                                                                    <Trigger Property="IsPressed" Value="True">
-                                                                                        <Setter TargetName="border" Property="Background" Value="#1565C0"/>
-                                                                                    </Trigger>
-                                                                                    <Trigger Property="IsEnabled" Value="False">
-                                                                                        <Setter TargetName="border" Property="Background" Value="#CBD5E1"/>
-                                                                                        <Setter TargetName="border" Property="Effect" Value="{x:Null}"/>
-                                                                                    </Trigger>
-                                                                                </ControlTemplate.Triggers>
-                                                                            </ControlTemplate>
-                                                                        </Setter.Value>
-                                                                    </Setter>
-                                                                </Style>
-                                                            </Button.Style>
-                                                        </Button>
-                                                    </Grid>
-
-                                                    <!-- Member Profile Card (Shown when member is found) -->
-                                                    <Border Margin="0,10,0,0" Padding="12,10" Background="#EFF6FF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10">
-                                                        <Border.Style>
-                                                            <Style TargetType="Border">
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding HasSelectedCustomer}" Value="True">
-                                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Border.Style>
-                                                        <StackPanel>
-                                                            <!-- Row 1: Profile Icon + Name + Existing Points -->
-                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                                <TextBlock Text="👤" FontSize="15" Foreground="#0284C7" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                                                <TextBlock Text="{Binding SelectedCustomer.Name, StringFormat='คุณ {0}'}" FontSize="13.5" FontWeight="Bold" Foreground="#0369A1" VerticalAlignment="Center"/>
-                                                                <TextBlock Text="{Binding SelectedCustomer.Points, StringFormat=' (สะสมเดิม: {0} แต้ม)'}" FontSize="13" FontWeight="SemiBold" Foreground="#0284C7" VerticalAlignment="Center"/>
-                                                            </StackPanel>
-
-                                                            <!-- Row 2: Earned Points Badge in this Bill -->
-                                                            <Border Margin="0,8,0,0" Padding="10,6" Background="#F0FDF4" BorderBrush="#86EFAC" BorderThickness="1" CornerRadius="6">
+                                                            <!-- Earned Points Badge in this Bill -->
+                                                            <Border Margin="0,10,0,0" Padding="12,7" Background="#FFFFFF" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="8">
                                                                 <Grid>
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="Auto"/>
                                                                         <ColumnDefinition Width="*"/>
                                                                         <ColumnDefinition Width="Auto"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                    <TextBlock Grid.Column="0" Text="🎁" FontSize="13" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                                                    <TextBlock Grid.Column="1" Text="บิลนี้รับแต้มสะสม:" FontSize="12" FontWeight="SemiBold" Foreground="#166534" VerticalAlignment="Center"/>
-                                                                    <TextBlock Grid.Column="2" Text="{Binding EarnedPoints, StringFormat=+{0} แต้ม}" FontSize="13" FontWeight="ExtraBold" Foreground="#15803D" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="0" Text="🎁" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                                    <TextBlock Grid.Column="1" Text="บิลนี้รับแต้มสะสม:" FontSize="13" FontWeight="SemiBold" Foreground="#166534" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="2" Text="{Binding EarnedPoints, StringFormat=+{0} แต้ม}" FontSize="14" FontWeight="ExtraBold" Foreground="#15803D" VerticalAlignment="Center"/>
                                                                 </Grid>
                                                             </Border>
                                                         </StackPanel>
                                                     </Border>
+
+                                                    <!-- CASE B: Phone Search Area (Shown when no member is selected OR user clicked "เปลี่ยน") -->
+                                                    <StackPanel Visibility="{Binding IsMemberSearchBoxVisible, Converter={StaticResource BoolToVis}}">
+                                                        <!-- When changing member and a customer is already selected, provide a cancel change button -->
+                                                        <Grid Visibility="{Binding HasSelectedCustomer, Converter={StaticResource BoolToVis}}" Margin="0,0,0,6">
+                                                            <TextBlock Text="ค้นหาหรือเปลี่ยนสมาชิกใหม่:" FontSize="12.5" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                                            <Button Command="{Binding CancelChangeMemberCommand}" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                                                <TextBlock Text="ยกเลิกการเปลี่ยน" FontSize="12" Foreground="#0284C7" TextDecorations="Underline"/>
+                                                            </Button>
+                                                        </Grid>
+
+                                                        <!-- Search Bar Row (Phone Icon + Placeholder + Search Button) -->
+                                                        <Grid Margin="0,2,0,0">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!-- Phone Input Box with Icon, Placeholder, and Autocomplete Dropdown Popup -->
+                                                            <Border x:Name="bdPhoneInput" Grid.Column="0" Background="#F8FAFC" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Height="42" Padding="10,0">
+                                                                <Grid VerticalAlignment="Center">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <!-- Phone Icon -->
+                                                                    <TextBlock Grid.Column="0" Text="📞" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#0284C7"/>
+
+                                                                    <!-- Input Field -->
+                                                                    <Grid Grid.Column="1">
+                                                                        <TextBox x:Name="txtMemberSearchPhone"
+                                                                                 Text="{Binding CustomerSearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                                 Background="Transparent"
+                                                                                 BorderThickness="0"
+                                                                                 FontSize="14"
+                                                                                 FontWeight="SemiBold"
+                                                                                 Foreground="#0F172A"
+                                                                                 VerticalContentAlignment="Center"
+                                                                                 Height="36"
+                                                                                 Padding="0"
+                                                                                 IsEnabled="{Binding ElementName=chkEnableMember, Path=IsChecked}"/>
+
+                                                                        <!-- Placeholder (08X-XXX-XXXX) -->
+                                                                        <TextBlock Text="08X-XXX-XXXX" 
+                                                                                   IsHitTestVisible="False" 
+                                                                                   FontSize="14" 
+                                                                                   Foreground="#94A3B8" 
+                                                                                   VerticalAlignment="Center">
+                                                                            <TextBlock.Style>
+                                                                                <Style TargetType="TextBlock">
+                                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding CustomerSearchText}" Value="">
+                                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                                        </DataTrigger>
+                                                                                        <DataTrigger Binding="{Binding CustomerSearchText}" Value="{x:Null}">
+                                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBlock.Style>
+                                                                        </TextBlock>
+
+                                                                        <!-- Autocomplete Dropdown Suggestions Popup (Aligned directly with Phone Input Container) -->
+                                                                        <Popup Placement="Bottom"
+                                                                               PlacementTarget="{Binding ElementName=bdPhoneInput}"
+                                                                               Width="{Binding ElementName=bdPhoneInput, Path=ActualWidth}"
+                                                                               IsOpen="{Binding IsCustomerDropDownOpen, Mode=TwoWay}"
+                                                                               StaysOpen="False"
+                                                                               AllowsTransparency="True"
+                                                                               PopupAnimation="Slide">
+                                                                            <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Margin="0,4,0,4">
+                                                                                <Border.Effect>
+                                                                                    <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#0B2545" Opacity="0.15"/>
+                                                                                </Border.Effect>
+                                                                                <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" SnapsToDevicePixels="True">
+                                                                                    <StackPanel Margin="4,4">
+                                                                                        <!-- Results List -->
+                                                                                        <ListBox ItemsSource="{Binding FilteredCustomerList}"
+                                                                                                 SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
+                                                                                                 BorderThickness="0"
+                                                                                                 Background="Transparent"
+                                                                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                                                            <ListBox.ItemTemplate>
+                                                                                                <DataTemplate>
+                                                                                                    <Border Padding="10,7" Cursor="Hand" Background="Transparent">
+                                                                                                        <Grid>
+                                                                                                            <Grid.ColumnDefinitions>
+                                                                                                                <ColumnDefinition Width="*"/>
+                                                                                                                <ColumnDefinition Width="Auto"/>
+                                                                                                            </Grid.ColumnDefinitions>
+                                                                                                            <TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis" Margin="0,0,6,0"/>
+                                                                                                            <TextBlock Grid.Column="1" Text="{Binding Phone}" Foreground="#0284C7" FontWeight="SemiBold"/>
+                                                                                                        </Grid>
+                                                                                                    </Border>
+                                                                                                </DataTemplate>
+                                                                                            </ListBox.ItemTemplate>
+                                                                                            <ListBox.ItemContainerStyle>
+                                                                                                <Style TargetType="ListBoxItem">
+                                                                                                    <Setter Property="Template">
+                                                                                                        <Setter.Value>
+                                                                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                                                                                <Border x:Name="bd" Background="Transparent" CornerRadius="6" Margin="2,1">
+                                                                                                                    <ContentPresenter />
+                                                                                                                </Border>
+                                                                                                                <ControlTemplate.Triggers>
+                                                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                                                        <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
+                                                                                                                    </Trigger>
+                                                                                                                    <Trigger Property="IsSelected" Value="True">
+                                                                                                                        <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                                                                                                    </Trigger>
+                                                                                                                </ControlTemplate.Triggers>
+                                                                                                            </ControlTemplate>
+                                                                                                        </Setter.Value>
+                                                                                                    </Setter>
+                                                                                                </Style>
+                                                                                            </ListBox.ItemContainerStyle>
+                                                                                        </ListBox>
+
+                                                                                        <!-- No Results Notice -->
+                                                                                        <TextBlock Text="ไม่พบข้อมูลสมาชิก" 
+                                                                                                   FontSize="12.5" 
+                                                                                                   Foreground="#94A3B8" 
+                                                                                                   Padding="12,10" 
+                                                                                                   HorizontalAlignment="Center">
+                                                                                            <TextBlock.Style>
+                                                                                                <Style TargetType="TextBlock">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                                    <Style.Triggers>
+                                                                                                        <DataTrigger Binding="{Binding FilteredCustomerList.Count}" Value="0">
+                                                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                                                        </DataTrigger>
+                                                                                                    </Style.Triggers>
+                                                                                                </Style>
+                                                                                            </TextBlock.Style>
+                                                                                        </TextBlock>
+                                                                                    </StackPanel>
+                                                                                </ScrollViewer>
+                                                                            </Border>
+                                                                        </Popup>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Border>
+
+                                                            <!-- Search Button (Styled matching the reference image) -->
+                                                            <Button Grid.Column="1"
+                                                                    x:Name="btnSearchCustomer"
+                                                                    Click="BtnSearchCustomer_Click"
+                                                                    Command="{Binding SearchCustomerCommand}"
+                                                                    IsEnabled="{Binding ElementName=chkEnableMember, Path=IsChecked}"
+                                                                    Margin="8,0,0,0"
+                                                                    Height="42"
+                                                                    Padding="18,0"
+                                                                    Cursor="Hand">
+                                                                <Button.Style>
+                                                                    <Style TargetType="Button">
+                                                                        <Setter Property="Background" Value="#1E88E5"/>
+                                                                        <Setter Property="Foreground" Value="White"/>
+                                                                        <Setter Property="FontWeight" Value="ExtraBold"/>
+                                                                        <Setter Property="FontSize" Value="14"/>
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="Button">
+                                                                                    <Border x:Name="border" 
+                                                                                            Background="{TemplateBinding Background}" 
+                                                                                            CornerRadius="13" 
+                                                                                            Padding="{TemplateBinding Padding}">
+                                                                                        <Border.Effect>
+                                                                                            <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Color="#1E88E5" Opacity="0.35"/>
+                                                                                        </Border.Effect>
+                                                                                        <TextBlock Text="ค้นหา" 
+                                                                                                   FontWeight="ExtraBold" 
+                                                                                                   Foreground="White" 
+                                                                                                   FontSize="14.5" 
+                                                                                                   HorizontalAlignment="Center" 
+                                                                                                   VerticalAlignment="Center"/>
+                                                                                    </Border>
+                                                                                    <ControlTemplate.Triggers>
+                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                            <Setter TargetName="border" Property="Background" Value="#42A5F5"/>
+                                                                                        </Trigger>
+                                                                                        <Trigger Property="IsPressed" Value="True">
+                                                                                            <Setter TargetName="border" Property="Background" Value="#1565C0"/>
+                                                                                        </Trigger>
+                                                                                        <Trigger Property="IsEnabled" Value="False">
+                                                                                            <Setter TargetName="border" Property="Background" Value="#CBD5E1"/>
+                                                                                            <Setter TargetName="border" Property="Effect" Value="{x:Null}"/>
+                                                                                        </Trigger>
+                                                                                    </ControlTemplate.Triggers>
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Style>
+                                                                </Button.Style>
+                                                            </Button>
+                                                        </Grid>
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -1427,7 +1457,7 @@
                                                                         <TextBlock Grid.Column="0" Text="💵" FontSize="26" VerticalAlignment="Center" Margin="0,0,14,0"/>
 
                                                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                                            <TextBlock Text="เงินสด (Cash)" FontSize="17" FontWeight="Bold" Foreground="#0B2545"/>
+                                                                            <TextBlock Text="เงินสด" FontSize="17" FontWeight="Bold" Foreground="#0B2545"/>
                                                                             <TextBlock Text="ชำระด้วยเงินสดและคำนวณเงินทอน" FontSize="14" Foreground="#64748B" Margin="0,2,0,0"/>
                                                                         </StackPanel>
 

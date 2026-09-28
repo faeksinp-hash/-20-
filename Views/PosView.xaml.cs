@@ -42,6 +42,7 @@ namespace Porjai20.Views
                 vm.CustomerSearchText = "";
                 vm.MemberSearchResultText = "";
                 vm.IsCustomerDropDownOpen = false;
+                vm.IsManualMemberSearchMode = false;
             }
         }
 

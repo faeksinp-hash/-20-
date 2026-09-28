@@ -169,6 +169,18 @@ namespace Porjai20.ViewModels
                         SelectedShippingMethod = "Pickup";
                     }
                     IsDeliveryModalOpen = false;
+                    // Reset delivery-linked customer state
+                    _selectedDeliveryCustomer = null;
+                    CustomerName = "";
+                    CustomerPhone = "";
+                    CustomerAddress = "";
+                    SelectedCustomer = null;
+                    IsMemberSelected = false;
+                    IsManualMemberSearchMode = false;
+                    CustomerSearchText = "";
+                    MemberSearchResultText = "";
+                    OnPropertyChanged(nameof(SelectedDeliveryCustomer));
+                    OnPropertyChanged(nameof(MemberSubtitleText));
                 }
             }
         }
@@ -204,14 +216,15 @@ namespace Porjai20.ViewModels
                         CustomerPhone = value.Phone ?? "";
                         CustomerAddress = value.Address ?? "";
                         SelectedCustomer = value;
+                        CustomerSearchText = value.Phone ?? "";
+                        MemberPhone = value.Phone ?? "";
+                        IsMemberSelected = true;
+                        IsManualMemberSearchMode = false;
+                        OnPropertyChanged(nameof(MemberSubtitleText));
                     }
-                    else
-                    {
-                        // Reset / Clear fields when placeholder/null is selected
-                        CustomerName = "";
-                        CustomerPhone = "";
-                        CustomerAddress = "";
-                    }
+                    OnPropertyChanged(nameof(DeliveryCustomerName));
+                    OnPropertyChanged(nameof(DeliveryCustomerPhone));
+                    OnPropertyChanged(nameof(DeliveryCustomerAddress));
                 }
             }
         }
@@ -401,15 +414,87 @@ namespace Porjai20.ViewModels
                 if (SetProperty(ref _isMemberSelected, value))
                 {
                     OnPropertyChanged(nameof(IsMemberInputVisible));
+                    OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                    OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                    OnPropertyChanged(nameof(MemberSubtitleText));
+                    OnPropertyChanged(nameof(HasMember));
                     if (!value)
                     {
                         ClearSelectedCustomer();
+                        IsManualMemberSearchMode = false;
+                    }
+                    else
+                    {
+                        // If delivery customer is already selected, link it automatically
+                        if (SelectedCustomer == null && IsDeliverySelected && SelectedDeliveryCustomer != null)
+                        {
+                            SelectedCustomer = SelectedDeliveryCustomer;
+                            IsManualMemberSearchMode = false;
+                        }
                     }
                 }
             }
         }
 
         public bool IsMemberInputVisible => IsMemberSelected;
+
+        private bool _isManualMemberSearchMode = false;
+        public bool IsManualMemberSearchMode
+        {
+            get => _isManualMemberSearchMode;
+            set
+            {
+                if (SetProperty(ref _isManualMemberSearchMode, value))
+                {
+                    OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                    OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                }
+            }
+        }
+
+        public bool IsLinkedMemberCardVisible => IsMemberSelected && HasSelectedCustomer && !IsManualMemberSearchMode;
+        public bool IsMemberSearchBoxVisible => IsMemberSelected && (!HasSelectedCustomer || IsManualMemberSearchMode);
+
+        public bool IsMemberConfirmed => HasSelectedCustomer && !IsManualMemberSearchMode;
+        public bool IsSearchingMember => IsManualMemberSearchMode || !HasSelectedCustomer;
+        public bool IsMemberEditing => IsManualMemberSearchMode;
+
+        public string LinkedMemberDisplayText => SelectedCustomer != null
+            ? $"{SelectedCustomer.Name}"
+            : "";
+
+        public bool HasMember => HasSelectedCustomer;
+
+        public string SearchPhoneNumber
+        {
+            get => CustomerSearchText;
+            set => CustomerSearchText = value;
+        }
+
+        public string MemberSearchText
+        {
+            get => CustomerSearchText;
+            set => CustomerSearchText = value;
+        }
+
+        public string MemberSubtitleText
+        {
+            get
+            {
+                if (SelectedCustomer != null)
+                {
+                    string phoneStr = !string.IsNullOrWhiteSpace(SelectedCustomer.Phone) ? SelectedCustomer.Phone : CustomerPhone;
+                    string nameStr = !string.IsNullOrWhiteSpace(SelectedCustomer.Name) ? SelectedCustomer.Name : CustomerName;
+                    return $"{phoneStr} ({nameStr}) • แต้มสะสม: {SelectedCustomer.Points:N0} แต้ม";
+                }
+                if (!string.IsNullOrWhiteSpace(CustomerPhone))
+                {
+                    string nameStr = !string.IsNullOrWhiteSpace(CustomerName) ? CustomerName : "ลูกค้า";
+                    return $"{CustomerPhone} ({nameStr})";
+                }
+                return "ค้นหาด้วยเบอร์โทรศัพท์เพื่อสะสมแต้ม";
+            }
+        }
 
         private bool _isCustomerSearchOpen;
         public bool IsCustomerSearchOpen
@@ -436,6 +521,11 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(SelectedCustomerItem));
                     OnPropertyChanged(nameof(EarnedPoints));
                     OnPropertyChanged(nameof(HasSelectedCustomer));
+                    OnPropertyChanged(nameof(HasMember));
+                    OnPropertyChanged(nameof(MemberSubtitleText));
+                    OnPropertyChanged(nameof(LinkedMemberDisplayText));
+                    OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                    OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
                     if (value != null)
                     {
                         CustomerName = value.Name;
@@ -444,8 +534,14 @@ namespace Porjai20.ViewModels
                         _customerSearchText = value.Phone;
                         OnPropertyChanged(nameof(CustomerSearchText));
                         OnPropertyChanged(nameof(MemberPhone));
+                        OnPropertyChanged(nameof(SearchPhoneNumber));
+                        OnPropertyChanged(nameof(MemberSearchText));
                         MemberSearchResultText = $"👤 คุณ {value.Name} (สะสมเดิม: {value.Points} แต้ม)";
                         IsCustomerDropDownOpen = false;
+                        _isManualMemberSearchMode = false;
+                        OnPropertyChanged(nameof(IsManualMemberSearchMode));
+                        OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                        OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
                     }
                 }
             }
@@ -482,6 +578,8 @@ namespace Porjai20.ViewModels
                         IsMemberSelected = true;
                     }
                     OnPropertyChanged(nameof(MemberPhone));
+                    OnPropertyChanged(nameof(SearchPhoneNumber));
+                    OnPropertyChanged(nameof(MemberSearchText));
                     FilterCustomers(value);
                 }
             }
@@ -658,6 +756,8 @@ namespace Porjai20.ViewModels
         public ICommand SelectCustomerCommand { get; }
         public ICommand ClearSelectedCustomerCommand { get; }
         public ICommand ToggleCustomerDropDownCommand { get; }
+        public ICommand ChangeMemberCommand { get; }
+        public ICommand CancelChangeMemberCommand { get; }
 
         // Checkout Wizard Commands
         public ICommand CheckoutCommand { get; } // Triggers the modal
@@ -684,14 +784,51 @@ namespace Porjai20.ViewModels
             ToggleMemberCommand = new RelayCommand(_ => { IsMemberSelected = !IsMemberSelected; });
             SearchCustomerCommand = new RelayCommand(async _ => await ExecuteSearchCustomer());
             SearchMemberCommand = SearchCustomerCommand;
-            SelectCustomerCommand = new RelayCommand(param => { if (param is Customer c) SelectedCustomer = c; });
-            ClearSelectedCustomerCommand = new RelayCommand(_ => ClearSelectedCustomer());
+            SelectCustomerCommand = new RelayCommand(param => { 
+                if (param is Customer c) 
+                {
+                    SelectedCustomer = c;
+                    IsManualMemberSearchMode = false;
+                }
+            });
+            ClearSelectedCustomerCommand = new RelayCommand(_ => {
+                ClearSelectedCustomer();
+                IsMemberSelected = false;
+                IsManualMemberSearchMode = false;
+                CustomerSearchText = "";
+                MemberPhone = "";
+                MemberSearchResultText = "";
+                OnPropertyChanged(nameof(MemberSubtitleText));
+                OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                OnPropertyChanged(nameof(IsMemberConfirmed));
+                OnPropertyChanged(nameof(IsSearchingMember));
+                OnPropertyChanged(nameof(IsMemberEditing));
+            });
+            ChangeMemberCommand = new RelayCommand(_ => {
+                IsManualMemberSearchMode = true;
+                IsCustomerDropDownOpen = true;
+                OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                OnPropertyChanged(nameof(IsMemberConfirmed));
+                OnPropertyChanged(nameof(IsSearchingMember));
+                OnPropertyChanged(nameof(IsMemberEditing));
+            });
+            CancelChangeMemberCommand = new RelayCommand(_ => {
+                IsManualMemberSearchMode = false;
+                IsCustomerDropDownOpen = false;
+                OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                OnPropertyChanged(nameof(IsMemberConfirmed));
+                OnPropertyChanged(nameof(IsSearchingMember));
+                OnPropertyChanged(nameof(IsMemberEditing));
+            });
             ToggleCustomerDropDownCommand = new RelayCommand(_ => { IsCustomerDropDownOpen = !IsCustomerDropDownOpen; });
 
             _ = LoadCustomersAsync();
 
             // Checkout Commands
-            CheckoutCommand = new RelayCommand(_ => { 
+            CheckoutCommand = new RelayCommand(async _ => { 
                 if (CartItems.Count > 0)
                 {
                     IsCheckoutModalVisible = true; 
@@ -700,12 +837,25 @@ namespace Porjai20.ViewModels
                     _isNewInput = true;
                     CashAmountReceived = 0;
                     SelectedPaymentMethod = null;
-                    IsMemberSelected = false;
-                    MemberPhone = "";
-                    MemberSearchResultText = "";
-                    _ = LoadCustomersAsync();
                     IsCustomerSearchOpen = false;
-                    SelectedCustomer = null;
+                    IsManualMemberSearchMode = false;
+
+                    if (IsDeliverySelected)
+                    {
+                        await InitializeMemberAsync();
+                    }
+                    else
+                    {
+                        // Regular POS checkout without delivery: reset member state if not already selected
+                        if (SelectedCustomer == null)
+                        {
+                            IsMemberSelected = false;
+                            CustomerSearchText = "";
+                            MemberPhone = "";
+                            MemberSearchResultText = "";
+                            OnPropertyChanged(nameof(MemberSubtitleText));
+                        }
+                    }
                 }
             });
             NumpadCommand = new RelayCommand(param => NumpadInput(param?.ToString()), _ => true);
@@ -719,15 +869,20 @@ namespace Porjai20.ViewModels
             });
             CancelDeliveryModalCommand = new RelayCommand(_ => {
                 IsDeliveryModalOpen = false;
-                IsDeliverySelected = false; // Uncheck delivery checkbox if cancelled
+                if (string.IsNullOrWhiteSpace(CustomerName) && SelectedDeliveryCustomer == null && SelectedCustomer == null)
+                {
+                    IsDeliverySelected = false; // Uncheck delivery checkbox only if cancelled without any info
+                }
             });
-            SaveDeliveryDetailsCommand = new RelayCommand(_ => {
+            SaveDeliveryDetailsCommand = new RelayCommand(async _ => {
                 if (string.IsNullOrWhiteSpace(CustomerName) || string.IsNullOrWhiteSpace(CustomerPhone) || string.IsNullOrWhiteSpace(CustomerAddress))
                 {
                     ErrorModalMessage = "กรุณากรอกชื่อลูกค้า เบอร์โทร และที่อยู่จัดส่งให้ครบถ้วนก่อนยืนยัน";
                     IsErrorModalOpen = true;
                     return;
                 }
+
+                await InitializeMemberAsync();
                 IsDeliveryModalOpen = false;
                 OnPropertyChanged(nameof(ShippingFee));
                 OnPropertyChanged(nameof(CartTotal));
@@ -763,9 +918,9 @@ namespace Porjai20.ViewModels
             {
                 SelectedDeliveryCustomer = SelectedCustomer;
             }
-            else
+            else if (SelectedDeliveryCustomer != null)
             {
-                SelectedDeliveryCustomer = null;
+                SelectedCustomer = SelectedDeliveryCustomer;
             }
         }
 
@@ -814,11 +969,55 @@ namespace Porjai20.ViewModels
             {
                 var results = await _databaseService.GetCustomersForPosAsync();
                 _allCustomers = results.ToList();
+
+                // Preserve current selection ID to prevent WPF ComboBox from wiping it out on Clear()
+                int? selectedCusId = SelectedCustomer?.Id ?? SelectedDeliveryCustomer?.Id;
+                string? prevPhone = !string.IsNullOrWhiteSpace(CustomerPhone) ? CustomerPhone : SelectedCustomer?.Phone;
+
                 CustomerList.Clear();
                 foreach (var c in _allCustomers)
                 {
                     CustomerList.Add(c);
                 }
+
+                if (selectedCusId.HasValue && selectedCusId.Value > 0)
+                {
+                    var reselected = _allCustomers.FirstOrDefault(c => c.Id == selectedCusId.Value);
+                    if (reselected != null)
+                    {
+                        _selectedDeliveryCustomer = reselected;
+                        _selectedCustomer = reselected;
+                        CustomerName = reselected.Name;
+                        CustomerPhone = reselected.Phone;
+                        OnPropertyChanged(nameof(SelectedDeliveryCustomer));
+                        OnPropertyChanged(nameof(SelectedCustomer));
+                        OnPropertyChanged(nameof(HasSelectedCustomer));
+                        OnPropertyChanged(nameof(HasMember));
+                        OnPropertyChanged(nameof(MemberSubtitleText));
+                        OnPropertyChanged(nameof(LinkedMemberDisplayText));
+                    }
+                }
+                else if (!string.IsNullOrWhiteSpace(prevPhone))
+                {
+                    string cleanPrev = prevPhone.Replace("-", "").Replace(" ", "").Trim();
+                    var reselected = _allCustomers.FirstOrDefault(c => 
+                        !string.IsNullOrEmpty(c.Phone) && 
+                        c.Phone.Replace("-", "").Replace(" ", "").Trim() == cleanPrev);
+                    if (reselected != null)
+                    {
+                        _selectedDeliveryCustomer = reselected;
+                        _selectedCustomer = reselected;
+                        CustomerName = reselected.Name;
+                        CustomerPhone = reselected.Phone;
+                        OnPropertyChanged(nameof(SelectedDeliveryCustomer));
+                        OnPropertyChanged(nameof(SelectedCustomer));
+                        OnPropertyChanged(nameof(HasSelectedCustomer));
+                        OnPropertyChanged(nameof(HasMember));
+                        OnPropertyChanged(nameof(MemberSubtitleText));
+                        OnPropertyChanged(nameof(LinkedMemberDisplayText));
+                    }
+                }
+
                 OnPropertyChanged(nameof(CustomerList));
                 OnPropertyChanged(nameof(FilteredCustomerList));
                 OnPropertyChanged(nameof(CustomerSearchResults));
@@ -924,6 +1123,167 @@ namespace Porjai20.ViewModels
         private async Task SearchMember()
         {
             await ExecuteSearchCustomer();
+        }
+
+        public void InitializeMember(string phone, string? name = null)
+        {
+            if (string.IsNullOrWhiteSpace(phone) && string.IsNullOrWhiteSpace(name)) return;
+            CustomerSearchText = phone ?? "";
+            MemberPhone = phone ?? "";
+            IsMemberSelected = true;
+            _ = InitializeMemberAsync(phone, name);
+        }
+
+        public async Task InitializeMemberAsync(string? phone = null, string? name = null)
+        {
+            try
+            {
+                string targetPhone = !string.IsNullOrWhiteSpace(phone) 
+                    ? phone 
+                    : (!string.IsNullOrWhiteSpace(CustomerPhone) 
+                        ? CustomerPhone 
+                        : (SelectedDeliveryCustomer?.Phone ?? SelectedCustomer?.Phone ?? ""));
+
+                string targetName = !string.IsNullOrWhiteSpace(name) 
+                    ? name 
+                    : (!string.IsNullOrWhiteSpace(CustomerName) 
+                        ? CustomerName 
+                        : (SelectedDeliveryCustomer?.Name ?? SelectedCustomer?.Name ?? ""));
+
+                if (_allCustomers.Count == 0)
+                {
+                    await LoadCustomersAsync();
+                }
+
+                Customer? found = SelectedDeliveryCustomer ?? SelectedCustomer;
+
+                string cleanPhone = (targetPhone ?? "").Replace("-", "").Replace(" ", "").Trim();
+                string rawName = (targetName ?? "").Trim();
+
+                if (found == null && !string.IsNullOrEmpty(cleanPhone))
+                {
+                    found = _allCustomers.FirstOrDefault(c => 
+                        !string.IsNullOrEmpty(c.Phone) && 
+                        c.Phone.Replace("-", "").Replace(" ", "").Trim() == cleanPhone);
+                }
+
+                if (found == null && !string.IsNullOrEmpty(rawName))
+                {
+                    found = _allCustomers.FirstOrDefault(c => 
+                        !string.IsNullOrEmpty(c.Name) && 
+                        c.Name.Trim().Equals(rawName, StringComparison.OrdinalIgnoreCase));
+                }
+
+                // Fallback direct DB query if not in cache
+                if (found == null && (!string.IsNullOrEmpty(cleanPhone) || !string.IsNullOrEmpty(rawName)))
+                {
+                    try
+                    {
+                        using (var conn = _databaseService.GetConnection())
+                        {
+                            string sql = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, 
+                                                  Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
+                                           FROM tblCustomer 
+                                           WHERE (REPLACE(REPLACE(Cus_Tel, '-', ''), ' ', '') = @cleanPhone AND @cleanPhone <> '')
+                                              OR (Cus_Name = @rawName AND @rawName <> '')
+                                           LIMIT 1";
+                            found = await conn.QueryFirstOrDefaultAsync<Customer>(sql, new { cleanPhone, rawName });
+                            if (found != null && !_allCustomers.Any(c => c.Id == found.Id))
+                            {
+                                _allCustomers.Add(found);
+                                CustomerList.Add(found);
+                            }
+                        }
+                    }
+                    catch (Exception dbEx)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"DB lookup failed: {dbEx.Message}");
+                    }
+                }
+
+                if (found != null)
+                {
+                    SelectedCustomer = found;
+                    SelectedDeliveryCustomer = found;
+                    CustomerName = found.Name;
+                    CustomerPhone = found.Phone;
+                    if (!string.IsNullOrWhiteSpace(found.Address) && string.IsNullOrWhiteSpace(CustomerAddress))
+                    {
+                        CustomerAddress = found.Address;
+                    }
+                    _customerSearchText = found.Phone ?? "";
+                    OnPropertyChanged(nameof(CustomerSearchText));
+                    OnPropertyChanged(nameof(MemberPhone));
+                    OnPropertyChanged(nameof(SearchPhoneNumber));
+                    OnPropertyChanged(nameof(MemberSearchText));
+                    IsMemberSelected = true;
+                    IsManualMemberSearchMode = false;
+                    MemberSearchResultText = $"👤 คุณ {found.Name} (สะสมเดิม: {found.Points} แต้ม)";
+                }
+                else
+                {
+                    // Even if customer is not found in database, set phone and keep member checked
+                    if (!string.IsNullOrWhiteSpace(targetPhone))
+                    {
+                        _customerSearchText = targetPhone;
+                        OnPropertyChanged(nameof(CustomerSearchText));
+                        OnPropertyChanged(nameof(MemberPhone));
+                        OnPropertyChanged(nameof(SearchPhoneNumber));
+                        OnPropertyChanged(nameof(MemberSearchText));
+                        IsMemberSelected = true;
+                    }
+                }
+
+                OnPropertyChanged(nameof(SelectedCustomer));
+                OnPropertyChanged(nameof(SelectedDeliveryCustomer));
+                OnPropertyChanged(nameof(HasSelectedCustomer));
+                OnPropertyChanged(nameof(HasMember));
+                OnPropertyChanged(nameof(IsMemberSelected));
+                OnPropertyChanged(nameof(IsManualMemberSearchMode));
+                OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
+                OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                OnPropertyChanged(nameof(IsMemberConfirmed));
+                OnPropertyChanged(nameof(IsSearchingMember));
+                OnPropertyChanged(nameof(IsMemberEditing));
+                OnPropertyChanged(nameof(MemberSubtitleText));
+                OnPropertyChanged(nameof(LinkedMemberDisplayText));
+                OnPropertyChanged(nameof(EarnedPoints));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in InitializeMemberAsync: {ex.Message}");
+            }
+        }
+
+        public async Task<Customer?> LookupCustomer(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return null;
+            string clean = phone.Replace("-", "").Replace(" ", "").Trim();
+            var matched = _allCustomers.FirstOrDefault(c => 
+                !string.IsNullOrEmpty(c.Phone) && 
+                c.Phone.Replace("-", "").Replace(" ", "").Trim() == clean);
+            if (matched == null)
+            {
+                try
+                {
+                    using (var conn = _databaseService.GetConnection())
+                    {
+                        string sql = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, 
+                                              Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
+                                       FROM tblCustomer 
+                                       WHERE REPLACE(REPLACE(Cus_Tel, '-', ''), ' ', '') = @clean 
+                                       LIMIT 1";
+                        matched = await conn.QueryFirstOrDefaultAsync<Customer>(sql, new { clean });
+                    }
+                }
+                catch { }
+            }
+            return matched;
+        }
+
+        public async Task<Customer?> FindMemberByPhone(string phone)
+        {
+            return await LookupCustomer(phone);
         }
 
         private async Task SearchCustomersAsync(string keyword)
@@ -1151,6 +1511,8 @@ namespace Porjai20.ViewModels
                         IsErrorModalOpen = true;
                         return;
                     }
+
+                    await InitializeMemberAsync();
                 }
                 CurrentStep = 2;
             }
@@ -1206,6 +1568,45 @@ namespace Porjai20.ViewModels
                         var orderRef = "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
                         LastRefNo = orderRef;
                         var effectivePayment = !string.IsNullOrWhiteSpace(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด";
+
+                        int? customerId = null;
+                        if (SelectedCustomer != null && SelectedCustomer.Id > 0)
+                        {
+                            customerId = SelectedCustomer.Id;
+                        }
+                        else if (SelectedDeliveryCustomer != null && SelectedDeliveryCustomer.Id > 0)
+                        {
+                            customerId = SelectedDeliveryCustomer.Id;
+                        }
+                        else if (!string.IsNullOrWhiteSpace(CustomerPhone) || !string.IsNullOrWhiteSpace(CustomerName))
+                        {
+                            string cleanP = (CustomerPhone ?? "").Replace("-", "").Replace(" ", "").Trim();
+                            string rawN = (CustomerName ?? "").Trim();
+                            var matched = _allCustomers.FirstOrDefault(c => 
+                                (!string.IsNullOrEmpty(c.Phone) && !string.IsNullOrEmpty(cleanP) && c.Phone.Replace("-", "").Replace(" ", "").Trim() == cleanP)
+                                || (!string.IsNullOrEmpty(c.Name) && !string.IsNullOrEmpty(rawN) && c.Name.Trim().Equals(rawN, StringComparison.OrdinalIgnoreCase)));
+                            
+                            if (matched == null && (!string.IsNullOrEmpty(cleanP) || !string.IsNullOrEmpty(rawN)))
+                            {
+                                try
+                                {
+                                    string sqlFind = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
+                                                       FROM tblCustomer 
+                                                       WHERE (REPLACE(REPLACE(Cus_Tel, '-', ''), ' ', '') = @cleanP AND @cleanP <> '') 
+                                                          OR (Cus_Name = @rawN AND @rawN <> '') 
+                                                       LIMIT 1";
+                                    matched = await conn.QueryFirstOrDefaultAsync<Customer>(sqlFind, new { cleanP, rawN }, trans);
+                                }
+                                catch { }
+                            }
+
+                            if (matched != null && matched.Id > 0)
+                            {
+                                customerId = matched.Id;
+                                if (SelectedCustomer == null) SelectedCustomer = matched;
+                            }
+                        }
+
                         var salesOrder = new SalesOrder
                         {
                             RefNo = orderRef,
@@ -1215,18 +1616,18 @@ namespace Porjai20.ViewModels
                             PaymentMethod = effectivePayment,
                             Timestamp = System.DateTime.Now,
                             IsDelivery = SelectedShippingMethod == "Delivery",
-                            CustomerName = SelectedShippingMethod == "Delivery" ? CustomerName : null,
-                            CustomerPhone = SelectedShippingMethod == "Delivery" ? CustomerPhone : null,
-                            CustomerAddress = SelectedShippingMethod == "Delivery" ? CustomerAddress : null,
+                            CustomerName = SelectedShippingMethod == "Delivery" ? CustomerName : (SelectedCustomer?.Name ?? null),
+                            CustomerPhone = SelectedShippingMethod == "Delivery" ? CustomerPhone : (SelectedCustomer?.Phone ?? null),
+                            CustomerAddress = SelectedShippingMethod == "Delivery" ? CustomerAddress : (SelectedCustomer?.Address ?? null),
                             DeliveryStatus = SelectedShippingMethod == "Delivery" ? "รอจัดส่ง" : null,
-                            Cus_ID = SelectedCustomer != null && SelectedCustomer.Id > 0 ? SelectedCustomer.Id : 0
+                            Cus_ID = customerId ?? 0
                         };
 
                         var salesOrderParam = new
                         {
                             RefNo = orderRef,
                             Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
-                            Cus_ID = SelectedCustomer != null && SelectedCustomer.Id > 0 ? (int?)SelectedCustomer.Id : null,
+                            Cus_ID = customerId,
                             Emp_ID = (int?)null,
                             Sales_Total = CartTotal,
                             Sales_Cash = IsCashPayment ? CashAmountReceived : CartTotal,
@@ -1305,24 +1706,48 @@ namespace Porjai20.ViewModels
                             }
                         }
 
-                        // Accumulate Member Points if Customer is Selected
-                        if (SelectedCustomer != null && EarnedPoints > 0)
+                        // Accumulate Member Points and Update Spending if Customer is Selected
+                        if (customerId.HasValue && customerId.Value > 0)
                         {
-                            try
-                            {
-                                string sqlPointsTbl = "UPDATE tblCustomer SET Cus_Points = COALESCE(Cus_Points, 0) + @Points WHERE Cus_ID = @Id";
-                                await conn.ExecuteAsync(sqlPointsTbl, new { Points = EarnedPoints, Id = SelectedCustomer.Id }, trans);
-                            }
-                            catch
+                            if (EarnedPoints > 0)
                             {
                                 try
                                 {
-                                    string sqlPoints = "UPDATE Customers SET Points = COALESCE(Points, 0) + @Points WHERE Id = @Id";
-                                    await conn.ExecuteAsync(sqlPoints, new { Points = EarnedPoints, Id = SelectedCustomer.Id }, trans);
+                                    string sqlPointsTbl = "UPDATE tblCustomer SET Cus_Points = COALESCE(Cus_Points, 0) + @Points WHERE Cus_ID = @Id";
+                                    await conn.ExecuteAsync(sqlPointsTbl, new { Points = EarnedPoints, Id = customerId.Value }, trans);
                                 }
-                                catch { }
+                                catch
+                                {
+                                    try
+                                    {
+                                        string sqlPoints = "UPDATE Customers SET Points = COALESCE(Points, 0) + @Points WHERE Id = @Id";
+                                        await conn.ExecuteAsync(sqlPoints, new { Points = EarnedPoints, Id = customerId.Value }, trans);
+                                    }
+                                    catch { }
+                                }
                             }
-                            SelectedCustomer.Points += EarnedPoints;
+
+                            try
+                            {
+                                string sqlSpend = "UPDATE tblCustomer SET Cus_TotalSpent = COALESCE(Cus_TotalSpent, 0) + @Spent, Cus_TotalPurchases = COALESCE(Cus_TotalPurchases, 0) + 1 WHERE Cus_ID = @Id";
+                                await conn.ExecuteAsync(sqlSpend, new { Spent = CartTotal, Id = customerId.Value }, trans);
+                            }
+                            catch { }
+
+                            if (SelectedCustomer != null)
+                            {
+                                SelectedCustomer.Points += EarnedPoints;
+                                SelectedCustomer.TotalSpent += (double)CartTotal;
+                                SelectedCustomer.TotalPurchases += 1;
+                            }
+
+                            var inMem = _allCustomers.FirstOrDefault(c => c.Id == customerId.Value);
+                            if (inMem != null)
+                            {
+                                inMem.Points += EarnedPoints;
+                                inMem.TotalSpent += (double)CartTotal;
+                                inMem.TotalPurchases += 1;
+                            }
                         }
 
                         trans.Commit();
@@ -1374,7 +1799,7 @@ namespace Porjai20.ViewModels
                 {
                     RefNo = string.IsNullOrWhiteSpace(LastRefNo) ? "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture) : LastRefNo,
                     Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
-                    CustomerName = !string.IsNullOrWhiteSpace(CustomerName) ? CustomerName : "ลูกค้าทั่วไป",
+                    CustomerName = !string.IsNullOrWhiteSpace(CustomerName) ? CustomerName : (SelectedCustomer?.Name ?? "ลูกค้าทั่วไป"),
                     TotalAmount = FinalGrandTotal,
                     CashReceived = FinalCashReceived,
                     Change = FinalChange,
@@ -1412,7 +1837,10 @@ namespace Porjai20.ViewModels
             CustomerPhone = "";
             CustomerAddress = "";
             SelectedCustomer = null;
+            SelectedDeliveryCustomer = null;
+            IsDeliverySelected = false;
             IsMemberSelected = false;
+            IsManualMemberSearchMode = false;
             CashAmountReceived = 0;
             _numpadInput = "0";
             _isNewInput = true;
