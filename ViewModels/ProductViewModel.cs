@@ -3151,6 +3151,26 @@ namespace Porjai20.ViewModels
         // Goods Receipt Properties
         public ObservableCollection<PurchaseOrder> PendingPurchaseOrders { get; set; } = new ObservableCollection<PurchaseOrder>();
 
+        public ObservableCollection<string> StockInStatusOptions { get; } = new ObservableCollection<string>
+        {
+            "ทั้งหมด",
+            "รอดำเนินการ",
+            "ตรวจรับแล้ว"
+        };
+
+        private string _selectedStockInStatus = "ทั้งหมด";
+        public string SelectedStockInStatus
+        {
+            get => _selectedStockInStatus;
+            set
+            {
+                if (SetProperty(ref _selectedStockInStatus, value))
+                {
+                    _ = LoadPendingPurchaseOrders();
+                }
+            }
+        }
+
         private PurchaseOrder? _selectedReceiptPO;
         public PurchaseOrder? SelectedReceiptPO
         {
@@ -3213,7 +3233,9 @@ namespace Porjai20.ViewModels
             ReceiptItems.Count > 0 &&
             ReceiptItems.Any(i => i.ReceivedQty > 0);
 
-        public string StockInSummaryText => $"แสดงทั้งหมด {PendingPurchaseOrders.Count} รายการ (รอดำเนินการ {PendingPurchaseOrders.Count(p => p.IsPending)} รายการ | ตรวจรับแล้ว {PendingPurchaseOrders.Count(p => p.IsReceived)} รายการ)";
+        private int _allPendingPOCount;
+        private int _allReceivedPOCount;
+        public string StockInSummaryText => $"แสดงทั้งหมด {PendingPurchaseOrders.Count} รายการ (รอดำเนินการ {_allPendingPOCount} รายการ | ตรวจรับแล้ว {_allReceivedPOCount} รายการ)";
 
         private string _receiptDeliveryNoteNo = string.Empty;
         public string ReceiptDeliveryNoteNo
@@ -7612,9 +7634,23 @@ namespace Porjai20.ViewModels
 
         private async Task LoadPendingPurchaseOrders()
         {
+            var rawList = (await Task.Run(() => _databaseService.GetPendingPurchaseOrders(PendingPOSearchKeyword)))?.ToList() ?? new List<PurchaseOrder>();
+
+            _allPendingPOCount = rawList.Count(p => !p.IsReceived);
+            _allReceivedPOCount = rawList.Count(p => p.IsReceived);
+
+            IEnumerable<PurchaseOrder> filtered = rawList;
+            if (SelectedStockInStatus == "รอดำเนินการ")
+            {
+                filtered = filtered.Where(p => !p.IsReceived);
+            }
+            else if (SelectedStockInStatus == "ตรวจรับแล้ว")
+            {
+                filtered = filtered.Where(p => p.IsReceived);
+            }
+
             PendingPurchaseOrders.Clear();
-            var pos = await Task.Run(() => _databaseService.GetPendingPurchaseOrders(PendingPOSearchKeyword));
-            foreach (var p in pos)
+            foreach (var p in filtered)
             {
                 PendingPurchaseOrders.Add(p);
             }
