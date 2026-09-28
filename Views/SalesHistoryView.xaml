@@ -285,15 +285,24 @@
         </Style>
 
         <Style x:Key="SHRowStyle" TargetType="DataGridRow">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#2D3748"/>
-            <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#2D3748"/>
+            <Setter Property="FontSize"        Value="15"/>
+            <Setter Property="FontWeight"      Value="Normal"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <EventSetter Event="MouseDoubleClick" Handler="SalesHistoryRow_MouseDoubleClick"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
                         <Border x:Name="RowBorder"
-                                CornerRadius="10" Margin="4,2" Padding="6,0"
-                                Background="Transparent">
+                                CornerRadius="8" Margin="0,1" Padding="4,0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                BorderBrush="Transparent">
                             <DataGridCellsPresenter
                                 ItemsPanel="{TemplateBinding ItemsPanel}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -305,7 +314,7 @@
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
                                 <Setter Property="Foreground"  Value="#1E293B"/>
-                                <Setter Property="FontWeight"  Value="Bold"/>
+                                <Setter Property="FontWeight"  Value="Normal"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -313,21 +322,24 @@
             </Setter>
             <Style.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                     Color="Transparent"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                 Color="White"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                 Color="#1E293B"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"    Color="Transparent"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#1E293B"/>
             </Style.Resources>
         </Style>
 
         <Style x:Key="SHCellStyle" TargetType="DataGridCell">
             <Setter Property="Background"      Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
             <Setter Property="Padding"         Value="12,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="FontWeight"      Value="Normal"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridCell">
-                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                        <Border Background="Transparent" BorderThickness="0" BorderBrush="Transparent" Padding="{TemplateBinding Padding}">
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -336,6 +348,7 @@
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Foreground" Value="#1E293B"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -649,8 +662,7 @@
                               CanUserResizeColumns="False"
                               CanUserSortColumns="True"
                               RowHeight="50"
-                              GridLinesVisibility="Horizontal"
-                              HorizontalGridLinesBrush="#F1F5F9"
+                              GridLinesVisibility="None"
                               BorderThickness="0"
                               Background="Transparent"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -665,29 +677,29 @@
                             <!-- #1: Receipt ID (รหัสใบเสร็จ) -->
                             <DataGridTextColumn Header="รหัสใบเสร็จ"
                                                 Binding="{Binding RefNo}"
-                                                Width="1.4*"
+                                                Width="1.5*"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #2: Date & Time (วัน-เวลา) -->
                             <DataGridTextColumn Header="วัน-เวลา"
                                                 Binding="{Binding Timestamp, StringFormat=dd/MM/yy HH:mm}"
-                                                Width="1.2*"
+                                                Width="1.3*"
                                                 ElementStyle="{StaticResource ColCenter}"/>
 
                             <!-- #3: Customer Name (ชื่อลูกค้า) -->
                             <DataGridTextColumn Header="ชื่อลูกค้า"
                                                 Binding="{Binding CustomerDisplayName}"
-                                                Width="1.4*"
+                                                Width="1.6*"
                                                 ElementStyle="{StaticResource ColLeft}"/>
 
                             <!-- #4: Total Items (จำนวนรายการ) -->
                             <DataGridTextColumn Header="รายการ"
                                                 Binding="{Binding ItemCount}"
-                                                Width="0.7*"
+                                                Width="0.8*"
                                                 ElementStyle="{StaticResource ColRightBold}"/>
 
                             <!-- #5: Net Amount (ยอดสุทธิ) -->
-                            <DataGridTemplateColumn Header="ยอดสุทธิ" Width="1.1*">
+                            <DataGridTemplateColumn Header="ยอดสุทธิ" Width="1.3*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}" Style="{StaticResource ColAmountStyle}"/>
@@ -696,7 +708,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- #6: Payment Method (ช่องทางชำระเงิน) -->
-                            <DataGridTemplateColumn Header="ช่องทางชำระ" Width="1.1*">
+                            <DataGridTemplateColumn Header="ช่องทางชำระ" Width="1.3*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="PayBadge" CornerRadius="12" Padding="12,4"
@@ -767,7 +779,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- #7: Status (สถานะบิล) -->
-                            <DataGridTemplateColumn Header="สถานะบิล" Width="1.0*">
+                            <DataGridTemplateColumn Header="สถานะบิล" Width="1.2*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="StatusBadge" CornerRadius="12" Padding="12,4"
@@ -813,22 +825,6 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <!-- #8: View Details Button -->
-                            <DataGridTemplateColumn Header="รายละเอียด" Width="130">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="ดูรายละเอียด"
-                                                Command="{Binding DataContext.ViewDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource ViewDetailsButtonStyle}"
-                                                Padding="6,2"
-                                                MinWidth="100"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -836,12 +832,19 @@
                     <DockPanel Grid.Row="1"
                                LastChildFill="False"
                                Margin="0,12,0,0">
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดใบเสร็จ"
+                                   Foreground="#64748B"
+                                   FontSize="13.5"
+                                   FontWeight="Medium"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Left"
+                                   Margin="4,0,0,0"/>
                         <TextBlock Text="{Binding StatusBarText}"
                                    Foreground="#718096"
                                    FontSize="14"
                                    VerticalAlignment="Center"
-                                   DockPanel.Dock="Left"
-                                   Margin="0"/>
+                                   DockPanel.Dock="Right"
+                                   Margin="0,0,4,0"/>
                     </DockPanel>
                 </Grid>
             </Border>

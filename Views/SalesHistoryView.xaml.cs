@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Porjai20.ViewModels;
 
 namespace Porjai20.Views
@@ -26,6 +27,25 @@ namespace Porjai20.Views
             if (e.NewValue is true && DataContext is SalesHistoryViewModel vm)
             {
                 vm.LoadSalesHistory();
+            }
+        }
+
+        private void SalesHistoryRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGridRow row && row.Item is SalesOrderDisplayRow orderItem)
+            {
+                if (DataContext is SalesHistoryViewModel vm)
+                {
+                    if (vm.ViewDetailsCommand?.CanExecute(orderItem) == true)
+                    {
+                        vm.ViewDetailsCommand.Execute(orderItem);
+                    }
+                    else
+                    {
+                        vm.SelectedOrder = orderItem;
+                        vm.IsDetailModalOpen = true;
+                    }
+                }
             }
         }
 
