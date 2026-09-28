@@ -2289,6 +2289,7 @@ namespace Porjai20.ViewModels
                 {
                     FilterStockView();
                     FilteredStaffs?.Refresh();
+                    OnPropertyChanged(nameof(FilteredStaffList));
                 }
             } 
         }
@@ -7345,6 +7346,7 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(TotalStaffCount));
                     OnPropertyChanged(nameof(ActiveStaffCount));
                     OnPropertyChanged(nameof(AdminStaffCount));
+                    OnPropertyChanged(nameof(FilteredStaffList));
                 }
             }
             catch (Exception ex)

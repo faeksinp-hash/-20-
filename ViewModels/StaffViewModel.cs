@@ -45,6 +45,18 @@ namespace Porjai20.ViewModels
 
         public ICollectionView StaffsView => FilteredStaffs;
 
+        public ObservableCollection<User> FilteredStaffList
+        {
+            get
+            {
+                if (FilteredStaffs is ICollectionView cv)
+                {
+                    return new ObservableCollection<User>(cv.Cast<User>());
+                }
+                return UsersList ?? new ObservableCollection<User>();
+            }
+        }
+
         private string _staffModalTitle = "⚙️ แก้ไขข้อมูลพนักงาน";
         public string StaffModalTitle
         {
@@ -136,12 +148,17 @@ namespace Porjai20.ViewModels
             CloseStaffModalCommand = new RelayCommand(_ => ExecuteCloseStaffModal());
             ClearStaffCommand = new RelayCommand(_ => ClearStaffForm());
             
-            SearchStaffCommand = new RelayCommand(_ => FilteredStaffs?.Refresh());
+            SearchStaffCommand = new RelayCommand(_ =>
+            {
+                FilteredStaffs?.Refresh();
+                OnPropertyChanged(nameof(FilteredStaffList));
+            });
             ClearStaffFilterCommand = new RelayCommand(_ =>
             {
                 StaffSearchKeyword = string.Empty;
                 SearchText = string.Empty;
                 FilteredStaffs?.Refresh();
+                OnPropertyChanged(nameof(FilteredStaffList));
             });
         }
 
@@ -305,6 +322,18 @@ namespace Porjai20.ViewModels
 
         public ICollectionView FilteredStaffs { get; private set; }
         public ICollectionView StaffsView => FilteredStaffs;
+
+        public ObservableCollection<User> FilteredStaffList
+        {
+            get
+            {
+                if (FilteredStaffs is ICollectionView cv)
+                {
+                    return new ObservableCollection<User>(cv.Cast<User>());
+                }
+                return UsersList ?? new ObservableCollection<User>();
+            }
+        }
 
         private User? _selectedStaff;
         public User? SelectedStaff
