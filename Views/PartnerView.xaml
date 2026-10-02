@@ -282,11 +282,11 @@
         <!--  DATAGRID STYLES                                           -->
         <!-- ══════════════════════════════════════════════════════════ -->
         <Style x:Key="PartnerColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background"              Value="#F1F5F9"/>
+            <Setter Property="Background"              Value="#F8FAFC"/>
             <Setter Property="Foreground"              Value="#1E293B"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="48"/>
+            <Setter Property="Height"                  Value="44"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -333,8 +333,10 @@
                                 <Setter Property="Foreground" Value="#1E293B"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
-                                <Setter Property="Foreground" Value="#1E293B"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter TargetName="RowBorder" Property="BorderThickness" Value="1"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
                                 <Setter Property="FontWeight" Value="Normal"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -342,12 +344,12 @@
                 </Setter.Value>
             </Setter>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#1E293B"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#1E293B"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#0F172A"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#1E293B"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
             </Style.Resources>
         </Style>
 
@@ -369,25 +371,25 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
                     <Setter Property="FontWeight" Value="Normal"/>
                     <Setter Property="BorderThickness" Value="0"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
                 </Trigger>
                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                    <Setter Property="Foreground" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
                     <Setter Property="BorderThickness" Value="0"/>
                 </Trigger>
             </Style.Triggers>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#1E293B"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#1E293B"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#0F172A"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#1E293B"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
             </Style.Resources>
         </Style>
 
@@ -509,8 +511,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนคู่ค้าทั้งหมดในระบบ"
-                                   FontSize="11"
-                                   Foreground="#94A3B8"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -543,8 +545,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="รายการใบสั่งซื้อในเดือนปัจจุบัน"
-                                   FontSize="11"
-                                   Foreground="#94A3B8"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -567,7 +569,7 @@
                             <Border Width="36" Height="36" CornerRadius="10" Background="#FEF3C7" Margin="0,0,10,0">
                                 <TextBlock Text="💎" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="ยอดสั่งซื้อสะสมรวม" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="ยอดสั่งซื้อสะสมรวม" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#64748B" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -577,8 +579,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="ยอดสั่งซื้อสะสมกับคู่ค้ารวมกัน"
-                                   FontSize="11"
-                                   Foreground="#94A3B8"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -722,7 +724,7 @@
                             <!-- #2: Company Name -->
                             <DataGridTextColumn Header="ชื่อบริษัท / คู่ค้า"
                                                 Binding="{Binding Name}"
-                                                Width="2.5*"
+                                                Width="2.8*"
                                                 ElementStyle="{StaticResource ColPartnerName}"/>
 
                             <!-- #3: Contact Person -->
@@ -746,7 +748,7 @@
                             <!-- #6: Address -->
                             <DataGridTextColumn Header="ที่อยู่"
                                                 Binding="{Binding Address}"
-                                                Width="2.8*"
+                                                Width="3.2*"
                                                 ElementStyle="{StaticResource ColPartnerAddress}"/>
 
                             <!-- #7: Registration Date -->
@@ -770,7 +772,7 @@
                                    DockPanel.Dock="Left"
                                    Margin="4,0,0,0"/>
 
-                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดข้อมูลบริษัทคู่ค้า"
                                    Foreground="#94A3B8"
                                    FontSize="13"
                                    VerticalAlignment="Center"

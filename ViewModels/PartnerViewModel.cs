@@ -45,12 +45,30 @@ namespace Porjai20.ViewModels
 
         public ICollectionView PartnersView => FilteredPartners;
 
-        private string _partnerModalTitle = "⚙️ แก้ไขข้อมูลบริษัทคู่ค้า";
+        private string _partnerModalTitle = "ข้อมูลบริษัทคู่ค้า";
         public string PartnerModalTitle
         {
             get => _partnerModalTitle;
             set => SetProperty(ref _partnerModalTitle, value);
         }
+
+        private bool _isPartnerAddMode;
+        public bool IsPartnerAddMode
+        {
+            get => _isPartnerAddMode;
+            set => SetProperty(ref _isPartnerAddMode, value);
+        }
+
+        private string _originalPartnerCode = string.Empty;
+        private string _originalPartnerName = string.Empty;
+        private string _originalPartnerContactPerson = string.Empty;
+        private string _originalPartnerPhone = string.Empty;
+        private string _originalPartnerEmail = string.Empty;
+        private string _originalPartnerAddress = string.Empty;
+        private string _originalPartnerNote = string.Empty;
+
+        public ICommand EnterPartnerEditModeCommand { get; set; }
+        public ICommand CancelPartnerEditCommand { get; set; }
 
         private string _partnerValidationMessage = string.Empty;
         public string PartnerValidationMessage
@@ -71,6 +89,8 @@ namespace Porjai20.ViewModels
         {
             OpenPartnerManageModalCommand = new RelayCommand(_ => ExecuteOpenPartnerManageModal());
             OpenAddPartnerModalCommand = new RelayCommand(_ => ExecuteOpenAddPartnerModal());
+            EnterPartnerEditModeCommand = new RelayCommand(_ => ExecuteEnterPartnerEditMode());
+            CancelPartnerEditCommand = new RelayCommand(_ => ExecuteCancelPartnerEdit());
             
             SavePartnerCommand = new RelayCommand(_ => ExecuteSavePartner());
             DeletePartnerCommand = new RelayCommand(_ => ExecuteDeletePartner());
@@ -110,28 +130,67 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            PartnerModalTitle = "⚙️ แก้ไขข้อมูลบริษัทคู่ค้า";
+            IsPartnerAddMode = false;
+            IsEditMode = false; // Start in Read-Only Mode!
+            PartnerModalTitle = "ข้อมูลบริษัทคู่ค้า";
             ModalTitle = PartnerModalTitle;
             PartnerValidationMessage = string.Empty;
-            
-            PartnerCode = SelectedPartner.Code;
-            PartnerName = SelectedPartner.Name;
-            PartnerContactPerson = SelectedPartner.ContactPerson;
-            PartnerPhone = SelectedPartner.Phone;
-            PartnerEmail = SelectedPartner.Email;
-            PartnerAddress = SelectedPartner.Address;
-            PartnerNote = SelectedPartner.Note;
+
+            _originalPartnerCode = SelectedPartner.Code ?? string.Empty;
+            _originalPartnerName = SelectedPartner.Name ?? string.Empty;
+            _originalPartnerContactPerson = SelectedPartner.ContactPerson ?? string.Empty;
+            _originalPartnerPhone = SelectedPartner.Phone ?? string.Empty;
+            _originalPartnerEmail = SelectedPartner.Email ?? string.Empty;
+            _originalPartnerAddress = SelectedPartner.Address ?? string.Empty;
+            _originalPartnerNote = SelectedPartner.Note ?? string.Empty;
+
+            PartnerCode = _originalPartnerCode;
+            PartnerName = _originalPartnerName;
+            PartnerContactPerson = _originalPartnerContactPerson;
+            PartnerPhone = _originalPartnerPhone;
+            PartnerEmail = _originalPartnerEmail;
+            PartnerAddress = _originalPartnerAddress;
+            PartnerNote = _originalPartnerNote;
 
             IsModalOpen = true;
             IsPartnerModalOpen = true;
         }
 
+        public void ExecuteEnterPartnerEditMode()
+        {
+            IsEditMode = true;
+            PartnerModalTitle = "แก้ไขข้อมูลบริษัทคู่ค้า";
+            ModalTitle = PartnerModalTitle;
+        }
+
+        public void ExecuteCancelPartnerEdit()
+        {
+            if (IsPartnerAddMode)
+            {
+                ExecuteClosePartnerModal();
+                return;
+            }
+
+            PartnerCode = _originalPartnerCode;
+            PartnerName = _originalPartnerName;
+            PartnerContactPerson = _originalPartnerContactPerson;
+            PartnerPhone = _originalPartnerPhone;
+            PartnerEmail = _originalPartnerEmail;
+            PartnerAddress = _originalPartnerAddress;
+            PartnerNote = _originalPartnerNote;
+
+            PartnerValidationMessage = string.Empty;
+            IsEditMode = false;
+            PartnerModalTitle = "ข้อมูลบริษัทคู่ค้า";
+            ModalTitle = PartnerModalTitle;
+        }
+
         public void ExecuteOpenAddPartnerModal()
         {
             ClearPartnerForm();
-            IsEditMode = false;
-            PartnerModalTitle = "➕ เพิ่มข้อมูลบริษัทคู่ค้า";
+            IsPartnerAddMode = true;
+            IsEditMode = true;
+            PartnerModalTitle = "เพิ่มข้อมูลบริษัทคู่ค้า";
             ModalTitle = PartnerModalTitle;
             PartnerValidationMessage = string.Empty;
             PartnerCode = GenerateNextPartnerCode();
@@ -144,36 +203,40 @@ namespace Porjai20.ViewModels
             if (string.IsNullOrWhiteSpace(PartnerName))
             {
                 PartnerValidationMessage = "กรุณากรอกชื่อบริษัท/คู่ค้า";
+                ShowAlert("กรุณากรอกชื่อบริษัท/คู่ค้า", "แจ้งเตือน", "⚠️");
                 return;
             }
 
-            if (IsEditMode && SelectedPartner != null && SelectedPartner.Id > 0)
+            if (!IsPartnerAddMode && SelectedPartner != null && SelectedPartner.Id > 0)
             {
-                SelectedPartner.Name = PartnerName;
-                SelectedPartner.ContactPerson = PartnerContactPerson;
-                SelectedPartner.Phone = PartnerPhone;
-                SelectedPartner.Email = PartnerEmail;
-                SelectedPartner.Address = PartnerAddress;
-                SelectedPartner.Note = PartnerNote;
+                SelectedPartner.Code = PartnerCode;
+                SelectedPartner.Name = PartnerName?.Trim() ?? string.Empty;
+                SelectedPartner.ContactPerson = PartnerContactPerson?.Trim() ?? string.Empty;
+                SelectedPartner.Phone = PartnerPhone?.Trim() ?? string.Empty;
+                SelectedPartner.Email = PartnerEmail?.Trim() ?? string.Empty;
+                SelectedPartner.Address = PartnerAddress?.Trim() ?? string.Empty;
+                SelectedPartner.Note = PartnerNote?.Trim() ?? string.Empty;
 
                 _databaseService.UpdatePartner(SelectedPartner);
                 ClearPartnerForm();
                 SetPartnerModalsClosed();
                 _ = LoadPartners();
+                FilteredPartners?.Refresh();
+                OnPropertyChanged(nameof(TotalPartnersCount));
                 ShowAlert("อัปเดตข้อมูลบริษัทคู่ค้าเรียบร้อยแล้ว", "สำเร็จ", "🎉");
             }
             else
             {
-                string autoCode = GenerateNextPartnerCode();
+                string autoCode = string.IsNullOrWhiteSpace(PartnerCode) ? GenerateNextPartnerCode() : PartnerCode;
                 var newPartner = new Partner
                 {
                     Code = autoCode,
-                    Name = PartnerName,
-                    ContactPerson = PartnerContactPerson,
-                    Phone = PartnerPhone,
-                    Email = PartnerEmail,
-                    Address = PartnerAddress,
-                    Note = PartnerNote,
+                    Name = PartnerName?.Trim() ?? string.Empty,
+                    ContactPerson = PartnerContactPerson?.Trim() ?? string.Empty,
+                    Phone = PartnerPhone?.Trim() ?? string.Empty,
+                    Email = PartnerEmail?.Trim() ?? string.Empty,
+                    Address = PartnerAddress?.Trim() ?? string.Empty,
+                    Note = PartnerNote?.Trim() ?? string.Empty,
                     RegisteredDate = DateTime.Now
                 };
 
@@ -181,6 +244,8 @@ namespace Porjai20.ViewModels
                 ClearPartnerForm();
                 SetPartnerModalsClosed();
                 _ = LoadPartners();
+                FilteredPartners?.Refresh();
+                OnPropertyChanged(nameof(TotalPartnersCount));
                 ShowAlert("บันทึกข้อมูลบริษัทคู่ค้าเรียบร้อยแล้ว", "สำเร็จ", "🎉");
             }
         }
@@ -190,6 +255,7 @@ namespace Porjai20.ViewModels
             if (SelectedPartner == null || SelectedPartner.Id <= 0)
             {
                 PartnerValidationMessage = "กรุณาคลิกเลือกรายการบริษัทคู่ค้าในตารางก่อนดำเนินการ";
+                ShowAlert("กรุณาคลิกเลือกรายการบริษัทคู่ค้าในตารางก่อนดำเนินการ", "แจ้งเตือน", "⚠️");
                 return;
             }
 
@@ -201,6 +267,8 @@ namespace Porjai20.ViewModels
                     ClearPartnerForm();
                     SetPartnerModalsClosed();
                     _ = LoadPartners();
+                    FilteredPartners?.Refresh();
+                    OnPropertyChanged(nameof(TotalPartnersCount));
                     ShowAlert("ลบข้อมูลบริษัทคู่ค้าเรียบร้อยแล้ว", "สำเร็จ", "🗑️");
                 },
                 "ยืนยันการลบข้อมูลคู่ค้า");
@@ -265,6 +333,21 @@ namespace Porjai20.ViewModels
             }
         }
 
+        private bool _isPartnerAddMode;
+        public bool IsPartnerAddMode
+        {
+            get => _isPartnerAddMode;
+            set => SetProperty(ref _isPartnerAddMode, value);
+        }
+
+        private string _originalPartnerCode = string.Empty;
+        private string _originalPartnerName = string.Empty;
+        private string _originalPartnerContactPerson = string.Empty;
+        private string _originalPartnerPhone = string.Empty;
+        private string _originalPartnerEmail = string.Empty;
+        private string _originalPartnerAddress = string.Empty;
+        private string _originalPartnerNote = string.Empty;
+
         private bool _isEditMode;
         public bool IsEditMode
         {
@@ -272,7 +355,7 @@ namespace Porjai20.ViewModels
             set => SetProperty(ref _isEditMode, value);
         }
 
-        private string _modalTitle = "⚙️ แก้ไขข้อมูลบริษัทคู่ค้า";
+        private string _modalTitle = "ข้อมูลบริษัทคู่ค้า";
         public string ModalTitle
         {
             get => _modalTitle;
@@ -399,6 +482,8 @@ namespace Porjai20.ViewModels
         public ICommand OpenManageModalCommand { get; }
         public ICommand OpenPartnerManageModalCommand => OpenManageModalCommand;
         public ICommand OpenAddPartnerModalCommand { get; }
+        public ICommand EnterPartnerEditModeCommand { get; }
+        public ICommand CancelPartnerEditCommand { get; }
         public ICommand SavePartnerCommand { get; }
         public ICommand DeletePartnerCommand { get; }
         public ICommand CloseModalCommand { get; }
@@ -427,6 +512,8 @@ namespace Porjai20.ViewModels
 
             OpenManageModalCommand = new RelayCommand(_ => ExecuteOpenManageModal());
             OpenAddPartnerModalCommand = new RelayCommand(_ => ExecuteOpenAddModal());
+            EnterPartnerEditModeCommand = new RelayCommand(_ => ExecuteEnterEditMode());
+            CancelPartnerEditCommand = new RelayCommand(_ => ExecuteCancelEdit());
             SavePartnerCommand = new RelayCommand(_ => ExecuteSavePartner());
             DeletePartnerCommand = new RelayCommand(_ => ExecuteDeletePartner());
             CloseModalCommand = new RelayCommand(_ => ExecuteCloseModal());
@@ -476,26 +563,63 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            ModalTitle = "⚙️ แก้ไขข้อมูลบริษัทคู่ค้า";
+            IsPartnerAddMode = false;
+            IsEditMode = false; // Start in Read-Only Mode!
+            ModalTitle = "ข้อมูลบริษัทคู่ค้า";
             PartnerValidationMessage = string.Empty;
 
-            PartnerCode = SelectedPartner.Code;
-            PartnerName = SelectedPartner.Name;
-            PartnerContactPerson = SelectedPartner.ContactPerson;
-            PartnerPhone = SelectedPartner.Phone;
-            PartnerEmail = SelectedPartner.Email;
-            PartnerAddress = SelectedPartner.Address;
-            PartnerNote = SelectedPartner.Note;
+            _originalPartnerCode = SelectedPartner.Code ?? string.Empty;
+            _originalPartnerName = SelectedPartner.Name ?? string.Empty;
+            _originalPartnerContactPerson = SelectedPartner.ContactPerson ?? string.Empty;
+            _originalPartnerPhone = SelectedPartner.Phone ?? string.Empty;
+            _originalPartnerEmail = SelectedPartner.Email ?? string.Empty;
+            _originalPartnerAddress = SelectedPartner.Address ?? string.Empty;
+            _originalPartnerNote = SelectedPartner.Note ?? string.Empty;
+
+            PartnerCode = _originalPartnerCode;
+            PartnerName = _originalPartnerName;
+            PartnerContactPerson = _originalPartnerContactPerson;
+            PartnerPhone = _originalPartnerPhone;
+            PartnerEmail = _originalPartnerEmail;
+            PartnerAddress = _originalPartnerAddress;
+            PartnerNote = _originalPartnerNote;
 
             IsModalOpen = true;
+        }
+
+        public void ExecuteEnterEditMode()
+        {
+            IsEditMode = true;
+            ModalTitle = "แก้ไขข้อมูลบริษัทคู่ค้า";
+        }
+
+        public void ExecuteCancelEdit()
+        {
+            if (IsPartnerAddMode)
+            {
+                ExecuteCloseModal();
+                return;
+            }
+
+            PartnerCode = _originalPartnerCode;
+            PartnerName = _originalPartnerName;
+            PartnerContactPerson = _originalPartnerContactPerson;
+            PartnerPhone = _originalPartnerPhone;
+            PartnerEmail = _originalPartnerEmail;
+            PartnerAddress = _originalPartnerAddress;
+            PartnerNote = _originalPartnerNote;
+
+            PartnerValidationMessage = string.Empty;
+            IsEditMode = false;
+            ModalTitle = "ข้อมูลบริษัทคู่ค้า";
         }
 
         public void ExecuteOpenAddModal()
         {
             ClearPartnerForm();
-            IsEditMode = false;
-            ModalTitle = "➕ เพิ่มข้อมูลบริษัทคู่ค้า";
+            IsPartnerAddMode = true;
+            IsEditMode = true;
+            ModalTitle = "เพิ่มข้อมูลบริษัทคู่ค้า";
             PartnerValidationMessage = string.Empty;
             PartnerCode = GenerateNextPartnerCode();
             IsModalOpen = true;
@@ -509,14 +633,15 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode && SelectedPartner != null && SelectedPartner.Id > 0)
+            if (!IsPartnerAddMode && SelectedPartner != null && SelectedPartner.Id > 0)
             {
-                SelectedPartner.Name = PartnerName;
-                SelectedPartner.ContactPerson = PartnerContactPerson;
-                SelectedPartner.Phone = PartnerPhone;
-                SelectedPartner.Email = PartnerEmail;
-                SelectedPartner.Address = PartnerAddress;
-                SelectedPartner.Note = PartnerNote;
+                SelectedPartner.Code = PartnerCode;
+                SelectedPartner.Name = PartnerName?.Trim() ?? string.Empty;
+                SelectedPartner.ContactPerson = PartnerContactPerson?.Trim() ?? string.Empty;
+                SelectedPartner.Phone = PartnerPhone?.Trim() ?? string.Empty;
+                SelectedPartner.Email = PartnerEmail?.Trim() ?? string.Empty;
+                SelectedPartner.Address = PartnerAddress?.Trim() ?? string.Empty;
+                SelectedPartner.Note = PartnerNote?.Trim() ?? string.Empty;
 
                 _databaseService.UpdatePartner(SelectedPartner);
                 ClearPartnerForm();
@@ -525,16 +650,16 @@ namespace Porjai20.ViewModels
             }
             else
             {
-                string autoCode = GenerateNextPartnerCode();
+                string autoCode = string.IsNullOrWhiteSpace(PartnerCode) ? GenerateNextPartnerCode() : PartnerCode;
                 var partner = new Partner
                 {
                     Code = autoCode,
-                    Name = PartnerName,
-                    ContactPerson = PartnerContactPerson,
-                    Phone = PartnerPhone,
-                    Email = PartnerEmail,
-                    Address = PartnerAddress,
-                    Note = PartnerNote,
+                    Name = PartnerName?.Trim() ?? string.Empty,
+                    ContactPerson = PartnerContactPerson?.Trim() ?? string.Empty,
+                    Phone = PartnerPhone?.Trim() ?? string.Empty,
+                    Email = PartnerEmail?.Trim() ?? string.Empty,
+                    Address = PartnerAddress?.Trim() ?? string.Empty,
+                    Note = PartnerNote?.Trim() ?? string.Empty,
                     RegisteredDate = DateTime.Now
                 };
 
