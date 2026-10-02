@@ -17,14 +17,25 @@ namespace Porjai20.ViewModels
     /// </summary>
     public partial class ProductViewModel
     {
-        private string _customerModalTitle = "⚙️ แก้ไข/จัดการข้อมูลลูกค้า";
+        private string _originalCustomerName = string.Empty;
+        private string _originalCustomerPhone = string.Empty;
+        private string _originalCustomerAddress = string.Empty;
+        private bool _isCustomerAddMode;
+
+        public bool IsCustomerAddMode
+        {
+            get => _isCustomerAddMode;
+            set => SetProperty(ref _isCustomerAddMode, value);
+        }
+
+        private string _customerModalTitle = "ข้อมูลลูกค้า";
         public string CustomerModalTitle
         {
             get => _customerModalTitle;
             set => SetProperty(ref _customerModalTitle, value);
         }
 
-        private string _modalTitle = "⚙️ แก้ไข/จัดการข้อมูลลูกค้า";
+        private string _modalTitle = "ข้อมูลลูกค้า";
         public string ModalTitle
         {
             get => _modalTitle;
@@ -46,6 +57,10 @@ namespace Porjai20.ViewModels
 
         public bool HasCustomerValidationMessage => !string.IsNullOrWhiteSpace(CustomerValidationMessage);
 
+        public ICommand EnterCustomerEditModeCommand { get; set; }
+        public ICommand SwitchToCustomerEditModeCommand => EnterCustomerEditModeCommand;
+        public ICommand CancelCustomerEditCommand { get; set; }
+
         public void InitializeCustomerViewModelCommands()
         {
             OpenManageModalCommand = new RelayCommand(_ => ExecuteOpenManageModal());
@@ -53,6 +68,9 @@ namespace Porjai20.ViewModels
             
             OpenAddCustomerModalCommand = new RelayCommand(_ => ExecuteOpenAddModal());
             
+            EnterCustomerEditModeCommand = new RelayCommand(_ => ExecuteEnterCustomerEditMode());
+            CancelCustomerEditCommand = new RelayCommand(_ => ExecuteCancelCustomerEdit());
+
             SaveCustomerCommand = new RelayCommand(_ => ExecuteSaveCustomer());
             AddCustomerCommand = SaveCustomerCommand;
             UpdateCustomerCommand = SaveCustomerCommand;
@@ -73,7 +91,8 @@ namespace Porjai20.ViewModels
         }
 
         /// <summary>
-        /// Executes command when clicking '⚙️ จัดการข้อมูล' button.
+        /// Executes command when double-clicking customer row or clicking 'จัดการข้อมูล'.
+        /// Opens modal in Read-Only View mode (IsEditMode = false) initially.
         /// </summary>
         public void ExecuteOpenManageModal()
         {
@@ -83,8 +102,9 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            CustomerModalTitle = "⚙️ แก้ไข/จัดการข้อมูลลูกค้า";
+            IsCustomerAddMode = false;
+            IsEditMode = false; // เริ่มต้นในสถานะดูข้อมูลอย่างเดียว
+            CustomerModalTitle = "ข้อมูลลูกค้า";
             ModalTitle = CustomerModalTitle;
             CustomerValidationMessage = string.Empty;
             
@@ -93,9 +113,58 @@ namespace Porjai20.ViewModels
             CustomerPhone = SelectedCustomer.Phone ?? string.Empty;
             CustomerAddress = SelectedCustomer.Address ?? string.Empty;
 
+            // สำรองค่าเดิมไว้สำหรับกดยกเลิก
+            _originalCustomerName = CustomerName;
+            _originalCustomerPhone = CustomerPhone;
+            _originalCustomerAddress = CustomerAddress;
+
             IsModalOpen = true;
             IsManageModalOpen = true;
             IsCustomerModalOpen = true;
+        }
+
+        /// <summary>
+        /// Switches customer modal to Edit Mode (IsEditMode = true).
+        /// </summary>
+        public void ExecuteEnterCustomerEditMode()
+        {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "customer"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            _originalCustomerName = CustomerName ?? string.Empty;
+            _originalCustomerPhone = CustomerPhone ?? string.Empty;
+            _originalCustomerAddress = CustomerAddress ?? string.Empty;
+
+            IsEditMode = true;
+            CustomerModalTitle = "แก้ไขข้อมูลลูกค้า";
+            ModalTitle = CustomerModalTitle;
+            CustomerValidationMessage = string.Empty;
+        }
+
+        /// <summary>
+        /// Cancels customer edit mode: restores original values and switches back to Read-Only View mode.
+        /// </summary>
+        public void ExecuteCancelCustomerEdit()
+        {
+            if (IsCustomerAddMode)
+            {
+                ExecuteCloseModal();
+                return;
+            }
+
+            // คืนค่าข้อมูลในช่องกรอกกลับเป็นค่าเดิมก่อนแก้ไข
+            CustomerName = _originalCustomerName;
+            CustomerPhone = _originalCustomerPhone;
+            CustomerAddress = _originalCustomerAddress;
+            CustomerValidationMessage = string.Empty;
+
+            // สลับสถานะกลับไปเป็นโหมดดูข้อมูล โดยยังไม่ต้องปิด Modal
+            IsEditMode = false;
+            CustomerModalTitle = "ข้อมูลลูกค้า";
+            ModalTitle = CustomerModalTitle;
         }
 
         /// <summary>
@@ -104,7 +173,8 @@ namespace Porjai20.ViewModels
         public void ExecuteOpenAddModal()
         {
             ClearCustomerForm();
-            IsEditMode = false;
+            IsCustomerAddMode = true;
+            IsEditMode = true; // โหมดเพิ่มข้อมูลปลดล็อกให้พิมพ์ได้
             CustomerModalTitle = "➕ เพิ่มข้อมูลลูกค้า";
             ModalTitle = CustomerModalTitle;
             CustomerCode = GenerateCustomerCode();
@@ -137,7 +207,7 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode && SelectedCustomer != null && SelectedCustomer.Id > 0)
+            if (!IsCustomerAddMode && SelectedCustomer != null && SelectedCustomer.Id > 0)
             {
                 string codeToUse = !string.IsNullOrWhiteSpace(CustomerCode)
                     ? CustomerCode
@@ -154,7 +224,7 @@ namespace Porjai20.ViewModels
                 SetCustomerModalsClosed();
                 _ = LoadCustomers();
                 _ = LoadDeliveries();
-                ShowAlert("อัปเดตข้อมูลลูกค้าเรียบร้อยแล้ว", "สำเร็จ", "🎉");
+                ShowAlert("บันทึกข้อมูลสำเร็จ", "สำเร็จ", "🎉");
             }
             else
             {
@@ -174,7 +244,7 @@ namespace Porjai20.ViewModels
                 ClearCustomerForm();
                 SetCustomerModalsClosed();
                 _ = LoadCustomers();
-                ShowAlert("บันทึกข้อมูลลูกค้าเรียบร้อยแล้ว", "สำเร็จ", "🎉");
+                ShowAlert("บันทึกข้อมูลสำเร็จ", "สำเร็จ", "🎉");
             }
         }
 
@@ -223,6 +293,8 @@ namespace Porjai20.ViewModels
             IsModalOpen = false;
             IsManageModalOpen = false;
             IsCustomerModalOpen = false;
+            IsCustomerAddMode = false;
+            IsEditMode = false;
             CustomerValidationMessage = string.Empty;
         }
     }
@@ -237,6 +309,10 @@ namespace Porjai20.ViewModels
 
         public ObservableCollection<Customer> Customers { get; } = new ObservableCollection<Customer>();
         public ObservableCollection<Customer> FilteredCustomers => Customers;
+
+        private string _originalCustomerName = string.Empty;
+        private string _originalCustomerPhone = string.Empty;
+        private string _originalCustomerAddress = string.Empty;
 
         private Customer? _selectedCustomer;
         public Customer? SelectedCustomer
@@ -254,6 +330,13 @@ namespace Porjai20.ViewModels
             }
         }
 
+        private bool _isCustomerAddMode;
+        public bool IsCustomerAddMode
+        {
+            get => _isCustomerAddMode;
+            set => SetProperty(ref _isCustomerAddMode, value);
+        }
+
         private bool _isEditMode;
         public bool IsEditMode
         {
@@ -261,14 +344,14 @@ namespace Porjai20.ViewModels
             set => SetProperty(ref _isEditMode, value);
         }
 
-        private string _customerModalTitle = "⚙️ แก้ไข/จัดการข้อมูลลูกค้า";
+        private string _customerModalTitle = "ข้อมูลลูกค้า";
         public string CustomerModalTitle
         {
             get => _customerModalTitle;
             set => SetProperty(ref _customerModalTitle, value);
         }
 
-        private string _modalTitle = "⚙️ แก้ไข/จัดการข้อมูลลูกค้า";
+        private string _modalTitle = "ข้อมูลลูกค้า";
         public string ModalTitle
         {
             get => _modalTitle;
@@ -363,6 +446,9 @@ namespace Porjai20.ViewModels
         public ICommand OpenManageModalCommand { get; }
         public ICommand OpenCustomerManageModalCommand => OpenManageModalCommand;
         public ICommand OpenAddCustomerModalCommand { get; }
+        public ICommand EnterCustomerEditModeCommand { get; }
+        public ICommand SwitchToCustomerEditModeCommand => EnterCustomerEditModeCommand;
+        public ICommand CancelCustomerEditCommand { get; }
         public ICommand SaveCustomerCommand { get; }
         public ICommand DeleteCustomerCommand { get; }
         public ICommand CloseModalCommand { get; }
@@ -377,6 +463,8 @@ namespace Porjai20.ViewModels
 
             OpenManageModalCommand = new RelayCommand(_ => ExecuteOpenManageModal());
             OpenAddCustomerModalCommand = new RelayCommand(_ => ExecuteOpenAddModal());
+            EnterCustomerEditModeCommand = new RelayCommand(_ => ExecuteEnterCustomerEditMode());
+            CancelCustomerEditCommand = new RelayCommand(_ => ExecuteCancelCustomerEdit());
             SaveCustomerCommand = new RelayCommand(_ => ExecuteSaveCustomer());
             DeleteCustomerCommand = new RelayCommand(_ => ExecuteDeleteCustomer());
             CloseModalCommand = new RelayCommand(_ => ExecuteCloseModal());
@@ -416,8 +504,9 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            CustomerModalTitle = "⚙️ แก้ไข/จัดการข้อมูลลูกค้า";
+            IsCustomerAddMode = false;
+            IsEditMode = false; // เปิดในสถานะดูข้อมูลอย่างเดียว
+            CustomerModalTitle = "ข้อมูลลูกค้า";
             ModalTitle = CustomerModalTitle;
             CustomerValidationMessage = string.Empty;
 
@@ -426,7 +515,41 @@ namespace Porjai20.ViewModels
             CustomerPhone = SelectedCustomer.Phone ?? string.Empty;
             CustomerAddress = SelectedCustomer.Address ?? string.Empty;
 
+            _originalCustomerName = CustomerName;
+            _originalCustomerPhone = CustomerPhone;
+            _originalCustomerAddress = CustomerAddress;
+
             IsModalOpen = true;
+        }
+
+        public void ExecuteEnterCustomerEditMode()
+        {
+            _originalCustomerName = CustomerName ?? string.Empty;
+            _originalCustomerPhone = CustomerPhone ?? string.Empty;
+            _originalCustomerAddress = CustomerAddress ?? string.Empty;
+
+            IsEditMode = true;
+            CustomerModalTitle = "แก้ไขข้อมูลลูกค้า";
+            ModalTitle = CustomerModalTitle;
+            CustomerValidationMessage = string.Empty;
+        }
+
+        public void ExecuteCancelCustomerEdit()
+        {
+            if (IsCustomerAddMode)
+            {
+                ExecuteCloseModal();
+                return;
+            }
+
+            CustomerName = _originalCustomerName;
+            CustomerPhone = _originalCustomerPhone;
+            CustomerAddress = _originalCustomerAddress;
+            CustomerValidationMessage = string.Empty;
+
+            IsEditMode = false;
+            CustomerModalTitle = "ข้อมูลลูกค้า";
+            ModalTitle = CustomerModalTitle;
         }
 
         private string GenerateCustomerCode()
@@ -446,7 +569,8 @@ namespace Porjai20.ViewModels
         public void ExecuteOpenAddModal()
         {
             ClearCustomerForm();
-            IsEditMode = false;
+            IsCustomerAddMode = true;
+            IsEditMode = true;
             CustomerModalTitle = "➕ เพิ่มข้อมูลลูกค้า";
             ModalTitle = CustomerModalTitle;
             CustomerValidationMessage = string.Empty;
@@ -468,7 +592,7 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode && SelectedCustomer != null && SelectedCustomer.Id > 0)
+            if (!IsCustomerAddMode && SelectedCustomer != null && SelectedCustomer.Id > 0)
             {
                 SelectedCustomer.Code = !string.IsNullOrWhiteSpace(SelectedCustomer.Code)
                     ? SelectedCustomer.Code
@@ -481,6 +605,8 @@ namespace Porjai20.ViewModels
                 _databaseService.UpdateCustomer(SelectedCustomer);
                 ClearCustomerForm();
                 IsModalOpen = false;
+                IsEditMode = false;
+                IsCustomerAddMode = false;
                 LoadCustomers();
             }
             else
@@ -499,6 +625,8 @@ namespace Porjai20.ViewModels
                 _databaseService.SaveCustomer(customer);
                 ClearCustomerForm();
                 IsModalOpen = false;
+                IsEditMode = false;
+                IsCustomerAddMode = false;
                 LoadCustomers();
             }
         }
@@ -514,6 +642,8 @@ namespace Porjai20.ViewModels
             _databaseService.DeleteCustomer(SelectedCustomer.Id);
             ClearCustomerForm();
             IsModalOpen = false;
+            IsEditMode = false;
+            IsCustomerAddMode = false;
             LoadCustomers();
         }
 
@@ -521,6 +651,8 @@ namespace Porjai20.ViewModels
         {
             ClearCustomerForm();
             IsModalOpen = false;
+            IsEditMode = false;
+            IsCustomerAddMode = false;
         }
 
         public void ClearCustomerForm()

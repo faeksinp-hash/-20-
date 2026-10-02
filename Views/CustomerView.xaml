@@ -833,7 +833,7 @@
                                    DockPanel.Dock="Left"
                                    Margin="4,0,0,0"/>
 
-                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดข้อมูลลูกค้า"
                                    Foreground="#64748B"
                                    FontSize="13.5"
                                    VerticalAlignment="Center"
