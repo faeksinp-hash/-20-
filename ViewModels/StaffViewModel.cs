@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using Dapper;
 using Porjai20.Models;
 using Porjai20.Services;
 using Porjai20.Views;
@@ -132,7 +133,29 @@ namespace Porjai20.ViewModels
             }
         }
 
+        private bool _isStaffAddMode;
+        public bool IsStaffAddMode
+        {
+            get => _isStaffAddMode;
+            set
+            {
+                if (SetProperty(ref _isStaffAddMode, value))
+                {
+                    OnPropertyChanged(nameof(CanEditStaffUsername));
+                }
+            }
+        }
+        public bool CanEditStaffUsername => IsStaffAddMode;
+
+        private string _originalStaffUsername = string.Empty;
+        private string _originalStaffPassword = string.Empty;
+        private string _originalStaffName = string.Empty;
+        private string _originalStaffPhone = string.Empty;
+        private string _originalStaffRole = "พนักงานทั่วไป";
+
         public ICommand OpenAddStaffModalCommand { get; set; }
+        public ICommand EnterStaffEditModeCommand { get; set; }
+        public ICommand CancelStaffEditCommand { get; set; }
         public ICommand SaveStaffCommand { get; set; }
         public ICommand DeleteStaffCommand { get; set; }
         public ICommand ClearStaffCommand { get; set; }
@@ -141,6 +164,8 @@ namespace Porjai20.ViewModels
         {
             OpenStaffManageModalCommand = new RelayCommand(_ => ExecuteOpenStaffManageModal());
             OpenAddStaffModalCommand = new RelayCommand(_ => ExecuteOpenAddStaffModal());
+            EnterStaffEditModeCommand = new RelayCommand(_ => ExecuteEnterStaffEditMode());
+            CancelStaffEditCommand = new RelayCommand(_ => ExecuteCancelStaffEdit());
             
             SaveStaffCommand = new RelayCommand(_ => ExecuteSaveStaff());
             DeleteStaffCommand = new RelayCommand(_ => ExecuteDeleteStaff());
@@ -170,25 +195,69 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            StaffModalTitle = "⚙️ แก้ไขข้อมูลพนักงาน";
+            IsStaffAddMode = false;
+            IsEditMode = false; // เริ่มต้นในสถานะดูข้อมูลอย่างเดียว (Read-Only)
+            StaffModalTitle = "ข้อมูลพนักงาน";
             ModalTitle = StaffModalTitle;
             StaffValidationMessage = string.Empty;
             
-            StaffUsername = SelectedStaff.Username;
-            StaffPassword = SelectedStaff.Password;
-            StaffName = SelectedStaff.Name;
-            StaffPhone = SelectedStaff.Phone;
-            StaffRole = !string.IsNullOrWhiteSpace(SelectedStaff.Role) ? SelectedStaff.Role : "พนักงานทั่วไป (User)";
+            StaffUsername = SelectedStaff.Username ?? string.Empty;
+            StaffPassword = SelectedStaff.Password ?? string.Empty;
+            StaffName = SelectedStaff.Name ?? string.Empty;
+            StaffPhone = SelectedStaff.Phone ?? string.Empty;
+            StaffRole = !string.IsNullOrWhiteSpace(SelectedStaff.Role) ? SelectedStaff.Role : "พนักงานทั่วไป";
+
+            _originalStaffUsername = StaffUsername;
+            _originalStaffPassword = StaffPassword;
+            _originalStaffName = StaffName;
+            _originalStaffPhone = StaffPhone;
+            _originalStaffRole = StaffRole;
 
             IsModalOpen = true;
             IsStaffModalOpen = true;
         }
 
+        public void ExecuteEnterStaffEditMode()
+        {
+            _originalStaffUsername = StaffUsername;
+            _originalStaffPassword = StaffPassword;
+            _originalStaffName = StaffName;
+            _originalStaffPhone = StaffPhone;
+            _originalStaffRole = StaffRole;
+
+            IsEditMode = true;
+            StaffModalTitle = "แก้ไขข้อมูลพนักงาน";
+            ModalTitle = StaffModalTitle;
+            StaffValidationMessage = string.Empty;
+        }
+
+        public void ExecuteCancelStaffEdit()
+        {
+            if (IsStaffAddMode)
+            {
+                ExecuteCloseStaffModal();
+                return;
+            }
+
+            // คืนค่าเดิมก่อนแก้ไข
+            StaffUsername = _originalStaffUsername;
+            StaffPassword = _originalStaffPassword;
+            StaffName = _originalStaffName;
+            StaffPhone = _originalStaffPhone;
+            StaffRole = _originalStaffRole;
+            StaffValidationMessage = string.Empty;
+
+            // สลับกลับสู่โหมดดูข้อมูล
+            IsEditMode = false;
+            StaffModalTitle = "ข้อมูลพนักงาน";
+            ModalTitle = StaffModalTitle;
+        }
+
         public void ExecuteOpenAddStaffModal()
         {
             ClearStaffForm();
-            IsEditMode = false;
+            IsStaffAddMode = true;
+            IsEditMode = true; // โหมดเพิ่มข้อมูลปลดล็อกให้กรอกได้
             StaffModalTitle = "➕ เพิ่มข้อมูลพนักงานใหม่";
             ModalTitle = StaffModalTitle;
             StaffValidationMessage = string.Empty;
@@ -216,7 +285,7 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode && SelectedStaff != null && SelectedStaff.Id > 0)
+            if (!IsStaffAddMode && SelectedStaff != null && SelectedStaff.Id > 0)
             {
                 SelectedStaff.Username = StaffUsername;
                 SelectedStaff.Password = StaffPassword;
@@ -228,6 +297,9 @@ namespace Porjai20.ViewModels
                 ClearStaffForm();
                 SetStaffModalsClosed();
                 FilteredStaffs?.Refresh();
+                OnPropertyChanged(nameof(TotalStaffCount));
+                OnPropertyChanged(nameof(ActiveStaffCount));
+                OnPropertyChanged(nameof(AdminStaffCount));
                 ShowAlert("อัปเดตข้อมูลพนักงานเรียบร้อยแล้ว", "สำเร็จ", "🎉");
             }
             else
@@ -253,6 +325,9 @@ namespace Porjai20.ViewModels
                 ClearStaffForm();
                 SetStaffModalsClosed();
                 FilteredStaffs?.Refresh();
+                OnPropertyChanged(nameof(TotalStaffCount));
+                OnPropertyChanged(nameof(ActiveStaffCount));
+                OnPropertyChanged(nameof(AdminStaffCount));
                 ShowAlert("บันทึกข้อมูลพนักงานเรียบร้อยแล้ว", "สำเร็จ", "🎉");
             }
         }
@@ -268,18 +343,41 @@ namespace Porjai20.ViewModels
             if (string.Equals(SelectedStaff.Username, "admin", StringComparison.OrdinalIgnoreCase))
             {
                 StaffValidationMessage = "ไม่สามารถลบบัญชีผู้ดูแลระบบหลัก (admin) ได้";
+                ShowAlert("ไม่สามารถลบบัญชีผู้ดูแลระบบหลัก (admin) ได้", "แจ้งเตือน", "⚠️");
+                return;
+            }
+
+            if (CurrentUser != null && string.Equals(SelectedStaff.Username, CurrentUser.Username, StringComparison.OrdinalIgnoreCase))
+            {
+                StaffValidationMessage = "ไม่สามารถลบบัญชีพนักงานที่กำลังเข้าสู่ระบบอยู่ได้";
+                ShowAlert("ไม่สามารถลบบัญชีพนักงานที่กำลังเข้าสู่ระบบอยู่ได้", "แจ้งเตือน", "⚠️");
                 return;
             }
 
             ShowConfirm(
                 $"คุณต้องการลบบัญชีพนักงาน '{SelectedStaff.Name}' ใช่หรือไม่?",
-                () =>
+                async () =>
                 {
-                    _ = DeleteUser();
-                    ClearStaffForm();
-                    SetStaffModalsClosed();
-                    FilteredStaffs?.Refresh();
-                    ShowAlert("ลบข้อมูลพนักงานเรียบร้อยแล้ว", "สำเร็จ", "🗑️");
+                    try
+                    {
+                        using (var conn = _databaseService.GetConnection())
+                        {
+                            string sql = "DELETE FROM tblEmployee WHERE Emp_ID = @Id";
+                            await conn.ExecuteAsync(sql, new { Id = SelectedStaff.Id });
+                        }
+                        await LoadUsers();
+                        ClearStaffForm();
+                        SetStaffModalsClosed();
+                        FilteredStaffs?.Refresh();
+                        OnPropertyChanged(nameof(TotalStaffCount));
+                        OnPropertyChanged(nameof(ActiveStaffCount));
+                        OnPropertyChanged(nameof(AdminStaffCount));
+                        ShowAlert("ลบข้อมูลพนักงานเรียบร้อยแล้ว", "สำเร็จ", "🗑️");
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowAlert($"เกิดข้อผิดพลาดในการลบข้อมูล: {ex.Message}", "ข้อผิดพลาด", "❌");
+                    }
                 },
                 "ยืนยันการลบข้อมูลพนักงาน");
         }
@@ -294,12 +392,14 @@ namespace Porjai20.ViewModels
         {
             IsModalOpen = false;
             IsStaffModalOpen = false;
+            IsStaffAddMode = false;
             StaffValidationMessage = string.Empty;
         }
 
         public void ClearStaffForm()
         {
             SelectedStaff = null;
+            IsStaffAddMode = false;
             StaffUsername = string.Empty;
             StaffPassword = string.Empty;
             StaffName = string.Empty;
@@ -475,9 +575,31 @@ namespace Porjai20.ViewModels
         public int ActiveStaffCount => UsersList.Count(u => u != null);
         public int AdminStaffCount => UsersList.Count(u => u.Role == "Admin" || u.Role == "ผู้ดูแลระบบ" || u.Role == "ผู้ดูแลระบบ (Admin)" || u.Role == "เจ้าของร้าน");
 
+        private bool _isStaffAddMode;
+        public bool IsStaffAddMode
+        {
+            get => _isStaffAddMode;
+            set
+            {
+                if (SetProperty(ref _isStaffAddMode, value))
+                {
+                    OnPropertyChanged(nameof(CanEditStaffUsername));
+                }
+            }
+        }
+        public bool CanEditStaffUsername => IsStaffAddMode;
+
+        private string _originalStaffUsername = string.Empty;
+        private string _originalStaffPassword = string.Empty;
+        private string _originalStaffName = string.Empty;
+        private string _originalStaffPhone = string.Empty;
+        private string _originalStaffRole = "พนักงานทั่วไป";
+
         public ICommand OpenManageModalCommand { get; }
         public ICommand OpenStaffManageModalCommand => OpenManageModalCommand;
         public ICommand OpenAddStaffModalCommand { get; }
+        public ICommand EnterStaffEditModeCommand { get; }
+        public ICommand CancelStaffEditCommand { get; }
         public ICommand SaveStaffCommand { get; }
         public ICommand SaveUserCommand => SaveStaffCommand;
         public ICommand DeleteStaffCommand { get; }
@@ -509,6 +631,8 @@ namespace Porjai20.ViewModels
 
             OpenManageModalCommand = new RelayCommand(_ => ExecuteOpenManageModal());
             OpenAddStaffModalCommand = new RelayCommand(_ => ExecuteOpenAddModal());
+            EnterStaffEditModeCommand = new RelayCommand(_ => ExecuteEnterStaffEditMode());
+            CancelStaffEditCommand = new RelayCommand(_ => ExecuteCancelStaffEdit());
             SaveStaffCommand = new RelayCommand(_ => ExecuteSaveStaff());
             DeleteStaffCommand = new RelayCommand(_ => ExecuteDeleteStaff());
             CloseModalCommand = new RelayCommand(_ => ExecuteCloseModal());
@@ -542,23 +666,63 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            ModalTitle = "⚙️ แก้ไขข้อมูลพนักงาน";
+            IsStaffAddMode = false;
+            IsEditMode = false;
+            ModalTitle = "ข้อมูลพนักงาน";
             StaffValidationMessage = string.Empty;
 
-            StaffUsername = SelectedStaff.Username;
-            StaffPassword = SelectedStaff.Password;
-            StaffName = SelectedStaff.Name;
-            StaffPhone = SelectedStaff.Phone;
+            StaffUsername = SelectedStaff.Username ?? string.Empty;
+            StaffPassword = SelectedStaff.Password ?? string.Empty;
+            StaffName = SelectedStaff.Name ?? string.Empty;
+            StaffPhone = SelectedStaff.Phone ?? string.Empty;
             StaffRole = !string.IsNullOrWhiteSpace(SelectedStaff.Role) ? SelectedStaff.Role : "พนักงานทั่วไป";
 
+            _originalStaffUsername = StaffUsername;
+            _originalStaffPassword = StaffPassword;
+            _originalStaffName = StaffName;
+            _originalStaffPhone = StaffPhone;
+            _originalStaffRole = StaffRole;
+
             IsModalOpen = true;
+        }
+
+        public void ExecuteEnterStaffEditMode()
+        {
+            _originalStaffUsername = StaffUsername;
+            _originalStaffPassword = StaffPassword;
+            _originalStaffName = StaffName;
+            _originalStaffPhone = StaffPhone;
+            _originalStaffRole = StaffRole;
+
+            IsEditMode = true;
+            ModalTitle = "แก้ไขข้อมูลพนักงาน";
+            StaffValidationMessage = string.Empty;
+        }
+
+        public void ExecuteCancelStaffEdit()
+        {
+            if (IsStaffAddMode)
+            {
+                ExecuteCloseModal();
+                return;
+            }
+
+            StaffUsername = _originalStaffUsername;
+            StaffPassword = _originalStaffPassword;
+            StaffName = _originalStaffName;
+            StaffPhone = _originalStaffPhone;
+            StaffRole = _originalStaffRole;
+            StaffValidationMessage = string.Empty;
+
+            IsEditMode = false;
+            ModalTitle = "ข้อมูลพนักงาน";
         }
 
         public void ExecuteOpenAddModal()
         {
             ClearStaffForm();
-            IsEditMode = false;
+            IsStaffAddMode = true;
+            IsEditMode = true;
             ModalTitle = "➕ เพิ่มข้อมูลพนักงานใหม่";
             StaffValidationMessage = string.Empty;
             IsModalOpen = true;
@@ -584,7 +748,7 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode && SelectedStaff != null && SelectedStaff.Id > 0)
+            if (!IsStaffAddMode && SelectedStaff != null && SelectedStaff.Id > 0)
             {
                 SelectedStaff.Username = StaffUsername;
                 SelectedStaff.Password = StaffPassword;
@@ -651,6 +815,7 @@ namespace Porjai20.ViewModels
         public void ClearStaffForm()
         {
             SelectedStaff = null;
+            IsStaffAddMode = false;
             StaffUsername = string.Empty;
             StaffPassword = string.Empty;
             StaffName = string.Empty;

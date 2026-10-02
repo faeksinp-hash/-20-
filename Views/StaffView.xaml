@@ -321,11 +321,12 @@
         <!--  DATAGRID STYLES (Identical to CustomerView & Solid Black) -->
         <!-- ══════════════════════════════════════════════════════════ -->
         <Style x:Key="StaffColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background"              Value="#F1F5F9"/>
-            <Setter Property="Foreground"              Value="#000000"/>
+            <Setter Property="Background"              Value="#F8FAFC"/>
+            <Setter Property="Foreground"              Value="#1E293B"/>
             <Setter Property="FontWeight"              Value="Bold"/>
-            <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="48"/>
+            <Setter Property="FontSize"                Value="15"/>
+            <Setter Property="MinHeight"               Value="44"/>
+            <Setter Property="Height"                  Value="46"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -338,9 +339,9 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{TemplateBinding Padding}">
                             <TextBlock Text="{TemplateBinding Content}"
-                                       Foreground="#000000"
-                                       FontWeight="Bold"
-                                       FontSize="16"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       FontSize="{TemplateBinding FontSize}"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
                         </Border>
@@ -351,7 +352,7 @@
 
         <Style x:Key="StaffRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="FontSize"   Value="15"/>
             <Setter Property="Cursor"     Value="Hand"/>
             <Setter Property="FontWeight" Value="Normal"/>
@@ -363,17 +364,20 @@
                         <Border x:Name="RowBorder"
                                 CornerRadius="8" Margin="4,2" Padding="4,0"
                                 Background="Transparent"
-                                BorderThickness="0">
+                                BorderBrush="Transparent"
+                                BorderThickness="1">
                             <DataGridCellsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
-                                <Setter Property="Foreground" Value="#000000"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#BAE6FD"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
-                                <Setter Property="Foreground" Value="#000000"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
                                 <Setter Property="FontWeight" Value="Normal"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -381,18 +385,18 @@
                 </Setter.Value>
             </Setter>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#000000"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#000000"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#0F172A"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#000000"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
             </Style.Resources>
         </Style>
 
         <Style x:Key="StaffCellStyle" TargetType="DataGridCell">
             <Setter Property="Background"      Value="Transparent"/>
-            <Setter Property="Foreground"      Value="#000000"/>
+            <Setter Property="Foreground"      Value="#0F172A"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="BorderBrush"     Value="Transparent"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -408,25 +412,25 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="#000000"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
                     <Setter Property="FontWeight" Value="Normal"/>
                     <Setter Property="BorderThickness" Value="0"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="#000000"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
                 </Trigger>
                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                    <Setter Property="Foreground" Value="#000000"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
                     <Setter Property="BorderThickness" Value="0"/>
                 </Trigger>
             </Style.Triggers>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#000000"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#BAE6FD"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#000000"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#0F172A"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#000000"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
             </Style.Resources>
         </Style>
 
@@ -534,8 +538,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนบัญชีพนักงานทั้งหมดในระบบ"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -571,8 +575,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="สถานะพร้อมปฏิบัติงานในระบบ"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -598,7 +602,7 @@
                             <Border Width="36" Height="36" CornerRadius="10" Background="#FEF3C7" Margin="0,0,10,0">
                                 <TextBlock Text="👑" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="ผู้ดูแลระบบ" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="ผู้ดูแลระบบ" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -608,8 +612,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนบัญชีระดับผู้ดูแลระบบ (Admin)"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -783,7 +787,7 @@
                                    DockPanel.Dock="Left"
                                    Margin="4,0,0,0"/>
 
-                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดข้อมูลพนักงาน"
                                    Foreground="#94A3B8"
                                    FontSize="13"
                                    VerticalAlignment="Center"
