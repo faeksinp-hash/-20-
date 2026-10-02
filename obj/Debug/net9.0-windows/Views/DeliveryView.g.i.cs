@@ -69,7 +69,7 @@ namespace Porjai20.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MatchaShop;V1.0.0.0;component/views/deliveryview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MatchaShop;component/views/deliveryview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\DeliveryView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

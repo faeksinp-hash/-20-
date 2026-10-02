@@ -1166,12 +1166,14 @@
               Grid.RowSpan="99"
               Grid.ColumnSpan="99"
               Panel.ZIndex="999">
-            <Border Width="620"
+            <Border Width="720"
+                    MinWidth="700"
+                    MaxWidth="740"
                     Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1.5"
                     CornerRadius="16"
-                    Padding="24"
+                    Padding="32,28"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
                 <Border.Effect>
@@ -1179,10 +1181,10 @@
                 </Border.Effect>
 
                 <Border.Resources>
-                    <!-- Border style for customer editable fields (light gray in view mode, crisp white in edit mode) -->
+                    <!-- สถานะกล่องข้อความ: โหมดดูข้อมูลขอบ #E2E8F0 พื้นหลัง #F8FAFC, โหมดแก้ไขขอบ #38BDF8 พื้นหลัง #FFFFFF -->
                     <Style x:Key="CustomerFieldBorderStyle" TargetType="Border">
                         <Setter Property="Background" Value="#F8FAFC"/>
-                        <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
                         <Setter Property="BorderThickness" Value="1.5"/>
                         <Setter Property="CornerRadius" Value="8"/>
                         <Style.Triggers>
@@ -1193,14 +1195,28 @@
                         </Style.Triggers>
                     </Style>
 
-                    <!-- MultiLine style for address field: transparent to inherit CustomerFieldBorderStyle background and border -->
-                    <Style x:Key="CustomerMultiLineTextBoxStyle" TargetType="TextBox">
-                        <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                    <!-- SingleLine style for customer input fields: font 17, transparent background, borderless, height 50, padding 14,0 -->
+                    <Style x:Key="CustomerSingleLineTextBoxStyle" TargetType="TextBox">
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#0F172A"/>
                         <Setter Property="CaretBrush" Value="#0F172A"/>
                         <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontSize" Value="17"/>
+                        <Setter Property="Height" Value="50"/>
+                        <Setter Property="Padding" Value="14,0"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+
+                    <!-- MultiLine style for address field: transparent to inherit CustomerFieldBorderStyle background and border -->
+                    <Style x:Key="CustomerMultiLineTextBoxStyle" TargetType="TextBox">
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#0F172A"/>
+                        <Setter Property="CaretBrush" Value="#0F172A"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FontSize" Value="17"/>
+                        <Setter Property="Padding" Value="14,10"/>
                         <Setter Property="VerticalContentAlignment" Value="Top"/>
                         <Setter Property="Template">
                             <Setter.Value>
@@ -1215,16 +1231,17 @@
                         </Setter>
                     </Style>
 
-                    <!-- 1) ปุ่มสีฟ้า (แก้ไขข้อมูล / บันทึกข้อมูล): ปกติ #0284C7, Hover #38BDF8, Pressed #0369A1 -->
+                    <!-- ปุ่มสีฟ้า (แก้ไขข้อมูล / บันทึกข้อมูล): ปกติ #0284C7, Hover #38BDF8, Pressed #0369A1, สูง 48, MinWidth 130, Font 17 Bold -->
                     <Style x:Key="CustomerBlueBtnStyle" TargetType="Button">
                         <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <Setter Property="Background" Value="#0284C7"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontSize" Value="17"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="Height" Value="44"/>
+                        <Setter Property="Height" Value="48"/>
+                        <Setter Property="MinWidth" Value="130"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
@@ -1248,16 +1265,17 @@
                         </Setter>
                     </Style>
 
-                    <!-- 2) ปุ่มลบ (สีแดง): ปกติ #EF4444, Hover #F87171, Pressed #DC2626 -->
+                    <!-- ปุ่มลบ (สีแดง): ปกติ #EF4444, Hover #F87171, Pressed #DC2626, สูง 48, MinWidth 130, Font 17 Bold -->
                     <Style x:Key="CustomerDeleteBtnStyle" TargetType="Button">
                         <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <Setter Property="Background" Value="#EF4444"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontSize" Value="17"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="Height" Value="44"/>
+                        <Setter Property="Height" Value="48"/>
+                        <Setter Property="MinWidth" Value="130"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
@@ -1281,17 +1299,18 @@
                         </Setter>
                     </Style>
 
-                    <!-- 3) ปุ่มปิด / ยกเลิก (สีเทาอ่อน): ปกติ #F1F5F9, ขอบ #CBD5E1, Hover #E2E8F0, ตัวหนังสือ #475569 Bold -->
+                    <!-- ปุ่มปิด / ยกเลิก (สีเทาอ่อน): ปกติ #F1F5F9, ขอบ #CBD5E1, Hover #E2E8F0, ตัวหนังสือ #475569 Bold, สูง 48, MinWidth 130, Font 17 Bold -->
                     <Style x:Key="CustomerNeutralBtnStyle" TargetType="Button">
                         <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
                         <Setter Property="Background" Value="#F1F5F9"/>
                         <Setter Property="Foreground" Value="#475569"/>
                         <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontSize" Value="17"/>
                         <Setter Property="BorderThickness" Value="1"/>
                         <Setter Property="BorderBrush" Value="#CBD5E1"/>
                         <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="Height" Value="44"/>
+                        <Setter Property="Height" Value="48"/>
+                        <Setter Property="MinWidth" Value="130"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
@@ -1314,10 +1333,10 @@
                 </Border.Resources>
 
                 <StackPanel>
-                    <!-- Header Bar with Title (เหลือเฉพาะข้อความหัวข้อ Modal ทางฝั่งซ้าย) -->
-                    <DockPanel LastChildFill="False" Margin="0,0,0,18">
+                    <!-- 1. Header Bar with Title (FontSize="24", FontWeight="Bold", Foreground="#0F172A", Margin="0,0,0,20") -->
+                    <DockPanel LastChildFill="False" Margin="0,0,0,20">
                         <TextBlock Text="{Binding CustomerModalTitle, FallbackValue='ข้อมูลลูกค้า'}"
-                                   FontSize="20" FontWeight="Bold" Foreground="#0B2545"
+                                   FontSize="24" FontWeight="Bold" Foreground="#0F172A"
                                    DockPanel.Dock="Left" VerticalAlignment="Center"/>
                     </DockPanel>
 
@@ -1326,12 +1345,12 @@
                             BorderBrush="#BAE6FD"
                             BorderThickness="1.5"
                             CornerRadius="12"
-                            Padding="18"
-                            Margin="0,0,0,16">
+                            Padding="20,18"
+                            Margin="0,0,0,20">
                         <Grid>
+                            <!-- 2. ปรับสัดส่วนคอลัมน์: Column 0 (รหัสลูกค้า) Width="220", Column 1 (ชื่อ-นามสกุล) Width="*" -->
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition Width="220"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -1341,51 +1360,57 @@
                             </Grid.RowDefinitions>
 
                             <!-- Row 0 Left: Customer Code (ReadOnly เสมอ เพื่อป้องกันการเปลี่ยน Primary Key) -->
-                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสลูกค้า" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1.5" CornerRadius="8">
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,16,16">
+                                <TextBlock Text="รหัสลูกค้า" FontSize="17" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,8"/>
+                                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1.5" CornerRadius="8">
                                     <TextBox Text="{Binding CustomerCode, Mode=OneWay}"
                                              IsReadOnly="True"
                                              Foreground="#0284C7"
                                              FontWeight="SemiBold"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="15"/>
+                                             Style="{StaticResource CustomerSingleLineTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
-                            <!-- Row 0 Right: Customer Name -->
-                            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อ-นามสกุล *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                            <!-- Row 0 Right: Customer Name (สัญลักษณ์ดอกจันแสดงเฉพาะโหมดแก้ไข) -->
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,16">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="ชื่อ-นามสกุล" FontSize="17" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="17" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
                                 <Border Style="{StaticResource CustomerFieldBorderStyle}">
                                     <TextBox Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
                                              IsEnabled="{Binding CanEditCustomer}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="15"/>
+                                             Style="{StaticResource CustomerSingleLineTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
-                            <!-- Row 1 Full Width: Phone Number -->
-                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,14">
-                                <TextBlock Text="เบอร์โทรศัพท์ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                            <!-- Row 1 Full Width: Phone Number (สัญลักษณ์ดอกจันแสดงเฉพาะโหมดแก้ไข) -->
+                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,16">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="เบอร์โทรศัพท์" FontSize="17" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="17" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
                                 <Border Style="{StaticResource CustomerFieldBorderStyle}">
                                     <TextBox Text="{Binding CustomerPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
                                              IsEnabled="{Binding CanEditCustomer}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="15"/>
+                                             Style="{StaticResource CustomerSingleLineTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
-                            <!-- Row 2 Full Width: Address (ปรับสไตล์ให้เหมือนช่องชื่อและเบอร์โทรศัพท์) -->
-                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
+                            <!-- Row 2 Full Width: Address (สไตล์กล่องข้อความเหมือนช่องอื่น พร้อมรองรับหลายบรรทัด) -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0">
+                                <TextBlock Text="ที่อยู่ / รายละเอียดที่ตั้ง" FontSize="17" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,8"/>
                                 <Border Style="{StaticResource CustomerFieldBorderStyle}">
                                     <TextBox Text="{Binding CustomerAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                              IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
                                              IsEnabled="{Binding CanEditCustomer}"
                                              Style="{StaticResource CustomerMultiLineTextBoxStyle}"
-                                             Height="76" Padding="12,8" FontSize="15" TextWrapping="Wrap" AcceptsReturn="True"/>
+                                             MinHeight="95" Height="100"
+                                             TextWrapping="Wrap" AcceptsReturn="True"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -1394,7 +1419,7 @@
                     <!-- Validation Message -->
                     <TextBlock Text="{Binding CustomerValidationMessage}"
                                Visibility="{Binding HasCustomerValidationMessage, Converter={StaticResource BoolToVis}}"
-                               Foreground="#DC2626" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                               Foreground="#DC2626" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16"/>
 
                     <!-- Action Buttons Bar -->
                     <!-- 1) ชุดปุ่มโหมดดูข้อมูล (IsEditMode == false): แสดง 3 ปุ่ม [แก้ไขข้อมูล, ลบ, ปิด] -->
@@ -1402,31 +1427,40 @@
                           Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="14"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="14"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- 1.1) ปุ่ม "แก้ไขข้อมูล" (สีฟ้า Background="#0284C7", Hover="#38BDF8", Foreground="White", FontWeight="Bold") -->
+                        <!-- 1.1) ปุ่ม "แก้ไขข้อมูล" (สีฟ้า Background="#0284C7", Hover="#38BDF8", ไอคอน ✏️ เว้น Margin="0,0,8,0") -->
                         <Button Grid.Column="0"
                                 Command="{Binding EnterCustomerEditModeCommand}"
                                 IsEnabled="{Binding CanEditCustomer}"
-                                Content="✏️ แก้ไขข้อมูล"
-                                Style="{StaticResource CustomerBlueBtnStyle}"/>
+                                Style="{StaticResource CustomerBlueBtnStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="✏️" Margin="0,0,8,0" FontSize="16" VerticalAlignment="Center"/>
+                                <TextBlock Text="แก้ไขข้อมูล" FontSize="17" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                        <!-- 1.2) ปุ่ม "ลบ" (สีแดง Background="#EF4444", Hover="#F87171", Foreground="White", FontWeight="Bold") -->
+                        <!-- 1.2) ปุ่ม "ลบ" (สีแดง Background="#EF4444", Hover="#F87171", ไอคอน 🗑️ เว้น Margin="0,0,8,0") -->
                         <Button Grid.Column="2"
                                 Command="{Binding DeleteCustomerCommand}"
                                 IsEnabled="{Binding CanEditCustomer}"
-                                Content="🗑️ ลบ"
-                                Style="{StaticResource CustomerDeleteBtnStyle}"/>
+                                Style="{StaticResource CustomerDeleteBtnStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="🗑️" Margin="0,0,8,0" FontSize="16" VerticalAlignment="Center"/>
+                                <TextBlock Text="ลบ" FontSize="17" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                        <!-- 1.3) ปุ่ม "ปิด" (สีเทาอ่อน Background="#F1F5F9", Hover="#E2E8F0", Foreground="#475569", FontWeight="Bold") -->
+                        <!-- 1.3) ปุ่ม "ปิด" (สีเทาอ่อน Background="#F1F5F9", Hover="#E2E8F0", Foreground="#475569") -->
                         <Button Grid.Column="4"
                                 Command="{Binding CloseCustomerModalCommand}"
-                                Content="ปิด"
-                                Style="{StaticResource CustomerNeutralBtnStyle}"/>
+                                Style="{StaticResource CustomerNeutralBtnStyle}">
+                            <TextBlock Text="ปิด" FontSize="17" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
                     </Grid>
 
                     <!-- 2) ชุดปุ่มโหมดแก้ไข (IsEditMode == true): แสดง 2 ปุ่ม [บันทึกข้อมูล, ยกเลิก] -->
@@ -1434,22 +1468,27 @@
                           Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="14"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- 2.1) ปุ่ม "บันทึกข้อมูล" (สีฟ้า Background="#0284C7", Hover="#38BDF8", Foreground="White", FontWeight="Bold") -->
+                        <!-- 2.1) ปุ่ม "บันทึกข้อมูล" (สีฟ้า Background="#0284C7", Hover="#38BDF8", ไอคอน 💾 เว้น Margin="0,0,8,0") -->
                         <Button Grid.Column="0"
                                 Command="{Binding SaveCustomerCommand}"
                                 IsEnabled="{Binding CanEditCustomer}"
-                                Content="💾 บันทึกข้อมูล"
-                                Style="{StaticResource CustomerBlueBtnStyle}"/>
+                                Style="{StaticResource CustomerBlueBtnStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="💾" Margin="0,0,8,0" FontSize="16" VerticalAlignment="Center"/>
+                                <TextBlock Text="บันทึกข้อมูล" FontSize="17" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                        <!-- 2.2) ปุ่ม "ยกเลิก" (สีเทาอ่อน Background="#F1F5F9", Hover="#E2E8F0", Foreground="#475569", FontWeight="Bold") -->
+                        <!-- 2.2) ปุ่ม "ยกเลิก" (สีเทาอ่อน Background="#F1F5F9", Hover="#E2E8F0", Foreground="#475569") -->
                         <Button Grid.Column="2"
                                 Command="{Binding CancelCustomerEditCommand}"
-                                Content="ยกเลิก"
-                                Style="{StaticResource CustomerNeutralBtnStyle}"/>
+                                Style="{StaticResource CustomerNeutralBtnStyle}">
+                            <TextBlock Text="ยกเลิก" FontSize="17" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
                     </Grid>
                 </StackPanel>
             </Border>

@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\customerview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\customerview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\staffview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\staffview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -24,12 +33,28 @@
               "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StaffView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\StaffView.xaml",
+              "RelativeDocumentMoniker": "Views\\StaffView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\StaffView.xaml",
+              "RelativeToolTip": "Views\\StaffView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T22:18:18.869Z",
+              "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CustomerView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml",
+              "RelativeDocumentMoniker": "Views\\CustomerView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml*",
+              "RelativeToolTip": "Views\\CustomerView.xaml*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T22:17:10.414Z",
+              "EditorCaption": ""
             }
           ]
         }

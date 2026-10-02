@@ -86,7 +86,7 @@ namespace Porjai20.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MatchaShop;V1.0.0.0;component/views/managementview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MatchaShop;component/views/managementview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\ManagementView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
