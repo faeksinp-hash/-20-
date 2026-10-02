@@ -57,8 +57,9 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _selectedExpense, value) && value != null)
                 {
+                    ExpenseCode = value.Code;
                     SelectedExpenseCategory = string.IsNullOrWhiteSpace(value.Category) ? "ค่าน้ำ/ค่าไฟ" : value.Category;
-                    ExpenseDescription = SelectedExpenseCategory == "ค่าใช้จ่ายอื่นๆ" ? value.Description : SelectedExpenseCategory;
+                    ExpenseDescription = value.Description;
                     ExpenseAmount = value.Amount;
                     ExpenseDate = value.ExpenseDate;
                     ExpenseNote = value.Note;
@@ -66,12 +67,36 @@ namespace Porjai20.ViewModels
             }
         }
 
-        private string _expenseModalTitle = "⚙️ แก้ไขข้อมูลรายจ่าย";
+        private string _expenseCode = string.Empty;
+        public string ExpenseCode
+        {
+            get => _expenseCode;
+            set => SetProperty(ref _expenseCode, value);
+        }
+
+        private string _expenseModalTitle = "ข้อมูลรายจ่าย";
         public string ExpenseModalTitle
         {
             get => _expenseModalTitle;
             set => SetProperty(ref _expenseModalTitle, value);
         }
+
+        private bool _isExpenseAddMode;
+        public bool IsExpenseAddMode
+        {
+            get => _isExpenseAddMode;
+            set => SetProperty(ref _isExpenseAddMode, value);
+        }
+
+        private string _originalExpenseCode = string.Empty;
+        private string _originalExpenseCategory = "ค่าน้ำ/ค่าไฟ";
+        private string _originalExpenseDescription = string.Empty;
+        private decimal _originalExpenseAmount;
+        private DateTime _originalExpenseDate = DateTime.Now;
+        private string _originalExpenseNote = string.Empty;
+
+        public ICommand EnterExpenseEditModeCommand { get; set; }
+        public ICommand CancelExpenseEditCommand { get; set; }
 
         private bool _isExpenseModalOpen;
         public bool IsExpenseModalOpen
@@ -211,6 +236,8 @@ namespace Porjai20.ViewModels
                 ExecuteOpenManageExpenseModal();
             });
             OpenAddExpenseModalCommand = new RelayCommand(_ => ExecuteOpenAddExpenseModal());
+            EnterExpenseEditModeCommand = new RelayCommand(_ => ExecuteEnterExpenseEditMode());
+            CancelExpenseEditCommand = new RelayCommand(_ => ExecuteCancelExpenseEdit());
             
             SaveExpenseCommand = new RelayCommand(_ => ExecuteSaveExpense());
             AddExpenseCommand = new RelayCommand(_ => ExecuteSaveExpense());
@@ -252,28 +279,67 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            IsEditMode = true;
-            ExpenseModalTitle = "⚙️ แก้ไขข้อมูลรายจ่าย";
+            IsExpenseAddMode = false;
+            IsEditMode = false; // Start in Read-Only Mode!
+            ExpenseModalTitle = "ข้อมูลรายจ่าย";
             ModalTitle = ExpenseModalTitle;
             ExpenseValidationMessage = string.Empty;
-            
-            SelectedExpenseCategory = string.IsNullOrWhiteSpace(SelectedExpense.Category) ? "ค่าน้ำ/ค่าไฟ" : SelectedExpense.Category;
-            ExpenseDescription = SelectedExpenseCategory == "ค่าใช้จ่ายอื่นๆ" ? SelectedExpense.Description : SelectedExpenseCategory;
-            ExpenseAmount = SelectedExpense.Amount;
-            ExpenseDate = SelectedExpense.ExpenseDate;
-            ExpenseNote = SelectedExpense.Note;
+
+            _originalExpenseCode = SelectedExpense.Code ?? string.Empty;
+            _originalExpenseCategory = string.IsNullOrWhiteSpace(SelectedExpense.Category) ? "ค่าน้ำ/ค่าไฟ" : SelectedExpense.Category;
+            _originalExpenseDescription = SelectedExpense.Description ?? string.Empty;
+            _originalExpenseAmount = SelectedExpense.Amount;
+            _originalExpenseDate = SelectedExpense.ExpenseDate;
+            _originalExpenseNote = SelectedExpense.Note ?? string.Empty;
+
+            ExpenseCode = _originalExpenseCode;
+            SelectedExpenseCategory = _originalExpenseCategory;
+            ExpenseDescription = _originalExpenseDescription;
+            ExpenseAmount = _originalExpenseAmount;
+            ExpenseDate = _originalExpenseDate;
+            ExpenseNote = _originalExpenseNote;
 
             IsModalOpen = true;
             IsExpenseModalOpen = true;
         }
 
+        public void ExecuteEnterExpenseEditMode()
+        {
+            IsEditMode = true;
+            ExpenseModalTitle = "แก้ไขข้อมูลรายจ่าย";
+            ModalTitle = ExpenseModalTitle;
+        }
+
+        public void ExecuteCancelExpenseEdit()
+        {
+            if (IsExpenseAddMode)
+            {
+                ExecuteCloseExpenseModal();
+                return;
+            }
+
+            ExpenseCode = _originalExpenseCode;
+            SelectedExpenseCategory = _originalExpenseCategory;
+            ExpenseDescription = _originalExpenseDescription;
+            ExpenseAmount = _originalExpenseAmount;
+            ExpenseDate = _originalExpenseDate;
+            ExpenseNote = _originalExpenseNote;
+
+            ExpenseValidationMessage = string.Empty;
+            IsEditMode = false;
+            ExpenseModalTitle = "ข้อมูลรายจ่าย";
+            ModalTitle = ExpenseModalTitle;
+        }
+
         public void ExecuteOpenAddExpenseModal()
         {
             ClearExpenseForm();
-            IsEditMode = false;
-            ExpenseModalTitle = "➕ เพิ่มข้อมูลรายจ่าย";
+            IsExpenseAddMode = true;
+            IsEditMode = true;
+            ExpenseModalTitle = "เพิ่มข้อมูลรายจ่าย";
             ModalTitle = ExpenseModalTitle;
             ExpenseValidationMessage = string.Empty;
+            ExpenseCode = GenerateNextExpenseCode();
             ExpenseDate = DateTime.Now;
             IsModalOpen = true;
             IsExpenseModalOpen = true;
@@ -284,22 +350,25 @@ namespace Porjai20.ViewModels
             if (string.IsNullOrWhiteSpace(ExpenseDescription))
             {
                 ExpenseValidationMessage = "กรุณากรอกรายละเอียด/ชื่อรายการรายจ่าย";
+                ShowAlert("กรุณากรอกรายละเอียด/ชื่อรายการรายจ่าย", "แจ้งเตือน", "⚠️");
                 return;
             }
 
             if (ExpenseAmount <= 0)
             {
-                ExpenseValidationMessage = "กรุณากรอกจำนวนเงินรายจ่ายที่ถูกต้อง";
+                ExpenseValidationMessage = "กรุณากรอกจำนวนเงินรายจ่ายที่ถูกต้อง (มากกว่า 0)";
+                ShowAlert("กรุณากรอกจำนวนเงินรายจ่ายที่ถูกต้อง", "แจ้งเตือน", "⚠️");
                 return;
             }
 
-            if (IsEditMode && SelectedExpense != null && SelectedExpense.Id > 0)
+            if (!IsExpenseAddMode && SelectedExpense != null && SelectedExpense.Id > 0)
             {
+                SelectedExpense.Code = ExpenseCode;
                 SelectedExpense.Category = SelectedExpenseCategory;
-                SelectedExpense.Description = SelectedExpenseCategory == "ค่าใช้จ่ายอื่นๆ" ? ExpenseDescription : SelectedExpenseCategory;
+                SelectedExpense.Description = ExpenseDescription?.Trim() ?? string.Empty;
                 SelectedExpense.Amount = ExpenseAmount;
                 SelectedExpense.ExpenseDate = ExpenseDate;
-                SelectedExpense.Note = ExpenseNote;
+                SelectedExpense.Note = ExpenseNote?.Trim() ?? string.Empty;
                 if (SelectedExpense.Emp_ID <= 0)
                 {
                     SelectedExpense.Emp_ID = CurrentUser != null && CurrentUser.Emp_ID > 0 
@@ -311,19 +380,23 @@ namespace Porjai20.ViewModels
                 ClearExpenseForm();
                 SetExpenseModalsClosed();
                 _ = LoadExpenses();
+                FilteredExpenses?.Refresh();
+                OnPropertyChanged(nameof(MonthlyTotalExpense));
+                OnPropertyChanged(nameof(MonthlyExpenseCount));
+                OnPropertyChanged(nameof(TopExpenseCategoryName));
                 ShowAlert("อัปเดตข้อมูลรายจ่ายเรียบร้อยแล้ว", "สำเร็จ", "🎉");
             }
             else
             {
-                string autoCode = GenerateNextExpenseCode();
+                string autoCode = string.IsNullOrWhiteSpace(ExpenseCode) ? GenerateNextExpenseCode() : ExpenseCode;
                 var newExpense = new Expense
                 {
                     Code = autoCode,
                     Category = string.IsNullOrWhiteSpace(SelectedExpenseCategory) ? "ค่าใช้จ่ายอื่นๆ" : SelectedExpenseCategory,
-                    Description = SelectedExpenseCategory == "ค่าใช้จ่ายอื่นๆ" ? ExpenseDescription : SelectedExpenseCategory,
+                    Description = ExpenseDescription?.Trim() ?? string.Empty,
                     Amount = ExpenseAmount,
                     ExpenseDate = ExpenseDate,
-                    Note = ExpenseNote,
+                    Note = ExpenseNote?.Trim() ?? string.Empty,
                     Emp_ID = CurrentUser != null && CurrentUser.Emp_ID > 0 
                         ? CurrentUser.Emp_ID 
                         : 1 // Fallback ใช้ Admin ID = 1
@@ -333,6 +406,10 @@ namespace Porjai20.ViewModels
                 ClearExpenseForm();
                 SetExpenseModalsClosed();
                 _ = LoadExpenses();
+                FilteredExpenses?.Refresh();
+                OnPropertyChanged(nameof(MonthlyTotalExpense));
+                OnPropertyChanged(nameof(MonthlyExpenseCount));
+                OnPropertyChanged(nameof(TopExpenseCategoryName));
                 ShowAlert("บันทึกข้อมูลรายจ่ายเรียบร้อยแล้ว", "สำเร็จ", "🎉");
             }
         }
@@ -342,6 +419,7 @@ namespace Porjai20.ViewModels
             if (SelectedExpense == null || SelectedExpense.Id <= 0)
             {
                 ExpenseValidationMessage = "กรุณาคลิกเลือกรายการรายจ่ายในตารางก่อนดำเนินการ";
+                ShowAlert("กรุณาคลิกเลือกรายการรายจ่ายในตารางก่อนดำเนินการ", "แจ้งเตือน", "⚠️");
                 return;
             }
 
@@ -353,6 +431,10 @@ namespace Porjai20.ViewModels
                     ClearExpenseForm();
                     SetExpenseModalsClosed();
                     _ = LoadExpenses();
+                    FilteredExpenses?.Refresh();
+                    OnPropertyChanged(nameof(MonthlyTotalExpense));
+                    OnPropertyChanged(nameof(MonthlyExpenseCount));
+                    OnPropertyChanged(nameof(TopExpenseCategoryName));
                     ShowAlert("ลบข้อมูลรายจ่ายเรียบร้อยแล้ว", "สำเร็จ", "🗑️");
                 },
                 "ยืนยันการลบข้อมูลรายจ่าย");
@@ -374,6 +456,7 @@ namespace Porjai20.ViewModels
         public void ClearExpenseForm()
         {
             SelectedExpense = new Expense();
+            ExpenseCode = string.Empty;
             SelectedExpenseCategory = "ค่าน้ำ/ค่าไฟ";
             ExpenseDescription = "ค่าน้ำ/ค่าไฟ";
             ExpenseAmount = 0;
@@ -424,6 +507,27 @@ namespace Porjai20.ViewModels
         public ICollectionView FilteredExpenses { get; private set; }
         public ICollectionView ExpensesView => FilteredExpenses;
 
+        private string _expenseCode = string.Empty;
+        public string ExpenseCode
+        {
+            get => _expenseCode;
+            set => SetProperty(ref _expenseCode, value);
+        }
+
+        private bool _isExpenseAddMode;
+        public bool IsExpenseAddMode
+        {
+            get => _isExpenseAddMode;
+            set => SetProperty(ref _isExpenseAddMode, value);
+        }
+
+        private string _originalExpenseCode = string.Empty;
+        private string _originalExpenseCategory = string.Empty;
+        private string _originalExpenseDescription = string.Empty;
+        private decimal _originalExpenseAmount;
+        private DateTime _originalExpenseDate = DateTime.Now;
+        private string _originalExpenseNote = string.Empty;
+
         private Expense? _selectedExpense;
         public Expense? SelectedExpense
         {
@@ -432,6 +536,7 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _selectedExpense, value) && value != null)
                 {
+                    ExpenseCode = value.Code;
                     SelectedExpenseCategory = value.Category;
                     ExpenseDescription = value.Description;
                     ExpenseAmount = value.Amount;
@@ -448,7 +553,7 @@ namespace Porjai20.ViewModels
             set => SetProperty(ref _isEditMode, value);
         }
 
-        private string _modalTitle = "⚙️ แก้ไขข้อมูลรายจ่าย";
+        private string _modalTitle = "ข้อมูลรายจ่าย";
         public string ModalTitle
         {
             get => _modalTitle;
@@ -580,6 +685,8 @@ namespace Porjai20.ViewModels
         public ICommand ClearExpenseCommand { get; }
         public ICommand SearchExpenseCommand { get; }
         public ICommand ClearExpenseFilterCommand { get; }
+        public ICommand EnterExpenseEditModeCommand { get; }
+        public ICommand CancelExpenseEditCommand { get; }
 
         public ExpenseViewModel()
         {
@@ -610,6 +717,8 @@ namespace Porjai20.ViewModels
             DeleteExpenseCommand = new RelayCommand(_ => ExecuteDeleteExpense());
             CloseModalCommand = new RelayCommand(_ => ExecuteCloseModal());
             ClearExpenseCommand = new RelayCommand(_ => ClearExpenseForm());
+            EnterExpenseEditModeCommand = new RelayCommand(_ => ExecuteEnterExpenseEditMode());
+            CancelExpenseEditCommand = new RelayCommand(_ => ExecuteCancelExpenseEdit());
             SearchExpenseCommand = new RelayCommand(_ =>
             {
                 FilteredExpenses?.Refresh();
@@ -649,25 +758,62 @@ namespace Porjai20.ViewModels
         {
             if (SelectedExpense == null || SelectedExpense.Id <= 0) return;
 
-            IsEditMode = true;
-            ModalTitle = "⚙️ แก้ไขข้อมูลรายจ่าย";
+            IsExpenseAddMode = false;
+            IsEditMode = false;
+            ModalTitle = "ข้อมูลรายจ่าย";
             ExpenseValidationMessage = string.Empty;
 
-            SelectedExpenseCategory = SelectedExpense.Category;
-            ExpenseDescription = SelectedExpense.Description;
-            ExpenseAmount = SelectedExpense.Amount;
-            ExpenseDate = SelectedExpense.ExpenseDate;
-            ExpenseNote = SelectedExpense.Note;
+            _originalExpenseCode = SelectedExpense.Code;
+            _originalExpenseCategory = SelectedExpense.Category;
+            _originalExpenseDescription = SelectedExpense.Description;
+            _originalExpenseAmount = SelectedExpense.Amount;
+            _originalExpenseDate = SelectedExpense.ExpenseDate;
+            _originalExpenseNote = SelectedExpense.Note;
+
+            ExpenseCode = _originalExpenseCode;
+            SelectedExpenseCategory = _originalExpenseCategory;
+            ExpenseDescription = _originalExpenseDescription;
+            ExpenseAmount = _originalExpenseAmount;
+            ExpenseDate = _originalExpenseDate;
+            ExpenseNote = _originalExpenseNote;
 
             IsModalOpen = true;
+        }
+
+        public void ExecuteEnterExpenseEditMode()
+        {
+            IsEditMode = true;
+            ModalTitle = "แก้ไขข้อมูลรายจ่าย";
+        }
+
+        public void ExecuteCancelExpenseEdit()
+        {
+            if (IsExpenseAddMode)
+            {
+                ExecuteCloseModal();
+                return;
+            }
+
+            ExpenseCode = _originalExpenseCode;
+            SelectedExpenseCategory = _originalExpenseCategory;
+            ExpenseDescription = _originalExpenseDescription;
+            ExpenseAmount = _originalExpenseAmount;
+            ExpenseDate = _originalExpenseDate;
+            ExpenseNote = _originalExpenseNote;
+
+            ExpenseValidationMessage = string.Empty;
+            IsEditMode = false;
+            ModalTitle = "ข้อมูลรายจ่าย";
         }
 
         public void ExecuteOpenAddModal()
         {
             ClearExpenseForm();
-            IsEditMode = false;
-            ModalTitle = "➕ เพิ่มข้อมูลรายจ่าย";
+            IsExpenseAddMode = true;
+            IsEditMode = true;
+            ModalTitle = "เพิ่มข้อมูลรายจ่าย";
             ExpenseValidationMessage = string.Empty;
+            ExpenseCode = GenerateNextExpenseCode();
             ExpenseDate = DateTime.Now;
             IsModalOpen = true;
         }
@@ -686,13 +832,14 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode && SelectedExpense != null && SelectedExpense.Id > 0)
+            if (!IsExpenseAddMode && SelectedExpense != null && SelectedExpense.Id > 0)
             {
+                SelectedExpense.Code = ExpenseCode;
                 SelectedExpense.Category = SelectedExpenseCategory;
-                SelectedExpense.Description = ExpenseDescription;
+                SelectedExpense.Description = ExpenseDescription?.Trim() ?? string.Empty;
                 SelectedExpense.Amount = ExpenseAmount;
                 SelectedExpense.ExpenseDate = ExpenseDate;
-                SelectedExpense.Note = ExpenseNote;
+                SelectedExpense.Note = ExpenseNote?.Trim() ?? string.Empty;
                 if (SelectedExpense.Emp_ID <= 0)
                 {
                     SelectedExpense.Emp_ID = 1;
@@ -705,15 +852,15 @@ namespace Porjai20.ViewModels
             }
             else
             {
-                string autoCode = GenerateNextExpenseCode();
+                string autoCode = string.IsNullOrWhiteSpace(ExpenseCode) ? GenerateNextExpenseCode() : ExpenseCode;
                 var expense = new Expense
                 {
                     Code = autoCode,
                     Category = string.IsNullOrWhiteSpace(SelectedExpenseCategory) ? "ค่าใช้จ่ายอื่นๆ" : SelectedExpenseCategory,
-                    Description = ExpenseDescription,
+                    Description = ExpenseDescription?.Trim() ?? string.Empty,
                     Amount = ExpenseAmount,
                     ExpenseDate = ExpenseDate,
-                    Note = ExpenseNote,
+                    Note = ExpenseNote?.Trim() ?? string.Empty,
                     Emp_ID = 1 // Fallback ใช้ Admin ID = 1
                 };
 
@@ -743,6 +890,7 @@ namespace Porjai20.ViewModels
         public void ClearExpenseForm()
         {
             SelectedExpense = null;
+            ExpenseCode = string.Empty;
             SelectedExpenseCategory = "ค่าน้ำ/ค่าไฟ";
             ExpenseDescription = "ค่าน้ำ/ค่าไฟ";
             ExpenseAmount = 0;

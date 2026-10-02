@@ -269,8 +269,8 @@
         <!--  DATAGRID STYLES                                           -->
         <!-- ══════════════════════════════════════════════════════════ -->
         <Style x:Key="ExpenseColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background"              Value="#F1F5F9"/>
-            <Setter Property="Foreground"              Value="#000000"/>
+            <Setter Property="Background"              Value="#F8FAFC"/>
+            <Setter Property="Foreground"              Value="#1E293B"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
             <Setter Property="Height"                  Value="48"/>
@@ -286,7 +286,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{TemplateBinding Padding}">
                             <TextBlock Text="{TemplateBinding Content}"
-                                       Foreground="#000000"
+                                       Foreground="#1E293B"
                                        FontWeight="Bold"
                                        FontSize="16"
                                        HorizontalAlignment="Center"
@@ -311,16 +311,18 @@
                         <Border x:Name="RowBorder"
                                 CornerRadius="8" Margin="4,2" Padding="4,0"
                                 Background="Transparent"
-                                BorderThickness="0">
+                                BorderThickness="1"
+                                BorderBrush="Transparent">
                             <DataGridCellsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
-                                <Setter Property="Foreground" Value="#000000"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#BAE6FD"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
                                 <Setter Property="Foreground" Value="#000000"/>
                                 <Setter Property="FontWeight" Value="Normal"/>
                             </Trigger>
@@ -329,9 +331,9 @@
                 </Setter.Value>
             </Setter>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#BAE6FD"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#000000"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#BAE6FD"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#000000"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#000000"/>
@@ -369,9 +371,9 @@
                 </Trigger>
             </Style.Triggers>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#BAE6FD"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#000000"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#BAE6FD"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#000000"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#000000"/>
@@ -484,9 +486,9 @@
                                    Foreground="#0B2545"
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
-                                   Text="ยอดรวมค่าใช้จ่ายทั้งหมดในเดือนปัจจุบัน"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
+                                   Text="ยอดรวมค่าใช้จ่ายที่เกิดขึ้นในเดือนปัจจุบัน"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -522,8 +524,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนรายการรายจ่ายที่บันทึกไว้เดือนนี้"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -549,7 +551,7 @@
                             <Border Width="36" Height="36" CornerRadius="10" Background="#FEF3C7" Margin="0,0,10,0">
                                 <TextBlock Text="🏆" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
                             </Border>
-                            <TextBlock Text="หมวดหมู่รายจ่ายสูงสุด" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="หมวดหมู่รายจ่ายสูงสุด" FontSize="16" FontWeight="SemiBold"
                                        Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
                         <TextBlock Grid.Row="1"
@@ -559,8 +561,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="หมวดหมู่ที่มีมูลค่าการจ่ายสูงสุดในระบบ"
-                                   FontSize="11"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -740,7 +742,7 @@
                                    DockPanel.Dock="Left"
                                    Margin="4,0,0,0"/>
 
-                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดข้อมูลรายจ่าย"
                                    Foreground="#94A3B8"
                                    FontSize="13"
                                    VerticalAlignment="Center"

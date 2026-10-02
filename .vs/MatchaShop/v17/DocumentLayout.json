@@ -3,12 +3,60 @@
   "WorkspaceRootPath": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\customerview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\customerview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\purchaseorderview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\purchaseorderview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\receiptwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\receiptwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\reportsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\reportsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\staffview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\staffview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\saleshistoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\saleshistoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\stockinview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\stockinview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\customerview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\customerview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\custommessagebox.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\custommessagebox.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\dashboardview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\dashboardview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\deliveryslipwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\deliveryslipwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\expenseview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\expenseview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\views\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:views\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\viewmodels\\productviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:viewmodels\\productviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|d:\\shopmanagement-\u0E2B\u0E25\u0E31\u0E01\\matchashop\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{625A35D6-8483-4944-8EAE-1CBD66133360}|MatchaShop.csproj|solutionrelative:services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +66,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -33,31 +81,173 @@
               "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PurchaseOrderView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\PurchaseOrderView.xaml",
+              "RelativeDocumentMoniker": "Views\\PurchaseOrderView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\PurchaseOrderView.xaml",
+              "RelativeToolTip": "Views\\PurchaseOrderView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:25.493Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ReceiptWindow.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\ReceiptWindow.xaml",
+              "RelativeDocumentMoniker": "Views\\ReceiptWindow.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\ReceiptWindow.xaml",
+              "RelativeToolTip": "Views\\ReceiptWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:23.903Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ReportsView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\ReportsView.xaml",
+              "RelativeDocumentMoniker": "Views\\ReportsView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\ReportsView.xaml",
+              "RelativeToolTip": "Views\\ReportsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:22.186Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "StaffView.xaml",
               "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\StaffView.xaml",
               "RelativeDocumentMoniker": "Views\\StaffView.xaml",
               "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\StaffView.xaml",
               "RelativeToolTip": "Views\\StaffView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-10-02T22:18:18.869Z",
+              "WhenOpened": "2026-10-02T23:18:20.013Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
+              "Title": "SalesHistoryView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\SalesHistoryView.xaml",
+              "RelativeDocumentMoniker": "Views\\SalesHistoryView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\SalesHistoryView.xaml",
+              "RelativeToolTip": "Views\\SalesHistoryView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:18.402Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "StockInView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\StockInView.xaml",
+              "RelativeDocumentMoniker": "Views\\StockInView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\StockInView.xaml",
+              "RelativeToolTip": "Views\\StockInView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:16.644Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "CustomerView.xaml",
               "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml",
               "RelativeDocumentMoniker": "Views\\CustomerView.xaml",
               "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml",
               "RelativeToolTip": "Views\\CustomerView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-10-02T22:17:10.414Z",
+              "WhenOpened": "2026-10-02T23:18:11.788Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CustomMessageBox.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomMessageBox.xaml",
+              "RelativeDocumentMoniker": "Views\\CustomMessageBox.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomMessageBox.xaml",
+              "RelativeToolTip": "Views\\CustomMessageBox.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:09.213Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DashboardView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\DashboardView.xaml",
+              "RelativeDocumentMoniker": "Views\\DashboardView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\DashboardView.xaml",
+              "RelativeToolTip": "Views\\DashboardView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:07.881Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DeliverySlipWindow.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\DeliverySlipWindow.xaml",
+              "RelativeDocumentMoniker": "Views\\DeliverySlipWindow.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\DeliverySlipWindow.xaml",
+              "RelativeToolTip": "Views\\DeliverySlipWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:18:05.995Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "Views\\MainWindow.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\MainWindow.xaml",
+              "RelativeToolTip": "Views\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:17:40.961Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "DialogService.cs",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Services\\DialogService.cs",
+              "RelativeDocumentMoniker": "Services\\DialogService.cs",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Services\\DialogService.cs",
+              "RelativeToolTip": "Services\\DialogService.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAhwA8AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-02T23:17:06.269Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ProductViewModel.cs",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\ViewModels\\ProductViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ProductViewModel.cs",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\ViewModels\\ProductViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ProductViewModel.cs",
+              "ViewState": "AgIAAB0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-02T23:15:20.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ExpenseView.xaml",
+              "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\ExpenseView.xaml",
+              "RelativeDocumentMoniker": "Views\\ExpenseView.xaml",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\ExpenseView.xaml",
+              "RelativeToolTip": "Views\\ExpenseView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-02T23:14:49.193Z",
               "EditorCaption": ""
             }
           ]

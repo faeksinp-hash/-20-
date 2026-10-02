@@ -18,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -31,6 +31,10 @@
             {
               "$type": "Bookmark",
               "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
               "$type": "Document",
@@ -50,8 +54,8 @@
               "Title": "CustomerView.xaml",
               "DocumentMoniker": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml",
               "RelativeDocumentMoniker": "Views\\CustomerView.xaml",
-              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml*",
-              "RelativeToolTip": "Views\\CustomerView.xaml*",
+              "ToolTip": "D:\\ShopManagement-\u0E2B\u0E25\u0E31\u0E01\\MatchaShop\\Views\\CustomerView.xaml",
+              "RelativeToolTip": "Views\\CustomerView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-10-02T22:17:10.414Z",
               "EditorCaption": ""
