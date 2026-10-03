@@ -114,6 +114,37 @@
             </Setter>
         </Style>
 
+        <!-- Clear Button Style (สไตล์ปุ่มล้างมาตรฐาน) -->
+        <Style x:Key="ClearButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="75"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#E2E8F0"/>
+                                <Setter Property="Foreground" Value="#1E293B"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#CBD5E1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Danger Button (ลบ / เก็บถาวร) -->
         <Style x:Key="DangerBtnStyle" TargetType="Button">
             <Setter Property="Background" Value="#FEF2F2"/>
@@ -268,16 +299,19 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Toolbar: Search Box & "+ สร้างโปรโมชั่นใหม่" -->
+                <!-- Toolbar: Search Box, ปุ่มล้าง & "+ สร้างโปรโมชั่นใหม่" -->
                 <Grid Grid.Row="0" Margin="0,0,0,14">
                     <Grid.ColumnDefinitions>
+                        <!-- คอลัมน์ 0: ช่องค้นหา -->
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="14"/>
+                        <!-- คอลัมน์ 1: ปุ่มล้าง -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- คอลัมน์ 2: ปุ่ม + สร้างโปรโมชั่นใหม่ -->
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Search Box -->
-                    <Border Grid.Column="0" Height="42" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12,0">
+                    <Border Grid.Column="0" Height="42" Margin="0,0,10,0" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12,0">
                         <Grid VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -290,7 +324,7 @@
                                      Style="{StaticResource FormTextBoxStyle}" FontSize="14" VerticalAlignment="Center"/>
 
                             <!-- Watermark / Placeholder -->
-                            <TextBlock Grid.Column="1" Text="ค้นหาจากรหัสโปรโมชั่น (Case-sensitive) เช่น FREESHIP, POINTS-50..."
+                            <TextBlock Grid.Column="1" Text="ค้นหาจากรหัสโปรโมชั่น"
                                        Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
@@ -305,6 +339,10 @@
                             </TextBlock>
                         </Grid>
                     </Border>
+
+                    <!-- ปุ่มล้าง (Clear Button) -->
+                    <Button Grid.Column="1" Content="ล้าง" Command="{Binding ClearSearchCommand}"
+                            Style="{StaticResource ClearButtonStyle}" Margin="0,0,12,0"/>
 
                     <!-- Button "+ สร้างโปรโมชั่นใหม่" -->
                     <Button Grid.Column="2" Style="{StaticResource PrimaryActionBtnStyle}"

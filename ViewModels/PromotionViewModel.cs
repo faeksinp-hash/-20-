@@ -86,6 +86,8 @@ namespace Porjai20.ViewModels
                 }
             });
 
+            ClearSearchCommand = new RelayCommand(_ => ClearSearch());
+
             // Initial load
             _ = LoadPromotionsAsync();
         }
@@ -258,6 +260,7 @@ namespace Porjai20.ViewModels
         public ICommand DuplicatePromotionCommand { get; }
         public ICommand ToggleStatusCommand { get; }
         public ICommand SetFilterCommand { get; }
+        public ICommand ClearSearchCommand { get; }
 
         #endregion
 
@@ -326,6 +329,11 @@ namespace Porjai20.ViewModels
             }
 
             FilteredPromotions = new ObservableCollection<PromotionModel>(query.ToList());
+        }
+
+        public void ClearSearch()
+        {
+            SearchKeyword = string.Empty;
         }
 
         public void SelectPromotion(PromotionModel promo)
