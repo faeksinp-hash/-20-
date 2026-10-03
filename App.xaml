@@ -480,6 +480,9 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Height" Value="44"/>
             <Setter Property="MinHeight" Value="42"/>
+            <Setter Property="MaxDropDownHeight" Value="260"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
             <Setter Property="Padding" Value="12,0,32,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -517,7 +520,10 @@
                                     <Border.Effect>
                                         <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="#0B2545" Opacity="0.12"/>
                                     </Border.Effect>
-                                    <ScrollViewer MaxHeight="220" SnapsToDevicePixels="True">
+                                    <ScrollViewer MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                                  SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" Margin="4"/>
                                     </ScrollViewer>
                                 </Border>

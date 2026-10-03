@@ -56,5 +56,39 @@ namespace Porjai20.Views
                 await vm.ExecutePrintAsync(Window.GetWindow(this) ?? Application.Current.MainWindow);
             }
         }
+
+        private void ModalItemsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (sender is DependencyObject depObj)
+            {
+                var scrollViewer = FindVisualChild<ScrollViewer>(depObj);
+                if (scrollViewer != null)
+                {
+                    if (e.Delta > 0)
+                        scrollViewer.LineUp();
+                    else
+                        scrollViewer.LineDown();
+
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) return null;
+            int childCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                    return childOfChild;
+            }
+            return null;
+        }
     }
 }

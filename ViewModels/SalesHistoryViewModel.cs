@@ -29,6 +29,9 @@ namespace Porjai20.ViewModels
         /// <summary>Items for the selected order (detail panel).</summary>
         public ObservableCollection<SalesOrderItem> SelectedOrderItems { get; } = new();
 
+        /// <summary>Alias for SelectedOrderItems to match standard receipt dialog bindings.</summary>
+        public ObservableCollection<SalesOrderItem> ReceiptItems => SelectedOrderItems;
+
         /// <summary>Payment method filter options.</summary>
         public ObservableCollection<string> PaymentMethodOptions { get; } = new()
         {
