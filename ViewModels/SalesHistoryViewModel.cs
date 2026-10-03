@@ -80,8 +80,25 @@ namespace Porjai20.ViewModels
         public decimal AverageTicket
         {
             get => _averageTicket;
-            set => SetProperty(ref _averageTicket, value);
+            set
+            {
+                if (SetProperty(ref _averageTicket, value))
+                {
+                    OnPropertyChanged(nameof(AverageOrderAmount));
+                    OnPropertyChanged(nameof(AverageTicketText));
+                    OnPropertyChanged(nameof(AverageOrderAmountText));
+                }
+            }
         }
+
+        public decimal AverageOrderAmount
+        {
+            get => _averageTicket;
+            set => AverageTicket = value;
+        }
+
+        public string AverageTicketText => _averageTicket.ToString("N2");
+        public string AverageOrderAmountText => _averageTicket.ToString("N2");
 
         private string _revenueSubLabel = "ตามช่วงเวลาที่เลือก";
         public string RevenueSubLabel
@@ -605,7 +622,9 @@ namespace Porjai20.ViewModels
         {
             TotalRevenue  = SalesOrders.Where(o => o.Status == "ชำระเงินแล้ว" || o.Status == "Completed" || string.IsNullOrWhiteSpace(o.Status)).Sum(o => o.TotalAmount);
             TotalOrders   = SalesOrders.Count(o => o.Status == "ชำระเงินแล้ว" || o.Status == "Completed" || string.IsNullOrWhiteSpace(o.Status));
-            AverageTicket = TotalOrders > 0 ? TotalRevenue / TotalOrders : 0m;
+            AverageTicket = TotalOrders > 0 
+                ? Math.Round(TotalRevenue / TotalOrders, 2, MidpointRounding.AwayFromZero) 
+                : 0.00m;
 
             // Sub-labels
             string label;

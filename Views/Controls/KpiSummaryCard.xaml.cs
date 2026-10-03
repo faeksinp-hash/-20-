@@ -20,7 +20,7 @@ namespace Porjai20.Views.Controls
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(
                 nameof(Value),
-                typeof(object),
+                typeof(string),
                 typeof(KpiSummaryCard),
                 new PropertyMetadata(string.Empty));
 
@@ -58,9 +58,9 @@ namespace Porjai20.Views.Controls
             set => SetValue(TitleProperty, value);
         }
 
-        public object Value
+        public string Value
         {
-            get => GetValue(ValueProperty);
+            get => (string)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
         }
 
