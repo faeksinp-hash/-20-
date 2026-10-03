@@ -19,7 +19,7 @@ namespace Porjai20.Views
                 if (DataContext is ProductViewModel vm)
                 {
                     vm.SelectedProduct = product;
-                    vm.ExecuteOpenEditProductModal(product);
+                    vm.ExecuteOpenViewProductModal(product);
                 }
             }
         }

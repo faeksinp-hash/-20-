@@ -404,10 +404,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter TargetName="RowBorder" Property="BorderThickness" Value="1"/>
                                 <Setter Property="Foreground"  Value="#000000"/>
                                 <Setter Property="FontWeight"  Value="Normal"/>
                             </Trigger>
@@ -582,7 +584,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนสินค้าทั้งหมดในระบบ"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -619,7 +621,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="เหลือน้อยกว่าจุดสั่งซื้อขั้นต่ำ"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -656,7 +658,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="สต็อกเป็น 0 ต้องเติมทันที"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -1045,30 +1047,38 @@
                                LastChildFill="False"
                                Margin="4,12,4,0">
 
-                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                        <!-- Left: Items Count -->
+                        <TextBlock Text="{Binding FilteredProducts.Count, StringFormat='แสดงทั้งหมด {0} รายการสินค้า'}"
                                    Foreground="#64748B"
-                                   FontSize="13.5"
-                                   FontWeight="Medium"
+                                   FontSize="14"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
-                                   Margin="0,0,16,0"/>
-
-                        <!-- Products Count -->
-                        <TextBlock Text="{Binding Products.Count, StringFormat=แสดงทั้งหมด {0} รายการสินค้า}"
-                                   Foreground="#718096"
-                                   FontSize="14"
-                                   VerticalAlignment="Center"
-                                   DockPanel.Dock="Right"
-                                   Margin="0"
+                                   Margin="4,0,0,0"
                                    Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}"/>
 
-                        <!-- Categories Count -->
-                        <TextBlock Text="{Binding ProductCategories.Count, StringFormat=แสดงทั้งหมด {0} รายการประเภทสินค้า}"
-                                   Foreground="#718096"
+                        <TextBlock Text="{Binding ProductCategories.Count, StringFormat='แสดงทั้งหมด {0} รายการประเภทสินค้า'}"
+                                   Foreground="#64748B"
                                    FontSize="14"
                                    VerticalAlignment="Center"
+                                   DockPanel.Dock="Left"
+                                   Margin="4,0,0,0"
+                                   Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}"/>
+
+                        <!-- Right: Double-click Hint -->
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดข้อมูลสินค้า"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
                                    DockPanel.Dock="Right"
-                                   Margin="0"
+                                   Margin="0,0,4,0"
+                                   Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}"/>
+
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
+                                   Margin="0,0,4,0"
                                    Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}"/>
                     </DockPanel>
                 </Grid>

@@ -675,7 +675,24 @@ namespace Porjai20.ViewModels
             set { _isEditMode = value; OnPropertyChanged(nameof(IsEditMode)); OnPropertyChanged(nameof(ProductFormTitle)); }
         }
 
-        public string ProductFormTitle => IsEditMode ? "✏️ แก้ไขข้อมูลสินค้า" : "➕ เพิ่มสินค้าใหม่";
+        private bool _isProductAddMode;
+        public bool IsProductAddMode
+        {
+            get => _isProductAddMode;
+            set { _isProductAddMode = value; OnPropertyChanged(nameof(IsProductAddMode)); }
+        }
+
+        private string _originalProductName = string.Empty;
+        private string _originalProductCategory = string.Empty;
+        private int _originalProductCategoryId = 0;
+        private string _originalProductUnit = string.Empty;
+        private decimal _originalProductCost = 0;
+        private decimal _originalProductPrice = 0;
+        private int _originalProductStock = 0;
+        private int _originalProductReorderPoint = 0;
+        private string _originalProductImage = string.Empty;
+
+        public string ProductFormTitle => IsProductAddMode ? "➕ เพิ่มข้อมูลสินค้า" : (IsEditMode ? "✏️ แก้ไขข้อมูลสินค้า" : "📦 ข้อมูลสินค้า");
 
         public bool HasSelectedProduct => SelectedProduct != null;
         // ── End Stock Management Modal ───────────────────────────────────────────
@@ -1810,6 +1827,8 @@ namespace Porjai20.ViewModels
             StockDeleteProductCommand = new RelayCommand(async _ => await ExecuteDeleteProduct());
             SaveProductFormCommand = new RelayCommand(async _ => await ExecuteSaveProduct());
             CancelProductFormCommand = new RelayCommand(_ => ExecuteCloseProductModal());
+            EnterProductEditModeCommand = new RelayCommand(_ => ExecuteEnterProductEditMode());
+            CancelProductEditCommand = new RelayCommand(_ => ExecuteCancelProductEdit());
             // ── End Stock Management Modal Commands ──────────────────────────────
             
             SwitchToStaffCommand = new RelayCommand(async _ => await NavigateAsync(async () => { CurrentView = "staff"; await OpenStaffMode(); }));
@@ -2744,12 +2763,19 @@ namespace Porjai20.ViewModels
 
         public void ExecuteOpenAddProductModal()
         {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
             // Load Categories first before clearing and setting defaults
             LoadProductCategories();
 
             ClearForm();
-            IsEditMode = false;
-            ProductModalTitle = "➕ เพิ่มข้อมูลสินค้า";
+            IsProductAddMode = true;
+            IsEditMode = true;
+            ProductModalTitle = "เพิ่มข้อมูลสินค้า";
             ProductValidationMessage = string.Empty;
 
             string generatedCode = GenerateNextProductCode();
@@ -2768,6 +2794,7 @@ namespace Porjai20.ViewModels
             Stock = 0;
             ReorderPoint = 10;
             Unit = string.Empty;
+            ImagePath = string.Empty;
 
             if (ProductCategories.Any())
             {
@@ -2788,7 +2815,7 @@ namespace Porjai20.ViewModels
             CurrentModalContent = "product";
         }
 
-        public void ExecuteOpenEditProductModal(Product product = null)
+        public void ExecuteOpenViewProductModal(Product product = null)
         {
             if (product != null)
             {
@@ -2845,8 +2872,9 @@ namespace Porjai20.ViewModels
                 }
             }
 
-            IsEditMode = true;
-            ProductModalTitle = "⚙️ แก้ไขข้อมูลสินค้า";
+            IsProductAddMode = false;
+            IsEditMode = false; // Start in Read-Only mode!
+            ProductModalTitle = "ข้อมูลสินค้า";
             ProductValidationMessage = string.Empty;
 
             Code = SelectedProduct.Code;
@@ -2900,9 +2928,72 @@ namespace Porjai20.ViewModels
             ImagePath = SelectedProduct.ImagePath;
             Description = SelectedProduct.Description;
 
+            SaveProductOriginalState();
+
             CurrentModalContent = "product";
             IsProductFormOpen = true;
             IsModalOpen = true;
+        }
+
+        public void ExecuteOpenEditProductModal(Product product = null)
+        {
+            ExecuteOpenViewProductModal(product);
+        }
+
+        private void SaveProductOriginalState()
+        {
+            _originalProductName = Name ?? string.Empty;
+            _originalProductCategory = Category ?? string.Empty;
+            _originalProductCategoryId = CategoryID;
+            _originalProductUnit = Unit ?? string.Empty;
+            _originalProductCost = CostPrice;
+            _originalProductPrice = Price;
+            _originalProductStock = Stock;
+            _originalProductReorderPoint = ReorderPoint;
+            _originalProductImage = ImagePath ?? string.Empty;
+        }
+
+        private void RestoreProductOriginalState()
+        {
+            Name = _originalProductName;
+            CategoryID = _originalProductCategoryId;
+            Category = _originalProductCategory;
+            SelectedProductCategory = ProductCategories.FirstOrDefault(c => c.CategoryID == _originalProductCategoryId);
+            Unit = _originalProductUnit;
+            CostPrice = _originalProductCost;
+            Cost = _originalProductCost;
+            Price = _originalProductPrice;
+            Stock = _originalProductStock;
+            ReorderPoint = _originalProductReorderPoint;
+            ImagePath = _originalProductImage;
+        }
+
+        public void ExecuteEnterProductEditMode()
+        {
+            if (RolePermissions.IsReadOnly(CurrentUser?.Role, "stock_manage"))
+            {
+                ShowAlert("ไม่มีสิทธิ์ในการดำเนินการนี้ (สิทธิ์ดูอย่างเดียว)", "ไม่มีสิทธิ์", "⚠️");
+                return;
+            }
+
+            SaveProductOriginalState();
+            IsEditMode = true;
+            ProductModalTitle = "แก้ไขข้อมูลสินค้า";
+            ProductValidationMessage = string.Empty;
+        }
+
+        public void ExecuteCancelProductEdit()
+        {
+            if (IsProductAddMode)
+            {
+                ExecuteCloseProductModal();
+                return;
+            }
+
+            RestoreProductOriginalState();
+            IsEditMode = false;
+            ProductModalTitle = "ข้อมูลสินค้า";
+            ProductValidationMessage = string.Empty;
         }
 
         public async Task ExecuteSaveProduct()
@@ -2925,7 +3016,8 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (IsEditMode)
+            bool wasEdit = !IsProductAddMode;
+            if (wasEdit)
             {
                 await UpdateProduct();
             }
@@ -2936,7 +3028,7 @@ namespace Porjai20.ViewModels
 
             ExecuteCloseProductModal();
             await LoadProducts();
-            ShowAlert(IsEditMode ? "บันทึกการแก้ไขข้อมูลสินค้าเรียบร้อยแล้ว" : "เพิ่มข้อมูลสินค้าเรียบร้อยแล้ว", "สำเร็จ", "🎉");
+            ShowAlert(wasEdit ? "บันทึกการแก้ไขข้อมูลสินค้าเรียบร้อยแล้ว" : "เพิ่มข้อมูลสินค้าเรียบร้อยแล้ว", "สำเร็จ", "🎉");
         }
 
         public async Task ExecuteDeleteProduct()
@@ -3096,6 +3188,8 @@ namespace Porjai20.ViewModels
         public ICommand StockDeleteProductCommand { get; }
         public ICommand SaveProductFormCommand { get; }
         public ICommand CancelProductFormCommand { get; }
+        public ICommand EnterProductEditModeCommand { get; set; }
+        public ICommand CancelProductEditCommand { get; set; }
         public ICommand OpenCustomerCommand { get; }
         public ICommand OpenPartnerCommand { get; }
         

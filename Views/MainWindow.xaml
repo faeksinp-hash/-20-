@@ -2757,33 +2757,171 @@
               Grid.RowSpan="99"
               Grid.ColumnSpan="99"
               Panel.ZIndex="999">
-            <Border Width="640"
+            <Border Width="680"
+                    MaxWidth="700"
                     Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1.5"
                     CornerRadius="16"
-                    Padding="24"
+                    Padding="28,24"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="25" Opacity="0.4" ShadowDepth="4" Direction="270" Color="#000000"/>
                 </Border.Effect>
 
+                <Border.Resources>
+                    <!-- สถานะกล่องข้อความทั่วไป: โหมดดูข้อมูลขอบ #E2E8F0 พื้นหลัง #F8FAFC, โหมดแก้ไขขอบ #38BDF8 พื้นหลัง #FFFFFF -->
+                    <Style x:Key="ProductFieldBorderStyle" TargetType="Border">
+                        <Setter Property="Background" Value="#F8FAFC"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="CornerRadius" Value="8"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Background" Value="#FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#38BDF8"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <!-- สถานะกล่องข้อความรหัสสินค้า (อ่านอย่างเดียวเสมอ) -->
+                    <Style x:Key="ProductCodeBorderStyle" TargetType="Border">
+                        <Setter Property="Background" Value="#F8FAFC"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+
+                    <!-- กล่องข้อความสไตล์โมเดิร์นมาตรฐาน: Font 16, Height 46, Padding 12,0 -->
+                    <Style x:Key="ProductInputTextBoxStyle" TargetType="TextBox">
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#0F172A"/>
+                        <Setter Property="CaretBrush" Value="#0F172A"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="Height" Value="46"/>
+                        <Setter Property="Padding" Value="12,0"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+
+                    <!-- ปุ่มสีฟ้า (แก้ไขข้อมูล / บันทึกข้อมูลสินค้า): สูง 46, MinWidth 115, Font 16 Bold -->
+                    <Style x:Key="ProductBlueBtnStyle" TargetType="Button">
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <Setter Property="Background" Value="#0284C7"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Height" Value="46"/>
+                        <Setter Property="MinWidth" Value="115"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="14,0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#38BDF8"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#0369A1"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background" Value="#BAE6FD"/>
+                                            <Setter Property="Foreground" Value="#94A3B8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- ปุ่มลบ (สีแดง): สูง 46, MinWidth 115, Font 16 Bold -->
+                    <Style x:Key="ProductDeleteBtnStyle" TargetType="Button">
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <Setter Property="Background" Value="#EF4444"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Height" Value="46"/>
+                        <Setter Property="MinWidth" Value="115"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="14,0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#F87171"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#DC2626"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background" Value="#FECACA"/>
+                                            <Setter Property="Foreground" Value="#94A3B8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- ปุ่มปิด / ยกเลิก (สีเทาอ่อน): สูง 46, MinWidth 115, Font 16 Bold -->
+                    <Style x:Key="ProductNeutralBtnStyle" TargetType="Button">
+                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                        <Setter Property="Background" Value="#F1F5F9"/>
+                        <Setter Property="Foreground" Value="#475569"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Height" Value="46"/>
+                        <Setter Property="MinWidth" Value="115"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="14,0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#E2E8F0"/>
+                                            <Setter Property="Foreground" Value="#1E293B"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#CBD5E1"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Border.Resources>
+
                 <StackPanel>
                     <!-- Header Bar with Title -->
                     <DockPanel LastChildFill="False" Margin="0,0,0,18">
-                        <TextBlock Text="{Binding ProductModalTitle, FallbackValue='⚙️ จัดการข้อมูลสินค้า'}"
-                                   FontSize="20" FontWeight="Bold" Foreground="#0B2545"
+                        <TextBlock Text="{Binding ProductModalTitle, FallbackValue='ข้อมูลสินค้า'}"
+                                   FontSize="22" FontWeight="Bold" Foreground="#0F172A"
                                    DockPanel.Dock="Left" VerticalAlignment="Center"/>
                     </DockPanel>
 
-                    <!-- Outer Form Container Card (Light Blue Border Grid Container) -->
+                    <!-- Outer Form Container Card -->
                     <Border Background="#F0F9FF"
-                            BorderBrush="#7DD3FC"
+                            BorderBrush="#BAE6FD"
                             BorderThickness="1.5"
                             CornerRadius="12"
-                            Padding="16"
-                            Margin="0,0,0,16">
+                            Padding="18,16"
+                            Margin="0,0,0,18">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -2798,106 +2936,122 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Row 0 Left: Product Code (รหัสสินค้า - Auto Generated & Read-Only) -->
+                            <!-- Row 0 Left: Product Code (รหัสสินค้า - อ่านอย่างเดียวเสมอ) -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="รหัสสินค้า (อัตโนมัติ) *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#F1F5F9" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="6">
-                                    <TextBox Text="{Binding ProductCode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                             Style="{StaticResource LightTextBoxStyle}"
+                                <TextBlock Text="รหัสสินค้า (อัตโนมัติ)" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                <Border Style="{StaticResource ProductCodeBorderStyle}">
+                                    <TextBox Text="{Binding ProductCode, Mode=OneWay}"
                                              IsReadOnly="True"
                                              Focusable="False"
-                                             Background="Transparent"
-                                             BorderThickness="0"
-                                             Height="44" Padding="12,0" FontSize="16" FontWeight="Bold" Foreground="#0284C7"/>
+                                             Foreground="#0284C7"
+                                             FontWeight="Bold"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 0 Right: Product Name (ชื่อสินค้า) -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ชื่อสินค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="ชื่อสินค้า" FontSize="16" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="16" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}">
                                     <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             IsEnabled="{Binding CanEditStockManage}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="16"/>
+                                             IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
-                            <!-- Row 1 Left: Category (หมวดหมู่สินค้า - Searchable / Selectable Dropdown) -->
+                            <!-- Row 1 Left: Category (หมวดหมู่สินค้า) -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="หมวดหมู่สินค้า *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="หมวดหมู่สินค้า" FontSize="16" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="16" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}" Height="46">
                                     <ComboBox ItemsSource="{Binding ProductCategories}"
                                               DisplayMemberPath="CategoryName"
                                               SelectedValuePath="CategoryID"
                                               SelectedValue="{Binding CategoryID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               SelectedItem="{Binding SelectedProductCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               TextSearch.TextPath="CategoryName"
-                                              IsEnabled="{Binding CanEditStockManage}"
+                                              IsEnabled="{Binding IsEditMode}"
                                               Style="{StaticResource LightComboBoxStyle}"
-                                              Height="44" Padding="12,0" Background="Transparent" BorderThickness="0"/>
+                                              Height="44" Padding="12,0" FontSize="16"
+                                              Background="Transparent" BorderThickness="0"
+                                              VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 1 Right: Unit (หน่วยนับ) -->
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="หน่วยนับ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="หน่วยนับ" FontSize="16" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="16" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}">
                                     <TextBox Text="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             IsEnabled="{Binding CanEditStockManage}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="16"/>
+                                             IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Left: Cost Price (ราคาทุน) -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="ราคาทุน (บาท)" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <TextBlock Text="ราคาทุน (บาท)" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}">
                                     <TextBox Text="{Binding CostPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
-                                             IsEnabled="{Binding CanEditStockManage}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="16"/>
+                                             IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 2 Right: Selling Price (ราคาขาย) -->
                             <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="ราคาขาย (บาท) *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="ราคาขาย (บาท)" FontSize="16" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="16" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}">
                                     <TextBox Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N2}}"
-                                             IsEnabled="{Binding CanEditStockManage}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="16" FontWeight="Bold" Foreground="#0284C7"/>
+                                             IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                             FontWeight="Bold" Foreground="#0284C7"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 3 Left: Stock Qty (จำนวนคงเหลือ) -->
                             <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,14">
-                                <TextBlock Text="จำนวนคงเหลือ *" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="จำนวนคงเหลือ" FontSize="16" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBlock Text=" *" FontSize="16" FontWeight="Bold" Foreground="#DC2626"
+                                               Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}">
                                     <TextBox Text="{Binding Stock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             IsEnabled="{Binding CanEditStockManage}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="16"/>
+                                             IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 3 Right: Reorder Point (จุดสั่งซื้อขั้นต่ำ) -->
                             <StackPanel Grid.Row="3" Grid.Column="2" Margin="0,0,0,14">
-                                <TextBlock Text="จุดสั่งซื้อขั้นต่ำ (Reorder Point)" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="6">
+                                <TextBlock Text="จุดสั่งซื้อขั้นต่ำ (Reorder Point)" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                <Border Style="{StaticResource ProductFieldBorderStyle}">
                                     <TextBox Text="{Binding ReorderPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             IsEnabled="{Binding CanEditStockManage}"
-                                             Style="{StaticResource LightTextBoxStyle}"
-                                             Height="44" Padding="12,0" FontSize="16"/>
+                                             IsReadOnly="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                             Style="{StaticResource ProductInputTextBoxStyle}"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- Row 4 Full Width: Product Image Upload Section (อัปโหลดรูปภาพสินค้า) -->
                             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
-                                <TextBlock Text="รูปภาพสินค้า" FontSize="15" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6"/>
-                                <Border Background="#FFFFFF" BorderBrush="#7DD3FC" BorderThickness="1.5" CornerRadius="8" Padding="12">
+                                <TextBlock Text="รูปภาพสินค้า" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="8" Padding="12">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="100"/>
@@ -2912,7 +3066,7 @@
                                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
                                                             Visibility="{Binding HasImagePath, Converter={StaticResource InverseBoolToVis}}">
                                                     <TextBlock Text="📷" FontSize="28" HorizontalAlignment="Center" Foreground="#94A3B8"/>
-                                                    <TextBlock Text="ไม่มีรูปภาพ" FontSize="11" Foreground="#94A3B8" Margin="0,4,0,0"/>
+                                                    <TextBlock Text="ไม่มีรูปภาพ" FontSize="12" Foreground="#94A3B8" Margin="0,4,0,0"/>
                                                 </StackPanel>
 
                                                 <!-- Image Preview -->
@@ -2923,26 +3077,36 @@
 
                                         <!-- Controls & Details -->
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                            <TextBlock Text="อัปโหลดรูปภาพสินค้า (.png, .jpg, .webp)" FontSize="12.5" Foreground="#64748B" Margin="0,0,0,8"/>
+                                            <TextBlock Text="รูปภาพสินค้า (.png, .jpg, .webp)" FontSize="13" Foreground="#64748B" Margin="0,0,0,8"/>
                                             
-                                            <StackPanel Orientation="Horizontal">
+                                            <!-- Buttons visible in Edit Mode -->
+                                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}">
                                                 <!-- Select / Upload Image Button -->
                                                 <Button Command="{Binding BrowseImageCommand}"
-                                                        IsEnabled="{Binding CanEditStockManage}"
-                                                        Content="🖼️ เลือกรูปภาพ"
-                                                        Style="{StaticResource SecondaryBtnStyle}"
-                                                        Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                                        Height="36" Padding="14,0" FontSize="13" FontWeight="Bold" Margin="0,0,8,0"/>
+                                                        Style="{StaticResource ProductBlueBtnStyle}"
+                                                        Height="38" MinWidth="110" FontSize="13" Margin="0,0,8,0">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <TextBlock Text="🖼️" Margin="0,0,6,0" FontSize="14" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="เลือกรูปภาพ" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
 
                                                 <!-- Remove Image Button -->
                                                 <Button Command="{Binding RemoveImageCommand}"
-                                                        IsEnabled="{Binding CanEditStockManage}"
-                                                        Content="🗑️ ลบรูปภาพ"
-                                                        Style="{StaticResource DangerBtnStyle}"
-                                                        BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                                        Height="36" Padding="12,0" FontSize="13" FontWeight="Bold"
-                                                        Visibility="{Binding HasImagePath, Converter={StaticResource BoolToVis}}"/>
+                                                        Style="{StaticResource ProductDeleteBtnStyle}"
+                                                        Height="38" MinWidth="100" FontSize="13"
+                                                        Visibility="{Binding HasImagePath, Converter={StaticResource BoolToVis}}">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <TextBlock Text="🗑️" Margin="0,0,6,0" FontSize="14" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="ลบรูปภาพ" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
                                             </StackPanel>
+
+                                            <!-- Hint in Read-Only Mode -->
+                                            <TextBlock Text="กด 'แก้ไขข้อมูล' เพื่ออัปโหลดหรือเปลี่ยนรูปภาพ"
+                                                       FontSize="13" Foreground="#94A3B8" FontStyle="Italic"
+                                                       Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
 
                                             <!-- File Path / Status Text -->
                                             <TextBlock Text="{Binding ImagePath}"
@@ -2958,56 +3122,76 @@
                     <!-- Validation Error Message -->
                     <TextBlock Text="{Binding ProductValidationMessage}"
                                Visibility="{Binding HasProductValidationMessage, Converter={StaticResource BoolToVis}}"
-                               Foreground="#DC2626" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                               Foreground="#DC2626" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16"/>
 
                     <!-- Action Buttons Bar -->
-                    <Grid Margin="0,4,0,0">
+                    <!-- 1) ชุดปุ่มโหมดดูข้อมูล (IsEditMode == false): แสดง 3 ปุ่ม [แก้ไขข้อมูล, ลบ, ปิด] -->
+                    <Grid Margin="0,4,0,0"
+                          Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="14"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="14"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Save Button -->
+                        <!-- 1.1) ปุ่ม "แก้ไขข้อมูล" (สีฟ้า) -->
+                        <Button Grid.Column="0"
+                                Command="{Binding EnterProductEditModeCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
+                                Style="{StaticResource ProductBlueBtnStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="✏️" Margin="0,0,8,0" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="แก้ไขข้อมูล" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- 1.2) ปุ่ม "ลบ" (สีแดง) -->
+                        <Button Grid.Column="2"
+                                Command="{Binding StockDeleteProductCommand}"
+                                IsEnabled="{Binding CanEditStockManage}"
+                                Style="{StaticResource ProductDeleteBtnStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="🗑️" Margin="0,0,8,0" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="ลบ" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- 1.3) ปุ่ม "ปิด" (สีเทาอ่อน) -->
+                        <Button Grid.Column="4"
+                                Command="{Binding CloseStockManageModalCommand}"
+                                Style="{StaticResource ProductNeutralBtnStyle}">
+                            <TextBlock Text="ปิด" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- 2) ชุดปุ่มโหมดแก้ไข / เพิ่ม (IsEditMode == true): แสดง 2 ปุ่ม [บันทึกข้อมูลสินค้า, ยกเลิก] -->
+                    <Grid Margin="0,4,0,0"
+                          Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 2.1) ปุ่ม "บันทึกข้อมูลสินค้า" (สีฟ้า) -->
                         <Button Grid.Column="0"
                                 Command="{Binding SaveProductFormCommand}"
                                 IsEnabled="{Binding CanEditStockManage}"
-                                Content="💾 บันทึกข้อมูลสินค้า"
-                                Style="{StaticResource PrimaryBtnStyle}"
-                                BorderBrush="#0284C7" BorderThickness="1.5"
-                                Height="46" FontSize="16" FontWeight="Bold"/>
+                                Style="{StaticResource ProductBlueBtnStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="💾" Margin="0,0,8,0" FontSize="15" VerticalAlignment="Center"/>
+                                <TextBlock Text="บันทึกข้อมูลสินค้า" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
 
-                        <!-- Clear Button (Visible only in Add Mode) -->
+                        <!-- 2.2) ปุ่ม "ยกเลิก" (สีเทาอ่อน) -->
                         <Button Grid.Column="2"
-                                Command="{Binding ClearFormCommand}"
-                                IsEnabled="{Binding CanEditStockManage}"
-                                Content="✏️ ล้างข้อมูล"
-                                Style="{StaticResource SecondaryBtnStyle}"
-                                Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="46" FontSize="16" FontWeight="Bold"
-                                Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVis}}"/>
-
-                        <!-- Delete Button (Visible in Edit Mode) -->
-                        <Button Grid.Column="4"
-                                Command="{Binding StockDeleteProductCommand}"
-                                IsEnabled="{Binding CanEditStockManage}"
-                                Content="🗑️ ลบ"
-                                Style="{StaticResource DangerBtnStyle}"
-                                BorderBrush="#FCA5A5" BorderThickness="1.5"
-                                Height="46" Padding="16,0" FontSize="16" FontWeight="Bold"
-                                Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"/>
-
-                        <!-- Cancel Button -->
-                        <Button Grid.Column="6"
-                                Command="{Binding CloseStockManageModalCommand}"
-                                Content="❌ ยกเลิก"
-                                Style="{StaticResource SecondaryBtnStyle}"
-                                Background="#F0F9FF" BorderBrush="#7DD3FC" BorderThickness="1.5" Foreground="#0284C7"
-                                Height="46" FontSize="16" FontWeight="Bold"/>
+                                Command="{Binding CancelProductEditCommand}"
+                                Style="{StaticResource ProductNeutralBtnStyle}">
+                            <TextBlock Text="ยกเลิก" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
                     </Grid>
                 </StackPanel>
             </Border>
