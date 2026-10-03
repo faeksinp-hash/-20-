@@ -202,6 +202,38 @@
             </Setter>
         </Style>
 
+        <!-- Card Duplicate Soft Button (ปุ่มทำสำเนาขนาดขยาย คมชัด อ่านง่าย) -->
+        <Style x:Key="CardDuplicateBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#E2E8F0"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#94A3B8"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#CBD5E1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Close Button (ปิด ในโหมดดูข้อมูล) -->
         <Style x:Key="CloseBtnStyle" TargetType="Button">
             <Setter Property="Background" Value="#F1F5F9"/>
@@ -748,27 +780,21 @@
                                                 </Grid>
                                             </Border>
 
-                                            <!-- 4. Footer: [ แก้ไข ], [ ทำสำเนา ], ToggleButton สลับสถานะเปิด-ปิด -->
+                                            <!-- 4. Footer: [ 📋 ทำสำเนา ] ฝั่งซ้าย และ สวิตช์ ToggleButton ฝั่งขวา -->
                                             <DockPanel Grid.Row="3" LastChildFill="False">
-                                                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <!-- Button แก้ไข -->
-                                                    <Button Style="{StaticResource CardActionBtnStyle}"
-                                                            Command="{Binding DataContext.SelectAndEditPromotionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            Margin="0,0,6,0" ToolTip="แก้ไขโปรโมชั่น">
-                                                        <TextBlock Text="แก้ไข" FontSize="12"/>
-                                                    </Button>
+                                                <!-- Button ทำสำเนา (Soft Button เด่นชัด อ่านง่าย คลิกสะดวก) -->
+                                                <Button DockPanel.Dock="Left"
+                                                        Style="{StaticResource CardDuplicateBtnStyle}"
+                                                        Command="{Binding DataContext.DuplicatePromotionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        ToolTip="คัดลอกโปรโมชั่นนี้">
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <TextBlock Text="📋" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="ทำสำเนา" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
 
-                                                    <!-- Button ทำสำเนา -->
-                                                    <Button Style="{StaticResource CardActionBtnStyle}"
-                                                            Command="{Binding DataContext.DuplicatePromotionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            ToolTip="คัดลอกโปรโมชั่นนี้">
-                                                        <TextBlock Text="ทำสำเนา" FontSize="12"/>
-                                                    </Button>
-                                                </StackPanel>
-
-                                                <!-- ToggleButton ModernToggleSwitchStyle -->
+                                                <!-- ToggleButton ModernToggleSwitchStyle (สวิตช์เปิด-ปิดการใช้งาน) -->
                                                 <ToggleButton DockPanel.Dock="Right"
                                                               Style="{StaticResource ModernToggleSwitchStyle}"
                                                               IsChecked="{Binding IsActive, Mode=TwoWay}"
