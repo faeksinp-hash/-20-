@@ -1440,11 +1440,57 @@ namespace Porjai20.Services
                     SELECT 
                         po.PO_ID AS PO_ID, po.PO_ID AS Id,
                         po.PO_Date AS PO_Date, po.PO_Total AS PO_Total, po.PO_Status AS PO_Status,
-                        p.Partner_Name AS SupplierName
+                        po.Partner_ID AS Partner_ID,
+                        COALESCE(NULLIF(s.SupplierName, ''), NULLIF(p.Partner_Name, ''), '') AS SupplierName
                     FROM tblPO_H po
                     LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
+                    LEFT JOIN tblSupplier s ON po.Partner_ID = s.SupplierID
                     ORDER BY po.PO_ID DESC";
                 return connection.Query<Models.PurchaseOrder>(sql);
+            }
+        }
+
+        public Models.PurchaseOrder? GetPurchaseOrderById(int poId)
+        {
+            using (var connection = GetConnection())
+            {
+                try
+                {
+                    string sql = @"
+                        SELECT 
+                            po.PO_ID AS PO_ID, po.PO_ID AS Id,
+                            po.PO_Date AS PO_Date, po.PO_Total AS PO_Total, po.PO_Status AS PO_Status,
+                            po.Partner_ID AS Partner_ID,
+                            COALESCE(NULLIF(s.SupplierName, ''), NULLIF(p.Partner_Name, ''), '') AS SupplierName
+                        FROM tblPO_H po
+                        LEFT JOIN tblPartner p ON po.Partner_ID = p.Partner_ID
+                        LEFT JOIN tblSupplier s ON po.Partner_ID = s.SupplierID
+                        WHERE po.PO_ID = @POId";
+                    var result = connection.QueryFirstOrDefault<Models.PurchaseOrder>(sql, new { POId = poId });
+                    if (result != null) return result;
+                }
+                catch { }
+
+                try
+                {
+                    int hasCustomTable = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='tblPurchaseOrder_H';");
+                    if (hasCustomTable > 0)
+                    {
+                        string sql = @"
+                            SELECT 
+                                po.PO_ID AS PO_ID, po.PO_ID AS Id,
+                                po.PO_Date AS PO_Date, po.PO_Total AS PO_Total, po.PO_Status AS PO_Status,
+                                po.SupplierID AS Partner_ID,
+                                COALESCE(NULLIF(s.SupplierName, ''), '') AS SupplierName
+                            FROM tblPurchaseOrder_H po
+                            LEFT JOIN tblSupplier s ON po.SupplierID = s.SupplierID
+                            WHERE po.PO_ID = @POId";
+                        return connection.QueryFirstOrDefault<Models.PurchaseOrder>(sql, new { POId = poId });
+                    }
+                }
+                catch { }
+
+                return null;
             }
         }
 
@@ -1452,16 +1498,44 @@ namespace Porjai20.Services
         {
             using (var connection = GetConnection())
             {
-                string sql = @"
-                    SELECT 
-                        d.Detail_ID AS Detail_ID, d.Detail_ID AS Id,
-                        d.PO_ID AS PO_ID, d.Pro_ID AS Pro_ID,
-                        d.PO_Cost AS PO_Cost, d.PO_Qty AS PO_Qty, d.PO_Subtotal AS PO_Subtotal,
-                        p.Pro_Name AS ProductName, p.Pro_Barcode AS ProductCode
-                    FROM tblPODetail d
-                    JOIN tblProduct p ON d.Pro_ID = p.Pro_ID
-                    WHERE d.PO_ID = @POId";
-                return connection.Query<Models.PurchaseOrderItem>(sql, new { POId = poId });
+                try
+                {
+                    string sql = @"
+                        SELECT 
+                            d.Detail_ID AS Detail_ID, d.Detail_ID AS Id,
+                            d.PO_ID AS PO_ID, d.Pro_ID AS Pro_ID,
+                            d.PO_Cost AS PO_Cost, d.PO_Qty AS PO_Qty, d.PO_Subtotal AS PO_Subtotal,
+                            COALESCE(p.Pro_Name, CAST(d.Pro_ID AS TEXT)) AS ProductName,
+                            COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', d.Pro_ID)) AS ProductCode
+                        FROM tblPODetail d
+                        LEFT JOIN tblProduct p ON d.Pro_ID = p.Pro_ID
+                        WHERE d.PO_ID = @POId";
+                    var list = connection.Query<Models.PurchaseOrderItem>(sql, new { POId = poId }).ToList();
+                    if (list.Count > 0) return list;
+                }
+                catch { }
+
+                try
+                {
+                    int hasCustomTable = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='tblPurchaseOrder_D';");
+                    if (hasCustomTable > 0)
+                    {
+                        string sql = @"
+                            SELECT 
+                                d.Detail_ID AS Detail_ID, d.Detail_ID AS Id,
+                                d.PO_ID AS PO_ID, d.ProductID AS Pro_ID,
+                                d.CostPrice AS PO_Cost, d.QTY AS PO_Qty, d.TotalAmount AS PO_Subtotal,
+                                COALESCE(p.Pro_Name, d.ProductName) AS ProductName,
+                                COALESCE(NULLIF(p.Pro_Barcode, ''), printf('P-%04d', d.ProductID)) AS ProductCode
+                            FROM tblPurchaseOrder_D d
+                            LEFT JOIN tblProduct p ON d.ProductID = p.Pro_ID
+                            WHERE d.PO_ID = @POId";
+                        return connection.Query<Models.PurchaseOrderItem>(sql, new { POId = poId }).ToList();
+                    }
+                }
+                catch { }
+
+                return new System.Collections.Generic.List<Models.PurchaseOrderItem>();
             }
         }
 
@@ -1490,21 +1564,30 @@ namespace Porjai20.Services
         {
             if (partnerId > 0)
             {
+                var existingSupp = connection.QueryFirstOrDefault<int?>("SELECT SupplierID FROM tblSupplier WHERE SupplierID = @Id LIMIT 1", new { Id = partnerId });
+                if (existingSupp.HasValue && existingSupp.Value > 0) return existingSupp.Value;
+
                 var existing = connection.QueryFirstOrDefault<int?>("SELECT Partner_ID FROM tblPartner WHERE Partner_ID = @Id LIMIT 1", new { Id = partnerId });
                 if (existing.HasValue && existing.Value > 0) return existing.Value;
             }
 
             if (!string.IsNullOrWhiteSpace(supplierName))
             {
+                var bySuppName = connection.QueryFirstOrDefault<int?>("SELECT SupplierID FROM tblSupplier WHERE SupplierName = @Name LIMIT 1", new { Name = supplierName.Trim() });
+                if (bySuppName.HasValue && bySuppName.Value > 0) return bySuppName.Value;
+
                 var byName = connection.QueryFirstOrDefault<int?>("SELECT Partner_ID FROM tblPartner WHERE Partner_Name = @Name LIMIT 1", new { Name = supplierName.Trim() });
                 if (byName.HasValue && byName.Value > 0) return byName.Value;
 
                 string sqlInsert = @"
-                    INSERT INTO tblPartner (Partner_Name, Partner_Address, Partner_Tel, Partner_Contact) 
-                    VALUES (@Name, '', '', '');
+                    INSERT INTO tblSupplier (SupplierName, ContactPerson, PhoneNumber) 
+                    VALUES (@Name, '', '');
                     SELECT last_insert_rowid();";
                 return connection.ExecuteScalar<int>(sqlInsert, new { Name = supplierName.Trim() });
             }
+
+            var defaultSupp = connection.QueryFirstOrDefault<int?>("SELECT SupplierID FROM tblSupplier LIMIT 1");
+            if (defaultSupp.HasValue && defaultSupp.Value > 0) return defaultSupp.Value;
 
             return connection.QueryFirstOrDefault<int?>("SELECT Partner_ID FROM tblPartner LIMIT 1");
         }

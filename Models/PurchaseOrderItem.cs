@@ -25,6 +25,11 @@ namespace Porjai20.Models
             get => Pro_ID;
             set => Pro_ID = value;
         }
+        public int ProductID
+        {
+            get => Pro_ID;
+            set => Pro_ID = value;
+        }
 
         private decimal _poCost;
         public decimal PO_Cost
@@ -57,6 +62,7 @@ namespace Porjai20.Models
                 if (SetProperty(ref _poQty, value))
                 {
                     OnPropertyChanged(nameof(Quantity));
+                    OnPropertyChanged(nameof(QTY));
                     OnPropertyChanged(nameof(TotalPrice));
                     OnPropertyChanged(nameof(PO_Subtotal));
                     ItemChanged?.Invoke();
@@ -65,6 +71,11 @@ namespace Porjai20.Models
         }
 
         public int Quantity
+        {
+            get => PO_Qty;
+            set => PO_Qty = value;
+        }
+        public int QTY
         {
             get => PO_Qty;
             set => PO_Qty = value;

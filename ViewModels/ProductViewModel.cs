@@ -1690,21 +1690,18 @@ namespace Porjai20.ViewModels
             {
                 ClearPurchaseOrderForm();
                 IsNewPOMode = true;
+                IsPOReadOnly = false;
                 POModalTitle = "สร้างใบสั่งซื้อสินค้าใหม่";
                 IsPOModalOpen = true;
                 _ = LoadSuppliersAsync();
                 _ = LoadProducts();
             });
-            OpenEditPOModalCommand = new RelayCommand(param =>
+            OpenEditPOModalCommand = new RelayCommand(async param =>
             {
-                if (param is PurchaseOrder po) SelectedPurchaseOrder = po;
-                if (SelectedPurchaseOrder != null && SelectedPurchaseOrder.Id > 0)
+                var po = (param as PurchaseOrder) ?? SelectedPurchaseOrder;
+                if (po != null && po.Id > 0)
                 {
-                    IsNewPOMode = false;
-                    POModalTitle = "จัดการใบสั่งซื้อสินค้า";
-                    IsPOModalOpen = true;
-                    _ = LoadSuppliersAsync();
-                    _ = LoadProducts();
+                    await LoadPODetailsAsync(po, isReadOnly: true);
                 }
                 else
                 {
@@ -3486,6 +3483,105 @@ namespace Porjai20.ViewModels
             }
         }
         
+        private bool _isPOReadOnly;
+        public bool IsPOReadOnly
+        {
+            get => _isPOReadOnly;
+            set
+            {
+                if (SetProperty(ref _isPOReadOnly, value))
+                {
+                    OnPropertyChanged(nameof(IsPOReadOnlyMode));
+                    OnPropertyChanged(nameof(IsPOCreateMode));
+                    OnPropertyChanged(nameof(CanEditPOStatus));
+                }
+            }
+        }
+
+        public bool IsPOReadOnlyMode
+        {
+            get => IsPOReadOnly;
+            set => IsPOReadOnly = value;
+        }
+
+        public bool IsPOCreateMode
+        {
+            get => !IsPOReadOnly;
+            set => IsPOReadOnly = !value;
+        }
+
+        public bool CanEditPOStatus => !IsPOReadOnly;
+
+        public async Task LoadPODetailsAsync(PurchaseOrder po, bool isReadOnly = true)
+        {
+            if (po == null || po.Id <= 0) return;
+
+            if (_suppliersList.Count == 0)
+            {
+                await LoadSuppliersAsync();
+            }
+
+            var dbPo = _databaseService.GetPurchaseOrderById(po.Id) ?? po;
+
+            _selectedPurchaseOrder = dbPo;
+            OnPropertyChanged(nameof(SelectedPurchaseOrder));
+
+            PONumber = dbPo.PONumber;
+            POExpectedDate = dbPo.ExpectedDate;
+            
+            string rawStatus = dbPo.Status ?? string.Empty;
+            if (rawStatus.Contains("รับ") || rawStatus.Equals("Completed", StringComparison.OrdinalIgnoreCase))
+            {
+                POStatus = "ได้รับสินค้าแล้ว";
+            }
+            else if (rawStatus.Contains("ยกเลิก") || rawStatus.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+            {
+                POStatus = "ยกเลิก";
+            }
+            else
+            {
+                POStatus = "รอดำเนินการ";
+            }
+
+            POTotalAmount = dbPo.TotalAmount;
+
+            Partner? matched = null;
+            if (dbPo.Partner_ID > 0)
+            {
+                matched = _suppliersList.FirstOrDefault(s => s.SupplierID == dbPo.Partner_ID || s.Partner_ID == dbPo.Partner_ID);
+            }
+            if (matched == null && !string.IsNullOrWhiteSpace(dbPo.SupplierName))
+            {
+                matched = _suppliersList.FirstOrDefault(s => string.Equals(s.SupplierName, dbPo.SupplierName, StringComparison.OrdinalIgnoreCase));
+            }
+
+            _selectedSupplier = matched;
+            _poSupplierId = matched?.SupplierID ?? (dbPo.Partner_ID > 0 ? dbPo.Partner_ID : (int?)null);
+            _poSupplierName = matched?.SupplierName ?? dbPo.SupplierName ?? string.Empty;
+
+            OnPropertyChanged(nameof(SelectedSupplier));
+            OnPropertyChanged(nameof(POSupplierId));
+            OnPropertyChanged(nameof(POSupplierName));
+
+            CurrentPOItems.Clear();
+            var items = _databaseService.GetPurchaseOrderItems(dbPo.Id);
+            foreach (var item in items)
+            {
+                item.ItemChanged = CalculatePOTotal;
+                CurrentPOItems.Add(item);
+            }
+
+            if (POTotalAmount <= 0 && CurrentPOItems.Count > 0)
+            {
+                CalculatePOTotal();
+            }
+
+            IsNewPOMode = false;
+            IsPOReadOnly = isReadOnly;
+            POModalTitle = isReadOnly ? $"รายละเอียดใบสั่งซื้อ {dbPo.PONumber}" : "จัดการใบสั่งซื้อสินค้า";
+            IsPOModalOpen = true;
+        }
+
         private PurchaseOrder _selectedPurchaseOrder = new PurchaseOrder();
         public PurchaseOrder SelectedPurchaseOrder
         {
@@ -3496,17 +3592,36 @@ namespace Porjai20.ViewModels
                 {
                     PONumber = value.PONumber;
                     POSupplierName = value.SupplierName;
-                    if (!string.IsNullOrWhiteSpace(value.SupplierName))
+                    Partner? matched = null;
+                    if (value.Partner_ID > 0)
                     {
-                        SelectedSupplier = _suppliersList.FirstOrDefault(s => string.Equals(s.SupplierName, value.SupplierName, StringComparison.OrdinalIgnoreCase));
+                        matched = _suppliersList.FirstOrDefault(s => s.SupplierID == value.Partner_ID || s.Partner_ID == value.Partner_ID);
                     }
-                    else
+                    if (matched == null && !string.IsNullOrWhiteSpace(value.SupplierName))
                     {
-                        SelectedSupplier = null;
+                        matched = _suppliersList.FirstOrDefault(s => string.Equals(s.SupplierName, value.SupplierName, StringComparison.OrdinalIgnoreCase));
+                    }
+                    SelectedSupplier = matched;
+                    POSupplierId = matched?.SupplierID ?? (value.Partner_ID > 0 ? value.Partner_ID : (int?)null);
+                    if (matched != null)
+                    {
+                        POSupplierName = matched.SupplierName;
                     }
                     POExpectedDate = value.ExpectedDate;
                     POTotalAmount = value.TotalAmount;
-                    POStatus = string.IsNullOrWhiteSpace(value.Status) ? "รอดำเนินการ" : value.Status;
+                    string rawStatus = value.Status ?? string.Empty;
+                    if (rawStatus.Contains("รับ") || rawStatus.Equals("Completed", StringComparison.OrdinalIgnoreCase))
+                    {
+                        POStatus = "ได้รับสินค้าแล้ว";
+                    }
+                    else if (rawStatus.Contains("ยกเลิก") || rawStatus.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+                    {
+                        POStatus = "ยกเลิก";
+                    }
+                    else
+                    {
+                        POStatus = "รอดำเนินการ";
+                    }
                     CurrentPOItems.Clear();
                     if (value.Id > 0)
                     {
@@ -3594,6 +3709,7 @@ namespace Porjai20.ViewModels
 
         private ObservableCollection<Partner> _suppliersList = new ObservableCollection<Partner>();
         public ObservableCollection<Partner> SuppliersList => _suppliersList;
+        public ObservableCollection<Partner> Suppliers => _suppliersList;
 
         public async Task LoadSuppliersAsync()
         {
@@ -3606,6 +3722,7 @@ namespace Porjai20.ViewModels
                     _suppliersList.Add(s);
                 }
                 OnPropertyChanged(nameof(SuppliersList));
+                OnPropertyChanged(nameof(Suppliers));
 
                 // Sync current POSupplierName if already set
                 if (!string.IsNullOrWhiteSpace(POSupplierName))
@@ -3633,7 +3750,24 @@ namespace Porjai20.ViewModels
         public decimal POTotalAmount { get => _poTotalAmount; set => SetProperty(ref _poTotalAmount, value); }
 
         private string _poStatus = "รอดำเนินการ";
-        public string POStatus { get => _poStatus; set => SetProperty(ref _poStatus, value); }
+        public string POStatus
+        {
+            get => _poStatus;
+            set
+            {
+                if (SetProperty(ref _poStatus, value))
+                {
+                    OnPropertyChanged(nameof(OrderStatus));
+                }
+            }
+        }
+
+        public string OrderStatus
+        {
+            get => POStatus;
+            set => POStatus = value;
+        }
+
         public IEnumerable<string> POStatusList => new List<string> { "รอดำเนินการ", "ได้รับสินค้าแล้ว", "ยกเลิก" };
 
 
@@ -3717,7 +3851,7 @@ namespace Porjai20.ViewModels
         private bool _isItemModalOpen;
         public bool IsItemModalOpen { get => _isItemModalOpen; set => SetProperty(ref _isItemModalOpen, value); }
 
-        public System.Collections.ObjectModel.ObservableCollection<string> POStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "รอรับของ", "รับของแล้ว", "ยกเลิก" };
+        public System.Collections.ObjectModel.ObservableCollection<string> POStatusOptions { get; } = new System.Collections.ObjectModel.ObservableCollection<string> { "รอดำเนินการ", "ได้รับสินค้าแล้ว", "ยกเลิก" };
 
         public ICommand SwitchToStaffCommand { get; }
         public ICommand LogoutCommand { get; }
@@ -7608,7 +7742,13 @@ namespace Porjai20.ViewModels
         public bool IsNewPOMode
         {
             get => _isNewPOMode;
-            set => SetProperty(ref _isNewPOMode, value);
+            set
+            {
+                if (SetProperty(ref _isNewPOMode, value))
+                {
+                    OnPropertyChanged(nameof(CanEditPOStatus));
+                }
+            }
         }
 
         private string _poModalTitle = "สร้างใบสั่งซื้อสินค้าใหม่";
@@ -7708,6 +7848,7 @@ namespace Porjai20.ViewModels
 
             ClearPurchaseOrderForm();
             IsNewPOMode = true;
+            IsPOReadOnly = false;
             POModalTitle = "สร้างใบสั่งซื้อสินค้าใหม่";
             CurrentPOItems.Clear();
 
@@ -7984,6 +8125,8 @@ namespace Porjai20.ViewModels
             POExpectedDate = DateTime.Now.AddDays(3);
             POTotalAmount = 0;
             POStatus = "รอดำเนินการ";
+            IsNewPOMode = true;
+            IsPOReadOnly = false;
             CurrentPOItems.Clear();
             ClearPOItemForm();
         }

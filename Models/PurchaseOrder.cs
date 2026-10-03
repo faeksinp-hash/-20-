@@ -23,6 +23,11 @@ namespace Porjai20.Models
         }
 
         public int Partner_ID { get; set; }
+        public int SupplierID
+        {
+            get => Partner_ID;
+            set => Partner_ID = value;
+        }
         public int Emp_ID { get; set; }
 
         public decimal PO_Total { get; set; }
@@ -47,6 +52,11 @@ namespace Porjai20.Models
         }
         public string SupplierName { get; set; } = string.Empty;
         public DateTime ExpectedDate { get; set; } = DateTime.Now.AddDays(3);
+        public DateTime ExpectedDeliveryDate
+        {
+            get => ExpectedDate;
+            set => ExpectedDate = value;
+        }
 
         public bool IsPending => Status == "รอดำเนินการ" || Status == "รอรับของ" || Status == "Pending";
         public bool IsReceived => Status == "ได้รับสินค้าแล้ว" || Status == "ตรวจรับแล้ว" || Status == "รับเข้าแล้ว" || Status == "เสร็จสิ้น" || Status == "Completed";
