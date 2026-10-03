@@ -1712,7 +1712,7 @@ namespace Porjai20.ViewModels
                 }
             });
             ClosePOModalCommand = new RelayCommand(_ => { IsPOModalOpen = false; });
-            ClearPOFilterCommand = new RelayCommand(_ => { POSearchKeyword = string.Empty; POStatusFilter = "ทั้งหมด"; _ = LoadPurchaseOrders(); });
+            ClearPOFilterCommand = new RelayCommand(_ => ExecuteClearPOFilter());
             AutoFillReorderItemsCommand = new RelayCommand(async _ => await AutoFillReorderItems());
             CreatePOFromSelectedLowStockCommand = new RelayCommand(async _ => await CreatePOFromSelectedLowStock());
             SelectPOSuggestionItemCommand = new RelayCommand(param => SelectPOSuggestionItem(param as PurchaseOrder));
@@ -3375,9 +3375,21 @@ namespace Porjai20.ViewModels
 
         public string SearchKeyword
         {
-            get => PendingPOSearchKeyword;
-            set => PendingPOSearchKeyword = value;
+            get => IsPurchaseOrderMode ? POSearchKeyword : PendingPOSearchKeyword;
+            set
+            {
+                if (IsPurchaseOrderMode)
+                {
+                    POSearchKeyword = value;
+                }
+                else
+                {
+                    PendingPOSearchKeyword = value;
+                }
+            }
         }
+
+        public string FilteredOrdersCountText => $"แสดงทั้งหมด {PurchaseOrders?.Count ?? 0} รายการ";
 
         public void ExecuteClearStockInFilter()
         {
@@ -3387,6 +3399,18 @@ namespace Porjai20.ViewModels
             _selectedStockInStatus = "ทั้งหมด";
             OnPropertyChanged(nameof(SelectedStockInStatus));
             _ = LoadPendingPurchaseOrders();
+        }
+
+        public void ExecuteClearPOFilter()
+        {
+            _poSearchKeyword = string.Empty;
+            OnPropertyChanged(nameof(POSearchKeyword));
+            OnPropertyChanged(nameof(SearchKeyword));
+            _filteredPOSuggestions?.Clear();
+            IsPOSuggestionsDropdownOpen = false;
+            _poStatusFilter = "ทั้งหมด";
+            OnPropertyChanged(nameof(POStatusFilter));
+            _ = LoadPurchaseOrders();
         }
 
         // System Data Commands
@@ -3407,6 +3431,7 @@ namespace Porjai20.ViewModels
                 {
                     FilterPOSuggestions(value);
                     _ = LoadPurchaseOrders();
+                    OnPropertyChanged(nameof(SearchKeyword));
                 }
             }
         }
@@ -7646,6 +7671,7 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(PendingPOCount));
             OnPropertyChanged(nameof(CompletedPOCount));
             OnPropertyChanged(nameof(TotalPOAmount));
+            OnPropertyChanged(nameof(FilteredOrdersCountText));
         }
 
         public int SelectedLowStockCount => LowStockProducts?.Count(p => p.IsSelected) ?? 0;

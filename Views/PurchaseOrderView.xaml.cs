@@ -26,5 +26,23 @@ namespace Porjai20.Views
                 comboBox.IsDropDownOpen = true;
             }
         }
+
+        private void POCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (sender is FrameworkElement element && element.DataContext is Models.PurchaseOrder po)
+                {
+                    if (DataContext is ViewModels.ProductViewModel vm)
+                    {
+                        vm.SelectedPurchaseOrder = po;
+                        if (vm.OpenEditPOModalCommand?.CanExecute(po) == true)
+                        {
+                            vm.OpenEditPOModalCommand.Execute(po);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
