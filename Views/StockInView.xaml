@@ -31,12 +31,15 @@
         <SolidColorBrush x:Key="TextMuted"      Color="#64748B"/>
 
         <!-- Search Button Style with bright blue hover micro-interaction -->
-        <Style x:Key="SearchBtnStyle" TargetType="Button" BasedOn="{StaticResource PrimaryBtnStyle}">
+        <Style x:Key="SearchBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
             <Setter Property="Background" Value="#0284C7"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="15"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -55,6 +58,113 @@
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="btnBorder" Property="Background" Value="#CBD5E1"/>
                                 <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Clear Toolbar Button Style -->
+        <Style x:Key="ClearToolbarBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background"      Value="#F1F5F9"/>
+            <Setter Property="BorderBrush"     Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground"      Value="#475569"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="15"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E2E8F0"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#94A3B8"/>
+                                <Setter Property="Foreground" Value="#1E293B"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#CBD5E1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modal Confirm Button Style: Height="46", MinWidth="120", CornerRadius="8", FontSize="16", FontWeight="Bold" -->
+        <Style x:Key="GoodsReceiptConfirmBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="18,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#38BDF8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#0369A1"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#94A3B8"/>
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.5"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modal Neutral / Cancel Button Style: Height="46", MinWidth="120", CornerRadius="8", FontSize="16", FontWeight="Bold" -->
+        <Style x:Key="GoodsReceiptNeutralBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8" Padding="18,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E2E8F0"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#94A3B8"/>
+                                <Setter Property="Foreground" Value="#1E293B"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#CBD5E1"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -344,10 +454,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter TargetName="RowBorder" Property="BorderThickness" Value="1"/>
                                 <Setter Property="Foreground"  Value="#000000"/>
                                 <Setter Property="FontWeight"  Value="Normal"/>
                             </Trigger>
@@ -505,7 +617,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="จำนวนครั้งที่บันทึกการรับสินค้าเข้า"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -542,7 +654,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="รวมจำนวนชิ้นสินค้าที่เพิ่มเข้าสต็อก"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -579,7 +691,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="รวมมูลค่าเงินทุนที่ใช้ในการรับสินค้าเข้า"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -599,8 +711,12 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>     <!-- Search Box -->
-                        <ColumnDefinition Width="Auto"/>  <!-- Status Filter ComboBox -->
-                        <ColumnDefinition Width="Auto"/>  <!-- Search Button (Far Right) -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="130"/>  <!-- Status Filter ComboBox -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="85"/>   <!-- Search Button -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="75"/>   <!-- Clear Button -->
                     </Grid.ColumnDefinitions>
 
                     <!-- Search TextBox -->
@@ -608,8 +724,7 @@
                             Background="#E0F2FE"
                             BorderBrush="#BAE6FD"
                             BorderThickness="1.5"
-                            CornerRadius="8"
-                            Margin="0,0,10,0">
+                            CornerRadius="8">
                         <Grid>
                             <!-- Search Icon -->
                             <Path Data="{StaticResource IconSearch}"
@@ -621,7 +736,7 @@
                                   VerticalAlignment="Center"/>
                             <!-- TextBox -->
                             <TextBox x:Name="StockInSearchBox"
-                                     Text="{Binding PendingPOSearchKeyword, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource LightTextBoxStyle}"
                                      Height="42"
                                      Padding="42,0,12,0"
@@ -648,15 +763,13 @@
                         </Grid>
                     </Border>
 
-                    <!-- Status Filter ComboBox -->
-                    <Border Grid.Column="1"
+                    <!-- Status Filter ComboBox (Width="130") -->
+                    <Border Grid.Column="2"
                             Background="#E0F2FE"
                             BorderBrush="#BAE6FD"
                             BorderThickness="1.5"
                             CornerRadius="8"
-                            Height="42"
-                            Width="170"
-                            Margin="0,0,10,0">
+                            Height="42">
                         <ComboBox ItemsSource="{Binding StockInStatusOptions}"
                                   SelectedItem="{Binding SelectedStockInStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Style="{StaticResource LightComboBoxStyle}"
@@ -669,12 +782,20 @@
                                   Cursor="Hand"/>
                     </Border>
 
-                    <!-- Search Button (Far Right) -->
-                    <Button Grid.Column="2"
+                    <!-- Search Button (Width="85") -->
+                    <Button Grid.Column="4"
                             Content="ค้นหา"
                             Command="{Binding SearchPendingPOCommand}"
                             Style="{StaticResource SearchBtnStyle}"
-                            Padding="24,0"
+                            Width="85"
+                            Height="42"/>
+
+                    <!-- Clear Button (Width="75") -->
+                    <Button Grid.Column="6"
+                            Content="ล้าง"
+                            Command="{Binding ClearStockInFilterCommand}"
+                            Style="{StaticResource ClearToolbarBtnStyle}"
+                            Width="75"
                             Height="42"/>
                 </Grid>
             </Border>
@@ -809,13 +930,19 @@
                     <!-- ── Status Bar (bottom of DataGrid panel) ─── -->
                     <DockPanel Grid.Row="1"
                                LastChildFill="False"
-                               Margin="0,12,0,0">
-                        <TextBlock Text="{Binding StockInSummaryText}"
-                                   Foreground="#475569"
+                               Margin="4,12,4,0">
+                        <TextBlock Text="{Binding DisplaySummaryCountText}"
+                                   Foreground="#64748B"
                                    FontSize="14"
-                                   FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
+                                   Margin="0"/>
+
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดหรือตรวจรับสินค้า"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
                                    Margin="0"/>
                     </DockPanel>
                 </Grid>
@@ -831,16 +958,18 @@
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Panel.ZIndex="100">
-            <Border Width="820"
+            <Border Width="700"
                     MaxHeight="780"
                     Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1.5"
                     CornerRadius="16"
-                    Padding="24"
+                    Padding="28,24"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Effect="{StaticResource SoftShadow}">
+                    VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="25" Opacity="0.4" ShadowDepth="4" Direction="270" Color="#000000"/>
+                </Border.Effect>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>   <!-- Header -->
@@ -852,17 +981,17 @@
                     </Grid.RowDefinitions>
 
                     <!-- Header -->
-                    <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
+                    <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,18">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="📥 " FontSize="20"/>
+                            <TextBlock Text="📥 " FontSize="22" VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <StackPanel>
                                 <TextBlock Text="ตรวจรับสินค้าเข้าคลัง"
-                                           FontSize="20" FontWeight="Bold"
-                                           Foreground="#2D3748"
+                                           FontSize="22" FontWeight="Bold"
+                                           Foreground="#0F172A"
                                            Margin="0"/>
-                                <TextBlock Text="ตรวจสอบรายการสินค้าที่ได้รับจริง และกรอกเลขที่ใบส่งของ/ใบกำกับภาษี"
+                                <TextBlock Text="ตรวจสอบรายการสินค้าที่ได้รับจริง และกรอกเลขที่ใบส่งของ / ใบกำกับภาษี"
                                            FontSize="14"
-                                           Foreground="#718096"
+                                           Foreground="#64748B"
                                            Margin="0,2,0,0"/>
                             </StackPanel>
                         </StackPanel>
@@ -882,7 +1011,7 @@
                             </DockPanel>
                         </Border>
 
-                        <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="16,12">
+                        <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="12" Padding="18,14">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" MinWidth="160"/>
@@ -892,41 +1021,42 @@
                                 
                                 <!-- Column 0: PO Number -->
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
-                                    <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="13.5" Foreground="#718096" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="16" FontWeight="Bold" Foreground="#0B2545" Margin="0,2,0,0"/>
+                                    <TextBlock Text="เลขที่ใบสั่งซื้อ" FontSize="14" Foreground="#64748B" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.PONumber}" FontSize="16" FontWeight="Bold" Foreground="#0284C7" Margin="0,4,0,0"/>
                                 </StackPanel>
 
                                 <!-- Column 1: Supplier Name (Expands in middle, trimmed with ellipsis if very long) -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,24,0">
-                                    <TextBlock Text="ผู้จัดจำหน่าย" FontSize="13.5" Foreground="#718096" FontWeight="SemiBold"/>
+                                    <TextBlock Text="ผู้จัดจำหน่าย" FontSize="14" Foreground="#64748B" FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding SelectedReceiptPO.SupplierName}" 
-                                               FontSize="15" FontWeight="Bold" Foreground="#2D3748" 
+                                               FontSize="16" FontWeight="Bold" Foreground="#0F172A" 
                                                TextTrimming="CharacterEllipsis"
                                                ToolTip="{Binding SelectedReceiptPO.SupplierName}"
-                                               Margin="0,2,0,0"/>
+                                               Margin="0,4,0,0"/>
                                 </StackPanel>
 
                                 <!-- Column 2: Order Date (Right-aligned to right border edge) -->
                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="13.5" Foreground="#718096" FontWeight="SemiBold" TextAlignment="Right" HorizontalAlignment="Right"/>
-                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="15" FontWeight="SemiBold" Foreground="#2D3748" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                                    <TextBlock Text="วันที่สั่งซื้อ" FontSize="14" Foreground="#64748B" FontWeight="SemiBold" TextAlignment="Right" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{Binding SelectedReceiptPO.OrderDate, StringFormat=dd/MM/yyyy}" FontSize="16" FontWeight="Bold" Foreground="#0F172A" TextAlignment="Right" HorizontalAlignment="Right" Margin="0,4,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
                     </StackPanel>
 
                     <!-- Delivery Note Input Field -->
-                    <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1.5" CornerRadius="10" Padding="14,10" Margin="0,0,0,14">
+                    <Border Grid.Row="2" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="14,12" Margin="0,0,0,14">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="Auto" MinWidth="220"/>
+                                <ColumnDefinition Width="14"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             
                             <!-- Left label -->
-                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="เลขที่ใบส่งของ / ใบกำกับภาษี *" FontSize="14.5" FontWeight="Bold" Foreground="#0B2545"/>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock Text="เลขที่ใบส่งของ / ใบกำกับภาษี" FontSize="16" FontWeight="SemiBold" Foreground="#334155" VerticalAlignment="Center"/>
+                                <TextBlock Text=" *" FontSize="16" FontWeight="Bold" Foreground="#EF4444" VerticalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- Right input and validation feedback -->
@@ -936,8 +1066,8 @@
                                         ToolTip="กรุณาระบุในรูปแบบ RC-XXXXX (ตัวเลข 5 หลัก เช่น RC-00001)">
                                     <Border.Style>
                                         <Style TargetType="Border">
-                                            <Setter Property="Background" Value="#E0F2FE"/>
-                                            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                            <Setter Property="BorderBrush" Value="#CBD5E1"/>
                                             <Style.Triggers>
                                                 <!-- Invalid format trigger: Red/Orange border -->
                                                 <DataTrigger Binding="{Binding IsReceiptDeliveryNoteInvalid}" Value="True">
@@ -958,12 +1088,12 @@
                                                  IsEnabled="{Binding CanEditReceiptModal}"
                                                  Style="{StaticResource LightTextBoxStyle}"
                                                  FontWeight="SemiBold"
-                                                 Padding="10,6" Height="42" FontSize="16" VerticalContentAlignment="Center"/>
+                                                 Padding="12,0" Height="46" FontSize="16" VerticalContentAlignment="Center"/>
                                         <TextBlock Text="ระบุเลขที่ใบส่งของ / ใบกำกับภาษี (ห้ามเว้นว่าง)"
                                                    Foreground="#94A3B8"
-                                                   FontSize="14"
+                                                   FontSize="15"
                                                    VerticalAlignment="Center"
-                                                   Margin="12,0,10,0"
+                                                   Margin="14,0,10,0"
                                                    IsHitTestVisible="False">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
@@ -980,10 +1110,10 @@
                                         <TextBlock Text="✓ ระบุเลขที่เอกสารแล้ว" 
                                                    Foreground="#10B981" 
                                                    FontWeight="Bold" 
-                                                   FontSize="12" 
+                                                   FontSize="13" 
                                                    HorizontalAlignment="Right" 
                                                    VerticalAlignment="Center" 
-                                                   Margin="0,0,12,0"
+                                                   Margin="0,0,14,0"
                                                    Visibility="{Binding IsReceiptDeliveryNoteValid, Converter={StaticResource BoolToVis}}"/>
                                     </Grid>
                                 </Border>
@@ -991,9 +1121,9 @@
                                 <!-- Error warning below input when pattern doesn't match -->
                                 <TextBlock Text="⚠️ กรุณาระบุเลขที่ใบส่งของ / ใบกำกับภาษี (ห้ามเว้นว่าง)"
                                            Foreground="#EF4444"
-                                           FontSize="11.5"
+                                           FontSize="13"
                                            FontWeight="SemiBold"
-                                           Margin="4,4,0,0"
+                                           Margin="4,6,0,0"
                                            Visibility="{Binding IsReceiptDeliveryNoteInvalid, Converter={StaticResource BoolToVis}}"/>
                             </StackPanel>
                         </Grid>
@@ -1002,35 +1132,36 @@
                     <!-- Receipt Items DataGrid -->
                     <Border Grid.Row="3" Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="10" Padding="4" MinHeight="220" MaxHeight="340">
                         <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
-                        <DataGrid ItemsSource="{Binding ReceiptItems}"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="False"
-                                  CanUserAddRows="False"
-                                  HeadersVisibility="Column"
-                                  RowHeight="48"
-                                  GridLinesVisibility="None"
-                                  BorderThickness="0"
-                                  Background="Transparent"
-                                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  ColumnHeaderStyle="{StaticResource StockInColumnHeaderStyle}"
-                                  RowStyle="{StaticResource StockInRowStyle}"
-                                  CellStyle="{StaticResource StockInCellStyle}">
+                            <DataGrid ItemsSource="{Binding ReceiptItems}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="False"
+                                      CanUserAddRows="False"
+                                      HeadersVisibility="Column"
+                                      RowHeight="46"
+                                      GridLinesVisibility="None"
+                                      BorderThickness="0"
+                                      Background="Transparent"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      ColumnHeaderStyle="{StaticResource StockInColumnHeaderStyle}"
+                                      RowStyle="{StaticResource StockInRowStyle}"
+                                      CellStyle="{StaticResource StockInCellStyle}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="รหัสสินค้า" Binding="{Binding ProductCode}" IsReadOnly="True" Width="0.8*" ElementStyle="{StaticResource ColCenterBold}"/>
                                     <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding ProductName}" IsReadOnly="True" Width="2*" ElementStyle="{StaticResource ColCenterBold}"/>
                                     <DataGridTextColumn Header="สั่งซื้อ" Binding="{Binding OrderedQty}" IsReadOnly="True" Width="0.6*" ElementStyle="{StaticResource ColCenterBold}"/>
-                                    <DataGridTextColumn Header="ต้นทุน/หน่วย" Binding="{Binding CostPrice, StringFormat='{}{0:N2}'}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ColCenterBold}"/>
+                                    <DataGridTextColumn Header="ต้นทุน" Binding="{Binding CostPrice, StringFormat='{}{0:N2}'}" IsReadOnly="True" Width="*" ElementStyle="{StaticResource ColCenterBold}"/>
 
                                     <!-- Editable Received Qty Column -->
                                     <DataGridTemplateColumn Header="จำนวนรับจริง *" Width="1.4*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Border Background="#E0F2FE" BorderBrush="#00A3E0" BorderThickness="1.5" CornerRadius="6" Padding="4,2" HorizontalAlignment="Center" Width="90">
-                                                    <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding DataContext.CanEditReceiptModal, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                <Border Background="#E0F2FE" BorderBrush="#0284C7" BorderThickness="1.5" CornerRadius="8" HorizontalAlignment="Center" Width="92" Height="36">
+                                                    <TextBox Text="{Binding ReceivedQty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                             IsEnabled="{Binding DataContext.CanEditReceiptModal, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                              Style="{StaticResource LightTextBoxStyle}"
-                                                             FontWeight="Bold" FontSize="16" Foreground="#0B2545"
-                                                             HorizontalAlignment="Center"
+                                                             FontWeight="Bold" FontSize="15" Foreground="#0F172A"
+                                                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                              TextAlignment="Center" VerticalContentAlignment="Center"/>
                                                 </Border>
                                             </DataTemplate>
@@ -1042,7 +1173,7 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding ReceivedSubtotal, StringFormat='{}{0:N2}'}"
-                                                           FontSize="16" FontWeight="Bold" Foreground="#059669"
+                                                           FontSize="15" FontWeight="Bold" Foreground="#0284C7"
                                                            HorizontalAlignment="Center" TextAlignment="Center" VerticalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -1053,14 +1184,14 @@
                     </Border>
 
                     <!-- Divider -->
-                    <Border Grid.Row="4" Height="1" Background="#BAE6FD" Margin="0,14,0,14"/>
+                    <Border Grid.Row="4" Height="1" Background="#E2E8F0" Margin="0,16,0,16"/>
 
                     <!-- Totals & Actions Bar -->
                     <DockPanel Grid.Row="5" LastChildFill="False">
                         <!-- Left: Net Total Amount -->
                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="ยอดรวมทุนการรับเข้าสุทธิ: " FontSize="16" Foreground="#718096" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding ReceiptTotalAmount, StringFormat={}{0:N2}}" FontSize="24" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
+                            <TextBlock Text="ยอดรวมทุนการรับเข้าสุทธิ: " FontSize="16" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ReceiptTotalAmount, StringFormat={}{0:N2}}" FontSize="22" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <!-- Right: Action Buttons -->
@@ -1069,8 +1200,8 @@
                             <Button Content="ยกเลิก"
                                     Command="{Binding CloseGoodsReceiptModalCommand}"
                                     Visibility="{Binding IsReceiptViewOnly, Converter={StaticResource InverseBoolToVis}}"
-                                    Style="{StaticResource CancelBtnStyle}"
-                                    Width="120" Height="46" FontSize="16" Margin="0,0,12,0"/>
+                                    Style="{StaticResource GoodsReceiptNeutralBtnStyle}"
+                                    Height="46" MinWidth="120" FontSize="16" FontWeight="Bold" Margin="0,0,12,0"/>
 
                             <!-- Confirm Button (Only in edit/pending mode) -->
                             <Button x:Name="btnConfirmReceipt"
@@ -1078,15 +1209,15 @@
                                     Command="{Binding ConfirmGoodsReceiptCommand}" 
                                     IsEnabled="{Binding CanConfirmGoodsReceipt}"
                                     Visibility="{Binding IsReceiptViewOnly, Converter={StaticResource InverseBoolToVis}}"
-                                    Style="{StaticResource RoseBtnStyle}"
-                                    Width="220" Height="46" FontSize="16"/>
+                                    Style="{StaticResource GoodsReceiptConfirmBtnStyle}"
+                                    Height="46" MinWidth="220" FontSize="16" FontWeight="Bold"/>
 
                             <!-- Close Button (Only in Read-Only / View mode, positioned at far right) -->
                             <Button Content="ปิดหน้าต่าง"
                                     Command="{Binding CloseGoodsReceiptModalCommand}"
                                     Visibility="{Binding IsReceiptViewOnly, Converter={StaticResource BoolToVis}}"
-                                    Style="{StaticResource CancelBtnStyle}"
-                                    Width="140" Height="46" FontSize="16"
+                                    Style="{StaticResource GoodsReceiptNeutralBtnStyle}"
+                                    Height="46" MinWidth="120" FontSize="16" FontWeight="Bold"
                                     HorizontalAlignment="Right"/>
                         </StackPanel>
                     </DockPanel>

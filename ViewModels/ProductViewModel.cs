@@ -1722,6 +1722,7 @@ namespace Porjai20.ViewModels
             CloseGoodsReceiptModalCommand = new RelayCommand(_ => { IsGoodsReceiptModalOpen = false; });
             ConfirmGoodsReceiptCommand = new RelayCommand(_ => ConfirmGoodsReceipt(), _ => CanConfirmGoodsReceipt);
             SearchPendingPOCommand = new RelayCommand(_ => _ = LoadPendingPurchaseOrders());
+            ClearStockInFilterCommand = new RelayCommand(_ => ExecuteClearStockInFilter());
             ClearStockSearchCommand = new RelayCommand(_ => 
             { 
                 SearchText = string.Empty; 
@@ -3247,6 +3248,7 @@ namespace Porjai20.ViewModels
         public ICommand CloseGoodsReceiptModalCommand { get; private set; }
         public ICommand ConfirmGoodsReceiptCommand { get; private set; }
         public ICommand SearchPendingPOCommand { get; private set; }
+        public ICommand ClearStockInFilterCommand { get; private set; }
 
         // Goods Receipt Properties
         public ObservableCollection<PurchaseOrder> PendingPurchaseOrders { get; set; } = new ObservableCollection<PurchaseOrder>();
@@ -3336,6 +3338,7 @@ namespace Porjai20.ViewModels
         private int _allPendingPOCount;
         private int _allReceivedPOCount;
         public string StockInSummaryText => $"แสดงทั้งหมด {PendingPurchaseOrders.Count} รายการ (รอดำเนินการ {_allPendingPOCount} รายการ | ตรวจรับแล้ว {_allReceivedPOCount} รายการ)";
+        public string DisplaySummaryCountText => StockInSummaryText;
 
         private string _receiptDeliveryNoteNo = string.Empty;
         public string ReceiptDeliveryNoteNo
@@ -3368,6 +3371,22 @@ namespace Porjai20.ViewModels
         {
             get => _pendingPOSearchKeyword;
             set { if (SetProperty(ref _pendingPOSearchKeyword, value)) _ = LoadPendingPurchaseOrders(); }
+        }
+
+        public string SearchKeyword
+        {
+            get => PendingPOSearchKeyword;
+            set => PendingPOSearchKeyword = value;
+        }
+
+        public void ExecuteClearStockInFilter()
+        {
+            _pendingPOSearchKeyword = string.Empty;
+            OnPropertyChanged(nameof(PendingPOSearchKeyword));
+            OnPropertyChanged(nameof(SearchKeyword));
+            _selectedStockInStatus = "ทั้งหมด";
+            OnPropertyChanged(nameof(SelectedStockInStatus));
+            _ = LoadPendingPurchaseOrders();
         }
 
         // System Data Commands
@@ -7759,6 +7778,7 @@ namespace Porjai20.ViewModels
             }
             OnPropertyChanged(nameof(PendingPOCount));
             OnPropertyChanged(nameof(StockInSummaryText));
+            OnPropertyChanged(nameof(DisplaySummaryCountText));
             _ = LoadStockTransactions();
         }
 
