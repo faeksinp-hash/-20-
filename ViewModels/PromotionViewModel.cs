@@ -22,7 +22,9 @@ namespace Porjai20.ViewModels
         private ObservableCollection<PromotionModel> _filteredPromotions = new();
         private PromotionModel? _selectedPromotion;
         private PromotionModel _editModel = new();
+        private PromotionModel? _backupModel;
         private bool _isCreatingNew;
+        private bool _isEditMode;
         private string _searchKeyword = string.Empty;
         private string _selectedFilter = "ALL"; // ALL, CashDiscount, PointRedeem, FreeDelivery, Expired
 
@@ -54,7 +56,17 @@ namespace Porjai20.ViewModels
                 }
             });
 
+            SelectAndEditPromotionCommand = new RelayCommand(param =>
+            {
+                if (param is PromotionModel promo)
+                {
+                    SelectAndEditPromotion(promo);
+                }
+            });
+
             StartCreateNewCommand = new RelayCommand(_ => StartCreateNew());
+            StartEditCommand = new RelayCommand(_ => StartEdit());
+            CloseDetailsCommand = new RelayCommand(_ => CloseDetails());
             SavePromotionCommand = new RelayCommand(async _ => await SavePromotionAsync());
             CancelEditCommand = new RelayCommand(_ => CancelEdit());
             DeletePromotionCommand = new RelayCommand(async _ => await DeletePromotionAsync());
@@ -138,19 +150,59 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _isCreatingNew, value))
                 {
-                    OnPropertyChanged(nameof(FormHeaderTitle));
+                    OnPropertyChanged(nameof(HasSelectedPromotion));
                     OnPropertyChanged(nameof(IsPromoIdReadOnly));
+                    OnPropertyChanged(nameof(IsReadOnlyMode));
+                    OnPropertyChanged(nameof(IsFormEditable));
+                    OnPropertyChanged(nameof(FormHeaderTitle));
+                    OnPropertyChanged(nameof(FormHeaderSubtitle));
+                    OnPropertyChanged(nameof(SaveButtonText));
                 }
             }
         }
 
+        public bool IsEditMode
+        {
+            get => _isEditMode;
+            set
+            {
+                if (SetProperty(ref _isEditMode, value))
+                {
+                    OnPropertyChanged(nameof(IsReadOnlyMode));
+                    OnPropertyChanged(nameof(IsFormEditable));
+                    OnPropertyChanged(nameof(FormHeaderTitle));
+                    OnPropertyChanged(nameof(FormHeaderSubtitle));
+                    OnPropertyChanged(nameof(SaveButtonText));
+                }
+            }
+        }
+
+        public bool IsReadOnlyMode => !IsEditMode && !IsCreatingNew;
+        public bool IsFormEditable => IsEditMode || IsCreatingNew;
         public bool IsPromoIdReadOnly => !IsCreatingNew;
         public bool HasSelectedPromotion => SelectedPromotion != null || IsCreatingNew;
         public bool IsFormVisible => true;
 
-        public string FormHeaderTitle => IsCreatingNew
-            ? "สร้างโปรโมชั่นใหม่"
-            : $"กำลังแก้ไข: {EditModel.PromoID}";
+        public string FormHeaderTitle
+        {
+            get
+            {
+                if (IsCreatingNew) return "สร้างโปรโมชั่นใหม่";
+                if (EditModel == null || string.IsNullOrEmpty(EditModel.PromoID)) return "ข้อมูลโปรโมชั่น";
+                return IsEditMode ? $"กำลังแก้ไข: {EditModel.PromoID}" : $"ข้อมูลโปรโมชั่น: {EditModel.PromoID}";
+            }
+        }
+
+        public string FormHeaderSubtitle
+        {
+            get
+            {
+                if (IsCreatingNew) return "กำหนดข้อมูลโปรโมชั่นใหม่";
+                return IsEditMode ? "แก้ไขเงื่อนไขส่วนลดและระยะเวลา" : "รายละเอียดเงื่อนไขและระยะเวลา";
+            }
+        }
+
+        public string SaveButtonText => IsCreatingNew ? "บันทึกข้อมูล" : "บันทึกการแก้ไข";
 
         public string SearchKeyword
         {
@@ -253,7 +305,10 @@ namespace Porjai20.ViewModels
         #region Commands
 
         public ICommand SelectPromotionCommand { get; }
+        public ICommand SelectAndEditPromotionCommand { get; }
         public ICommand StartCreateNewCommand { get; }
+        public ICommand StartEditCommand { get; }
+        public ICommand CloseDetailsCommand { get; }
         public ICommand SavePromotionCommand { get; }
         public ICommand CancelEditCommand { get; }
         public ICommand DeletePromotionCommand { get; }
@@ -277,11 +332,12 @@ namespace Porjai20.ViewModels
             if (SelectedPromotion != null)
             {
                 var match = _allPromotions.FirstOrDefault(p => p.PromoID == SelectedPromotion.PromoID);
-                SelectedPromotion = match ?? _allPromotions.FirstOrDefault();
+                SelectedPromotion = match;
             }
             else
             {
-                SelectedPromotion = _allPromotions.FirstOrDefault();
+                // ตอนเริ่มต้น: ไม่เลือกโปรโมชั่น เพื่อแสดงแผงว่างสีทึบ "กรุณาเลือกโปรโมชั่น"
+                SelectedPromotion = null;
             }
 
             if (SelectedPromotion != null && !_isCreatingNew)
@@ -339,14 +395,42 @@ namespace Porjai20.ViewModels
         public void SelectPromotion(PromotionModel promo)
         {
             IsCreatingNew = false;
+            IsEditMode = false;
+            _backupModel = null;
             SelectedPromotion = promo;
             LoadToEditForm(promo);
+        }
+
+        public void SelectAndEditPromotion(PromotionModel promo)
+        {
+            IsCreatingNew = false;
+            SelectedPromotion = promo;
+            LoadToEditForm(promo);
+            _backupModel = promo.Clone();
+            IsEditMode = true;
+        }
+
+        public void StartEdit()
+        {
+            if (SelectedPromotion == null && !IsCreatingNew) return;
+            _backupModel = EditModel.Clone();
+            IsEditMode = true;
+        }
+
+        public void CloseDetails()
+        {
+            SelectedPromotion = null;
+            IsCreatingNew = false;
+            IsEditMode = false;
+            _backupModel = null;
         }
 
         public void StartCreateNew()
         {
             IsCreatingNew = true;
+            IsEditMode = true;
             SelectedPromotion = null;
+            _backupModel = null;
 
             // Generate an automatic suggested ID
             int nextIndex = _allPromotions.Count + 1;
@@ -371,12 +455,19 @@ namespace Porjai20.ViewModels
             EditEndDate = DateTime.Today.AddMonths(1);
 
             OnPropertyChanged(nameof(FormHeaderTitle));
+            OnPropertyChanged(nameof(FormHeaderSubtitle));
         }
 
         private void LoadToEditForm(PromotionModel source)
         {
             EditModel = source.Clone();
+            SyncDatesFromModel(source);
+            OnPropertyChanged(nameof(FormHeaderTitle));
+            OnPropertyChanged(nameof(FormHeaderSubtitle));
+        }
 
+        private void SyncDatesFromModel(PromotionModel source)
+        {
             if (DateTime.TryParse(source.StartDate, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var start))
                 EditStartDate = start;
             else if (DateTime.TryParse(source.StartDate, out var startFallback))
@@ -390,8 +481,6 @@ namespace Porjai20.ViewModels
                 EditEndDate = endFallback;
             else
                 EditEndDate = DateTime.Today.AddMonths(1);
-
-            OnPropertyChanged(nameof(FormHeaderTitle));
         }
 
         public async Task SavePromotionAsync()
@@ -440,11 +529,17 @@ namespace Porjai20.ViewModels
             bool success = await _db.SavePromotionAsync(EditModel);
             if (success)
             {
-                _dialog.ShowSuccess("บันทึกสำเร็จ", $"บันทึกข้อมูลโปรโมชั่น '{EditModel.PromoName}' เรียบร้อยแล้ว");
+                _dialog.ShowSuccess("บันทึกข้อมูลสำเร็จ", $"บันทึกข้อมูลโปรโมชั่น '{EditModel.PromoName}' เรียบร้อยแล้ว");
                 string savedId = EditModel.PromoID;
                 IsCreatingNew = false;
+                IsEditMode = false;
+                _backupModel = null;
                 await LoadPromotionsAsync();
                 SelectedPromotion = _allPromotions.FirstOrDefault(p => p.PromoID == savedId);
+                if (SelectedPromotion != null)
+                {
+                    LoadToEditForm(SelectedPromotion);
+                }
             }
             else
             {
@@ -456,16 +551,22 @@ namespace Porjai20.ViewModels
         {
             if (IsCreatingNew)
             {
-                IsCreatingNew = false;
-                SelectedPromotion = _allPromotions.FirstOrDefault();
-                if (SelectedPromotion != null)
-                {
-                    LoadToEditForm(SelectedPromotion);
-                }
+                CloseDetails();
+            }
+            else if (_backupModel != null)
+            {
+                EditModel = _backupModel.Clone();
+                SyncDatesFromModel(EditModel);
+                IsEditMode = false;
             }
             else if (SelectedPromotion != null)
             {
                 LoadToEditForm(SelectedPromotion);
+                IsEditMode = false;
+            }
+            else
+            {
+                CloseDetails();
             }
         }
 
@@ -479,7 +580,7 @@ namespace Porjai20.ViewModels
 
             bool confirmed = _dialog.ShowConfirm(
                 "ยืนยันการลบ",
-                $"คุณแน่ใจหรือไม่ว่าต้องการลบหรือเก็บถาวรโปรโมชั่น '{EditModel.PromoName}' ({EditModel.PromoID}) ?");
+                $"คุณแน่ใจหรือไม่ว่าต้องการลบโปรโมชั่น '{EditModel.PromoName}' ({EditModel.PromoID}) ?");
 
             if (!confirmed) return;
 
@@ -487,7 +588,10 @@ namespace Porjai20.ViewModels
             if (success)
             {
                 _dialog.ShowSuccess("ลบเรียบร้อย", $"ลบโปรโมชั่น '{EditModel.PromoID}' สำเร็จแล้ว");
+                SelectedPromotion = null;
                 IsCreatingNew = false;
+                IsEditMode = false;
+                _backupModel = null;
                 await LoadPromotionsAsync();
             }
             else
