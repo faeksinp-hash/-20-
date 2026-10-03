@@ -45,6 +45,18 @@ namespace Porjai20.Services
                 },
                 new MenuItemModel
                 {
+                    Id = "promotion",
+                    Label = "โปรโมชั่น",
+                    IconGlyph = "\uE8EC",
+                    Category = MenuCategory.Sales,
+                    IconBgColorKey = "MenuSalesBg",
+                    IconFgColorKey = "MenuSalesFg",
+                    RequiredRole = null,
+                    NavigateCommand = vm.OpenPromotionCommand,
+                    SortOrder = 3
+                },
+                new MenuItemModel
+                {
                     Id = "sales_history",
                     Label = "ประวัติการขาย",
                     IconGlyph = "\uE81C",
@@ -53,7 +65,7 @@ namespace Porjai20.Services
                     IconFgColorKey = "MenuSalesFg",
                     RequiredRole = null,
                     NavigateCommand = vm.OpenSalesHistoryCommand,
-                    SortOrder = 3
+                    SortOrder = 4
                 },
 
                 // ─── กลุ่ม: คลังและซัพพลาย (โทนสีเขียว) ──────────────────────────────────────

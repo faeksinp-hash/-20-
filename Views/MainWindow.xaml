@@ -748,6 +748,14 @@
                                                     </MultiDataTrigger>
                                                     <MultiDataTrigger>
                                                         <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Id}" Value="promotion"/>
+                                                            <Condition Binding="{Binding DataContext.CurrentView, RelativeSource={RelativeSource AncestorType=Window}}" Value="promotion"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="#00A3E0"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
                                                             <Condition Binding="{Binding Id}" Value="sales_history"/>
                                                             <Condition Binding="{Binding DataContext.CurrentView, RelativeSource={RelativeSource AncestorType=Window}}" Value="sales_history"/>
                                                         </MultiDataTrigger.Conditions>
@@ -843,6 +851,13 @@
                                                                 <MultiDataTrigger.Conditions>
                                                                     <Condition Binding="{Binding Id}" Value="expense"/>
                                                                     <Condition Binding="{Binding DataContext.CurrentView, RelativeSource={RelativeSource AncestorType=Window}}" Value="expense"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" Value="White"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Id}" Value="promotion"/>
+                                                                    <Condition Binding="{Binding DataContext.CurrentView, RelativeSource={RelativeSource AncestorType=Window}}" Value="promotion"/>
                                                                 </MultiDataTrigger.Conditions>
                                                                 <Setter Property="Background" Value="White"/>
                                                             </MultiDataTrigger>
@@ -1133,6 +1148,20 @@
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <views:ExpenseView />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="promotion">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <views:PromotionView HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                            ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                            <views:PromotionView.DataContext>
+                                                <vm:PromotionViewModel/>
+                                            </views:PromotionView.DataContext>
+                                        </views:PromotionView>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>

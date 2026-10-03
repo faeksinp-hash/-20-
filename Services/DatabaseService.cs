@@ -3,6 +3,7 @@ using System.IO;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Porjai20.Common;
+using Porjai20.Models;
 
 namespace Porjai20.Services
 {
@@ -283,6 +284,35 @@ namespace Porjai20.Services
                         ('CAT-002', 'ของใช้ในครัวเรือน', 'สินค้าและอุปกรณ์ของใช้ในบ้านเรือน'),
                         ('CAT-003', 'ของเล่น', 'ของเล่นเสริมทักษะและของเล่นเด็ก'),
                         ('CAT-004', 'เบ็ดเตล็ด', 'สินค้าเบ็ดเตล็ดทั่วไป');");
+                }
+
+                // 15) tblPromotion
+                connection.Execute(@"
+                    CREATE TABLE IF NOT EXISTS tblPromotion (
+                        PromoID TEXT PRIMARY KEY,
+                        PromoName TEXT,
+                        PromoType TEXT,
+                        DiscountAmount REAL,
+                        MinSpend REAL,
+                        PointsRequired INTEGER,
+                        StartDate TEXT,
+                        EndDate TEXT,
+                        IsActive INTEGER,
+                        UsageCount INTEGER,
+                        TotalDiscountGiven REAL
+                    );");
+
+                int promoCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblPromotion;");
+                if (promoCount == 0)
+                {
+                    connection.Execute(@"
+                        INSERT INTO tblPromotion (PromoID, PromoName, PromoType, DiscountAmount, MinSpend, PointsRequired, StartDate, EndDate, IsActive, UsageCount, TotalDiscountGiven) VALUES
+                        ('PROMO-10B', 'ส่วนลดเปิดร้าน 10 บาท', 'CashDiscount', 10, 50, 0, '2026-01-01', '2026-12-31', 1, 124, 1240.0),
+                        ('PROMO-20B', 'ซื้อครบ 100 ลดทันที 20', 'CashDiscount', 20, 100, 0, '2026-02-01', '2026-12-31', 1, 85, 1700.0),
+                        ('POINTS-50', 'แลก 50 แต้มรับส่วนลด 15', 'PointRedeem', 15, 40, 50, '2026-01-01', '2026-12-31', 1, 42, 630.0),
+                        ('POINTS-100', 'แลก 100 แต้มรับส่วนลด 35', 'PointRedeem', 35, 80, 100, '2026-01-01', '2026-12-31', 1, 18, 630.0),
+                        ('FREESHIP', 'ส่งฟรีเดลิเวอรี่สั่งซื้อ 100+', 'FreeDelivery', 25, 100, 0, '2026-03-01', '2026-12-31', 1, 31, 775.0),
+                        ('EXPIRED-NEWYEAR', 'ต้อนรับปีใหม่ลด 30 บาท', 'CashDiscount', 30, 150, 0, '2025-12-15', '2026-01-15', 0, 65, 1950.0);");
                 }
 
                 // Seed Default Admin User ONLY if employee table is empty
@@ -2466,6 +2496,83 @@ namespace Porjai20.Services
                 var expRaw = await conn.QueryAsync<(string Month, decimal Total)>(sqlMonthlyExp, chartParams);
 
                 return (revRaw.ToList(), expRaw.ToList());
+            }
+        }
+
+        #endregion
+
+        #region Promotion Methods
+
+        public async Task<List<PromotionModel>> GetAllPromotionsAsync()
+        {
+            using (var conn = GetConnection())
+            {
+                var rows = await conn.QueryAsync<PromotionModel>(@"
+                    SELECT PromoID, PromoName, PromoType, DiscountAmount, MinSpend, PointsRequired,
+                           StartDate, EndDate, IsActive, UsageCount, TotalDiscountGiven
+                    FROM tblPromotion
+                    ORDER BY IsActive DESC, PromoID ASC;");
+                return rows.ToList();
+            }
+        }
+
+        public async Task<PromotionModel?> GetPromotionByIdAsync(string promoId)
+        {
+            using (var conn = GetConnection())
+            {
+                return await conn.QueryFirstOrDefaultAsync<PromotionModel>(@"
+                    SELECT PromoID, PromoName, PromoType, DiscountAmount, MinSpend, PointsRequired,
+                           StartDate, EndDate, IsActive, UsageCount, TotalDiscountGiven
+                    FROM tblPromotion
+                    WHERE PromoID = @PromoID;", new { PromoID = promoId });
+            }
+        }
+
+        public async Task<bool> SavePromotionAsync(PromotionModel promo)
+        {
+            using (var conn = GetConnection())
+            {
+                string sql = @"
+                    INSERT INTO tblPromotion (PromoID, PromoName, PromoType, DiscountAmount, MinSpend, PointsRequired, StartDate, EndDate, IsActive, UsageCount, TotalDiscountGiven)
+                    VALUES (@PromoID, @PromoName, @PromoType, @DiscountAmount, @MinSpend, @PointsRequired, @StartDate, @EndDate, @IsActive, @UsageCount, @TotalDiscountGiven)
+                    ON CONFLICT(PromoID) DO UPDATE SET
+                        PromoName = excluded.PromoName,
+                        PromoType = excluded.PromoType,
+                        DiscountAmount = excluded.DiscountAmount,
+                        MinSpend = excluded.MinSpend,
+                        PointsRequired = excluded.PointsRequired,
+                        StartDate = excluded.StartDate,
+                        EndDate = excluded.EndDate,
+                        IsActive = excluded.IsActive,
+                        UsageCount = excluded.UsageCount,
+                        TotalDiscountGiven = excluded.TotalDiscountGiven;";
+
+                int rows = await conn.ExecuteAsync(sql, promo);
+                return rows > 0;
+            }
+        }
+
+        public async Task<bool> UpdatePromotionStatusAsync(string promoId, bool isActive)
+        {
+            using (var conn = GetConnection())
+            {
+                int rows = await conn.ExecuteAsync(@"
+                    UPDATE tblPromotion
+                    SET IsActive = @IsActive
+                    WHERE PromoID = @PromoID;",
+                    new { PromoID = promoId, IsActive = isActive ? 1 : 0 });
+                return rows > 0;
+            }
+        }
+
+        public async Task<bool> DeletePromotionAsync(string promoId)
+        {
+            using (var conn = GetConnection())
+            {
+                int rows = await conn.ExecuteAsync(@"
+                    DELETE FROM tblPromotion
+                    WHERE PromoID = @PromoID;", new { PromoID = promoId });
+                return rows > 0;
             }
         }
 

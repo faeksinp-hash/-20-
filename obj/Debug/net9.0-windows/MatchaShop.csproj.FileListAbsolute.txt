@@ -1022,3 +1022,5 @@ D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\refint\Matcha
 D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.pdb
 D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\MatchaShop.genruntimeconfig.cache
 D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\ref\MatchaShop.dll
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PromotionView.g.cs
+D:\ShopManagement-หลัก\MatchaShop\obj\Debug\net9.0-windows\Views\PromotionView.baml

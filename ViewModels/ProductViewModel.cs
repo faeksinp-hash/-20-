@@ -1656,6 +1656,7 @@ namespace Porjai20.ViewModels
             });
             CloseReportModalCommand = new RelayCommand(_ => { IsReportModalOpen = false; });
             OpenHistoryCommand = new RelayCommand(async _ => await NavigateAsync(async () => { CurrentView = "sales_history"; await Task.CompletedTask; }));
+            OpenPromotionCommand = new RelayCommand(async _ => await NavigateAsync(async () => { CurrentView = "promotion"; await Task.CompletedTask; }));
             OpenSalesHistoryCommand = new RelayCommand(async _ => await NavigateAsync(async () => { CurrentView = "sales_history"; await Task.CompletedTask; }));
             PrintOrderCommand = new RelayCommand(_ => PrintSelectedOrder());
             SwitchToHomeCommand = new RelayCommand(async _ => await NavigateAsync(async () => { CurrentView = "home"; await LoadDashboardData(); }));
@@ -3157,6 +3158,7 @@ namespace Porjai20.ViewModels
         public ICommand SwitchToReportsCommand { get; }
         public ICommand SwitchToHomeCommand { get; }
         public ICommand OpenHistoryCommand { get; }
+        public ICommand OpenPromotionCommand { get; }
         public ICommand OpenSalesHistoryCommand { get; }
         public ICommand OpenDeliveryCommand { get; }
         public ICommand ConfirmStockInCommand { get; }

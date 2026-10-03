@@ -61,6 +61,9 @@ namespace Porjai20.Services
                 // จัดส่งสินค้า -> แก้ไข
                 "delivery"     => AccessLevel.Full,
 
+                // โปรโมชั่น -> สิทธิ์เข้าใช้งาน
+                "promotion"     => AccessLevel.Full,
+
                 // ประวัติการขาย -> ดูอย่างเดียว
                 "sales_history" => AccessLevel.ReadOnly,
 
