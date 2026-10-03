@@ -60,7 +60,7 @@
                        Text="{Binding Subtitle, ElementName=kpiCardRoot}"
                        FontSize="13"
                        FontWeight="Normal"
-                       Foreground="#A0AEC0"
+                       Foreground="#64748B"
                        Margin="0"
                        TextTrimming="CharacterEllipsis"/>
         </Grid>

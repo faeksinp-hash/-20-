@@ -35,6 +35,29 @@ namespace Porjai20.ViewModels
             "ทั้งหมด", "เงินสด", "โอนเงิน", "บัตรเครดิต"
         };
 
+        /// <summary>Date range filter options.</summary>
+        public ObservableCollection<string> DateFilterOptions { get; } = new()
+        {
+            "วันที่ทั้งหมด", "วันนี้", "7 วันล่าสุด", "เดือนนี้", "ปีนี้"
+        };
+
+        private string _selectedDateFilter = "วันที่ทั้งหมด";
+        public string SelectedDateFilter
+        {
+            get => _selectedDateFilter;
+            set
+            {
+                if (SetProperty(ref _selectedDateFilter, value))
+                {
+                    ApplyDateFilterRange();
+                    ExecuteSearch();
+                }
+            }
+        }
+
+        /// <summary>Alias for SalesOrders to match standard footer bindings.</summary>
+        public ObservableCollection<SalesOrderDisplayRow> FilteredSales => SalesOrders;
+
         // ── KPI Properties ───────────────────────────────────────────────
         private decimal _totalRevenue;
         public decimal TotalRevenue
@@ -324,20 +347,13 @@ namespace Porjai20.ViewModels
             PrintReceiptCommand     = new RelayCommand(_ => ExecutePrint());
             VoidOrderCommand        = new RelayCommand(_ => ExecuteVoid(), _ => CanVoidOrder);
             ExportExcelCommand      = new RelayCommand(_ => ExecuteExportExcel());
-            QuickFilterTodayCommand = new RelayCommand(_ => QuickFilter(DateTime.Today, DateTime.Today));
-            QuickFilterWeekCommand  = new RelayCommand(_ =>
-            {
-                var start = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
-                QuickFilter(start, DateTime.Today);
-            });
-            QuickFilterMonthCommand = new RelayCommand(_ =>
-            {
-                var start = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-                QuickFilter(start, DateTime.Today);
-            });
+            QuickFilterTodayCommand = new RelayCommand(_ => SelectedDateFilter = "วันนี้");
+            QuickFilterWeekCommand  = new RelayCommand(_ => SelectedDateFilter = "7 วันล่าสุด");
+            QuickFilterMonthCommand = new RelayCommand(_ => SelectedDateFilter = "เดือนนี้");
 
-            // Load today's data on startup
-            QuickFilter(DateTime.Today, DateTime.Today);
+            // Load all data on startup (Default: "วันที่ทั้งหมด")
+            _selectedDateFilter = "วันที่ทั้งหมด";
+            ExecuteSearch();
         }
 
         /// <summary>
@@ -393,16 +409,22 @@ namespace Porjai20.ViewModels
                             FROM tblSales_H s
                             LEFT JOIN tblSalesDetail i ON i.Sales_ID = s.Sales_ID
                             LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
-                            WHERE (
+                            WHERE 1=1";
+
+                var parameters = new DynamicParameters();
+
+                // Date range filter (if not "วันที่ทั้งหมด")
+                if (SelectedDateFilter != "วันที่ทั้งหมด")
+                {
+                    sql += @" AND (
                                 date(s.Sales_Date) BETWEEN date(@Start) AND date(@End)
                                 OR date(s.Sales_Date) BETWEEN date(@StartTh) AND date(@EndTh)
                             )";
-
-                var parameters = new DynamicParameters();
-                parameters.Add("Start",   StartDate.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                parameters.Add("End",     EndDate.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                parameters.Add("StartTh", StartDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                parameters.Add("EndTh",   EndDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                    parameters.Add("Start",   StartDate.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                    parameters.Add("End",     EndDate.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                    parameters.Add("StartTh", StartDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                    parameters.Add("EndTh",   EndDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                }
 
                 // Keyword filter
                 if (!string.IsNullOrWhiteSpace(SearchKeyword))
@@ -546,9 +568,33 @@ namespace Porjai20.ViewModels
             AverageTicket = TotalOrders > 0 ? TotalRevenue / TotalOrders : 0m;
 
             // Sub-labels
-            var label = StartDate.Date == EndDate.Date
-                ? $"วันที่ {StartDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}"
-                : $"{StartDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)} – {EndDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)}";
+            string label;
+            if (SelectedDateFilter == "วันที่ทั้งหมด")
+            {
+                label = "ข้อมูลทั้งหมด";
+            }
+            else if (SelectedDateFilter == "วันนี้")
+            {
+                label = $"วันที่ {DateTime.Today.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}";
+            }
+            else if (SelectedDateFilter == "7 วันล่าสุด")
+            {
+                label = $"{StartDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)} – {EndDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)}";
+            }
+            else if (SelectedDateFilter == "เดือนนี้")
+            {
+                label = $"เดือน {DateTime.Today.ToString("MM/yyyy", CultureInfo.InvariantCulture)}";
+            }
+            else if (SelectedDateFilter == "ปีนี้")
+            {
+                label = $"ปี {DateTime.Today.Year}";
+            }
+            else
+            {
+                label = StartDate.Date == EndDate.Date
+                    ? $"วันที่ {StartDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}"
+                    : $"{StartDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)} – {EndDate.ToString("dd/MM/yy", CultureInfo.InvariantCulture)}";
+            }
 
             RevenueSubLabel  = label;
             OrdersSubLabel   = label;
@@ -558,6 +604,7 @@ namespace Porjai20.ViewModels
         private void UpdateStatusBar()
         {
             StatusBarText = $"แสดงผล {SalesOrders.Count:N0} รายการ";
+            OnPropertyChanged(nameof(FilteredSales));
         }
 
         // ── Command Handlers ─────────────────────────────────────────────
@@ -565,13 +612,42 @@ namespace Porjai20.ViewModels
         {
             _searchKeyword         = string.Empty;
             _selectedPaymentMethod = "ทั้งหมด";
-            _startDate             = DateTime.Today;
-            _endDate               = DateTime.Today;
+            _selectedDateFilter    = "วันที่ทั้งหมด";
+            ApplyDateFilterRange();
             OnPropertyChanged(nameof(SearchKeyword));
             OnPropertyChanged(nameof(SelectedPaymentMethod));
+            OnPropertyChanged(nameof(SelectedDateFilter));
+            ExecuteSearch();
+        }
+
+        private void ApplyDateFilterRange()
+        {
+            switch (SelectedDateFilter)
+            {
+                case "วันนี้":
+                    _startDate = DateTime.Today;
+                    _endDate = DateTime.Today;
+                    break;
+                case "7 วันล่าสุด":
+                    _startDate = DateTime.Today.AddDays(-7);
+                    _endDate = DateTime.Today;
+                    break;
+                case "เดือนนี้":
+                    _startDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                    _endDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
+                    break;
+                case "ปีนี้":
+                    _startDate = new DateTime(DateTime.Today.Year, 1, 1);
+                    _endDate = new DateTime(DateTime.Today.Year, 12, 31);
+                    break;
+                case "วันที่ทั้งหมด":
+                default:
+                    _startDate = DateTime.Today;
+                    _endDate = DateTime.Today;
+                    break;
+            }
             OnPropertyChanged(nameof(StartDate));
             OnPropertyChanged(nameof(EndDate));
-            ExecuteSearch();
         }
 
         private void ExecuteViewDetails(SalesOrderDisplayRow row)
