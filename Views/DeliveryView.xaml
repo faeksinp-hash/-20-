@@ -626,8 +626,8 @@
         <!--  DATAGRID STYLES (MAIN TABLE & LIGHT MODAL)                -->
         <!-- ══════════════════════════════════════════════════════════ -->
         <Style x:Key="DeliveryColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background"              Value="#F1F5F9"/>
-            <Setter Property="Foreground"              Value="#000000"/>
+            <Setter Property="Background"              Value="#F8FAFC"/>
+            <Setter Property="Foreground"              Value="#1E293B"/>
             <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="16"/>
             <Setter Property="Height"                  Value="48"/>
@@ -643,7 +643,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{TemplateBinding Padding}">
                             <TextBlock Text="{TemplateBinding Content}"
-                                       Foreground="#000000"
+                                       Foreground="#1E293B"
                                        FontWeight="Bold"
                                        FontSize="16"
                                        HorizontalAlignment="Center"
@@ -660,35 +660,41 @@
             <Setter Property="FontSize"   Value="15"/>
             <Setter Property="MinHeight"  Value="48"/>
             <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="ToolTip"    Value="ดับเบิ้ลคลิกเพื่อดูรายละเอียดคำสั่งซื้อเดลิเวอรี"/>
             <EventSetter Event="MouseDoubleClick" Handler="DeliveryRow_MouseDoubleClick"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
                         <Border x:Name="RowBorder"
-                                CornerRadius="10" Margin="4,2" Padding="6,0"
-                                Background="Transparent">
+                                CornerRadius="8" Margin="4,2" Padding="6,0"
+                                Background="Transparent"
+                                BorderThickness="1"
+                                BorderBrush="Transparent">
                             <DataGridCellsPresenter
                                 ItemsPanel="{TemplateBinding ItemsPanel}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#BAE6FD"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
-                                <Setter Property="Foreground"  Value="#1E293B"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground"  Value="#000000"/>
+                                <Setter Property="FontWeight"  Value="Normal"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                     Color="Transparent"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                 Color="#1E293B"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"    Color="Transparent"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#1E293B"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                     Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                 Color="#000000"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"    Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#000000"/>
             </Style.Resources>
         </Style>
 
@@ -708,7 +714,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="#000000"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -747,9 +753,9 @@
         <Style x:Key="LightModalColHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="Background"              Value="#F8FAFC"/>
             <Setter Property="Foreground"              Value="#475569"/>
-            <Setter Property="FontWeight"              Value="SemiBold"/>
+            <Setter Property="FontWeight"              Value="Bold"/>
             <Setter Property="FontSize"                Value="15"/>
-            <Setter Property="Height"                  Value="44"/>
+            <Setter Property="Height"                  Value="42"/>
             <Setter Property="Padding"                 Value="10,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -763,7 +769,7 @@
                                 Padding="{TemplateBinding Padding}">
                             <TextBlock Text="{TemplateBinding Content}"
                                        Foreground="#475569"
-                                       FontWeight="SemiBold"
+                                       FontWeight="Bold"
                                        FontSize="15"
                                        VerticalAlignment="Center"/>
                         </Border>
@@ -776,7 +782,7 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#1E293B"/>
             <Setter Property="FontSize"   Value="15"/>
-            <Setter Property="MinHeight"  Value="44"/>
+            <Setter Property="MinHeight"  Value="40"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
@@ -806,6 +812,46 @@
                         <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Minimal Light ScrollBar Style for Modal DataGrid -->
+        <Style x:Key="MinimalScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="Bg" Background="Transparent" SnapsToDevicePixels="True">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border x:Name="ThumbBd" Background="#CBD5E1" CornerRadius="3"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ThumbBd" Property="Background" Value="#94A3B8"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter TargetName="ThumbBd" Property="Background" Value="#64748B"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -894,8 +940,8 @@
                         <!-- Sub-label -->
                         <TextBlock Grid.Row="2"
                                    Text="รายการที่ต้องเตรียม/นำส่ง"
-                                   FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -922,8 +968,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="ไรเดอร์กำลังเดินทางส่งสินค้า"
-                                   FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -950,8 +996,8 @@
                                    Margin="0,0,0,6"/>
                         <TextBlock Grid.Row="2"
                                    Text="ออเดอร์ส่งถึงมือลูกค้าเรียบร้อย"
-                                   FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -1096,8 +1142,7 @@
                             <!-- #1: Receipt ID (เลขที่บิล) -->
                             <DataGridTextColumn Header="เลขที่บิล"
                                                 Binding="{Binding RefNo}"
-                                                Width="185"
-                                                MinWidth="180"
+                                                Width="200"
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #2: Date & Time (วัน-เวลา) -->
@@ -1109,7 +1154,7 @@
                             <!-- #3: Customer Name (ชื่อลูกค้า) -->
                             <DataGridTextColumn Header="ชื่อลูกค้า"
                                                 Binding="{Binding CustomerDisplayName, TargetNullValue='-', FallbackValue='-'}"
-                                                Width="150"
+                                                Width="180"
                                                 ElementStyle="{StaticResource ColLeft}"/>
 
                             <!-- #4: Phone & Address (เบอร์โทร & ที่อยู่จัดส่ง) -->
@@ -1128,34 +1173,34 @@
                             <DataGridTemplateColumn Header="สถานะจัดส่ง" Width="140">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border x:Name="StatusBadge" CornerRadius="12" Padding="12,4"
+                                        <Border x:Name="StatusBadge" CornerRadius="12" Padding="10,4"
                                                 HorizontalAlignment="Center"
                                                 Background="#E0F2FE"
                                                 BorderBrush="#BAE6FD"
                                                 BorderThickness="1">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <TextBlock x:Name="StatusIcon" Text="⌛ " FontSize="13" Foreground="#0369A1" VerticalAlignment="Center"/>
+                                                <TextBlock x:Name="StatusIcon" Text="⏳ " FontSize="13" Foreground="#0284C7" VerticalAlignment="Center"/>
                                                 <TextBlock x:Name="StatusText"
                                                            Text="{Binding DeliveryStatus}"
-                                                           FontSize="14" FontWeight="Bold"
-                                                           Foreground="#0369A1"
+                                                           FontSize="14" FontWeight="SemiBold"
+                                                           Foreground="#0284C7"
                                                            VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding DeliveryStatus}" Value="รอจัดส่ง">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
-                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FDE68A"/>
-                                                <Setter TargetName="StatusIcon"  Property="Text" Value="⌛ "/>
-                                                <Setter TargetName="StatusIcon"  Property="Foreground" Value="#B45309"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B45309"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#BAE6FD"/>
+                                                <Setter TargetName="StatusIcon"  Property="Text" Value="⏳ "/>
+                                                <Setter TargetName="StatusIcon"  Property="Foreground" Value="#0284C7"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#0284C7"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding DeliveryStatus}" Value="รอดำเนินการ">
-                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
-                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FDE68A"/>
-                                                <Setter TargetName="StatusIcon"  Property="Text" Value="⌛ "/>
-                                                <Setter TargetName="StatusIcon"  Property="Foreground" Value="#B45309"/>
-                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#B45309"/>
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#BAE6FD"/>
+                                                <Setter TargetName="StatusIcon"  Property="Text" Value="⏳ "/>
+                                                <Setter TargetName="StatusIcon"  Property="Foreground" Value="#0284C7"/>
+                                                <Setter TargetName="StatusText"  Property="Foreground" Value="#0284C7"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding DeliveryStatus}" Value="กำลังจัดส่ง">
                                                 <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
@@ -1207,13 +1252,14 @@
                                LastChildFill="False"
                                Margin="0,12,0,0">
                         <TextBlock Text="{Binding Deliveries.Count, StringFormat=แสดงทั้งหมด {0} รายการการจัดส่ง}"
-                                   Foreground="#718096"
+                                   Foreground="#64748B"
                                    FontSize="14"
+                                   FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Left"
                                    Margin="0"/>
-                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่แถวเพื่อดูรายละเอียดและจัดการคำสั่งซื้อ"
-                                   Foreground="#64748B"
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดและอัปเดตสถานะจัดส่ง"
+                                   Foreground="#94A3B8"
                                    FontSize="13"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Right"
@@ -1232,412 +1278,422 @@
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Panel.ZIndex="99">
-            <Border Width="620"
-                    MaxHeight="720"
+            <Border Width="700"
+                    MaxHeight="780"
                     Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1.5"
-                    CornerRadius="18"
-                    Padding="24"
+                    CornerRadius="16"
+                    Padding="28,20"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Effect="{StaticResource SoftShadow}">
+                    VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="25" Opacity="0.4" ShadowDepth="4" Direction="270" Color="#000000"/>
+                </Border.Effect>
+
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>   <!-- 0: Header -->
-                        <RowDefinition Height="Auto"/>   <!-- 1: Delivery Details Inset Card -->
-                        <RowDefinition Height="Auto"/>   <!-- 2: Section Title (Items) -->
-                        <RowDefinition Height="*"/>      <!-- 3: Items List DataGrid Container -->
-                        <RowDefinition Height="Auto"/>   <!-- 4: Totals Section -->
-                        <RowDefinition Height="Auto"/>   <!-- 5: Action Buttons -->
+                        <RowDefinition Height="Auto"/>   <!-- Row 0: Sticky Header & Customer Info -->
+                        <RowDefinition Height="*"/>      <!-- Row 1: Scrollable Items Table -->
+                        <RowDefinition Height="Auto"/>   <!-- Row 2: Fixed Bottom Summary & Buttons -->
                     </Grid.RowDefinitions>
 
-                    <!-- 0: Header with Soft Blue/Purple Rounded Icon Box & 'X' Close Button -->
-                    <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
-                        <!-- Circular Close Button ('✕') on Top-Right -->
-                        <Button DockPanel.Dock="Right"
-                                Command="{Binding CloseDeliveryDetailCommand}"
-                                Style="{StaticResource ModalCloseButtonStyle}"
-                                VerticalAlignment="Center"/>
-
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <!-- Icon in Rounded Box -->
-                            <Border Width="44" Height="44" CornerRadius="12" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" Margin="0,0,12,0">
-                                <TextBlock Text="🛵" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="รายละเอียดคำสั่งซื้อเดลิเวอรี่"
-                                           FontSize="20" FontWeight="Bold"
-                                           Foreground="#0F172A"
-                                           Margin="0,0,0,2"/>
-                                <TextBlock Text="{Binding SelectedDeliveryOrder.RefNo, StringFormat='เลขที่บิล: {0}'}"
-                                           FontSize="14.5" FontWeight="SemiBold"
-                                           Foreground="#00A3E0"
-                                           Margin="0"/>
+                    <!-- ══════════════════════════════════════════════════════════ -->
+                    <!--  ROW 0: STICKY HEADER & COMPACT DELIVERY INFO              -->
+                    <!-- ══════════════════════════════════════════════════════════ -->
+                    <StackPanel Grid.Row="0">
+                        <!-- Header with Soft Blue Rounded Icon Box -->
+                        <DockPanel LastChildFill="False" Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Icon in Rounded Box -->
+                                <Border Width="44" Height="44" CornerRadius="12" Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" Margin="0,0,12,0">
+                                    <TextBlock Text="🛵" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="รายละเอียดคำสั่งซื้อเดลิเวอรี่"
+                                               FontSize="22" FontWeight="Bold"
+                                               Foreground="#0F172A"
+                                               Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding SelectedDeliveryOrder.RefNo, StringFormat='เลขที่บิล: {0}'}"
+                                               FontSize="15" FontWeight="SemiBold"
+                                               Foreground="#0284C7"
+                                               Margin="0"/>
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </DockPanel>
+                        </DockPanel>
 
-                    <!-- 1: Delivery Details Inset Card (#F8FAFC) -->
+                        <!-- Delivery Details Inset Card (#F8FAFC) - Compact Sizing -->
+                        <Border Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="14,10"
+                                Margin="0,0,0,10">
+                            <StackPanel>
+                                <!-- Row 1: Customer Name & Phone (2 Columns with White Rounded Icon Boxes) -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Customer Name -->
+                                    <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="10,6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="30" Height="30" CornerRadius="6" Background="#E0F2FE" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="ชื่อลูกค้า" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerName}" FontSize="15" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Customer Phone -->
+                                    <Border Grid.Column="2" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="10,6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="30" Height="30" CornerRadius="6" Background="#E0F2FE" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <TextBlock Text="📞" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="เบอร์โทรศัพท์" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerPhone}" FontSize="15" FontWeight="Bold" Foreground="#0284C7" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Dashed Divider -->
+                                <Line X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" Stroke="#CBD5E1" StrokeDashArray="4 3" StrokeThickness="1" Margin="0,8"/>
+
+                                <!-- Row 2: Full Width Delivery Address -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="28" Height="28" CornerRadius="6" Background="#FEE2E2" Margin="0,1,8,0" VerticalAlignment="Top">
+                                        <TextBlock Text="📍" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="ที่อยู่จัดส่ง:" FontSize="13" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,1"/>
+                                        <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerAddress, TargetNullValue='ไม่ระบุที่อยู่', FallbackValue='ไม่ระบุที่อยู่'}"
+                                                   FontSize="15" Foreground="#1E293B" FontWeight="Medium"
+                                                   TextWrapping="Wrap" LineHeight="20"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Dashed Divider -->
+                                <Line X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" Stroke="#CBD5E1" StrokeDashArray="4 3" StrokeThickness="1" Margin="0,8"/>
+
+                                <!-- Row 3: Order Timestamp & Status Badge -->
+                                <Grid VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🕒 วันเวลาสั่งซื้อ: " FontSize="14" Foreground="#64748B"/>
+                                        <TextBlock Text="{Binding SelectedDeliveryOrder.Timestamp, StringFormat=dd/MM/yyyy HH:mm}"
+                                                   FontSize="14" Foreground="#1E293B" FontWeight="SemiBold"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="สถานะจัดส่ง: " FontSize="14" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <!-- Status Dropdown (Select Menu) -->
+                                        <ComboBox SelectedValue="{Binding SelectedDeliveryOrderStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  SelectedValuePath="Tag"
+                                                  Style="{StaticResource DeliveryStatusModalComboBoxStyle}">
+                                            <ComboBoxItem Tag="รอจัดส่ง" Content="⌛  รอจัดส่ง" Style="{StaticResource StatusItemPendingStyle}"/>
+                                            <ComboBoxItem Tag="กำลังจัดส่ง" Content="🚚  กำลังจัดส่ง" Style="{StaticResource StatusItemInTransitStyle}"/>
+                                            <ComboBoxItem Tag="จัดส่งสำเร็จ" Content="☑  จัดส่งสำเร็จ" Style="{StaticResource StatusItemSuccessStyle}"/>
+                                            <ComboBoxItem Tag="ยกเลิก" Content="✖  ยกเลิก" Style="{StaticResource StatusItemCancelledStyle}"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section Title with Items Count -->
+                        <TextBlock Text="{Binding SelectedOrderItems.Count, StringFormat='รายการสินค้าที่จัดส่ง ({0} รายการ)', FallbackValue='รายการสินค้าที่จัดส่ง', TargetNullValue='รายการสินค้าที่จัดส่ง'}"
+                                   FontSize="16" FontWeight="Bold"
+                                   Foreground="#334155" Margin="2,2,0,8"/>
+                    </StackPanel>
+
+                    <!-- ══════════════════════════════════════════════════════════ -->
+                    <!--  ROW 1: SCROLLABLE ITEMS TABLE (INNER SCROLLABLE LIST)     -->
+                    <!-- ══════════════════════════════════════════════════════════ -->
                     <Border Grid.Row="1"
-                            Background="#F8FAFC"
-                            BorderBrush="#E2E8F0"
-                            BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="16"
-                            Margin="0,0,0,14">
-                        <StackPanel>
-                            <!-- Row 1: Customer Name & Phone (2 Columns with White Rounded Icon Boxes) -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Customer Name -->
-                                <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="10,8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Width="30" Height="30" CornerRadius="8" Background="#E0F2FE" Margin="0,0,8,0" VerticalAlignment="Center">
-                                            <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="ชื่อลูกค้า" FontSize="13" Foreground="#64748B" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerName}" FontSize="15" FontWeight="Bold" Foreground="#0F172A" TextTrimming="CharacterEllipsis"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Customer Phone -->
-                                <Border Grid.Column="2" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="10,8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Width="30" Height="30" CornerRadius="8" Background="#E0F2FE" Margin="0,0,8,0" VerticalAlignment="Center">
-                                            <TextBlock Text="📞" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="เบอร์โทรศัพท์" FontSize="13" Foreground="#64748B" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerPhone}" FontSize="15" FontWeight="Bold" Foreground="#00A3E0" TextTrimming="CharacterEllipsis"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-
-                            <!-- Dashed Divider -->
-                            <Line X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" Stroke="#CBD5E1" StrokeDashArray="4 3" StrokeThickness="1" Margin="0,12"/>
-
-                            <!-- Row 2: Full Width Delivery Address -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Border Width="28" Height="28" CornerRadius="8" Background="#FEE2E2" Margin="0,2,10,0" VerticalAlignment="Top">
-                                    <TextBlock Text="📍" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="ที่อยู่จัดส่ง:" FontSize="13" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
-                                    <TextBlock Text="{Binding SelectedDeliveryOrder.CustomerAddress, TargetNullValue='ไม่ระบุที่อยู่', FallbackValue='ไม่ระบุที่อยู่'}"
-                                               FontSize="14.5" Foreground="#1E293B" FontWeight="Medium"
-                                               TextWrapping="Wrap" LineHeight="20"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Dashed Divider -->
-                            <Line X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" Stroke="#CBD5E1" StrokeDashArray="4 3" StrokeThickness="1" Margin="0,12"/>
-
-                            <!-- Row 3: Order Timestamp & Status Badge -->
-                            <Grid VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🕒 วันเวลาสั่งซื้อ: " FontSize="14" Foreground="#64748B"/>
-                                    <TextBlock Text="{Binding SelectedDeliveryOrder.Timestamp, StringFormat=dd/MM/yyyy HH:mm}"
-                                               FontSize="14" Foreground="#1E293B" FontWeight="SemiBold"/>
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <TextBlock Text="สถานะจัดส่ง: " FontSize="14" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                    <!-- Status Dropdown (Select Menu) -->
-                                    <ComboBox SelectedValue="{Binding SelectedDeliveryOrderStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                              SelectedValuePath="Tag"
-                                              Style="{StaticResource DeliveryStatusModalComboBoxStyle}">
-                                        <ComboBoxItem Tag="รอจัดส่ง" Content="⌛  รอจัดส่ง" Style="{StaticResource StatusItemPendingStyle}"/>
-                                        <ComboBoxItem Tag="กำลังจัดส่ง" Content="🚚  กำลังจัดส่ง" Style="{StaticResource StatusItemInTransitStyle}"/>
-                                        <ComboBoxItem Tag="จัดส่งสำเร็จ" Content="☑  จัดส่งสำเร็จ" Style="{StaticResource StatusItemSuccessStyle}"/>
-                                        <ComboBoxItem Tag="ยกเลิก" Content="✖  ยกเลิก" Style="{StaticResource StatusItemCancelledStyle}"/>
-                                    </ComboBox>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- 2: Items Header Label -->
-                    <TextBlock Grid.Row="2" Text="รายการสินค้าที่จัดส่ง"
-                               FontSize="16" FontWeight="Bold"
-                               Foreground="#475569" Margin="2,0,0,6"/>
-
-                    <!-- 3: Items List Table in Rounded Border Container -->
-                    <Border Grid.Row="3"
                             Background="#FFFFFF"
                             BorderBrush="#E2E8F0"
                             BorderThickness="1"
                             CornerRadius="10"
                             ClipToBounds="True"
-                            MinHeight="120"
+                            MinHeight="140"
                             MaxHeight="220">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <DataGrid ItemsSource="{Binding SelectedOrderItems}"
-                                      AutoGenerateColumns="False"
-                                      IsReadOnly="True"
-                                      HeadersVisibility="Column"
-                                      CanUserReorderColumns="False"
-                                      CanUserResizeColumns="False"
-                                      CanUserSortColumns="False"
-                                      RowHeight="44"
-                                      GridLinesVisibility="Horizontal"
-                                      HorizontalGridLinesBrush="#F1F5F9"
-                                      BorderThickness="0"
-                                      Background="Transparent"
-                                      HorizontalScrollBarVisibility="Disabled"
-                                      ColumnHeaderStyle="{StaticResource LightModalColHeaderStyle}"
-                                      RowStyle="{StaticResource LightModalRowStyle}"
-                                      CellStyle="{StaticResource LightModalCellStyle}">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="รายการสินค้า"
-                                                        Binding="{Binding ProductName}"
-                                                        Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#1E293B"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                                <Setter Property="FontSize" Value="15"/>
-                                                <Setter Property="Margin" Value="10,0,0,0"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="จำนวน"
-                                                        Binding="{Binding Quantity}"
-                                                        Width="80">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#64748B"/>
-                                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="15"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="ราคา"
-                                                        Binding="{Binding UnitPrice, StringFormat={}{0:N2}}"
-                                                        Width="100">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#64748B"/>
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="15"/>
-                                                <Setter Property="Margin" Value="0,0,10,0"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="รวมเงิน"
-                                                        Binding="{Binding Total, StringFormat={}{0:N2}}"
-                                                        Width="115">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#0F172A"/>
-                                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontSize" Value="15"/>
-                                                <Setter Property="Margin" Value="0,0,12,0"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </ScrollViewer>
+                        <DataGrid ItemsSource="{Binding SelectedOrderItems}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column"
+                                  CanUserReorderColumns="False"
+                                  CanUserResizeColumns="False"
+                                  CanUserSortColumns="False"
+                                  RowHeight="40"
+                                  GridLinesVisibility="None"
+                                  BorderThickness="0"
+                                  Background="Transparent"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.CanContentScroll="True"
+                                  ColumnHeaderStyle="{StaticResource LightModalColHeaderStyle}"
+                                  RowStyle="{StaticResource LightModalRowStyle}"
+                                  CellStyle="{StaticResource LightModalCellStyle}">
+                            <DataGrid.Resources>
+                                <Style TargetType="ScrollBar" BasedOn="{StaticResource MinimalScrollBarStyle}"/>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="รายการสินค้า"
+                                                    Binding="{Binding ProductName}"
+                                                    Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#1E293B"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="Margin" Value="10,0,0,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="จำนวน"
+                                                    Binding="{Binding Quantity}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#64748B"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="ราคา"
+                                                    Binding="{Binding UnitPrice, StringFormat={}{0:N2}}"
+                                                    Width="100">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#64748B"/>
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="Margin" Value="0,0,10,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="รวมเงิน"
+                                                    Binding="{Binding Total, StringFormat={}{0:N2}}"
+                                                    Width="115">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#0F172A"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="Margin" Value="0,0,12,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Border>
 
-                    <!-- 4: Totals Section (Subtotal, Shipping Fee, Divider, Grand Total) -->
-                    <Border Grid.Row="4" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="18,14" Margin="0,12,0,16">
-                        <StackPanel>
-                            <!-- 1. ยอดรวมสินค้า (Subtotal) -->
-                            <DockPanel LastChildFill="False">
-                                <TextBlock Text="ยอดรวมสินค้า"
-                                           Foreground="#64748B"
-                                           FontSize="15"
-                                           FontWeight="Medium"
-                                           DockPanel.Dock="Left"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding SelectedDeliverySubtotal, StringFormat={}{0:N2}}"
-                                           Foreground="#1E293B"
-                                           FontSize="16"
-                                           FontWeight="SemiBold"
-                                           DockPanel.Dock="Right"
-                                           VerticalAlignment="Center"/>
-                            </DockPanel>
-
-                            <!-- 2. ค่าจัดส่ง (Shipping Fee) -->
-                            <DockPanel LastChildFill="False" Margin="0,8,0,0">
-                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                    <TextBlock Text="🚚 " FontSize="15" VerticalAlignment="Center"/>
-                                    <TextBlock Text="ค่าจัดส่ง"
+                    <!-- ══════════════════════════════════════════════════════════ -->
+                    <!--  ROW 2: FIXED BOTTOM SUMMARY & BUTTONS (STICKY FOOTER)     -->
+                    <!-- ══════════════════════════════════════════════════════════ -->
+                    <StackPanel Grid.Row="2">
+                        <!-- Totals Section (Subtotal, Shipping Fee, Divider, Grand Total) -->
+                        <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="18,12" Margin="0,10,0,14">
+                            <StackPanel>
+                                <!-- 1. ยอดรวมสินค้า (Subtotal) -->
+                                <DockPanel LastChildFill="False">
+                                    <TextBlock Text="ยอดรวมสินค้า"
                                                Foreground="#64748B"
                                                FontSize="15"
                                                FontWeight="Medium"
+                                               DockPanel.Dock="Left"
                                                VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding SelectedDeliverySubtotal, StringFormat={}{0:N2}}"
+                                               Foreground="#1E293B"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               DockPanel.Dock="Right"
+                                               VerticalAlignment="Center"/>
+                                </DockPanel>
+
+                                <!-- 2. ค่าจัดส่ง (Shipping Fee) -->
+                                <DockPanel LastChildFill="False" Margin="0,6,0,0">
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="🚚 " FontSize="14" VerticalAlignment="Center"/>
+                                        <TextBlock Text="ค่าจัดส่ง"
+                                                   Foreground="#64748B"
+                                                   FontSize="15"
+                                                   FontWeight="Medium"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding SelectedDeliveryShippingFee, StringFormat={}{0:N2}}"
+                                               Foreground="#0284C7"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               DockPanel.Dock="Right"
+                                               VerticalAlignment="Center"/>
+                                </DockPanel>
+
+                                <!-- 3. เส้นคั่น (Divider) -->
+                                <Border Height="1" Background="#E2E8F0" Margin="0,10,0,10"/>
+
+                                <!-- 4. ยอดรวมสุทธิทั้งสิ้น (Grand Total) -->
+                                <DockPanel LastChildFill="False">
+                                    <TextBlock Text="ยอดรวมสุทธิทั้งสิ้น"
+                                               Foreground="#0F172A"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               DockPanel.Dock="Left"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding SelectedDeliveryGrandTotal, StringFormat={}{0:N2}}"
+                                               FontSize="22"
+                                               FontWeight="Bold"
+                                               Foreground="#0284C7"
+                                               DockPanel.Dock="Right"
+                                               VerticalAlignment="Center"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Action Buttons inside Modal (3 Columns: Left->Right) -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- 1. Leftmost: Update Delivery Status (Solid Blue #0284C7) -->
+                            <Button Grid.Column="0"
+                                    Command="{Binding UpdateDeliveryStatusCommand}"
+                                    Height="46"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                                        <Setter Property="FontSize" Value="16"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" Background="#0284C7" CornerRadius="8" Padding="8,0">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#38BDF8"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#0369A1"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="🛵" Margin="0,0,8,0" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="อัปเดตสถานะจัดส่ง" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Text="{Binding SelectedDeliveryShippingFee, StringFormat={}{0:N2}}"
-                                           Foreground="#00A3E0"
-                                           FontSize="16"
-                                           FontWeight="SemiBold"
-                                           DockPanel.Dock="Right"
-                                           VerticalAlignment="Center"/>
-                            </DockPanel>
+                            </Button>
 
-                            <!-- 3. เส้นคั่น (Divider) -->
-                            <Border Height="1" Background="#E2E8F0" Margin="0,12,0,12"/>
+                            <!-- 2. Middle: Print Delivery Slip (White Background #FFFFFF with Border #CBD5E1) -->
+                            <Button Grid.Column="2"
+                                    Command="{Binding PrintDeliverySlipCommand}"
+                                    CommandParameter="{Binding SelectedDeliveryOrder}"
+                                    Height="46"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                                        <Setter Property="FontSize" Value="16"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#334155"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="8,0">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#F1F5F9"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#E2E8F0"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="🖨️" Margin="0,0,8,0" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="พิมพ์ใบจัดส่ง" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
 
-                            <!-- 4. ยอดรวมสุทธิทั้งสิ้น (Grand Total) -->
-                            <DockPanel LastChildFill="False">
-                                <TextBlock Text="ยอดรวมสุทธิทั้งสิ้น"
-                                           Foreground="#0F172A"
-                                           FontSize="17"
-                                           FontWeight="Bold"
-                                           DockPanel.Dock="Left"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding SelectedDeliveryGrandTotal, StringFormat={}{0:N2}}"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="#00A3E0"
-                                           DockPanel.Dock="Right"
-                                           VerticalAlignment="Center"/>
-                            </DockPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- 5: Action Buttons inside Modal (3 Columns: Left->Right) -->
-                    <Grid Grid.Row="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- 1. Leftmost: Update Delivery Status (Solid Blue with Soft Shadow) -->
-                        <Button Grid.Column="0"
-                                Content="🛵  อัปเดตสถานะจัดส่ง"
-                                Command="{Binding UpdateDeliveryStatusCommand}"
-                                Height="46"
-                                Cursor="Hand">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                    <Setter Property="FontSize" Value="15"/>
-                                    <Setter Property="FontWeight" Value="Bold"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border x:Name="Bd" Background="#00A3E0" CornerRadius="10" Padding="8,0">
-                                                    <Border.Effect>
-                                                        <DropShadowEffect Color="#00A3E0" BlurRadius="8" ShadowDepth="2" Direction="270" Opacity="0.3"/>
-                                                    </Border.Effect>
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#38BDF8"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#0082B3"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-
-                        <!-- 2. Middle: Print Delivery Slip (White Background with Blue Outline) -->
-                        <Button Grid.Column="2"
-                                Content="🖨️  พิมพ์ใบจัดส่ง"
-                                Command="{Binding PrintDeliverySlipCommand}"
-                                CommandParameter="{Binding SelectedDeliveryOrder}"
-                                Height="46"
-                                Cursor="Hand">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                    <Setter Property="FontSize" Value="15"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="#00A3E0"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border x:Name="Bd" Background="#FFFFFF" BorderBrush="#00A3E0" BorderThickness="1.5" CornerRadius="10" Padding="8,0">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#E0F2FE"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#BAE6FD"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-
-                        <!-- 3. Rightmost: Close Window (Soft Light Grey) -->
-                        <Button Grid.Column="4"
-                                Content="ปิด"
-                                Command="{Binding CloseDeliveryDetailCommand}"
-                                Height="46"
-                                Cursor="Hand">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-                                    <Setter Property="FontSize" Value="15"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="#64748B"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border x:Name="Bd" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="10" Padding="8,0">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#E2E8F0"/>
-                                                        <Setter Property="Foreground" Value="#334155"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#CBD5E1"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </Grid>
+                            <!-- 3. Rightmost: Close Window (Soft Light Grey #F1F5F9 with Border #CBD5E1) -->
+                            <Button Grid.Column="4"
+                                    Command="{Binding CloseDeliveryDetailCommand}"
+                                    Height="46"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+                                        <Setter Property="FontSize" Value="16"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#475569"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="8,0">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#E2E8F0"/>
+                                                            <Setter Property="Foreground" Value="#1E293B"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#CBD5E1"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <TextBlock Text="ปิด" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
