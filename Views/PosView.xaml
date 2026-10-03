@@ -13,6 +13,7 @@
              Background="#F4F7FB">
 
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <!-- SolidColorBrush palette for High-Contrast Crimson Red Theme -->
         <SolidColorBrush x:Key="PosBg" Color="#F4F7FB"/>
         <SolidColorBrush x:Key="PosCard"   Color="#FFFFFF"/>
@@ -190,7 +191,25 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <!-- Clickable Card Border -->
-                                <Border Background="#FFFFFF" Width="185" Height="265" CornerRadius="12" BorderThickness="1" BorderBrush="#BAE6FD" Margin="6" ClipToBounds="True" Cursor="Hand">
+                                <Border x:Name="CardBorder" Width="185" Height="265" CornerRadius="12" Margin="6" ClipToBounds="True">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#00A3E0"/>
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect BlurRadius="10" Direction="270" Opacity="0.15" ShadowDepth="3" Color="#00A3E0"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <Border.InputBindings>
                                         <MouseBinding MouseAction="LeftClick" Command="{Binding DataContext.AddToCartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
                                     </Border.InputBindings>
@@ -205,6 +224,11 @@
                                             <Grid>
                                                 <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="#BAE6FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 <Image Source="{Binding ImagePath}" Width="130" Height="130" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                                <!-- Out of Stock Badge -->
+                                                <Border Background="#99000000" CornerRadius="8" HorizontalAlignment="Center" Padding="12,4" VerticalAlignment="Center" Visibility="{Binding IsOutOfStock, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="White" Text="สินค้าหมด"/>
+                                                </Border>
                                             </Grid>
                                         </Border>
 
@@ -229,7 +253,7 @@
                                                 <TextBlock Grid.Column="0" Text="{Binding Price, StringFormat={}{0:N2}}" FontSize="21" FontWeight="SemiBold" Foreground="#0B2545" VerticalAlignment="Center"/>
 
                                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <TextBlock Text="คงเหลือ " FontSize="14" Foreground="#718096"/>
+                                                    <TextBlock x:Name="StockLabel" Text="คงเหลือ " FontSize="14" Foreground="#718096"/>
                                                     <TextBlock x:Name="StockText" Text="{Binding Stock}" FontSize="14" FontWeight="Bold" Foreground="#10B981"/>
                                                 </StackPanel>
                                             </Grid>
@@ -237,9 +261,17 @@
                                     </Grid>
                                 </Border>
                                 <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding Stock}" Value="0">
-                                        <Setter TargetName="StockText" Property="Foreground" Value="#EF4444"/>
-                                        <Setter TargetName="StockText" Property="Text" Value="หมด"/>
+                                    <DataTrigger Binding="{Binding IsOutOfStock}" Value="True">
+                                        <Setter TargetName="CardBorder" Property="Opacity" Value="0.55"/>
+                                        <Setter TargetName="CardBorder" Property="Background" Value="#F8FAFC"/>
+                                        <Setter TargetName="CardBorder" Property="BorderBrush" Value="#E2E8F0"/>
+                                        <Setter TargetName="CardBorder" Property="IsEnabled" Value="False"/>
+                                        <Setter TargetName="CardBorder" Property="IsHitTestVisible" Value="False"/>
+                                        <Setter TargetName="CardBorder" Property="Cursor" Value="Arrow"/>
+                                        <Setter TargetName="CardBorder" Property="Effect" Value="{x:Null}"/>
+                                        <Setter TargetName="StockLabel" Property="Foreground" Value="#94A3B8"/>
+                                        <Setter TargetName="StockText" Property="Foreground" Value="#94A3B8"/>
+                                        <Setter TargetName="StockText" Property="Text" Value="0"/>
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>

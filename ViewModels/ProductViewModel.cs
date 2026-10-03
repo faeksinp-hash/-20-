@@ -4518,7 +4518,10 @@ namespace Porjai20.ViewModels
         {
             if (parameter is Product product)
             {
-                if (product.Stock <= 0) return; // Prevent adding if out of stock
+                if (product == null || product.QTY <= 0)
+                {
+                    return; // ป้องกันการเพิ่มสินค้าหมดสต็อกลงตะกร้าทุกกรณี
+                }
 
                 var existingItem = CartItems.FirstOrDefault(c => c.Product.Id == product.Id);
                 if (existingItem != null)

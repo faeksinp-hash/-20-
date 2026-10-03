@@ -47,20 +47,38 @@ namespace Porjai20.Models
             set => Pro_Cost = value;
         }
 
-        public int Pro_Qty { get; set; }
-        public int Stock
+        private int _proQty;
+        public int Pro_Qty
         {
-            get => Pro_Qty;
+            get => _proQty;
             set
             {
-                if (Pro_Qty != value)
+                if (_proQty != value)
                 {
-                    Pro_Qty = value;
+                    _proQty = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(Stock));
+                    OnPropertyChanged(nameof(QTY));
+                    OnPropertyChanged(nameof(IsOutOfStock));
                     OnPropertyChanged(nameof(StockStatus));
+                    OnPropertyChanged(nameof(StatusPriority));
                 }
             }
         }
+
+        public int Stock
+        {
+            get => _proQty;
+            set => Pro_Qty = value;
+        }
+
+        public int QTY
+        {
+            get => _proQty;
+            set => Pro_Qty = value;
+        }
+
+        public bool IsOutOfStock => _proQty <= 0;
 
         public int Pro_MinQty { get; set; } = 5;
         public int ReorderPoint

@@ -1912,10 +1912,14 @@ namespace Porjai20.ViewModels
 
         private void AddToCart(Product product)
         {
-            if (product == null) return;
+            if (product == null || product.QTY <= 0)
+            {
+                return; // ป้องกันการเพิ่มสินค้าหมดสต็อกลงตะกร้าทุกกรณี
+            }
             var existingItem = CartItems.FirstOrDefault(c => c.Product.Id == product.Id);
             if (existingItem != null)
             {
+                if (existingItem.Quantity >= product.QTY) return;
                 existingItem.Quantity++;
             }
             else
