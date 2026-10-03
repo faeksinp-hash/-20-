@@ -518,7 +518,9 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _selectedCustomer, value))
                 {
+                    CurrentPoints = value?.Points ?? 0;
                     OnPropertyChanged(nameof(SelectedCustomerItem));
+                    OnPropertyChanged(nameof(MaxRedeemablePoints));
                     OnPropertyChanged(nameof(EarnedPoints));
                     OnPropertyChanged(nameof(HasSelectedCustomer));
                     OnPropertyChanged(nameof(HasMember));
@@ -526,6 +528,8 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(LinkedMemberDisplayText));
                     OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
                     OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
+                    UsedPoints = 0;
+                    DiscountAmount = 0;
                     if (value != null)
                     {
                         CustomerName = value.Name;
@@ -549,12 +553,144 @@ namespace Porjai20.ViewModels
 
         public bool HasSelectedCustomer => SelectedCustomer != null;
 
+        private int _currentPoints;
+        public int CurrentPoints
+        {
+            get => _currentPoints;
+            set
+            {
+                if (SetProperty(ref _currentPoints, value))
+                {
+                    OnPropertyChanged(nameof(MaxRedeemablePoints));
+                }
+            }
+        }
+
+        public int MaxRedeemablePoints
+        {
+            get
+            {
+                int available = CurrentPoints;
+                int maxByBill = (int)Math.Floor(TotalAmountBeforeDiscount);
+                return Math.Max(0, Math.Min(available, maxByBill));
+            }
+        }
+
+        private int _usedPoints;
+        public int UsedPoints
+        {
+            get => _usedPoints;
+            set
+            {
+                if (SetProperty(ref _usedPoints, value))
+                {
+                    _discountAmount = _usedPoints * 1.00m;
+                    OnPropertyChanged(nameof(DiscountAmount));
+                    OnPropertyChanged(nameof(HasDiscount));
+                    OnPropertyChanged(nameof(HasPointDiscount));
+                    OnPropertyChanged(nameof(CartTotal));
+                    OnPropertyChanged(nameof(CheckoutGrandTotal));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(Change));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                }
+            }
+        }
+
+        private decimal _discountAmount;
+        public decimal DiscountAmount
+        {
+            get => _discountAmount;
+            set
+            {
+                if (SetProperty(ref _discountAmount, value))
+                {
+                    OnPropertyChanged(nameof(HasDiscount));
+                    OnPropertyChanged(nameof(HasPointDiscount));
+                    OnPropertyChanged(nameof(CartTotal));
+                    OnPropertyChanged(nameof(CheckoutGrandTotal));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(Change));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                }
+            }
+        }
+
+        public bool HasDiscount => DiscountAmount > 0;
+        public bool HasPointDiscount => UsedPoints > 0;
+
+        private bool _isPointRedeemModalOpen;
+        public bool IsPointRedeemModalOpen
+        {
+            get => _isPointRedeemModalOpen;
+            set => SetProperty(ref _isPointRedeemModalOpen, value);
+        }
+
+        private int _redeemPoints;
+        public int RedeemPoints
+        {
+            get => _redeemPoints;
+            set
+            {
+                if (SetProperty(ref _redeemPoints, value))
+                {
+                    string textVal = value > 0 ? value.ToString() : "";
+                    if (_inputRedeemPointsText != textVal)
+                    {
+                        _inputRedeemPointsText = textVal;
+                        OnPropertyChanged(nameof(InputRedeemPointsText));
+                    }
+                    UpdateCalculatedDiscount();
+                }
+            }
+        }
+
+        private string _inputRedeemPointsText = "";
+        public string InputRedeemPointsText
+        {
+            get => _inputRedeemPointsText;
+            set
+            {
+                if (SetProperty(ref _inputRedeemPointsText, value))
+                {
+                    int.TryParse(value, out int parsed);
+                    if (_redeemPoints != parsed)
+                    {
+                        _redeemPoints = parsed;
+                        OnPropertyChanged(nameof(RedeemPoints));
+                    }
+                    UpdateCalculatedDiscount();
+                }
+            }
+        }
+
+        private decimal _calculatedDiscount;
+        public decimal CalculatedDiscount
+        {
+            get => _calculatedDiscount;
+            set => SetProperty(ref _calculatedDiscount, value);
+        }
+
+        private string _redeemValidationMessage = "";
+        public string RedeemValidationMessage
+        {
+            get => _redeemValidationMessage;
+            set
+            {
+                if (SetProperty(ref _redeemValidationMessage, value))
+                {
+                    OnPropertyChanged(nameof(HasRedeemValidationMessage));
+                }
+            }
+        }
+        public bool HasRedeemValidationMessage => !string.IsNullOrEmpty(RedeemValidationMessage);
+
         public int EarnedPoints
         {
             get
             {
                 if (SelectedCustomer == null) return 0;
-                // Every 100 Baht = 1 Point (Floor)
+                // Every 100 Baht net payable = 1 Point (Floor)
                 return (int)Math.Floor(CheckoutGrandTotal / 100m);
             }
         }
@@ -624,10 +760,11 @@ namespace Porjai20.ViewModels
         }
 
         public decimal ShippingFee => SelectedShippingMethod == "Delivery" ? CustomShippingFee : 0;
-        public decimal CartTotal => TotalAmount + ShippingFee;
+        public decimal TotalAmountBeforeDiscount => TotalAmount + ShippingFee;
+        public decimal CartTotal => Math.Max(0, TotalAmountBeforeDiscount - DiscountAmount);
         public decimal CheckoutGrandTotal => CartTotal;
 
-        public decimal ChangeAmount => Math.Max(0, CashAmountReceived - CartTotal);
+        public decimal ChangeAmount => Math.Max(0, CashAmountReceived - CheckoutGrandTotal);
 
         private string _customerName = "";
         public string CustomerName
@@ -768,9 +905,21 @@ namespace Porjai20.ViewModels
         public ICommand CloseCheckoutCommand { get; }
         public ICommand PrintReceiptCommand { get; }
 
+        // Point Redemption Commands
+        public ICommand OpenPointRedeemCommand { get; }
+        public ICommand ClosePointRedeemModalCommand { get; }
+        public ICommand ConfirmPointRedeemCommand { get; }
+        public ICommand CancelPointDiscountCommand { get; }
+
         public PosViewModel()
         {
             _databaseService = new DatabaseService();
+
+            // Point Redemption Commands
+            OpenPointRedeemCommand = new RelayCommand(_ => ExecuteOpenPointRedeem());
+            ClosePointRedeemModalCommand = new RelayCommand(_ => { IsPointRedeemModalOpen = false; });
+            ConfirmPointRedeemCommand = new RelayCommand(_ => ExecuteConfirmPointRedeem());
+            CancelPointDiscountCommand = new RelayCommand(_ => ExecuteCancelPointDiscount());
 
             // Catalog Commands
             FilterCategoryCommand = new RelayCommand(param => { SelectedCategory = param?.ToString() ?? "ทั้งหมด"; });
@@ -1629,27 +1778,30 @@ namespace Porjai20.ViewModels
                             Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                             Cus_ID = customerId,
                             Emp_ID = (int?)null,
-                            Sales_Total = CartTotal,
-                            Sales_Cash = IsCashPayment ? CashAmountReceived : CartTotal,
+                            Sales_Total = CheckoutGrandTotal,
+                            Sales_Cash = IsCashPayment ? CashAmountReceived : CheckoutGrandTotal,
                             Sales_Change = IsCashPayment ? ChangeAmount : 0,
                             Sales_PaymentType = effectivePayment,
-                            Sales_Status = "ชำระเงินแล้ว"
+                            Sales_Status = "ชำระเงินแล้ว",
+                            DiscountAmount = DiscountAmount,
+                            PointsUsed = UsedPoints,
+                            PointsEarned = EarnedPoints
                         };
 
                         int orderId;
                         try
                         {
-                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
-                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
+                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned)
+                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned);
                                                 SELECT last_insert_rowid();";
                             orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
                         }
                         catch
                         {
-                            string sqlOrder = @"INSERT INTO SalesOrders (RefNo, TotalAmount, CashReceived, Change, PaymentMethod, Timestamp, Status, IsDelivery, CustomerName, CustomerPhone, CustomerAddress, DeliveryStatus)
-                                                VALUES (@RefNo, @TotalAmount, @CashReceived, @Change, @PaymentMethod, @Timestamp, 'ชำระเงินแล้ว', @IsDelivery, @CustomerName, @CustomerPhone, @CustomerAddress, @DeliveryStatus);
+                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
+                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
                                                 SELECT last_insert_rowid();";
-                            orderId = await conn.ExecuteScalarAsync<int>(sqlOrder, salesOrder, trans);
+                            orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
                         }
 
                         if (SelectedShippingMethod == "Delivery")
@@ -1706,46 +1858,45 @@ namespace Porjai20.ViewModels
                             }
                         }
 
-                        // Accumulate Member Points and Update Spending if Customer is Selected
+                        // Accumulate Member Points and Deduct Used Points if Customer is Selected
                         if (customerId.HasValue && customerId.Value > 0)
                         {
-                            if (EarnedPoints > 0)
+                            int netPointChange = EarnedPoints - UsedPoints;
+                            try
+                            {
+                                string sqlPointsTbl = "UPDATE tblCustomer SET Cus_Points = MAX(0, COALESCE(Cus_Points, 0) + @NetChange) WHERE Cus_ID = @Id";
+                                await conn.ExecuteAsync(sqlPointsTbl, new { NetChange = netPointChange, Id = customerId.Value }, trans);
+                            }
+                            catch
                             {
                                 try
                                 {
-                                    string sqlPointsTbl = "UPDATE tblCustomer SET Cus_Points = COALESCE(Cus_Points, 0) + @Points WHERE Cus_ID = @Id";
-                                    await conn.ExecuteAsync(sqlPointsTbl, new { Points = EarnedPoints, Id = customerId.Value }, trans);
+                                    string sqlPoints = "UPDATE Customers SET Points = MAX(0, COALESCE(Points, 0) + @NetChange) WHERE Id = @Id";
+                                    await conn.ExecuteAsync(sqlPoints, new { NetChange = netPointChange, Id = customerId.Value }, trans);
                                 }
-                                catch
-                                {
-                                    try
-                                    {
-                                        string sqlPoints = "UPDATE Customers SET Points = COALESCE(Points, 0) + @Points WHERE Id = @Id";
-                                        await conn.ExecuteAsync(sqlPoints, new { Points = EarnedPoints, Id = customerId.Value }, trans);
-                                    }
-                                    catch { }
-                                }
+                                catch { }
                             }
 
                             try
                             {
                                 string sqlSpend = "UPDATE tblCustomer SET Cus_TotalSpent = COALESCE(Cus_TotalSpent, 0) + @Spent, Cus_TotalPurchases = COALESCE(Cus_TotalPurchases, 0) + 1 WHERE Cus_ID = @Id";
-                                await conn.ExecuteAsync(sqlSpend, new { Spent = CartTotal, Id = customerId.Value }, trans);
+                                await conn.ExecuteAsync(sqlSpend, new { Spent = CheckoutGrandTotal, Id = customerId.Value }, trans);
                             }
                             catch { }
 
                             if (SelectedCustomer != null)
                             {
-                                SelectedCustomer.Points += EarnedPoints;
-                                SelectedCustomer.TotalSpent += (double)CartTotal;
+                                SelectedCustomer.Points = Math.Max(0, SelectedCustomer.Points + netPointChange);
+                                SelectedCustomer.TotalSpent += (double)CheckoutGrandTotal;
                                 SelectedCustomer.TotalPurchases += 1;
+                                CurrentPoints = SelectedCustomer.Points;
                             }
 
                             var inMem = _allCustomers.FirstOrDefault(c => c.Id == customerId.Value);
                             if (inMem != null)
                             {
-                                inMem.Points += EarnedPoints;
-                                inMem.TotalSpent += (double)CartTotal;
+                                inMem.Points = Math.Max(0, inMem.Points + netPointChange);
+                                inMem.TotalSpent += (double)CheckoutGrandTotal;
                                 inMem.TotalPurchases += 1;
                             }
                         }
@@ -1763,9 +1914,9 @@ namespace Porjai20.ViewModels
             }
 
             // Capture snapshot for Step 4 Receipt Card
-            FinalCashReceived = IsCashPayment ? CashAmountReceived : CartTotal;
+            FinalCashReceived = IsCashPayment ? CashAmountReceived : CheckoutGrandTotal;
             FinalChange = IsCashPayment ? ChangeAmount : 0;
-            FinalGrandTotal = CartTotal;
+            FinalGrandTotal = CheckoutGrandTotal;
             if (IsTransferPayment)
             {
                 FinalPaymentMethod = "สแกน QR / โอนเงิน";
@@ -1953,6 +2104,10 @@ namespace Porjai20.ViewModels
         private void ClearCart()
         {
             CartItems.Clear();
+            UsedPoints = 0;
+            DiscountAmount = 0;
+            IsPointRedeemModalOpen = false;
+            InputRedeemPointsText = "";
             CalculateTotal();
         }
 
@@ -1961,6 +2116,100 @@ namespace Porjai20.ViewModels
             TotalAmount = CartItems.Sum(i => i.Total);
             OnPropertyChanged(nameof(CartTotalItems));
             OnPropertyChanged(nameof(CartTotalString));
+            OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+            OnPropertyChanged(nameof(MaxRedeemablePoints));
+            if (UsedPoints > MaxRedeemablePoints)
+            {
+                UsedPoints = MaxRedeemablePoints;
+            }
+            OnPropertyChanged(nameof(CartTotal));
+            OnPropertyChanged(nameof(CheckoutGrandTotal));
+            OnPropertyChanged(nameof(ChangeAmount));
+            OnPropertyChanged(nameof(Change));
+            OnPropertyChanged(nameof(EarnedPoints));
+        }
+
+        private void ExecuteOpenPointRedeem()
+        {
+            if (SelectedCustomer == null) return;
+            RedeemValidationMessage = "";
+            int initial = UsedPoints > 0 ? UsedPoints : Math.Min(CurrentPoints, MaxRedeemablePoints);
+            RedeemPoints = initial;
+            InputRedeemPointsText = initial > 0 ? initial.ToString() : "";
+            UpdateCalculatedDiscount();
+            IsPointRedeemModalOpen = true;
+        }
+
+        private void UpdateCalculatedDiscount()
+        {
+            RedeemValidationMessage = "";
+            if (string.IsNullOrWhiteSpace(InputRedeemPointsText))
+            {
+                CalculatedDiscount = 0;
+                return;
+            }
+
+            if (!int.TryParse(InputRedeemPointsText.Trim(), out int points))
+            {
+                RedeemValidationMessage = "กรุณากรอกตัวเลขจำนวนเต็ม";
+                CalculatedDiscount = 0;
+                return;
+            }
+
+            if (points < 0)
+            {
+                RedeemValidationMessage = "จำนวนแต้มต้องมากกว่า 0";
+                CalculatedDiscount = 0;
+                return;
+            }
+
+            int maxAllowed = MaxRedeemablePoints;
+            if (points > maxAllowed)
+            {
+                points = maxAllowed;
+                _redeemPoints = points;
+                OnPropertyChanged(nameof(RedeemPoints));
+                _inputRedeemPointsText = points.ToString();
+                OnPropertyChanged(nameof(InputRedeemPointsText));
+                RedeemValidationMessage = $"ปรับเป็นแต้มสูงสุดที่ใช้ได้ ({maxAllowed} แต้ม) อัตโนมัติ";
+            }
+
+            CalculatedDiscount = points * 1.00m;
+        }
+
+        private void ExecuteConfirmPointRedeem()
+        {
+            if (!int.TryParse(InputRedeemPointsText?.Trim(), out int points) || points <= 0)
+            {
+                RedeemValidationMessage = "กรุณากรอกจำนวนแต้มที่ถูกต้อง (> 0)";
+                return;
+            }
+
+            int maxAllowed = MaxRedeemablePoints;
+            if (points > maxAllowed)
+            {
+                points = maxAllowed;
+            }
+
+            if (points <= 0)
+            {
+                RedeemValidationMessage = "ไม่สามารถใช้แต้มได้ในบิลนี้";
+                return;
+            }
+
+            UsedPoints = points;
+            DiscountAmount = points * 1.00m;
+            IsPointRedeemModalOpen = false;
+        }
+
+        private void ExecuteCancelPointDiscount()
+        {
+            UsedPoints = 0;
+            DiscountAmount = 0;
+            RedeemPoints = 0;
+            InputRedeemPointsText = "";
+            CalculatedDiscount = 0;
+            RedeemValidationMessage = "";
         }
     }
 }

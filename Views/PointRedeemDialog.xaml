@@ -1,0 +1,147 @@
+<Window x:Class="Porjai20.Views.PointRedeemDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="แลกแต้มสะสม"
+        SizeToContent="WidthAndHeight"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="Noto Sans Thai, Segoe UI, sans-serif">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
+    <!-- Outer Container with Shadow Padding -->
+    <Grid Margin="20">
+        <Border Width="460" Background="#FFFFFF" CornerRadius="16" BorderBrush="#BAE6FD" BorderThickness="1.5"
+                Padding="24" ClipToBounds="True">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="28" ShadowDepth="6" Direction="270" Color="#0B2545" Opacity="0.25"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <!-- Header: Title and Close (x) button -->
+                <Grid Margin="0,0,0,16">
+                    <TextBlock Text="แลกแต้มสะสม" FontSize="20" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                    
+                    <Button Click="BtnClose_Click" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Background="#F1F5F9" BorderThickness="0" Cursor="Hand" Width="32" Height="32">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="xBorder" Background="{TemplateBinding Background}" CornerRadius="16">
+                                    <TextBlock Text="✕" Foreground="#64748B" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="xBorder" Property="Background" Value="#FEE2E2"/>
+                                        <Setter Property="Foreground" Value="#EF4444"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+
+                <!-- Points Info Box -->
+                <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="10" Padding="14,12" Margin="0,0,0,16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🪙" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="txtPointsInfo" FontSize="15" FontWeight="SemiBold" Foreground="#0369A1" VerticalAlignment="Center">
+                                <Run Text="แต้มคงเหลือของ คุณ "/><Run x:Name="runCustomerName" Text="ลูกค้า"/><Run Text=" : "/><Run x:Name="runCurrentPoints" Text="0" FontWeight="Bold"/><Run Text=" แต้ม"/>
+                            </TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="อัตราแลกเปลี่ยน: 1 แต้ม = 1 บาท" Foreground="#64748B" FontSize="13" Margin="26,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Input Box for Points -->
+                <TextBlock Text="จำนวนแต้มที่ต้องการแลก:" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                <Grid Height="46" Margin="0,0,0,8">
+                    <TextBox x:Name="txtInputPoints"
+                             TextChanged="TxtInputPoints_TextChanged"
+                             Height="46" FontSize="18" FontWeight="Bold" Foreground="#0B2545"
+                             TextAlignment="Center" VerticalContentAlignment="Center"
+                             Background="#FFFFFF" BorderBrush="#38BDF8" BorderThickness="2"
+                             Padding="30,0,50,0">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <TextBlock Text="แต้ม" FontSize="14" FontWeight="SemiBold" Foreground="#64748B"
+                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,16,0"
+                               IsHitTestVisible="False"/>
+                </Grid>
+
+                <!-- Realtime Calculation Note -->
+                <Border Background="#FEFCE8" BorderBrush="#FEF08A" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,0,16">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="มูลค่าส่วนลดที่จะได้รับ: " FontSize="14" FontWeight="SemiBold" Foreground="#854D0E"/>
+                        <TextBlock Text="🪙 " FontSize="14"/>
+                        <TextBlock x:Name="txtCalculatedDiscount" Text="0.00" FontSize="15" FontWeight="Bold" Foreground="#854D0E"/>
+                        <TextBlock Text=" บาท" FontSize="14" FontWeight="SemiBold" Foreground="#854D0E"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Validation Message -->
+                <TextBlock x:Name="txtValidationMessage" Text="" Foreground="#EF4444" FontSize="13" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" Margin="0,-8,0,12" Visibility="Collapsed"/>
+
+                <!-- Action Buttons -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cancel Button -->
+                    <Button Grid.Column="0" Click="BtnCancel_Click"
+                            Height="42" MinWidth="100" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="btnCancel" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8">
+                                    <TextBlock Text="ยกเลิก" Foreground="#475569" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="btnCancel" Property="Background" Value="#F8FAFC"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Confirm Button -->
+                    <Button Grid.Column="2" Click="BtnConfirm_Click"
+                            Height="42" MinWidth="140" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="btnConfirm" Background="#0284C7" CornerRadius="8">
+                                    <TextBlock Text="ยืนยันการแลกแต้ม" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="btnConfirm" Property="Background" Value="#38BDF8"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter TargetName="btnConfirm" Property="Background" Value="#94A3B8"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

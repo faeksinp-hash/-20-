@@ -1,9 +1,17 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Porjai20.Models
 {
-    public class Customer
+    public class Customer : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public int Cus_ID { get; set; }
         public int Id
         {
@@ -34,10 +42,23 @@ namespace Porjai20.Models
             set => Cus_Tel = value;
         }
 
-        public int Cus_Points { get; set; } = 0;
+        private int _cusPoints = 0;
+        public int Cus_Points
+        {
+            get => _cusPoints;
+            set
+            {
+                if (_cusPoints != value)
+                {
+                    _cusPoints = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Points));
+                }
+            }
+        }
         public int Points
         {
-            get => Cus_Points;
+            get => _cusPoints;
             set => Cus_Points = value;
         }
 

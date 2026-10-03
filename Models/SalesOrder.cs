@@ -113,6 +113,10 @@ namespace Porjai20.Models
             set => Sales_Status = value;
         }
 
+        public decimal DiscountAmount { get; set; } = 0;
+        public int PointsUsed { get; set; } = 0;
+        public int PointsEarned { get; set; } = 0;
+
         // Delivery Info
         public bool IsDelivery { get; set; }
 

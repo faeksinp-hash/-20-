@@ -200,9 +200,16 @@ namespace Porjai20.Services
                         Sales_Change REAL,
                         Sales_PaymentType TEXT,
                         Sales_Status TEXT,
+                        DiscountAmount REAL DEFAULT 0,
+                        PointsUsed INTEGER DEFAULT 0,
+                        PointsEarned INTEGER DEFAULT 0,
                         FOREIGN KEY(Cus_ID) REFERENCES tblCustomer(Cus_ID),
                         FOREIGN KEY(Emp_ID) REFERENCES tblEmployee(Emp_ID)
                     );");
+
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN DiscountAmount REAL DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN PointsUsed INTEGER DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN PointsEarned INTEGER DEFAULT 0;"); } catch { }
 
                 // 10) tblSalesDetail
                 connection.Execute(@"
