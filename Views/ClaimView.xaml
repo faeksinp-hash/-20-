@@ -227,14 +227,15 @@
 
         <!-- Detail Modal Action Button Styles -->
         <Style x:Key="ApproveModalBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="Background" Value="#D1FAE5"/>
-            <Setter Property="Foreground" Value="#065F46"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="115"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -242,17 +243,21 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#A7F3D0"/>
-                                <Setter Property="Foreground" Value="#047857"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#6EE7B7"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0369A1"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -261,14 +266,15 @@
         </Style>
 
         <Style x:Key="ReplaceModalBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
             <Setter Property="Background" Value="#F3E8FF"/>
             <Setter Property="Foreground" Value="#6B21A8"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="115"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -276,7 +282,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -295,14 +301,15 @@
         </Style>
 
         <Style x:Key="RejectModalBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="Background" Value="#FEE2E2"/>
-            <Setter Property="Foreground" Value="#991B1B"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background" Value="#EF4444"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="115"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -310,17 +317,21 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#FCA5A5"/>
-                                <Setter Property="Foreground" Value="#7F1D1D"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#F87171"/>
+                                <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#F87171"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#DC2626"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -329,15 +340,16 @@
         </Style>
 
         <Style x:Key="CloseModalBtnStyle" TargetType="Button">
-            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
-            <Setter Property="Background" Value="#E0F2FE"/>
-            <Setter Property="Foreground" Value="#0369A1"/>
-            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="115"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -345,17 +357,17 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#BAE6FD"/>
-                                <Setter Property="Foreground" Value="#0284C7"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#E2E8F0"/>
+                                <Setter Property="Foreground" Value="#334155"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BtnBorder" Property="Background" Value="#7DD3FC"/>
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#CBD5E1"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -413,11 +425,11 @@
         <!--  DATAGRID STYLES                                           -->
         <!-- ══════════════════════════════════════════════════════════ -->
         <Style x:Key="ClaimColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background"              Value="#F1F5F9"/>
-            <Setter Property="Foreground"              Value="#000000"/>
+            <Setter Property="Background"              Value="#F8FAFC"/>
+            <Setter Property="Foreground"              Value="#475569"/>
             <Setter Property="FontWeight"              Value="Bold"/>
-            <Setter Property="FontSize"                Value="16"/>
-            <Setter Property="Height"                  Value="48"/>
+            <Setter Property="FontSize"                Value="15"/>
+            <Setter Property="Height"                  Value="46"/>
             <Setter Property="Padding"                 Value="12,0"/>
             <Setter Property="BorderBrush"             Value="#E2E8F0"/>
             <Setter Property="BorderThickness"         Value="0,0,0,1"/>
@@ -430,9 +442,9 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{TemplateBinding Padding}">
                             <TextBlock Text="{TemplateBinding Content}"
-                                       Foreground="#000000"
+                                       Foreground="#475569"
                                        FontWeight="Bold"
-                                       FontSize="16"
+                                       FontSize="15"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
                         </Border>
@@ -453,19 +465,25 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridRow">
                         <Border x:Name="RowBorder"
-                                CornerRadius="10" Margin="4,2" Padding="6,0"
-                                Background="Transparent">
+                                CornerRadius="8" Margin="4,1" Padding="4,0"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="1">
                             <DataGridCellsPresenter
                                 ItemsPanel="{TemplateBinding ItemsPanel}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#BAE6FD"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter TargetName="RowBorder" Property="BorderThickness" Value="1"/>
                                 <Setter Property="Foreground"  Value="#1E293B"/>
+                                <Setter Property="FontWeight"  Value="Normal"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -530,7 +548,9 @@
         <!-- ════════════════════════════════════════════════════════════ -->
         <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
         <!-- ════════════════════════════════════════════════════════════ -->
-        <Grid Margin="16">
+        <Grid Margin="16"
+              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>  <!-- Page Header -->
                 <RowDefinition Height="Auto"/>  <!-- KPI Cards  -->
@@ -604,7 +624,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="รอตรวจสอบ/ดำเนินการ"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -632,7 +652,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="ได้รับของใหม่ / อนุมัติการคืนเงิน"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -660,7 +680,7 @@
                         <TextBlock Grid.Row="2"
                                    Text="ดำเนินการเสร็จสิ้นเรียบร้อย"
                                    FontSize="14"
-                                   Foreground="#A0AEC0"
+                                   Foreground="#64748B"
                                    Margin="0"/>
                     </Grid>
                 </Border>
@@ -822,7 +842,9 @@
                               GridLinesVisibility="None"
                               BorderThickness="0"
                               Background="Transparent"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.CanContentScroll="True"
                               ColumnHeaderStyle="{StaticResource ClaimColumnHeaderStyle}"
                               RowStyle="{StaticResource ClaimRowStyle}"
                               CellStyle="{StaticResource ClaimCellStyle}"
@@ -884,18 +906,18 @@
                                                 ElementStyle="{StaticResource ColCenterBold}"/>
 
                             <!-- #7: Status (สถานะเคลม) - Rounded Status Badge -->
-                            <DataGridTemplateColumn Header="สถานะเคลม" Width="130">
+                            <DataGridTemplateColumn Header="สถานะเคลม" Width="140" MinWidth="135">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="StatusBadge"
-                                                CornerRadius="12"
+                                                CornerRadius="10"
                                                 Padding="12,4"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Background="#FEF3C7">
                                             <TextBlock x:Name="StatusText"
                                                        Text="{Binding Status}"
-                                                       FontSize="13.5"
+                                                       FontSize="13"
                                                        FontWeight="SemiBold"
                                                        Foreground="#B45309"
                                                        HorizontalAlignment="Center"
@@ -955,8 +977,8 @@
                                    DockPanel.Dock="Left"
                                    Margin="0"/>
                         <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดและดำเนินการเคลม"
-                                   Foreground="#64748B"
-                                   FontSize="13.5"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"
                                    VerticalAlignment="Center"
                                    DockPanel.Dock="Right"
                                    Margin="0"/>
@@ -974,169 +996,190 @@
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Panel.ZIndex="99">
-            <Border Width="600"
+            <Border Width="680"
+                    MaxWidth="700"
+                    MinHeight="560"
                     MaxHeight="740"
                     Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1.5"
                     CornerRadius="16"
-                    Padding="24"
+                    Padding="28,24"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Effect="{StaticResource SoftShadow}">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>   <!-- Header -->
-                        <RowDefinition Height="Auto"/>   <!-- Claim & Customer Summary Inset Card -->
-                        <RowDefinition Height="Auto"/>   <!-- Divider -->
-                        <RowDefinition Height="*"/>      <!-- Product Details & Reason Section -->
-                        <RowDefinition Height="Auto"/>   <!-- Divider -->
-                        <RowDefinition Height="Auto"/>   <!-- Action Buttons Bar -->
+                        <RowDefinition Height="Auto"/> <!-- Row 0: ส่วน Header (ไอคอน + หัวข้อรายละเอียดการเคลมสินค้า) -->
+                        <RowDefinition Height="*"/>    <!-- Row 1: เนื้อหาข้อมูลผู้เคลม, สินค้า, เหตุผล, หมายเหตุ -->
+                        <RowDefinition Height="Auto"/> <!-- Row 2: แถบปุ่มคำสั่งด้านล่าง (Sticky Footer ต้องแสดงเสมอ) -->
                     </Grid.RowDefinitions>
 
-                    <!-- Header -->
+                    <!-- Row 0: Header (No 'X' button) -->
                     <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🛡️ " FontSize="22"/>
-                            <StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
+                            <Border Width="42" Height="42" CornerRadius="10" Background="#E0F2FE" Margin="0,0,12,0" VerticalAlignment="Center">
+                                <TextBlock Text="🛡️" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="รายละเอียดการเคลมสินค้า"
-                                           FontSize="20" FontWeight="Bold"
-                                           Foreground="#2D3748"
+                                           FontSize="22" FontWeight="Bold"
+                                           Foreground="#0F172A"
                                            Margin="0"/>
                                 <TextBlock Text="{Binding SelectedClaim.ClaimNo, StringFormat='เลขที่ใบรับเคลม: #{0}'}"
-                                           FontSize="14" FontWeight="Bold"
-                                           Foreground="#0B2545"
+                                           FontSize="15" FontWeight="Bold"
+                                           Foreground="#0284C7"
                                            Margin="0,3,0,0"/>
                             </StackPanel>
                         </StackPanel>
                     </DockPanel>
 
-                    <!-- Claim & Customer Summary Inset Card (#E0F2FE) -->
-                    <Border Grid.Row="1"
-                            Background="#E0F2FE"
-                            BorderBrush="#BAE6FD"
-                            BorderThickness="1"
-                            CornerRadius="12"
-                            Padding="16,14"
-                            Margin="0,0,0,14">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Customer Name & Phone -->
-                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
-                                <TextBlock Text="ผู้แจ้งเคลม / ชื่อลูกค้า" FontSize="13.5" Foreground="#718096" Margin="0,0,0,3"/>
-                                <TextBlock Text="{Binding SelectedClaim.CustomerName}"
-                                           FontSize="16" FontWeight="Bold" Foreground="#2D3748"/>
-                                <TextBlock Text="{Binding SelectedClaim.CustomerPhone, StringFormat='📞 {0}'}"
-                                           FontSize="15" Foreground="#0B2545" Margin="0,3,0,0"/>
-                            </StackPanel>
-
-                            <!-- Claim Action / Method Badge (รูปแบบการเคลม) -->
-                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" HorizontalAlignment="Right">
-                                <TextBlock Text="รูปแบบการเคลม" FontSize="13.5" Foreground="#718096" Margin="0,0,0,3"/>
-                                <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="6" Padding="10,4">
-                                    <TextBlock Text="{Binding SelectedClaim.ClaimAction}"
-                                               FontSize="14" FontWeight="Bold" Foreground="#0369A1"/>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Ref Receipt / StockIn No -->
-                            <StackPanel Grid.Row="1" Grid.Column="0">
-                                <TextBlock Text="เลขที่ใบเสร็จอ้างอิง" FontSize="13.5" Foreground="#718096" Margin="0,0,0,3"/>
-                                <TextBlock Text="{Binding SelectedClaim.SalesOrderRefNo}"
-                                           FontSize="15" FontWeight="Bold" Foreground="#2D3748"/>
-                                <TextBlock Text="{Binding SelectedClaim.StockInRefNo}"
-                                           FontSize="15" FontWeight="Bold" Foreground="#2D3748"/>
-                            </StackPanel>
-
-                            <!-- Date / Time -->
-                            <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">
-                                <TextBlock Text="วันที่แจ้งเคลม" FontSize="13.5" Foreground="#718096" Margin="0,0,0,3"/>
-                                <TextBlock Text="{Binding SelectedClaim.CreatedDate, StringFormat=dd/MM/yyyy HH:mm}"
-                                           FontSize="15" FontWeight="SemiBold" Foreground="#2D3748"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <!-- Divider -->
-                    <Border Grid.Row="2" Height="1" Background="#BAE6FD" Margin="0,0,0,14"/>
-
-                    <!-- Product Details & Reason Section -->
-                    <ScrollViewer Grid.Row="3" MaxHeight="280" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
+                    <!-- Row 1: Scrollable Body Content -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Hidden"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.CanContentScroll="True">
                         <StackPanel>
-                            <!-- Product Info Box -->
-                            <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="16,14" Margin="0,0,0,14">
+                            <!-- Claim & Customer Summary Inset Card -->
+                            <Border Background="#F8FAFC"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="16,14"
+                                    Margin="0,0,0,14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- ผู้แจ้งเคลม / ชื่อลูกค้า -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0">
+                                        <TextBlock Text="ผู้แจ้งเคลม / ชื่อลูกค้า" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Height="46" Padding="12,0">
+                                            <TextBlock Text="{Binding SelectedClaim.CustomerName}"
+                                                       FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- รูปแบบการเคลม & เบอร์โทรศัพท์ -->
+                                    <StackPanel Grid.Row="0" Grid.Column="2">
+                                        <TextBlock Text="รูปแบบการเคลม" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Height="46" Padding="12,0">
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding SelectedClaim.ClaimAction}"
+                                                           FontSize="16" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                                <TextBlock Text="{Binding SelectedClaim.CustomerPhone, StringFormat='📞 {0}'}"
+                                                           FontSize="15" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center" DockPanel.Dock="Right"/>
+                                            </DockPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- เลขที่เอกสารอ้างอิง -->
+                                    <StackPanel Grid.Row="2" Grid.Column="0">
+                                        <TextBlock Text="เลขที่เอกสารอ้างอิง" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Height="46" Padding="12,0">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding SelectedClaim.SalesOrderRefNo}"
+                                                           FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding SelectedClaim.StockInRefNo}"
+                                                           FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- วันที่แจ้งเคลม -->
+                                    <StackPanel Grid.Row="2" Grid.Column="2">
+                                        <TextBlock Text="วันที่แจ้งเคลม" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Height="46" Padding="12,0">
+                                            <TextBlock Text="{Binding SelectedClaim.CreatedDate, StringFormat=dd/MM/yyyy HH:mm}"
+                                                       FontSize="16" FontWeight="SemiBold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Divider -->
+                            <Border Height="1" Background="#E2E8F0" Margin="0,0,0,14"/>
+
+                            <!-- Product Info Box (#F8FAFC) -->
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16,14" Margin="0,0,0,14">
                                 <StackPanel>
-                                    <TextBlock Text="📦 รายละเอียดสินค้าเคลม" FontSize="16" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,10"/>
-                                    <Grid Margin="0,0,0,6">
-                                        <TextBlock Text="ชื่อสินค้า:" Foreground="#718096" FontSize="14.5"/>
-                                        <TextBlock Text="{Binding SelectedClaim.ProductName}" Foreground="#2D3748" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="📦 รายละเอียดสินค้าเคลม" FontSize="17" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,10"/>
+                                    <Grid Margin="0,0,0,8">
+                                        <TextBlock Text="ชื่อสินค้า:" Foreground="#334155" FontSize="16" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding SelectedClaim.ProductName}" Foreground="#0F172A" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
                                     </Grid>
-                                    <Grid Margin="0,0,0,6">
-                                        <TextBlock Text="รหัสสินค้า:" Foreground="#718096" FontSize="14.5"/>
-                                        <TextBlock Text="{Binding SelectedClaim.ProductCode}" Foreground="#2D3748" FontSize="14.5" HorizontalAlignment="Right"/>
+                                    <Grid Margin="0,0,0,8">
+                                        <TextBlock Text="รหัสสินค้า:" Foreground="#334155" FontSize="16" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding SelectedClaim.ProductCode}" Foreground="#64748B" FontSize="16" HorizontalAlignment="Right"/>
                                     </Grid>
-                                    <Grid Margin="0,0,0,6">
-                                        <TextBlock Text="จำนวนที่แจ้งเคลม:" Foreground="#718096" FontSize="14.5"/>
-                                        <TextBlock Text="{Binding SelectedClaim.Quantity, StringFormat='{}{0} ชิ้น'}" Foreground="#0B2545" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right"/>
+                                    <Grid Margin="0,0,0,8">
+                                        <TextBlock Text="จำนวนที่แจ้งเคลม:" Foreground="#334155" FontSize="16" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding SelectedClaim.Quantity, StringFormat='{}{0} ชิ้น'}" Foreground="#0284C7" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Grid>
-                                        <TextBlock Text="ประเภทการเคลม:" Foreground="#718096" FontSize="14.5"/>
-                                        <TextBlock Text="{Binding SelectedClaim.ClaimType}" Foreground="#2B6CB0" FontWeight="SemiBold" FontSize="14.5" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="ประเภทการเคลม:" Foreground="#334155" FontSize="16" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding SelectedClaim.ClaimType}" Foreground="#0F172A" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Right"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Defect / Reason Box -->
-                            <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="16,14">
+                            <!-- Defect / Reason Box (#F8FAFC) -->
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16,14">
                                 <StackPanel>
-                                    <TextBlock Text="⚠️ อาการ / เหตุผลที่แจ้งเคลม" FontSize="16" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,8"/>
-                                    <TextBlock Text="{Binding SelectedClaim.Reason}" FontSize="15" Foreground="#2D3748" TextWrapping="Wrap" LineHeight="22" Margin="0,0,0,10"/>
-                                    <TextBlock Text="📝 หมายเหตุเพิ่มเติม" FontSize="14.5" FontWeight="Bold" Foreground="#718096" Margin="0,4,0,4"/>
-                                    <TextBlock Text="{Binding SelectedClaim.Note}" FontSize="14.5" Foreground="#718096" TextWrapping="Wrap" LineHeight="20"/>
+                                    <TextBlock Text="⚠️ อาการ / เหตุผลที่แจ้งเคลม" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,8"/>
+                                    <Border Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12,10" MinHeight="60" Margin="0,0,0,12">
+                                        <TextBlock Text="{Binding SelectedClaim.Reason}" FontSize="16" Foreground="#0F172A" TextWrapping="Wrap" LineHeight="24"/>
+                                    </Border>
+                                    <TextBlock Text="📝 หมายเหตุเพิ่มเติม" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <Border Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12,10" MinHeight="50">
+                                        <TextBlock Text="{Binding SelectedClaim.Note}" FontSize="15" Foreground="#64748B" TextWrapping="Wrap" LineHeight="22"/>
+                                    </Border>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!-- Divider -->
-                    <Border Grid.Row="4" Height="1" Background="#BAE6FD" Margin="0,14,0,14"/>
+                    <!-- Row 2: Sticky Footer Action Buttons Bar -->
+                    <StackPanel Grid.Row="2" Margin="0,20,0,0">
+                        <Border Height="1" Background="#E2E8F0" Margin="0,0,0,16"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                    <!-- Action Buttons Bar -->
-                    <Grid Grid.Row="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                            <!-- 1) Approve (อนุมัติเคลม) -->
+                            <Button Grid.Column="0"
+                                    Content="อนุมัติเคลม"
+                                    Command="{Binding ApproveClaimActionCommand}"
+                                    IsEnabled="{Binding CanEditClaim}"
+                                    Style="{StaticResource ApproveModalBtnStyle}"/>
 
-                        <!-- 1) Approve (อนุมัติเคลม) -->
-                        <Button Grid.Column="0"
-                                Content="อนุมัติเคลม"
-                                Command="{Binding ApproveClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
-                                Style="{StaticResource ApproveModalBtnStyle}"/>
+                            <!-- 2) Reject (ปฏิเสธเคลม) -->
+                            <Button Grid.Column="2"
+                                    Content="ปฏิเสธเคลม"
+                                    Command="{Binding RejectClaimActionCommand}"
+                                    IsEnabled="{Binding CanEditClaim}"
+                                    Style="{StaticResource RejectModalBtnStyle}"/>
 
-                        <!-- 2) Reject (ปฏิเสธเคลม) -->
-                        <Button Grid.Column="2"
-                                Content="ปฏิเสธเคลม"
-                                Command="{Binding RejectClaimActionCommand}" IsEnabled="{Binding CanEditClaim}"
-                                Style="{StaticResource RejectModalBtnStyle}"/>
-
-                        <!-- 3) Close (ปิดหน้าต่าง) -->
-                        <Button Grid.Column="4"
-                                Content="ปิดหน้าต่าง"
-                                Command="{Binding CloseClaimDetailModalCommand}"
-                                Style="{StaticResource CloseModalBtnStyle}"/>
-                    </Grid>
+                            <!-- 3) Close (ปิดหน้าต่าง) -->
+                            <Button Grid.Column="4"
+                                    Content="ปิดหน้าต่าง"
+                                    Command="{Binding CloseClaimDetailModalCommand}"
+                                    Style="{StaticResource CloseModalBtnStyle}"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
@@ -1150,8 +1193,10 @@
               Panel.ZIndex="2000"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
-            <Border Width="780"
-                    MaxHeight="760"
+            <Border Width="680"
+                    MaxWidth="700"
+                    Height="Auto"
+                    MaxHeight="740"
                     Background="#FFFFFF"
                     BorderBrush="#BAE6FD"
                     BorderThickness="1"
@@ -1163,51 +1208,23 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/> <!-- 1. ส่วนหัวหน้าต่าง Header -->
-                        <RowDefinition Height="*"/>    <!-- เนื้อหา Scrollable Body -->
+                        <RowDefinition Height="Auto"/> <!-- เนื้อหา Scrollable Body -->
                         <RowDefinition Height="Auto"/> <!-- 5. ส่วนท้ายหน้าต่าง Footer Bar -->
                     </Grid.RowDefinitions>
 
                     <!-- ══════════════════════════════════════════════════════════ -->
                     <!-- 1. ส่วนหัวหน้าต่าง (Header): สไตล์คลีนสีขาว (Clean White)   -->
                     <!-- ══════════════════════════════════════════════════════════ -->
-                    <Border Grid.Row="0" Background="#FFFFFF" Padding="24,20,24,16" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" CornerRadius="16">
+                    <Border Grid.Row="0" Background="#FFFFFF" Padding="28,20,28,16" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" CornerRadius="16">
                         <DockPanel LastChildFill="False">
-                            <!-- ปุ่มปิด (X) มุมขวาบน สไตล์กลมกลืนกับพื้นหลังขาว -->
-                            <Button DockPanel.Dock="Right"
-                                    Command="{Binding CloseModalCommand}"
-                                    Width="36" Height="36"
-                                    Background="#F1F5F9"
-                                    Foreground="#64748B"
-                                    BorderThickness="0"
-                                    Cursor="Hand"
-                                    VerticalAlignment="Center">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="18">
-                                            <TextBlock x:Name="Txt" Text="✕" Foreground="{TemplateBinding Foreground}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Bd" Property="Background" Value="#FEE2E2"/>
-                                                <Setter TargetName="Txt" Property="Foreground" Value="#DC2626"/>
-                                            </Trigger>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="Bd" Property="Background" Value="#FECACA"/>
-                                                <Setter TargetName="Txt" Property="Foreground" Value="#B91C1C"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                            <!-- ไอคอนและหัวข้อ + คำบรรยายย่อย (ระดับเดียวกันบนพื้นขาว) -->
+                            <!-- ไอคอนและหัวข้อ + คำบรรยายย่อย (ไม่มีปุ่ม X มุมขวาบน) -->
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
                                 <Border Width="42" Height="42" CornerRadius="10" Background="#E0F2FE" Margin="0,0,14,0" VerticalAlignment="Center">
                                     <TextBlock Text="🛡️" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="จัดการข้อมูลการเคลมสินค้า"
-                                               FontSize="20" FontWeight="Bold"
+                                               FontSize="22" FontWeight="Bold"
                                                Foreground="#0F172A"/>
                                     <TextBlock Text="ระบบบันทึกและตรวจสอบสถานะการเคลม / เปลี่ยนคืนสินค้า (POS)"
                                                FontSize="14" Foreground="#64748B"
@@ -1220,38 +1237,41 @@
                     <!-- ══════════════════════════════════════════════════════════ -->
                     <!-- SCROLLABLE BODY (ส่วนที่ 1, ส่วนที่ 2, ส่วนที่ 3)           -->
                     <!-- ══════════════════════════════════════════════════════════ -->
-                    <ScrollViewer Grid.Row="1" MaxHeight="600" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel Margin="22,18,22,16">
+                    <ScrollViewer Grid.Row="1" MaxHeight="540"
+                                  VerticalScrollBarVisibility="Hidden"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.CanContentScroll="True">
+                        <StackPanel Margin="28,16,28,16">
 
                             <!-- ────────────────────────────────────────────────── -->
                             <!-- ส่วนที่ 1: ค้นหาและตรวจสอบเงื่อนไขเวลา              -->
                             <!-- ────────────────────────────────────────────────── -->
-                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="14" Margin="0,0,0,14">
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16,14" Margin="0,0,0,14">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,10">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="140"/>
                                             <ColumnDefinition Width="12"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="12"/>
-                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="160"/>
                                         </Grid.ColumnDefinitions>
 
                                         <!-- ComboBox ประเภทผู้เคลม -->
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="ประเภทผู้เคลม" FontSize="13.5" Foreground="#64748B" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                                            <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="44">
+                                            <TextBlock Text="ประเภทผู้เคลม" FontSize="16" Foreground="#334155" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                            <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="46">
                                                 <ComboBox ItemsSource="{Binding ClaimTypeOptions}"
                                                           SelectedItem="{Binding ClaimType, Mode=TwoWay}"
                                                           Style="{StaticResource LightComboBoxStyle}"
-                                                          FontSize="15"
-                                                          Height="42" VerticalContentAlignment="Center" Padding="8,0" BorderThickness="0"/>
+                                                          FontSize="16"
+                                                          Height="44" VerticalContentAlignment="Center" Padding="12,0" BorderThickness="0"/>
                                             </Border>
                                         </StackPanel>
 
                                         <!-- TextBox เลขที่ใบเสร็จ พร้อมปุ่มไอคอนแว่นขยาย (🔍) -->
                                         <StackPanel Grid.Column="2">
-                                            <TextBlock FontSize="13.5" Foreground="#64748B" FontWeight="SemiBold" Margin="0,0,0,5">
+                                            <TextBlock FontSize="16" Foreground="#334155" FontWeight="SemiBold" Margin="0,0,0,6">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Setter Property="Text" Value="เลขที่ใบเสร็จ"/>
@@ -1263,11 +1283,11 @@
                                                     </Style>
                                                 </TextBlock.Style>
                                             </TextBlock>
-                                            <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Height="44">
+                                            <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="46">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="42"/>
+                                                        <ColumnDefinition Width="44"/>
                                                     </Grid.ColumnDefinitions>
 
                                                     <Grid Grid.Column="0" VerticalAlignment="Center">
@@ -1288,8 +1308,8 @@
                                                         <TextBox x:Name="txtReceiptNo"
                                                                  Background="Transparent"
                                                                  BorderThickness="0"
-                                                                 FontSize="15"
-                                                                 Padding="10,0"
+                                                                 FontSize="16"
+                                                                 Padding="12,0"
                                                                  Margin="0"
                                                                  Foreground="#1E293B"
                                                                  CaretBrush="#1E293B"
@@ -1313,8 +1333,8 @@
                                                             ToolTip="ค้นหาข้อมูลบิล">
                                                         <Button.Template>
                                                             <ControlTemplate TargetType="Button">
-                                                                <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="0,6,6,0">
-                                                                    <TextBlock Text="🔍" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="0,8,8,0">
+                                                                    <TextBlock Text="🔍" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
                                                                 <ControlTemplate.Triggers>
                                                                     <Trigger Property="IsMouseOver" Value="True">
@@ -1330,7 +1350,7 @@
 
                                         <!-- DatePicker วันที่ซื้อสินค้า -->
                                         <StackPanel Grid.Column="4">
-                                            <TextBlock FontSize="13.5" Foreground="#64748B" FontWeight="SemiBold" Margin="0,0,0,5">
+                                            <TextBlock FontSize="16" Foreground="#334155" FontWeight="SemiBold" Margin="0,0,0,6">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Setter Property="Text" Value="วันที่ซื้อสินค้า"/>
@@ -1342,8 +1362,8 @@
                                                     </Style>
                                                 </TextBlock.Style>
                                             </TextBlock>
-                                            <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="44">
-                                                <DatePicker Height="42" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" Foreground="#1E293B" IsEnabled="False">
+                                            <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="46">
+                                                <DatePicker Height="44" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0" Foreground="#1E293B" IsEnabled="False">
                                                     <DatePicker.Style>
                                                         <Style TargetType="DatePicker" BasedOn="{StaticResource LightDatePickerStyle}">
                                                             <Setter Property="SelectedDate" Value="{Binding ClaimSaleDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -1574,7 +1594,9 @@
                             <!-- ตารางแสดงรายการเคลมหลัก -->
                             <TextBlock Text="รายการสินค้าที่ต้องการเคลม" FontSize="16" FontWeight="Bold" Foreground="#334155" Margin="0,0,0,6"/>
                             <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Margin="0,0,0,10" MaxHeight="180">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.CanContentScroll="True">
                                     <ItemsControl ItemsSource="{Binding CurrentClaimItems}">
                                         <!-- Header Row Template -->
                                         <ItemsControl.Template>
@@ -1691,7 +1713,9 @@
 
                                     <!-- รายการสินค้าในใบเสร็จพร้อม CheckBox ติ๊กเลือก, จำนวนที่ซื้อ, ช่องระบุจำนวนที่จะเคลม -->
                                     <Border Background="#FFFFFF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="6" MaxHeight="150" Margin="0,0,0,10">
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                                      HorizontalScrollBarVisibility="Disabled"
+                                                      ScrollViewer.CanContentScroll="True">
                                             <ItemsControl ItemsSource="{Binding AvailableReceiptItems}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
@@ -1766,18 +1790,18 @@
 
                             <!-- TextBox "เหตุผลการเคลม" -->
                             <StackPanel Margin="0,0,0,14">
-                                <TextBlock FontSize="14" FontWeight="SemiBold" Margin="0,0,0,5">
+                                <TextBlock FontSize="16" FontWeight="SemiBold" Margin="0,0,0,6">
                                     <TextBlock.Inlines>
-                                        <Run Text="เหตุผลการเคลม" Foreground="#64748B"/>
+                                        <Run Text="เหตุผลการเคลม" Foreground="#334155"/>
                                         <Run Text=" *" Foreground="#0284C7"/>
                                     </TextBlock.Inlines>
                                 </TextBlock>
                                 <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8">
                                     <TextBox Text="{Binding ClaimReason, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource LightTextBoxStyle}"
-                                             Padding="10,8"
-                                             Height="70"
-                                             FontSize="15"
+                                             Padding="12,10"
+                                             Height="80"
+                                             FontSize="16"
                                              TextWrapping="Wrap"
                                              AcceptsReturn="True"
                                              VerticalScrollBarVisibility="Auto"/>
@@ -1787,7 +1811,7 @@
                             <!-- ────────────────────────────────────────────────── -->
                             <!-- ส่วนที่ 3: แถบควบคุม 3 ปุ่ม                         -->
                             <!-- ────────────────────────────────────────────────── -->
-                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="12,10">
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="14,12">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -1800,16 +1824,16 @@
                                     <!-- ปุ่ม "เลือกสินค้าจากใบเสร็จ" (มีไอคอนบิล + ขอบมน) -->
                                     <Button Grid.Column="0"
                                             Command="{Binding ToggleReceiptProductSelectorCommand}"
-                                            Height="44"
+                                            Height="46"
                                             Cursor="Hand"
-                                            Padding="14,0"
+                                            Padding="16,0"
                                             VerticalAlignment="Bottom">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
                                                 <Border x:Name="B" Background="#E0F2FE" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="8" Padding="{TemplateBinding Padding}">
                                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                        <TextBlock Text="🧾 " FontSize="15"/>
-                                                        <TextBlock Text="เลือกสินค้าจากใบเสร็จ" FontSize="14.5" FontWeight="Bold" Foreground="#0369A1"/>
+                                                        <TextBlock Text="🧾 " FontSize="16"/>
+                                                        <TextBlock Text="เลือกสินค้าจากใบเสร็จ" FontSize="16" FontWeight="Bold" Foreground="#0284C7"/>
                                                     </StackPanel>
                                                 </Border>
                                                 <ControlTemplate.Triggers>
@@ -1826,25 +1850,25 @@
 
                                     <!-- Dropdown รูปแบบการเคลม -->
                                     <StackPanel Grid.Column="2">
-                                        <TextBlock Text="รูปแบบการเคลม" FontSize="13.5" Foreground="#64748B" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                        <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="44">
+                                        <TextBlock Text="รูปแบบการเคลม" FontSize="16" Foreground="#334155" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                        <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="46">
                                             <ComboBox ItemsSource="{Binding ClaimActionOptions}"
                                                       SelectedItem="{Binding ClaimAction}"
                                                       Style="{StaticResource LightComboBoxStyle}"
-                                                      FontSize="15"
-                                                      Height="42" VerticalContentAlignment="Center" Padding="8,0" BorderThickness="0"/>
+                                                      FontSize="16"
+                                                      Height="44" VerticalContentAlignment="Center" Padding="12,0" BorderThickness="0"/>
                                         </Border>
                                     </StackPanel>
 
                                     <!-- Dropdown สถานะเคลม -->
                                     <StackPanel Grid.Column="4">
-                                        <TextBlock Text="สถานะเคลม" FontSize="13.5" Foreground="#64748B" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                        <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="44">
+                                        <TextBlock Text="สถานะเคลม" FontSize="16" Foreground="#334155" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                        <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Height="46">
                                             <ComboBox ItemsSource="{Binding ClaimFormStatusOptions}"
                                                       SelectedItem="{Binding ClaimStatus}"
                                                       Style="{StaticResource LightComboBoxStyle}"
-                                                      FontSize="15"
-                                                      Height="42" VerticalContentAlignment="Center" Padding="8,0" BorderThickness="0"/>
+                                                      FontSize="16"
+                                                      Height="44" VerticalContentAlignment="Center" Padding="12,0" BorderThickness="0"/>
                                         </Border>
                                     </StackPanel>
                                 </Grid>
@@ -1856,11 +1880,11 @@
                     <!-- ══════════════════════════════════════════════════════════ -->
                     <!-- 5. ส่วนท้ายหน้าต่าง (Footer Bar)                            -->
                     <!-- ══════════════════════════════════════════════════════════ -->
-                    <Border Grid.Row="2" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="20,12">
+                    <Border Grid.Row="2" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="28,14">
                         <DockPanel LastChildFill="False">
                             <!-- ข้อความชิดซ้ายสีเทา -->
                             <TextBlock Text="* กรุณาตรวจสอบข้อมูลและจำนวนสินค้าก่อนกดยืนยัน"
-                                       FontSize="13.5" Foreground="#64748B"
+                                       FontSize="14" Foreground="#64748B"
                                        VerticalAlignment="Center"
                                        DockPanel.Dock="Left"/>
 
@@ -1869,13 +1893,13 @@
                                 <!-- ปุ่ม "ยกเลิก" -->
                                 <Button Content="ยกเลิก"
                                         Command="{Binding CloseModalCommand}"
-                                        Width="110" Height="44"
-                                        Margin="0,0,10,0"
+                                        MinWidth="115" Height="46"
+                                        Margin="0,0,12,0"
                                         Cursor="Hand">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="B" Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8">
-                                                <TextBlock Text="{TemplateBinding Content}" Foreground="#475569" FontWeight="SemiBold" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="#475569" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
@@ -1888,7 +1912,7 @@
 
                                 <!-- ปุ่ม "บันทึกข้อมูล" (สีฟ้า) -->
                                 <Button x:Name="btnSaveClaim"
-                                        Width="145" Height="44">
+                                        MinWidth="135" Height="46">
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Command" Value="{Binding UpdateClaimCommand}"/>
@@ -1898,7 +1922,7 @@
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border x:Name="B" Background="#0284C7" CornerRadius="8">
-                                                            <TextBlock Text="{TemplateBinding Content}" Foreground="White" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            <TextBlock Text="{TemplateBinding Content}" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
