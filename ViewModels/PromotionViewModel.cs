@@ -319,14 +319,10 @@ namespace Porjai20.ViewModels
                 query = query.Where(p => p.IsExpired);
             }
 
-            // Keyword Search
-            if (!string.IsNullOrWhiteSpace(SearchKeyword))
+            // Keyword Search (Exact Code & Case-Sensitive Only)
+            if (!string.IsNullOrEmpty(SearchKeyword))
             {
-                string kw = SearchKeyword.Trim().ToLowerInvariant();
-                query = query.Where(p =>
-                    (p.PromoID != null && p.PromoID.ToLowerInvariant().Contains(kw)) ||
-                    (p.PromoName != null && p.PromoName.ToLowerInvariant().Contains(kw)) ||
-                    (p.ConditionDescription != null && p.ConditionDescription.ToLowerInvariant().Contains(kw)));
+                query = query.Where(p => p.PromoID != null && p.PromoID.Contains(SearchKeyword, StringComparison.Ordinal));
             }
 
             FilteredPromotions = new ObservableCollection<PromotionModel>(query.ToList());
