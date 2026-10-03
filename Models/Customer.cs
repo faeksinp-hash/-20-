@@ -27,6 +27,11 @@ namespace Porjai20.Models
             get => Cus_Name;
             set => Cus_Name = value;
         }
+        public string CustomerName
+        {
+            get => Cus_Name;
+            set => Cus_Name = value;
+        }
 
         public string Cus_Address { get; set; } = string.Empty;
         public string Address
@@ -37,6 +42,11 @@ namespace Porjai20.Models
 
         public string Cus_Tel { get; set; } = string.Empty;
         public string Phone
+        {
+            get => Cus_Tel;
+            set => Cus_Tel = value;
+        }
+        public string PhoneNumber
         {
             get => Cus_Tel;
             set => Cus_Tel = value;

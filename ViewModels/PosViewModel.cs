@@ -519,6 +519,7 @@ namespace Porjai20.ViewModels
                 if (SetProperty(ref _selectedCustomer, value))
                 {
                     CurrentPoints = value?.Points ?? 0;
+                    OnPropertyChanged(nameof(CurrentMember));
                     OnPropertyChanged(nameof(SelectedCustomerItem));
                     OnPropertyChanged(nameof(MaxRedeemablePoints));
                     OnPropertyChanged(nameof(EarnedPoints));
@@ -552,6 +553,7 @@ namespace Porjai20.ViewModels
         }
 
         public bool HasSelectedCustomer => SelectedCustomer != null;
+        public Customer? CurrentMember => SelectedCustomer;
 
         private int _currentPoints;
         public int CurrentPoints
@@ -588,6 +590,8 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(DiscountAmount));
                     OnPropertyChanged(nameof(HasDiscount));
                     OnPropertyChanged(nameof(HasPointDiscount));
+                    OnPropertyChanged(nameof(IsDiscountApplied));
+                    OnPropertyChanged(nameof(DiscountText));
                     OnPropertyChanged(nameof(CartTotal));
                     OnPropertyChanged(nameof(CheckoutGrandTotal));
                     OnPropertyChanged(nameof(ChangeAmount));
@@ -607,6 +611,8 @@ namespace Porjai20.ViewModels
                 {
                     OnPropertyChanged(nameof(HasDiscount));
                     OnPropertyChanged(nameof(HasPointDiscount));
+                    OnPropertyChanged(nameof(IsDiscountApplied));
+                    OnPropertyChanged(nameof(DiscountText));
                     OnPropertyChanged(nameof(CartTotal));
                     OnPropertyChanged(nameof(CheckoutGrandTotal));
                     OnPropertyChanged(nameof(ChangeAmount));
@@ -618,6 +624,25 @@ namespace Porjai20.ViewModels
 
         public bool HasDiscount => DiscountAmount > 0;
         public bool HasPointDiscount => UsedPoints > 0;
+
+        private bool _isDiscountApplied;
+        public bool IsDiscountApplied
+        {
+            get => _isDiscountApplied || HasPointDiscount;
+            set
+            {
+                if (SetProperty(ref _isDiscountApplied, value))
+                {
+                    OnPropertyChanged(nameof(DiscountText));
+                    OnPropertyChanged(nameof(HasDiscount));
+                    OnPropertyChanged(nameof(HasPointDiscount));
+                }
+            }
+        }
+
+        public string DiscountText => $"ใช้ส่วนลด: -{DiscountAmount:N2} บาท (-{UsedPoints} แต้ม)";
+
+        public ICommand CancelDiscountCommand => CancelPointDiscountCommand;
 
         private bool _isPointRedeemModalOpen;
         public bool IsPointRedeemModalOpen
@@ -2199,6 +2224,9 @@ namespace Porjai20.ViewModels
 
             UsedPoints = points;
             DiscountAmount = points * 1.00m;
+            IsDiscountApplied = true;
+            OnPropertyChanged(nameof(IsDiscountApplied));
+            OnPropertyChanged(nameof(DiscountText));
             IsPointRedeemModalOpen = false;
         }
 
@@ -2210,6 +2238,9 @@ namespace Porjai20.ViewModels
             InputRedeemPointsText = "";
             CalculatedDiscount = 0;
             RedeemValidationMessage = "";
+            IsDiscountApplied = false;
+            OnPropertyChanged(nameof(IsDiscountApplied));
+            OnPropertyChanged(nameof(DiscountText));
         }
     }
 }
