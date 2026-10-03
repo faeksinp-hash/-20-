@@ -252,7 +252,7 @@
                 <!-- Divider Spacing -->
                 <ColumnDefinition Width="20"/>
                 <!-- Right: Edit Sidebar Form -->
-                <ColumnDefinition Width="360"/>
+                <ColumnDefinition Width="340"/>
             </Grid.ColumnDefinitions>
 
             <!-- ────────────────────────────────────────────────────────── -->
@@ -453,19 +453,23 @@
                 </ScrollViewer>
 
                 <!-- Promotion Cards Grid (ItemsControl / UniformGrid 3 คอลัมน์) -->
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer Grid.Row="2"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.CanContentScroll="True">
                     <Grid>
                         <!-- Cards View -->
                         <ItemsControl ItemsSource="{Binding FilteredPromotions}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid Columns="3"/>
+                                    <UniformGrid Columns="3" VerticalAlignment="Top"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="12" Padding="16" Margin="0,0,14,14" Effect="{StaticResource CardShadow}" Cursor="Hand">
+                                    <Border VerticalAlignment="Top"
+                                            CornerRadius="12" Padding="14,16" Margin="0,0,12,12" Effect="{StaticResource CardShadow}" Cursor="Hand">
                                         <Border.InputBindings>
                                             <MouseBinding Gesture="LeftClick"
                                                           Command="{Binding DataContext.SelectPromotionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -617,11 +621,13 @@
             </Grid>
 
             <!-- ────────────────────────────────────────────────────────── -->
-            <!--  RIGHT COLUMN: EDIT SIDEBAR FORM (Width="360")            -->
+            <!--  RIGHT COLUMN: EDIT SIDEBAR FORM (Width="340")            -->
             <!-- ────────────────────────────────────────────────────────── -->
             <Border Grid.Column="2" Background="#FFFFFF" CornerRadius="12" Padding="20"
                     BorderBrush="#E2E8F0" BorderThickness="1" Effect="{StaticResource CardShadow}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.CanContentScroll="True">
                     <StackPanel>
                         <!-- Form Header -->
                         <DockPanel LastChildFill="False" Margin="0,0,0,14">
