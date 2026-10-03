@@ -135,7 +135,25 @@ namespace Porjai20.ViewModels
         public string SearchKeyword
         {
             get => _searchKeyword;
-            set => SetProperty(ref _searchKeyword, value);
+            set
+            {
+                if (SetProperty(ref _searchKeyword, value))
+                {
+                    OnPropertyChanged(nameof(SearchText));
+                    ApplyFilter();
+                }
+            }
+        }
+
+        public string SearchText
+        {
+            get => _searchKeyword;
+            set => SearchKeyword = value;
+        }
+
+        public void ApplyFilter()
+        {
+            ExecuteSearch();
         }
 
         private string _selectedPaymentMethod = "ทั้งหมด";
@@ -374,14 +392,15 @@ namespace Porjai20.ViewModels
 
         // ── Data Loading ─────────────────────────────────────────────────
 
+        private int _searchVersion = 0;
+
         /// <summary>
         /// Loads sales orders from SQLite matching the current filter criteria,
         /// then refreshes the KPI cards.
         /// </summary>
         private async void ExecuteSearch()
         {
-            SalesOrders.Clear();
-            SelectedOrder = null;
+            int currentVersion = ++_searchVersion;
 
             try
             {
@@ -429,10 +448,16 @@ namespace Porjai20.ViewModels
                     parameters.Add("EndTh",   EndDate.Date.AddYears(543).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                 }
 
-                // Keyword filter
+                // Keyword filter (Real-time Instant Search)
                 if (!string.IsNullOrWhiteSpace(SearchKeyword))
                 {
-                    sql += " AND (s.RefNo LIKE @Kw OR COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') LIKE @Kw OR c.Cus_Tel LIKE @Kw)";
+                    sql += @" AND (
+                                s.RefNo LIKE @Kw 
+                                OR CAST(s.Sales_ID AS TEXT) LIKE @Kw 
+                                OR COALESCE(c.Cus_Name, 'ลูกค้าทั่วไป') LIKE @Kw 
+                                OR c.Cus_Tel LIKE @Kw 
+                                OR c.Cus_Code LIKE @Kw
+                            )";
                     parameters.Add("Kw", $"%{SearchKeyword.Trim()}%");
                 }
 
@@ -515,6 +540,15 @@ namespace Porjai20.ViewModels
                     splitOn: "SplitCusId"
                 );
 
+                // Discard stale query result if user kept typing
+                if (currentVersion != _searchVersion)
+                {
+                    return;
+                }
+
+                SalesOrders.Clear();
+                SelectedOrder = null;
+
                 foreach (var row in rows)
                 {
                     SalesOrders.Add(row);
@@ -526,7 +560,10 @@ namespace Porjai20.ViewModels
             }
             catch (Exception ex)
             {
-                ShowAlert($"เกิดข้อผิดพลาดในการโหลดข้อมูล:\n{ex.Message}", "ข้อผิดพลาด", "❌");
+                if (currentVersion == _searchVersion)
+                {
+                    ShowAlert($"เกิดข้อผิดพลาดในการโหลดข้อมูล:\n{ex.Message}", "ข้อผิดพลาด", "❌");
+                }
             }
         }
 
