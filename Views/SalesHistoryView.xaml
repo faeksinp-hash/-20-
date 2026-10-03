@@ -1016,51 +1016,53 @@
                                 BorderBrush="#E2E8F0"
                                 BorderThickness="1"
                                 CornerRadius="12"
-                                Padding="16,14"
+                                Padding="18,14"
                                 Margin="0,0,0,14">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>     <!-- Col 0: Left info -->
+                                    <ColumnDefinition Width="*"/>     <!-- Col 1: Center info -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- Col 2: Right info -->
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="12"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>    <!-- Row 0: Timestamp | Items count | Payment method -->
+                                    <RowDefinition Height="Auto"/>    <!-- Row 1: Customer name | [Empty] | Status badge -->
                                 </Grid.RowDefinitions>
 
-                                <!-- Date / Time & Items Count -->
-                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                <!-- Row 0, Col 0: Date / Time -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
                                     <TextBlock Text="วันเวลาทำรายการ" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,2"/>
                                     <TextBlock Text="{Binding SelectedOrder.Timestamp, StringFormat=dd/MM/yyyy HH:mm}"
                                                FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                        <TextBlock Text="จำนวนรายการที่ซื้อ: " Foreground="#64748B" FontSize="14" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ReceiptItems.Count, StringFormat='{}{0} รายการ'}"
-                                                   Foreground="#0F172A" FontWeight="SemiBold" FontSize="15" VerticalAlignment="Center"/>
-                                    </StackPanel>
                                 </StackPanel>
 
-                                <!-- Payment Method -->
-                                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">
+                                <!-- Row 0, Col 1: Items Count (Center) -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="จำนวนรายการที่ซื้อ" FontSize="14" Foreground="#64748B" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding ReceiptItems.Count, StringFormat='{}{0} รายการ'}"
+                                               FontSize="15" FontWeight="SemiBold" Foreground="#0F172A" TextAlignment="Center" HorizontalAlignment="Center"/>
+                                </StackPanel>
+
+                                <!-- Row 0, Col 2: Payment Method (Right) -->
+                                <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right">
                                     <TextBlock Text="ช่องทางชำระเงิน" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,2" HorizontalAlignment="Right"/>
-                                    <Border Background="#E0F2FE" CornerRadius="6" Padding="12,4">
+                                    <Border Background="#E0F2FE" CornerRadius="6" Padding="12,4" HorizontalAlignment="Right">
                                         <TextBlock Text="{Binding SelectedOrder.PaymentMethod}"
                                                    FontSize="15" FontWeight="Bold" Foreground="#0369A1"/>
                                     </Border>
                                 </StackPanel>
 
-                                <!-- Customer Name -->
-                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                <!-- Row 1, Col 0: Customer Name (Left) -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Margin="0,10,0,0">
                                     <TextBlock Text="ชื่อลูกค้า" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,2"/>
                                     <TextBlock Text="{Binding SelectedOrder.CustomerDisplayName}"
                                                FontSize="16" FontWeight="SemiBold" Foreground="#0F172A"/>
                                 </StackPanel>
 
-                                <!-- Status -->
-                                <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right">
+                                <!-- Row 1, Col 2: Status (Right) -->
+                                <StackPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" Margin="0,10,0,0">
                                     <TextBlock Text="สถานะบิล" FontSize="13.5" Foreground="#64748B" Margin="0,0,0,2" HorizontalAlignment="Right"/>
-                                    <Border Background="#D1FAE5" CornerRadius="6" Padding="12,4">
+                                    <Border Background="#D1FAE5" CornerRadius="6" Padding="12,4" HorizontalAlignment="Right">
                                         <TextBlock Text="{Binding SelectedOrder.Status}"
                                                    FontSize="15" FontWeight="Bold" Foreground="#065F46"/>
                                     </Border>
@@ -1091,7 +1093,7 @@
                               GridLinesVisibility="None"
                               BorderThickness="0"
                               Background="Transparent"
-                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               ScrollViewer.CanContentScroll="True"
                               ColumnHeaderStyle="{StaticResource LightModalColHeaderStyle}"
