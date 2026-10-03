@@ -594,6 +594,58 @@ VerticalAlignment="Center"/>
         </Setter.Value>
     </Setter>
 </Style>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  LOCKED / READ-ONLY STATUS COMBOBOX STYLE                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<Style x:Key="StatusLockedComboBoxStyle" TargetType="ComboBox">
+    <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI, sans-serif"/>
+    <Setter Property="FontSize" Value="16"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Foreground" Value="#334155"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="12,0"/>
+    <Setter Property="Height" Value="46"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="IsHitTestVisible" Value="False"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="ComboBox">
+                <Grid Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="32"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter Grid.Column="0"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                      VerticalAlignment="Center"
+                                      Margin="{TemplateBinding Padding}">
+                        <ContentPresenter.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#334155"/>
+                                <Setter Property="FontSize" Value="16"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </ContentPresenter.Resources>
+                    </ContentPresenter>
+                    <!-- Dimmed locked arrow indicator -->
+                    <Path Grid.Column="1"
+                          Data="M 0 0 L 4 4 L 8 0 Z"
+                          Fill="#94A3B8"
+                          Opacity="0.45"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Margin="0,0,6,0"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+
 <!-- Primary Rose Button Style -->
 <Style x:Key="RoseBtnStyle" TargetType="Button">
 <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
@@ -1616,31 +1668,15 @@ Margin="0"/>
                                 </Border>
                             </StackPanel>
 
-                            <!-- Status (Editable for manage mode, locked when creating new or in read-only) -->
-                            <!-- Status (Editable in create mode, disabled in read-only) -->
+                            <!-- Status (Non-editable / Locked: default to 'รอดำเนินการ', non-clickable) -->
                             <StackPanel Grid.Column="4">
                                 <TextBlock Text="สถานะใบสั่งซื้อ" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
-                                <Border CornerRadius="8" Height="46">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="#FFFFFF"/>
-                                            <Setter Property="BorderBrush" Value="#CBD5E1"/>
-                                            <Setter Property="BorderThickness" Value="1"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsPOReadOnly}" Value="True">
-                                                    <Setter Property="Background" Value="#F8FAFC"/>
-                                                    <Setter Property="BorderBrush" Value="#E2E8F0"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
+                                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Height="46">
                                     <ComboBox ItemsSource="{Binding POStatusOptions}"
                                               SelectedItem="{Binding POStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               SelectedValue="{Binding OrderStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                              IsEnabled="{Binding IsPOReadOnly, Converter={StaticResource InverseBoolConverter}}"
-                                              Style="{StaticResource LightComboBoxStyle}"
-                                              Height="46" Padding="12,0" FontSize="16" FontWeight="SemiBold"
-                                              Foreground="#0369A1" Background="Transparent" BorderThickness="0"/>
+                                              IsEnabled="{Binding IsStatusEditable}"
+                                              Style="{StaticResource StatusLockedComboBoxStyle}"/>
                                 </Border>
                             </StackPanel>
                         </Grid>

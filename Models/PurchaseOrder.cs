@@ -37,7 +37,7 @@ namespace Porjai20.Models
             set => PO_Total = value;
         }
 
-        public string PO_Status { get; set; } = "รอรับของ";
+        public string PO_Status { get; set; } = "รอดำเนินการ";
         public string Status
         {
             get => PO_Status;

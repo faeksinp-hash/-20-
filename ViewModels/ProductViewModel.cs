@@ -1691,6 +1691,8 @@ namespace Porjai20.ViewModels
                 ClearPurchaseOrderForm();
                 IsNewPOMode = true;
                 IsPOReadOnly = false;
+                POStatus = "รอดำเนินการ";
+                OrderStatus = "รอดำเนินการ";
                 POModalTitle = "สร้างใบสั่งซื้อสินค้าใหม่";
                 IsPOModalOpen = true;
                 _ = LoadSuppliersAsync();
@@ -3510,7 +3512,8 @@ namespace Porjai20.ViewModels
             set => IsPOReadOnly = !value;
         }
 
-        public bool CanEditPOStatus => !IsPOReadOnly;
+        public bool CanEditPOStatus => false;
+        public bool IsStatusEditable => false;
 
         public async Task LoadPODetailsAsync(PurchaseOrder po, bool isReadOnly = true)
         {
@@ -7849,6 +7852,8 @@ namespace Porjai20.ViewModels
             ClearPurchaseOrderForm();
             IsNewPOMode = true;
             IsPOReadOnly = false;
+            POStatus = "รอดำเนินการ";
+            OrderStatus = "รอดำเนินการ";
             POModalTitle = "สร้างใบสั่งซื้อสินค้าใหม่";
             CurrentPOItems.Clear();
 
