@@ -32,7 +32,13 @@
             </Style.Triggers>
         </Style>
 
+        <!-- ปิดการแสดงกรอบแดง Default Adorner ของ WPF สำหรับ TextBox ทั้งหมดในหน้านี้ -->
+        <Style TargetType="TextBox">
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+        </Style>
+
         <Style x:Key="CleanTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="#0F172A"/>
@@ -514,7 +520,9 @@
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="ซื้อครบกี่ชิ้น" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.BuyQuantity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding BuyQuantityInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
 
@@ -522,7 +530,9 @@
                                     <StackPanel Grid.Column="2">
                                         <TextBlock Text="แถมกี่ชิ้น" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.FreeQuantity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding FreeQuantityInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
                                 </Grid>
@@ -610,7 +620,7 @@
                                             </Border.Style>
                                             <Grid>
                                                 <TextBox x:Name="DiscountValueTextBox"
-                                                         Text="{Binding DiscountValue, UpdateSourceTrigger=PropertyChanged}"
+                                                         Text="{Binding DiscountValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                                                          Style="{StaticResource CleanTextBoxStyle}"
                                                          Validation.ErrorTemplate="{x:Null}"/>
                                                 <!-- Placeholder / Ghost Text -->
@@ -651,7 +661,9 @@
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="ยอดซื้อขั้นต่ำ (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.MinSpend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding MinSpendInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
 
@@ -659,7 +671,9 @@
                                     <StackPanel Grid.Column="2">
                                         <TextBlock Text="เพดานส่วนลดสูงสุด (กรณี %)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.MaxDiscountAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding MaxDiscountAmountInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
                                 </Grid>
@@ -678,7 +692,9 @@
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="แต้มที่ต้องใช้ (แต้ม)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.PointsRequired, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding PointsRequiredInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
 
@@ -686,7 +702,9 @@
                                     <StackPanel Grid.Column="2">
                                         <TextBlock Text="แลกเป็นส่วนลด (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.DiscountAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding RedeemDiscountInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
                                 </Grid>
@@ -694,7 +712,9 @@
                                 <StackPanel Margin="0,0,0,10">
                                     <TextBlock Text="ยอดซื้อขั้นต่ำ (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                     <Border Style="{StaticResource StandardInputBorderStyle}">
-                                        <TextBox Text="{Binding Model.MinSpend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        <TextBox Text="{Binding MinSpendInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                 Style="{StaticResource CleanTextBoxStyle}"
+                                                 Validation.ErrorTemplate="{x:Null}"/>
                                     </Border>
                                 </StackPanel>
                             </StackPanel>
@@ -712,7 +732,9 @@
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="ยอดซื้อขั้นต่ำ (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.MinSpend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding MinSpendInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
 
@@ -720,7 +742,9 @@
                                     <StackPanel Grid.Column="2">
                                         <TextBlock Text="โควตาสิทธิ์ทั้งหมด (0 = ไม่จำกัด)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
-                                            <TextBox Text="{Binding Model.TotalQuota, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                            <TextBox Text="{Binding TotalQuotaInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                     Style="{StaticResource CleanTextBoxStyle}"
+                                                     Validation.ErrorTemplate="{x:Null}"/>
                                         </Border>
                                     </StackPanel>
                                 </Grid>
@@ -776,7 +800,9 @@
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="จำกัดสิทธิ์ (ครั้ง/คน)" FontSize="13" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
                                     <Border Style="{StaticResource StandardInputBorderStyle}">
-                                        <TextBox Text="{Binding Model.MaxUsagePerCustomer, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        <TextBox Text="{Binding MaxUsagePerCustomerInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                 Style="{StaticResource CleanTextBoxStyle}"
+                                                 Validation.ErrorTemplate="{x:Null}"/>
                                     </Border>
                                     <TextBlock Text="0 = ไม่จำกัด" FontSize="11" Foreground="#94A3B8" Margin="2,4,0,0"/>
                                 </StackPanel>

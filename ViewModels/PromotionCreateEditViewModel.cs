@@ -210,6 +210,218 @@ namespace Porjai20.ViewModels
 
         public bool IsInvalidPercentageDiscount => HasDiscountValueError;
 
+        #region Safe Numeric String Inputs for UI Binding
+
+        private string _minSpendInput = "0";
+        public string MinSpendInput
+        {
+            get => _minSpendInput;
+            set
+            {
+                if (SetProperty(ref _minSpendInput, value))
+                {
+                    if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed) ||
+                        decimal.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out parsed))
+                    {
+                        Model.MinSpend = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.MinSpend = 0m;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _maxDiscountAmountInput = string.Empty;
+        public string MaxDiscountAmountInput
+        {
+            get => _maxDiscountAmountInput;
+            set
+            {
+                if (SetProperty(ref _maxDiscountAmountInput, value))
+                {
+                    if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed) ||
+                        decimal.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out parsed))
+                    {
+                        Model.MaxDiscountAmount = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.MaxDiscountAmount = null;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _buyQuantityInput = "2";
+        public string BuyQuantityInput
+        {
+            get => _buyQuantityInput;
+            set
+            {
+                if (SetProperty(ref _buyQuantityInput, value))
+                {
+                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+                    {
+                        Model.BuyQuantity = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.BuyQuantity = 0;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _freeQuantityInput = "1";
+        public string FreeQuantityInput
+        {
+            get => _freeQuantityInput;
+            set
+            {
+                if (SetProperty(ref _freeQuantityInput, value))
+                {
+                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+                    {
+                        Model.FreeQuantity = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.FreeQuantity = 0;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _pointsRequiredInput = "0";
+        public string PointsRequiredInput
+        {
+            get => _pointsRequiredInput;
+            set
+            {
+                if (SetProperty(ref _pointsRequiredInput, value))
+                {
+                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+                    {
+                        Model.PointsRequired = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.PointsRequired = 0;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _redeemDiscountInput = "0";
+        public string RedeemDiscountInput
+        {
+            get => _redeemDiscountInput;
+            set
+            {
+                if (SetProperty(ref _redeemDiscountInput, value))
+                {
+                    if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed) ||
+                        decimal.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out parsed))
+                    {
+                        Model.DiscountAmount = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.DiscountAmount = 0m;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _totalQuotaInput = "0";
+        public string TotalQuotaInput
+        {
+            get => _totalQuotaInput;
+            set
+            {
+                if (SetProperty(ref _totalQuotaInput, value))
+                {
+                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+                    {
+                        Model.TotalQuota = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.TotalQuota = 0;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private string _maxUsagePerCustomerInput = "0";
+        public string MaxUsagePerCustomerInput
+        {
+            get => _maxUsagePerCustomerInput;
+            set
+            {
+                if (SetProperty(ref _maxUsagePerCustomerInput, value))
+                {
+                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+                    {
+                        Model.MaxUsagePerCustomer = parsed;
+                    }
+                    else if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Model.MaxUsagePerCustomer = 0;
+                    }
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        public void NormalizeEmptyNumericInputs()
+        {
+            if (string.IsNullOrWhiteSpace(MinSpendInput))
+            {
+                MinSpendInput = "0";
+            }
+            if (string.IsNullOrWhiteSpace(MaxDiscountAmountInput))
+            {
+                Model.MaxDiscountAmount = null;
+                MaxDiscountAmountInput = string.Empty;
+            }
+            if (string.IsNullOrWhiteSpace(BuyQuantityInput))
+            {
+                BuyQuantityInput = "0";
+            }
+            if (string.IsNullOrWhiteSpace(FreeQuantityInput))
+            {
+                FreeQuantityInput = "0";
+            }
+            if (string.IsNullOrWhiteSpace(PointsRequiredInput))
+            {
+                PointsRequiredInput = "0";
+            }
+            if (string.IsNullOrWhiteSpace(RedeemDiscountInput))
+            {
+                RedeemDiscountInput = "0";
+            }
+            if (string.IsNullOrWhiteSpace(TotalQuotaInput))
+            {
+                TotalQuotaInput = "0";
+            }
+            if (string.IsNullOrWhiteSpace(MaxUsagePerCustomerInput))
+            {
+                MaxUsagePerCustomerInput = "0";
+            }
+        }
+
+        #endregion
+
         public bool ValidateDiscountValue(bool isStrict = false)
         {
             if (Model == null || Model.PromoType != "Discount")
@@ -528,6 +740,14 @@ namespace Porjai20.ViewModels
                 item.IsSelected = false;
             }
 
+            MinSpendInput = "0";
+            MaxDiscountAmountInput = string.Empty;
+            BuyQuantityInput = "2";
+            FreeQuantityInput = "1";
+            PointsRequiredInput = "0";
+            RedeemDiscountInput = "0";
+            TotalQuotaInput = "0";
+            MaxUsagePerCustomerInput = "0";
             DiscountValue = string.Empty;
             HasDiscountValueError = false;
             DiscountErrorMessage = string.Empty;
@@ -581,6 +801,17 @@ namespace Porjai20.ViewModels
                 IsSameProductFreebie = true;
                 SelectedGiftProduct = null;
             }
+
+            MinSpendInput = Model.MinSpend > 0 ? Model.MinSpend.ToString("0.##", CultureInfo.InvariantCulture) : "0";
+            MaxDiscountAmountInput = Model.MaxDiscountAmount.HasValue && Model.MaxDiscountAmount.Value > 0
+                ? Model.MaxDiscountAmount.Value.ToString("0.##", CultureInfo.InvariantCulture)
+                : string.Empty;
+            BuyQuantityInput = Model.BuyQuantity.ToString();
+            FreeQuantityInput = Model.FreeQuantity.ToString();
+            PointsRequiredInput = Model.PointsRequired.ToString();
+            RedeemDiscountInput = Model.DiscountAmount > 0 ? Model.DiscountAmount.ToString("0.##", CultureInfo.InvariantCulture) : "0";
+            TotalQuotaInput = Model.TotalQuota.ToString();
+            MaxUsagePerCustomerInput = Model.MaxUsagePerCustomer.ToString();
 
             if (Model.PromoType == "Discount" && Model.DiscountAmount > 0)
             {
@@ -747,10 +978,19 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(IsAllStoreScope));
             OnPropertyChanged(nameof(IsSpecificProductsScope));
             OnPropertyChanged(nameof(DiscountPlaceholderText));
+            OnPropertyChanged(nameof(MinSpendInput));
+            OnPropertyChanged(nameof(MaxDiscountAmountInput));
+            OnPropertyChanged(nameof(BuyQuantityInput));
+            OnPropertyChanged(nameof(FreeQuantityInput));
+            OnPropertyChanged(nameof(PointsRequiredInput));
+            OnPropertyChanged(nameof(RedeemDiscountInput));
+            OnPropertyChanged(nameof(TotalQuotaInput));
+            OnPropertyChanged(nameof(MaxUsagePerCustomerInput));
         }
 
         public async Task SaveAsync(bool isActive, bool isDraft)
         {
+            NormalizeEmptyNumericInputs();
             if (string.IsNullOrWhiteSpace(Model.PromoID))
             {
                 _dialog.ShowWarning("ข้อมูลไม่ครบถ้วน", "กรุณาระบุรหัสโปรโมชั่น");
