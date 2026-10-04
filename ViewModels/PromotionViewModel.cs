@@ -91,11 +91,12 @@ namespace Porjai20.ViewModels
                 }
             });
 
-            DeletePromotionCommand = new RelayCommand(async _ =>
+            DeletePromotionCommand = new RelayCommand(async param =>
             {
-                if (SelectedPromotion != null)
+                var target = param as PromotionModel ?? SelectedPromotion;
+                if (target != null)
                 {
-                    await DeletePromotionAsync(SelectedPromotion);
+                    await DeletePromotionAsync(target);
                 }
             });
 
@@ -426,6 +427,8 @@ namespace Porjai20.ViewModels
 
         public async Task DeletePromotionAsync(PromotionModel promo)
         {
+            if (promo == null) return;
+
             bool confirmed = _dialog.ShowConfirm(
                 "ยืนยันการลบ",
                 $"คุณแน่ใจหรือไม่ว่าต้องการลบโปรโมชั่น '{promo.PromoName}' ({promo.PromoID})?");
@@ -435,8 +438,28 @@ namespace Porjai20.ViewModels
             bool success = await _promoService.DeletePromotionAsync(promo.PromoID);
             if (success)
             {
-                _dialog.ShowSuccess("ลบเรียบร้อย", $"ลบโปรโมชั่น '{promo.PromoID}' สำเร็จแล้ว");
+                // 1. ลบรายการออกจากคอลเลกชันทันที
+                var matchInAll = _allPromotions.FirstOrDefault(p => p.PromoID == promo.PromoID);
+                if (matchInAll != null)
+                {
+                    _allPromotions.Remove(matchInAll);
+                }
+
+                var matchInFiltered = FilteredPromotions.FirstOrDefault(p => p.PromoID == promo.PromoID);
+                if (matchInFiltered != null)
+                {
+                    FilteredPromotions.Remove(matchInFiltered);
+                }
+
+                // 2. เคลียร์ SelectedPromotion ให้เป็น null เพื่อให้แผงฝั่งขวากลับไปเป็นหน้าว่าง
                 SelectedPromotion = null;
+
+                // 3. คำนวณตัวเลขนับจำนวนบน Badges ใหม่ทันที
+                UpdateCounters();
+
+                _dialog.ShowSuccess("ลบเรียบร้อย", $"ลบโปรโมชั่น '{promo.PromoID}' สำเร็จแล้ว");
+
+                // 4. ซิงค์กับฐานข้อมูลจริงอีกครั้ง
                 await LoadPromotionsAsync();
             }
             else

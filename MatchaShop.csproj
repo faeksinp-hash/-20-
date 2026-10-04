@@ -23,8 +23,18 @@
 
   <ItemGroup>
     <Resource Include="Resources\**" />
-    <None Update="**/*.db" CopyToOutputDirectory="Never" />
-    <None Update="**/*.sqlite" CopyToOutputDirectory="Never" />
+    <None Update="**/*.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="**/*.sqlite">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="matcha.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="matcha_pos.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

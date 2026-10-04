@@ -269,20 +269,33 @@ namespace Porjai20.Services
         /// </summary>
         public async Task<bool> DeletePromotionAsync(string promoId)
         {
+            if (string.IsNullOrWhiteSpace(promoId)) return false;
+
             using (var conn = _db.GetConnection())
-            using (var trans = conn.BeginTransaction())
             {
-                try
+                if (conn.State != System.Data.ConnectionState.Open)
                 {
-                    await conn.ExecuteAsync("DELETE FROM tblPromotionProducts WHERE PromoID = @PromoID;", new { PromoID = promoId }, trans);
-                    int rows = await conn.ExecuteAsync("DELETE FROM tblPromotion WHERE PromoID = @PromoID;", new { PromoID = promoId }, trans);
-                    trans.Commit();
-                    return rows > 0;
+                    conn.Open();
                 }
-                catch
+
+                using (var trans = conn.BeginTransaction())
                 {
-                    trans.Rollback();
-                    return false;
+                    try
+                    {
+                        // 1. ลบรายการสินค้าที่ผูกกับโปรโมชั่นใน tblPromotionProducts
+                        await conn.ExecuteAsync("DELETE FROM tblPromotionProducts WHERE PromoID = @PromoID;", new { PromoID = promoId }, trans);
+
+                        // 2. ลบหัวโปรโมชั่นใน tblPromotion
+                        int rows = await conn.ExecuteAsync("DELETE FROM tblPromotion WHERE PromoID = @PromoID;", new { PromoID = promoId }, trans);
+
+                        trans.Commit();
+                        return rows > 0;
+                    }
+                    catch
+                    {
+                        trans.Rollback();
+                        return false;
+                    }
                 }
             }
         }

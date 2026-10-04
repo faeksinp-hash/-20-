@@ -356,33 +356,53 @@ namespace Porjai20.Services
                 }
                 catch { }
 
-                int promoCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblPromotion;");
-                if (promoCount == 0)
-                {
-                    connection.Execute(@"
-                        INSERT INTO tblPromotion (
-                            PromoID, PromoCode, PromoName, PromoType, TargetScope, DiscountType,
-                            DiscountAmount, MaxDiscountAmount, MinSpend, PointsRequired, BuyQuantity,
-                            FreeQuantity, FreeProductID, CanRepeat, IsMemberOnly, CanCombine,
-                            MaxUsagePerCustomer, TotalQuota, CurrentUsage, StartDate, EndDate,
-                            IsActive, IsDraft, CreatedAt
-                        ) VALUES
-                        ('PROMO-10B', NULL, 'ส่วนลดเปิดร้าน 10 บาท', 'Discount', 'AllStore', 'Cash', 10, NULL, 50, 0, 0, 0, NULL, 1, 0, 1, 0, 0, 124, '2026-01-01', '2026-12-31', 1, 0, '2026-01-01 10:00:00'),
-                        ('POINTS-50', NULL, 'แลก 50 แต้มรับส่วนลด 15 บาท', 'Redeem', 'AllStore', 'Cash', 15, NULL, 40, 50, 0, 0, NULL, 0, 1, 0, 1, 0, 42, '2026-01-01', '2026-12-31', 1, 0, '2026-01-01 10:00:00'),
-                        ('GIFT-BAG', NULL, 'ซื้อครบ 200 แจกถุงผ้าร้านพอใจ', 'Gift', 'AllStore', 'Cash', 0, NULL, 200, 0, 0, 1, NULL, 0, 0, 1, 1, 100, 15, '2026-02-01', '2026-12-31', 1, 0, '2026-02-01 09:00:00'),
-                        ('BUY2FREE1', '2FREE1', 'ซื้อปากกาน้ำเงิน 2 แถม 1 ฟรี', 'Freebie', 'SpecificProducts', 'Cash', 0, NULL, 0, 0, 2, 1, NULL, 1, 0, 0, 0, 0, 38, '2026-01-01', '2026-12-31', 1, 0, '2026-01-01 09:00:00'),
-                        ('EXPIRED-NEWYEAR', NULL, 'ต้อนรับปีใหม่ลด 30 บาท', 'Discount', 'AllStore', 'Cash', 30, NULL, 150, 0, 0, 0, NULL, 1, 0, 0, 0, 0, 65, '2025-12-15', '2026-01-15', 0, 0, '2025-12-15 09:00:00');");
+                // 15.1) tblAppConfig - ติดตามสถานะระบบและการ Seed ข้อมูลเริ่มต้น
+                connection.Execute(@"
+                    CREATE TABLE IF NOT EXISTS tblAppConfig (
+                        ConfigKey TEXT PRIMARY KEY,
+                        ConfigValue TEXT
+                    );");
 
-                    // Seed first product into BUY2FREE1 if product exists
-                    try
+                // ตรวจสอบว่าเคย Seed ข้อมูลโปรโมชั่นเริ่มต้นไปแล้วหรือไม่
+                bool isPromotionsSeeded = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(1) FROM tblAppConfig WHERE ConfigKey = 'PromotionsSeeded' AND ConfigValue = 'true';") > 0;
+
+                if (!isPromotionsSeeded)
+                {
+                    int promoCount = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblPromotion;");
+                    int employeeCountBefore = connection.ExecuteScalar<int>("SELECT COUNT(1) FROM tblEmployee;");
+
+                    // สร้างโปรโมชั่นตัวอย่างเฉพาะกรณีที่เป็นการสร้างฐานข้อมูลใหม่ครั้งแรกสุดเท่านั้น (employeeCount == 0 และ promoCount == 0)
+                    if (promoCount == 0 && employeeCountBefore == 0)
                     {
-                        var firstProId = connection.ExecuteScalar<string>("SELECT CAST(Pro_ID AS TEXT) FROM tblProduct ORDER BY Pro_ID ASC LIMIT 1;");
-                        if (!string.IsNullOrEmpty(firstProId))
+                        connection.Execute(@"
+                            INSERT INTO tblPromotion (
+                                PromoID, PromoCode, PromoName, PromoType, TargetScope, DiscountType,
+                                DiscountAmount, MaxDiscountAmount, MinSpend, PointsRequired, BuyQuantity,
+                                FreeQuantity, FreeProductID, CanRepeat, IsMemberOnly, CanCombine,
+                                MaxUsagePerCustomer, TotalQuota, CurrentUsage, StartDate, EndDate,
+                                IsActive, IsDraft, CreatedAt
+                            ) VALUES
+                            ('PROMO-10B', NULL, 'ส่วนลดเปิดร้าน 10 บาท', 'Discount', 'AllStore', 'Cash', 10, NULL, 50, 0, 0, 0, NULL, 1, 0, 1, 0, 0, 124, '2026-01-01', '2026-12-31', 1, 0, '2026-01-01 10:00:00'),
+                            ('POINTS-50', NULL, 'แลก 50 แต้มรับส่วนลด 15 บาท', 'Redeem', 'AllStore', 'Cash', 15, NULL, 40, 50, 0, 0, NULL, 0, 1, 0, 1, 0, 42, '2026-01-01', '2026-12-31', 1, 0, '2026-01-01 10:00:00'),
+                            ('GIFT-BAG', NULL, 'ซื้อครบ 200 แจกถุงผ้าร้านพอใจ', 'Gift', 'AllStore', 'Cash', 0, NULL, 200, 0, 0, 1, NULL, 0, 0, 1, 1, 100, 15, '2026-02-01', '2026-12-31', 1, 0, '2026-02-01 09:00:00'),
+                            ('BUY2FREE1', '2FREE1', 'ซื้อปากกาน้ำเงิน 2 แถม 1 ฟรี', 'Freebie', 'SpecificProducts', 'Cash', 0, NULL, 0, 0, 2, 1, NULL, 1, 0, 0, 0, 0, 38, '2026-01-01', '2026-12-31', 1, 0, '2026-01-01 09:00:00'),
+                            ('EXPIRED-NEWYEAR', NULL, 'ต้อนรับปีใหม่ลด 30 บาท', 'Discount', 'AllStore', 'Cash', 30, NULL, 150, 0, 0, 0, NULL, 1, 0, 0, 0, 0, 65, '2025-12-15', '2026-01-15', 0, 0, '2025-12-15 09:00:00');");
+
+                        // Seed first product into BUY2FREE1 if product exists
+                        try
                         {
-                            connection.Execute("INSERT OR IGNORE INTO tblPromotionProducts (PromoID, ProductID) VALUES ('BUY2FREE1', @firstProId);", new { firstProId });
+                            var firstProId = connection.ExecuteScalar<string>("SELECT CAST(Pro_ID AS TEXT) FROM tblProduct ORDER BY Pro_ID ASC LIMIT 1;");
+                            if (!string.IsNullOrEmpty(firstProId))
+                            {
+                                connection.Execute("INSERT OR IGNORE INTO tblPromotionProducts (PromoID, ProductID) VALUES ('BUY2FREE1', @firstProId);", new { firstProId });
+                            }
                         }
+                        catch { }
                     }
-                    catch { }
+
+                    // บันทึก Flag ว่าได้ทำการ Seed แล้ว เพื่อไม่ให้ Re-seed ซ้ำอีกโดยเด็ดขาดแม้ผู้ใช้จะลบโปรโมชั่นจนหมด
+                    connection.Execute("INSERT OR REPLACE INTO tblAppConfig (ConfigKey, ConfigValue) VALUES ('PromotionsSeeded', 'true');");
                 }
 
                 // Seed Default Admin User ONLY if employee table is empty
