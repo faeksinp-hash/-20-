@@ -1,0 +1,1151 @@
+<UserControl x:Class="Porjai20.Views.ManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Porjai20"
+             xmlns:converters="clr-namespace:Porjai20.Converters"
+             mc:Ignorable="d" 
+              d:DesignHeight="800" d:DesignWidth="1200"
+              FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB">
+
+    <UserControl.Resources>
+
+        <Style x:Key="PrimaryRedButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryBtnStyle}"/>
+        <Style x:Key="SecondaryLightButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryBtnStyle}"/>
+        <Style x:Key="SecondaryGrayButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryBtnStyle}"/>
+        <Style x:Key="DangerRedButtonStyle" TargetType="Button" BasedOn="{StaticResource DangerBtnStyle}"/>
+        <Style x:Key="OutlineButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryBtnStyle}"/>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FB"/>
+        <SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="PosBorderLight" Color="#CBD5E1"/>
+
+        <SolidColorBrush x:Key="RosePrimary"    Color="#00A3E0"/>
+        <SolidColorBrush x:Key="RoseHover"      Color="#0B2545"/>
+        <SolidColorBrush x:Key="RosePressed"    Color="#0082B3"/>
+        <SolidColorBrush x:Key="RoseSubtle"     Color="#E0F2FE"/>
+
+        <SolidColorBrush x:Key="TextPrimary"    Color="#0F172A"/>
+        <SolidColorBrush x:Key="TextSecondary"  Color="#475569"/>
+        <SolidColorBrush x:Key="TextMuted"      Color="#64748B"/>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  MODAL CLOSE BUTTON STYLE (Circular Soft Pink Badge)       -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="ModalCloseButtonStyle" TargetType="Button">
+            <Setter Property="Width"               Value="36"/>
+            <Setter Property="Height"              Value="36"/>
+            <Setter Property="Background"          Value="#FCE4EC"/>
+            <Setter Property="Foreground"          Value="#D81B60"/>
+            <Setter Property="BorderThickness"     Value="0"/>
+            <Setter Property="Cursor"              Value="Hand"/>
+            <Setter Property="FontSize"            Value="16"/>
+            <Setter Property="FontWeight"          Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="18">
+                            <TextBlock x:Name="Txt"
+                                       Text="✕"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#00A3E0"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#0082B3"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Cyan Input Border Style -->
+        <Style x:Key="CyanInputBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#00A3E0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#38BDF8"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="#38BDF8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  KPI CARD STYLE                                            -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="KpiCardStyle" TargetType="Border">
+            <Setter Property="Background"      Value="#FFFFFF"/>
+            <Setter Property="CornerRadius"    Value="12"/>
+            <Setter Property="Padding"         Value="16,14"/>
+            <Setter Property="BorderBrush"     Value="#BAE6FD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  TEXTBOX STYLE                                             -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="LightTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"             Value="Transparent"/>
+            <Setter Property="Foreground"             Value="#2D3748"/>
+            <Setter Property="CaretBrush"             Value="#2D3748"/>
+            <Setter Property="BorderThickness"        Value="0"/>
+            <Setter Property="FontSize"               Value="16"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      BorderThickness="0" IsTabStop="False"
+                                      VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  COMBOBOX STYLE                                            -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="LightComboBoxStyle" BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox"/>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="Padding"    Value="10,8"/>
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Margin="4,2" Padding="{TemplateBinding Padding}">
+                            <TextBlock x:Name="Txt" Text="{TemplateBinding Content}" Foreground="#2D3748" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="#0B2545"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#00A3E0"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Primary Button Style -->
+        <Style x:Key="PrimaryBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background" Value="#00A3E0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#0077B6"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary Button Style -->
+        <Style x:Key="SecondaryBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background" Value="#E0F2FE"/>
+            <Setter Property="Foreground" Value="#0B2545"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderBrush" Value="#BAE6FD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter TargetName="btnBorder" Property="BorderBrush" Value="#7DD3FC"/>
+                                <Setter Property="Foreground" Value="#0B2545"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#7DD3FC"/>
+                                <Setter TargetName="btnBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="#0B2545"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#F1F5F9"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Primary Rose Button Style -->
+        <Style x:Key="RoseBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"      Value="#00A3E0"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontSize"        Value="16"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0B2545"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0082B3"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter Property="Foreground" Value="#A0AEC0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- View Details Outline Button Style -->
+        <Style x:Key="ViewDetailsButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"      Value="#E0F2FE"/>
+            <Setter Property="Foreground"      Value="#0B2545"/>
+            <Setter Property="BorderBrush"     Value="#00A3E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="32"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#00A3E0"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0B2545"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  DATAGRID STYLES                                           -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  DATAGRID STYLES & TYPOGRAPHY                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style TargetType="DataGrid">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+        </Style>
+
+        <Style x:Key="StockColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="FontFamily"              Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="FontSize"                Value="15"/>
+            <Setter Property="FontWeight"              Value="SemiBold"/>
+            <Setter Property="Foreground"              Value="#334155"/>
+            <Setter Property="Background"              Value="#F8FAFC"/>
+            <Setter Property="MinHeight"               Value="44"/>
+            <Setter Property="Height"                  Value="44"/>
+            <Setter Property="Padding"                 Value="12,0"/>
+            <Setter Property="BorderBrush"             Value="#E2E8F0"/>
+            <Setter Property="BorderThickness"         Value="0,0,0,1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Custom Add Button Style (+ เพิ่มข้อมูลสินค้า / + เพิ่มประเภทสินค้า) in Vivid Blue Theme -->
+        <Style x:Key="AddBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#0369A1"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="StockRowStyle" TargetType="DataGridRow">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#0F172A"/>
+            <Setter Property="FontSize"        Value="15"/>
+            <Setter Property="FontWeight"      Value="Normal"/>
+            <Setter Property="MinHeight"       Value="48"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <EventSetter Event="MouseDoubleClick" Handler="ProductRow_MouseDoubleClick"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridRow">
+                        <Border x:Name="RowBorder"
+                                CornerRadius="8" Margin="2,1" Padding="4,0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                BorderBrush="Transparent">
+                            <DataGridCellsPresenter
+                                ItemsPanel="{TemplateBinding ItemsPanel}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter TargetName="RowBorder" Property="BorderThickness" Value="1"/>
+                                <Setter Property="Foreground"  Value="#0F172A"/>
+                                <Setter Property="FontWeight"  Value="Normal"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                     Color="Transparent"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                 Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"    Color="Transparent"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="CategoryRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource StockRowStyle}">
+            <EventSetter Event="MouseDoubleClick" Handler="CategoryRow_MouseDoubleClick"/>
+        </Style>
+
+        <Style x:Key="StockCellStyle" TargetType="DataGridCell">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"        Value="15"/>
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#0F172A"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
+            <Setter Property="Padding"         Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="FontWeight"      Value="Normal"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="Transparent" BorderThickness="0" BorderBrush="Transparent" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="#0F172A"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Stock Table Cell Text Styles (Clean Modern Noto Sans Thai Typography) -->
+        <Style x:Key="StockProductCodeStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="Normal"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+        </Style>
+
+        <Style x:Key="StockProductNameStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="Normal"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="Padding"             Value="12,0"/>
+        </Style>
+
+        <Style x:Key="StockCategoryStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="Normal"/>
+            <Setter Property="Foreground"          Value="#475569"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="Padding"             Value="12,0"/>
+        </Style>
+
+        <Style x:Key="StockPriceStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="Padding"             Value="0,0,16,0"/>
+        </Style>
+
+        <Style x:Key="StockQtyStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+        </Style>
+
+        <!-- General Text Alignment Helpers -->
+        <Style x:Key="ColCenter" TargetType="TextBlock" BasedOn="{StaticResource StockProductCodeStyle}"/>
+        <Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource StockQtyStyle}"/>
+        <Style x:Key="ColLeft" TargetType="TextBlock" BasedOn="{StaticResource StockProductNameStyle}"/>
+        <Style x:Key="ColLeftBold" TargetType="TextBlock" BasedOn="{StaticResource StockProductNameStyle}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="ColRight" TargetType="TextBlock" BasedOn="{StaticResource StockPriceStyle}">
+            <Setter Property="FontWeight" Value="Normal"/>
+        </Style>
+        <Style x:Key="ColRightBold" TargetType="TextBlock" BasedOn="{StaticResource StockPriceStyle}"/>
+
+    </UserControl.Resources>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  OUTER ROOT GRID: Full 100% canvas for main page and modals     -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <Grid Visibility="{Binding IsManagementMode, Converter={StaticResource BoolToVis}}" Background="#F4F7FB">
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Page Header -->
+                <RowDefinition Height="Auto"/>  <!-- KPI Cards  -->
+                <RowDefinition Height="Auto"/>  <!-- Filter Bar  -->
+                <RowDefinition Height="*"/>     <!-- DataGrid Table -->
+            </Grid.RowDefinitions>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 0 — Page Header                                       -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal">
+                    <!-- Rose Accent Vertical Bar -->
+                    <Border Width="5" CornerRadius="3" Margin="0,0,12,0" VerticalAlignment="Stretch">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00A3E0" Offset="0"/>
+                                <GradientStop Color="#F4A2B8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                    <StackPanel>
+                        <TextBlock Text="📦 สต็อกสินค้า"
+                                   FontSize="24" FontWeight="SemiBold"
+                                   Foreground="#2D3748"
+                                   Margin="0,0,0,2"/>
+                        <TextBlock Text="จัดการสต็อกและสินค้า — ระบบจัดการร้าน พอใจ"
+                                   FontSize="15"
+                                   Foreground="#718096"
+                                   Margin="0"/>
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 1 — KPI Summary Cards (3 cards)                       -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="1" Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- KPI Card 1: Total Products Count -->
+                <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#E0F2FE" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
+                                <TextBlock Text="📦" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            </Border>
+                            <TextBlock Text="รายการสินค้าทั้งหมด" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding TotalStockItemsCount}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#0B2545"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="จำนวนสินค้าทั้งหมดในระบบ"
+                                   FontSize="14"
+                                   Foreground="#64748B"
+                                   Margin="0"/>
+                    </Grid>
+                </Border>
+
+                <!-- KPI Card 2: Low Stock Count -->
+                <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#FEF3C7" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#FDE68A"/>
+                    </Border.BorderBrush>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#FEF3C7" Margin="0,0,10,0">
+                                <TextBlock Text="⚠️" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            </Border>
+                            <TextBlock Text="สินค้าใกล้หมดสต็อก" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding LowStockItemsCount}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#D69E2E"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="เหลือน้อยกว่าจุดสั่งซื้อขั้นต่ำ"
+                                   FontSize="14"
+                                   Foreground="#64748B"
+                                   Margin="0"/>
+                    </Grid>
+                </Border>
+
+                <!-- KPI Card 3: Out of Stock Count -->
+                <Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#E0F2FE" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#BAE6FD"/>
+                    </Border.BorderBrush>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
+                                <TextBlock Text="🚨" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            </Border>
+                            <TextBlock Text="สินค้าหมดสต็อก" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding OutOfStockItemsCount}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#00A3E0"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="สต็อกเป็น 0 ต้องเติมทันที"
+                                   FontSize="14"
+                                   Foreground="#64748B"
+                                   Margin="0"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 2 — Filter / Search & Action Bar                      -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="2"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="16"
+                    Margin="0,0,0,16"
+                    Effect="{StaticResource SoftShadow}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>   <!-- ComboBox View Selector -->
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>     <!-- Search Box -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- ComboBox Stock Status Filter -->
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Action Buttons Stack -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ComboBox View Selector -->
+                    <Border Grid.Column="0"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1.5"
+                            CornerRadius="8">
+                        <ComboBox SelectedValue="{Binding SelectedStockViewMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="Tag"
+                                  Style="{StaticResource LightComboBoxStyle}"
+                                  Height="44" FontSize="16" Padding="12,0" Background="Transparent" BorderThickness="0">
+                            <ComboBoxItem Tag="products" Content="📦 ข้อมูลสินค้า" IsSelected="True"/>
+                            <ComboBoxItem Tag="categories" Content="🏷️ ประเภทสินค้า"/>
+                        </ComboBox>
+                    </Border>
+
+                    <!-- Search TextBox -->
+                    <Border Grid.Column="2"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1.5"
+                            CornerRadius="8">
+                        <Grid>
+                            <!-- Search Icon -->
+                            <Path Data="{StaticResource IconSearch}"
+                                  Fill="#718096"
+                                  Width="18" Height="18"
+                                  HorizontalAlignment="Left"
+                                  Margin="12,0,0,0"
+                                  Stretch="Uniform"
+                                  VerticalAlignment="Center"/>
+                            <!-- TextBox -->
+                            <TextBox x:Name="StockSearchBox"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource LightTextBoxStyle}"
+                                     Height="44"
+                                     Padding="38,0,12,0"
+                                     VerticalContentAlignment="Center"
+                                     FontSize="16"/>
+                            <!-- Dynamic Placeholder -->
+                            <TextBlock Text="{Binding StockViewSearchPlaceholder, FallbackValue='ค้นหารหัสสินค้า, ชื่อสินค้า...'}"
+                                       Foreground="#A0AEC0"
+                                       FontSize="15"
+                                       VerticalAlignment="Center"
+                                       Margin="38,0,12,0"
+                                       IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=StockSearchBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+
+                    <!-- ComboBox Stock Status Filter -->
+                    <Border Grid.Column="4"
+                            Width="170"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1.5"
+                            CornerRadius="8"
+                            Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}">
+                        <ComboBox ItemsSource="{Binding StockStatusFilterOptions}"
+                                  SelectedItem="{Binding SelectedStockStatusFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Style="{StaticResource LightComboBoxStyle}"
+                                  Height="44" FontSize="16" Padding="12,0" Background="Transparent" BorderThickness="0"/>
+                    </Border>
+
+                    <!-- Dynamic Action Buttons for Products View: [ล้าง] -> [+ เพิ่มข้อมูลสินค้า] -->
+                    <StackPanel Grid.Column="6" Orientation="Horizontal"
+                                Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}">
+                        <Button Content="ล้าง"
+                                Command="{Binding ClearStockSearchCommand}"
+                                Style="{StaticResource ClearBtnStyle}"
+                                Padding="14,0"
+                                Height="42"
+                                Margin="0,0,8,0"/>
+                        <Button x:Name="BtnOpenAddProduct"
+                                Content="➕ เพิ่มข้อมูลสินค้า"
+                                Command="{Binding OpenAddProductCommand}"
+                                IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                                Style="{StaticResource AddBtnStyle}"
+                                Height="42" Padding="18,0"/>
+                    </StackPanel>
+
+                    <!-- Dynamic Action Buttons for Categories View: [ล้าง] -> [+ เพิ่มประเภทสินค้า] -->
+                    <StackPanel Grid.Column="6" Orientation="Horizontal"
+                                Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}">
+                        <Button Content="ล้าง"
+                                Command="{Binding ClearStockSearchCommand}"
+                                Style="{StaticResource ClearBtnStyle}"
+                                Padding="14,0"
+                                Height="42"
+                                Margin="0,0,8,0"/>
+                        <Button Content="➕ เพิ่มประเภทสินค้า"
+                                Command="{Binding OpenAddCategoryModalCommand}"
+                                IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                                Style="{StaticResource AddBtnStyle}"
+                                Height="42" Padding="18,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 3 — DataGrid Tables Container                         -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="3"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Margin="0,0,0,0"
+                    Padding="16"
+                    Effect="{StaticResource SoftShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- DataGrid 1: Products Table -->
+                    <DataGrid Grid.Row="0"
+                              x:Name="ProductsDataGrid"
+                              ItemsSource="{Binding Products}"
+                              SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              CanUserSortColumns="True"
+                              FontFamily="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"
+                              FontSize="15"
+                              RowHeight="48"
+                              MinRowHeight="48"
+                              GridLinesVisibility="None"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ColumnHeaderStyle="{StaticResource StockColumnHeaderStyle}"
+                              RowStyle="{StaticResource StockRowStyle}"
+                              CellStyle="{StaticResource StockCellStyle}"
+                              SelectionMode="Single"
+                              Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}">
+
+                        <DataGrid.Columns>
+
+                            <!-- #1: Product Code (รหัสสินค้า) -->
+                            <DataGridTextColumn Header="รหัสสินค้า"
+                                                Binding="{Binding Code}"
+                                                Width="1.2*"
+                                                ElementStyle="{StaticResource StockProductCodeStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #2: Product Name (ชื่อสินค้า) -->
+                            <DataGridTextColumn Header="ชื่อสินค้า"
+                                                Binding="{Binding Name}"
+                                                Width="2.5*"
+                                                ElementStyle="{StaticResource StockProductNameStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        <Setter Property="Padding" Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #3: Category (หมวดหมู่) -->
+                            <DataGridTextColumn Header="หมวดหมู่"
+                                                Binding="{Binding Category}"
+                                                Width="1.3*"
+                                                ElementStyle="{StaticResource StockCategoryStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        <Setter Property="Padding" Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #4: Cost Price (ราคาทุน) -->
+                            <DataGridTextColumn Header="ราคาทุน"
+                                                Binding="{Binding Cost, StringFormat={}{0:N2}}"
+                                                Width="1.1*"
+                                                ElementStyle="{StaticResource StockPriceStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                        <Setter Property="Padding" Value="0,0,16,0"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #5: Selling Price (ราคาขาย) -->
+                            <DataGridTextColumn Header="ราคาขาย"
+                                                Binding="{Binding Price, StringFormat={}{0:N2}}"
+                                                Width="1.1*"
+                                                ElementStyle="{StaticResource StockPriceStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                        <Setter Property="Padding" Value="0,0,16,0"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #6: Reorder Point (จุดสั่งซื้อขั้นต่ำ) -->
+                            <DataGridTextColumn Header="ขั้นต่ำ"
+                                                Binding="{Binding ReorderPoint}"
+                                                Width="0.8*"
+                                                ElementStyle="{StaticResource StockQtyStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #7: Stock Qty (จำนวนคงเหลือ) -->
+                            <DataGridTextColumn Header="คงเหลือ"
+                                                Binding="{Binding Stock}"
+                                                Width="0.9*"
+                                                ElementStyle="{StaticResource StockQtyStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #8: Stock Status (สถานะสต็อก) - Status Badges / Pill Tag -->
+                            <DataGridTemplateColumn Header="สถานะสต็อก" Width="1.2*">
+                                <DataGridTemplateColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTemplateColumn.HeaderStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="StatusBadge"
+                                                CornerRadius="10"
+                                                Padding="10,3"
+                                                BorderThickness="1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="#DCFCE7"
+                                                BorderBrush="#86EFAC">
+                                            <TextBlock x:Name="StatusText"
+                                                       Text="{Binding StockStatus}"
+                                                       FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+                                                       FontSize="13.5"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#15803D"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <DataTemplate.Triggers>
+                                            <!-- สถานะ ปกติ: พื้นหลัง #DCFCE7, เส้นขอบ #86EFAC, ตัวหนังสือ #15803D -->
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="ปกติ">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#DCFCE7"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#86EFAC"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#15803D"/>
+                                            </DataTrigger>
+                                            <!-- สถานะ ใกล้หมด: พื้นหลัง #FEF3C7, เส้นขอบ #FDE68A, ตัวหนังสือ #B45309 -->
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="ใกล้หมด">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEF3C7"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FDE68A"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B45309"/>
+                                            </DataTrigger>
+                                            <!-- สถานะ หมดสต็อก: พื้นหลัง #FEE2E2, เส้นขอบ #FECACA, ตัวหนังสือ #B91C1C -->
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="หมดสต็อก">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FECACA"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding StockStatus}" Value="สินค้าหมด">
+                                                <Setter TargetName="StatusBadge" Property="Background" Value="#FEE2E2"/>
+                                                <Setter TargetName="StatusBadge" Property="BorderBrush" Value="#FECACA"/>
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#B91C1C"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- DataGrid 2: Product Categories Table -->
+                    <DataGrid Grid.Row="0"
+                              x:Name="CategoriesDataGrid"
+                              ItemsSource="{Binding ProductCategories}"
+                              SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              CanUserSortColumns="True"
+                              FontFamily="Noto Sans Thai, Segoe UI, Tahoma, sans-serif"
+                              FontSize="15"
+                              RowHeight="48"
+                              MinRowHeight="48"
+                              GridLinesVisibility="None"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ColumnHeaderStyle="{StaticResource StockColumnHeaderStyle}"
+                              RowStyle="{StaticResource CategoryRowStyle}"
+                              CellStyle="{StaticResource StockCellStyle}"
+                              SelectionMode="Single"
+                              Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}">
+
+                        <DataGrid.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding OpenManageCategoryModalCommand}"
+                                          CommandParameter="{Binding SelectedCategory}"/>
+                        </DataGrid.InputBindings>
+
+                        <DataGrid.Columns>
+
+                            <!-- #1: Category Code (รหัสหมวดหมู่) -->
+                            <DataGridTextColumn Header="รหัสหมวดหมู่"
+                                                Binding="{Binding Code}"
+                                                Width="1.2*"
+                                                ElementStyle="{StaticResource StockProductCodeStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #2: Category Name (ชื่อประเภทสินค้า) -->
+                            <DataGridTextColumn Header="ชื่อประเภทสินค้า"
+                                                Binding="{Binding Name}"
+                                                Width="2*"
+                                                ElementStyle="{StaticResource StockProductNameStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        <Setter Property="Padding" Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #3: Description (รายละเอียด) -->
+                            <DataGridTextColumn Header="รายละเอียด"
+                                                Binding="{Binding Description}"
+                                                Width="3*"
+                                                ElementStyle="{StaticResource StockCategoryStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        <Setter Property="Padding" Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                            <!-- #4: Product Count (จำนวนสินค้า) -->
+                            <DataGridTextColumn Header="จำนวนสินค้าในระบบ"
+                                                Binding="{Binding ProductCount}"
+                                                Width="1.3*"
+                                                ElementStyle="{StaticResource StockQtyStyle}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StockColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- ── Status Bar (bottom of DataGrid panel) ─── -->
+                    <DockPanel Grid.Row="1"
+                               LastChildFill="False"
+                               Margin="4,12,4,0">
+
+                        <!-- Left: Items Count -->
+                        <TextBlock Text="{Binding FilteredProducts.Count, StringFormat='แสดงทั้งหมด {0} รายการสินค้า'}"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Left"
+                                   Margin="4,0,0,0"
+                                   Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}"/>
+
+                        <TextBlock Text="{Binding ProductCategories.Count, StringFormat='แสดงทั้งหมด {0} รายการประเภทสินค้า'}"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Left"
+                                   Margin="4,0,0,0"
+                                   Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}"/>
+
+                        <!-- Right: Double-click Hint -->
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อดูรายละเอียดข้อมูลสินค้า"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
+                                   Margin="0,0,4,0"
+                                   Visibility="{Binding IsProductViewActive, Converter={StaticResource BoolToVis}}"/>
+
+                        <TextBlock Text="💡 ดับเบิ้ลคลิกที่รายการเพื่อแก้ไขข้อมูล"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
+                                   Margin="0,0,4,0"
+                                   Visibility="{Binding IsCategoryViewActive, Converter={StaticResource BoolToVis}}"/>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

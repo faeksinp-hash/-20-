@@ -1,0 +1,817 @@
+<UserControl x:Class="Porjai20.Views.PromotionCreateEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Porjai20.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1280"
+             FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, sans-serif"
+             Background="#F4F7FB">
+
+    <UserControl.Resources>
+        <!-- Soft Shadow for Cards -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="12" ShadowDepth="2" Direction="270" Color="#0B2545" Opacity="0.08"/>
+
+        <!-- Input Box Style -->
+        <Style x:Key="StandardInputBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#38BDF8"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="#0284C7"/>
+                    <Setter Property="BorderThickness" Value="1.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CleanTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="CaretBrush" Value="#0284C7"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Primary Action Button (บันทึกและเปิดใช้งาน) -->
+        <Style x:Key="PrimaryActionBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#38BDF8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#0369A1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Draft Button (บันทึกเป็นฉบับร่าง) -->
+        <Style x:Key="DraftBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#E2E8F0"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Text Button (ยกเลิก) -->
+        <Style x:Key="TextCancelBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="#0F172A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Back Button -->
+        <Style x:Key="BackNavBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#F1F5F9"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#94A3B8"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="24,18">
+        <Grid.RowDefinitions>
+            <!-- 0: Navigation Header -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: Spacing -->
+            <RowDefinition Height="14"/>
+            <!-- 2: 2-Column Content Area (5 Steps Form + Live Preview) -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  HEADER NAVIGATION: ปุ่มกลับ + หัวข้อหน้าจอ                     -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <DockPanel Grid.Row="0" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Style="{StaticResource BackNavBtnStyle}" Command="{Binding CancelCommand}" Margin="0,0,14,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="←" FontSize="16" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="กลับหน้ารายการโปรโมชั่น" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <TextBlock Text="{Binding HeaderTitle}" FontSize="22" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  MAIN 2-COLUMN WORKSPACE                                   -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <!-- Left: 5-Step Form (Width="*") -->
+                <ColumnDefinition Width="*"/>
+                <!-- Divider Spacing -->
+                <ColumnDefinition Width="20"/>
+                <!-- Right: Live Preview Panel (Width="340") -->
+                <ColumnDefinition Width="340"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ────────────────────────────────────────────────────────── -->
+            <!--  LEFT COLUMN: 5-STEP FORM                                  -->
+            <!-- ────────────────────────────────────────────────────────── -->
+            <ScrollViewer Grid.Column="0"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="0,0,10,20">
+
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <!--  ขั้นตอนที่ 1: เลือกประเภทโปรโมชั่น (4 การ์ดใหญ่แนวนอน)    -->
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <Border Background="#FFFFFF" CornerRadius="12" Padding="20" Margin="0,0,0,16" Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Border Width="26" Height="26" CornerRadius="13" Background="#0284C7" Margin="0,0,10,0">
+                                    <TextBlock Text="1" Foreground="White" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="เลือกประเภทโปรโมชั่น" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <UniformGrid Columns="4" Margin="0,4,0,0">
+                                <!-- Card 1: ลด (Discount) -->
+                                <Border Margin="0,0,8,0" CornerRadius="10" Padding="14,16" Cursor="Hand" BorderThickness="2">
+                                    <Border.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" Command="{Binding SelectPromoTypeCommand}" CommandParameter="Discount"/>
+                                    </Border.InputBindings>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsDiscountStep}" Value="True">
+                                                    <Setter Property="Background" Value="#F0F9FF"/>
+                                                    <Setter Property="BorderBrush" Value="#0284C7"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <DockPanel LastChildFill="False">
+                                            <Border DockPanel.Dock="Left" Background="#E0F2FE" CornerRadius="6" Padding="10,4">
+                                                <TextBlock Text="ลด" FontSize="15" FontWeight="Bold" Foreground="#0284C7"/>
+                                            </Border>
+                                            <!-- Checkmark badge if selected -->
+                                            <Border DockPanel.Dock="Right" Background="#DCFCE7" CornerRadius="4" Padding="6,2"
+                                                    Visibility="{Binding IsDiscountStep, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="✓ เลือกอยู่" FontSize="11" FontWeight="Bold" Foreground="#15803D"/>
+                                            </Border>
+                                        </DockPanel>
+                                        <TextBlock Text="ส่วนลดเงินสด / %" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,10,0,4"/>
+                                        <TextBlock Text="ได้ราคาถูกลง เช่น ลด 5 บาท หรือ 10% ผูกได้ทั้งยอดบิลหรือสินค้า" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card 2: แลก (Redeem) -->
+                                <Border Margin="0,0,8,0" CornerRadius="10" Padding="14,16" Cursor="Hand" BorderThickness="2">
+                                    <Border.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" Command="{Binding SelectPromoTypeCommand}" CommandParameter="Redeem"/>
+                                    </Border.InputBindings>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsRedeemStep}" Value="True">
+                                                    <Setter Property="Background" Value="#FEF3C7"/>
+                                                    <Setter Property="BorderBrush" Value="#D97706"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <DockPanel LastChildFill="False">
+                                            <Border DockPanel.Dock="Left" Background="#FEF3C7" CornerRadius="6" Padding="10,4">
+                                                <TextBlock Text="แลก" FontSize="15" FontWeight="Bold" Foreground="#D97706"/>
+                                            </Border>
+                                            <Border DockPanel.Dock="Right" Background="#DCFCE7" CornerRadius="4" Padding="6,2"
+                                                    Visibility="{Binding IsRedeemStep, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="✓ เลือกอยู่" FontSize="11" FontWeight="Bold" Foreground="#15803D"/>
+                                            </Border>
+                                        </DockPanel>
+                                        <TextBlock Text="สิทธิ์แลกแต้ม" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,10,0,4"/>
+                                        <TextBlock Text="ใช้แต้มสะสมแลกรับส่วนลดหรือสินค้า ผูกกับสมาชิกในร้าน" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card 3: แจก (Gift) -->
+                                <Border Margin="0,0,8,0" CornerRadius="10" Padding="14,16" Cursor="Hand" BorderThickness="2">
+                                    <Border.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" Command="{Binding SelectPromoTypeCommand}" CommandParameter="Gift"/>
+                                    </Border.InputBindings>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsGiftStep}" Value="True">
+                                                    <Setter Property="Background" Value="#DCFCE7"/>
+                                                    <Setter Property="BorderBrush" Value="#16A34A"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <DockPanel LastChildFill="False">
+                                            <Border DockPanel.Dock="Left" Background="#DCFCE7" CornerRadius="6" Padding="10,4">
+                                                <TextBlock Text="แจก" FontSize="15" FontWeight="Bold" Foreground="#16A34A"/>
+                                            </Border>
+                                            <Border DockPanel.Dock="Right" Background="#DCFCE7" CornerRadius="4" Padding="6,2"
+                                                    Visibility="{Binding IsGiftStep, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="✓ เลือกอยู่" FontSize="11" FontWeight="Bold" Foreground="#15803D"/>
+                                            </Border>
+                                        </DockPanel>
+                                        <TextBlock Text="ของสมนาคุณฟรี" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,10,0,4"/>
+                                        <TextBlock Text="ของฟรีผูกกับยอดบิล เช่น ซื้อครบ 200 แจกถุงผ้า (ตัดสต็อก 0 บาท)" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card 4: แถม (Freebie) -->
+                                <Border CornerRadius="10" Padding="14,16" Cursor="Hand" BorderThickness="2">
+                                    <Border.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" Command="{Binding SelectPromoTypeCommand}" CommandParameter="Freebie"/>
+                                    </Border.InputBindings>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsFreebieStep}" Value="True">
+                                                    <Setter Property="Background" Value="#F3E8FF"/>
+                                                    <Setter Property="BorderBrush" Value="#9333EA"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <DockPanel LastChildFill="False">
+                                            <Border DockPanel.Dock="Left" Background="#F3E8FF" CornerRadius="6" Padding="10,4">
+                                                <TextBlock Text="แถม" FontSize="15" FontWeight="Bold" Foreground="#9333EA"/>
+                                            </Border>
+                                            <Border DockPanel.Dock="Right" Background="#DCFCE7" CornerRadius="4" Padding="6,2"
+                                                    Visibility="{Binding IsFreebieStep, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="✓ เลือกอยู่" FontSize="11" FontWeight="Bold" Foreground="#15803D"/>
+                                            </Border>
+                                        </DockPanel>
+                                        <TextBlock Text="ซื้อแถมฟรี (1 แถม 1)" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,10,0,4"/>
+                                        <TextBlock Text="ซื้อสินค้าที่กำหนด แถมฟรี เช่น ซื้อ 2 แถม 1 (ตัดสต็อก 0 บาท)" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <!--  ขั้นตอนที่ 2: ชื่อและรหัสโปรโมชั่น                        -->
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <Border Background="#FFFFFF" CornerRadius="12" Padding="20" Margin="0,0,0,16" Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Border Width="26" Height="26" CornerRadius="13" Background="#0284C7" Margin="0,0,10,0">
+                                    <TextBlock Text="2" Foreground="White" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="ชื่อและรหัสโปรโมชั่น" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.4*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ชื่อโปรโมชั่น (จำเป็น) -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6">
+                                        <Run Text="ชื่อโปรโมชั่น"/>
+                                        <Run Text="*" Foreground="#DC2626"/>
+                                    </TextBlock>
+                                    <Border Style="{StaticResource StandardInputBorderStyle}">
+                                        <TextBox Text="{Binding Model.PromoName, UpdateSourceTrigger=PropertyChanged}"
+                                                 Style="{StaticResource CleanTextBoxStyle}"/>
+                                    </Border>
+                                    <TextBlock Text="เช่น 'ซื้อดินสอ 2 แถม 1', 'ส่วนลดเปิดร้าน 10 บาท'" FontSize="12" Foreground="#94A3B8" Margin="2,4,0,0"/>
+                                </StackPanel>
+
+                                <!-- รหัสโปรโมชั่น (ไม่บังคับ) -->
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="รหัสโปรโมชั่น (ไม่บังคับ)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource StandardInputBorderStyle}">
+                                        <TextBox Text="{Binding Model.PromoCode, UpdateSourceTrigger=PropertyChanged}"
+                                                 Style="{StaticResource CleanTextBoxStyle}"/>
+                                    </Border>
+                                    <TextBlock Text="เว้นว่าง = ใช้อัตโนมัติที่เคาน์เตอร์ POS" FontSize="12" Foreground="#94A3B8" Margin="2,4,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <!--  ขั้นตอนที่ 3: ใช้กับอะไร (ทั้งร้าน vs เลือกสินค้าเอง)     -->
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <Border Background="#FFFFFF" CornerRadius="12" Padding="20" Margin="0,0,0,16" Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Border Width="26" Height="26" CornerRadius="13" Background="#0284C7" Margin="0,0,10,0">
+                                    <TextBlock Text="3" Foreground="White" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="ใช้กับอะไร" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Radio buttons -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <RadioButton Content="ทั้งร้าน / ทั้งบิล" IsChecked="{Binding IsAllStoreScope, Mode=OneWay}"
+                                             Command="{Binding SetTargetScopeCommand}" CommandParameter="AllStore"
+                                             FontSize="14" FontWeight="SemiBold" Foreground="#0F172A" Margin="0,0,24,0" Cursor="Hand"/>
+                                <RadioButton Content="เลือกสินค้าเอง" IsChecked="{Binding IsSpecificProductsScope, Mode=OneWay}"
+                                             Command="{Binding SetTargetScopeCommand}" CommandParameter="SpecificProducts"
+                                             FontSize="14" FontWeight="SemiBold" Foreground="#0F172A" Cursor="Hand"/>
+                            </StackPanel>
+
+                            <!-- สินค้าที่เลือก (แสดงเมื่อ SpecificProducts) -->
+                            <StackPanel Visibility="{Binding IsSpecificProductsScope, Converter={StaticResource BoolToVis}}">
+                                <!-- Tags of Selected Products -->
+                                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="สินค้าที่เลือกเข้าร่วมโปรโมชั่น:" FontSize="13" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,8"/>
+                                        <ItemsControl ItemsSource="{Binding SelectedProducts}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#E0F2FE" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="14" Padding="10,4" Margin="0,0,6,6">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" Foreground="#0284C7"/>
+                                                            <Button Content="✕" FontSize="11" FontWeight="Bold" Foreground="#0284C7"
+                                                                    Command="{Binding DataContext.RemoveSelectedProductCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Background="Transparent" BorderThickness="0" Margin="6,0,0,0" Cursor="Hand"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Search Box -->
+                                <Border Style="{StaticResource StandardInputBorderStyle}" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="🔍" FontSize="13" Foreground="#94A3B8" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Column="1" Text="{Binding ProductSearchKeyword, UpdateSourceTrigger=PropertyChanged}"
+                                                 Style="{StaticResource CleanTextBoxStyle}" FontSize="13"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Product Table -->
+                                <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" MaxHeight="220">
+                                    <DataGrid ItemsSource="{Binding FilteredSelectableProducts}"
+                                              AutoGenerateColumns="False" CanUserAddRows="False"
+                                              HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                              HorizontalGridLinesBrush="#F1F5F9" Background="#FFFFFF"
+                                              RowHeight="36" BorderThickness="0"
+                                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <DataGrid.Columns>
+                                            <!-- Checkbox Selection -->
+                                            <DataGridTemplateColumn Width="45">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                  Cursor="Hand"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <!-- Product Name -->
+                                            <DataGridTextColumn Header="ชื่อสินค้า" Binding="{Binding Name}" Width="*" IsReadOnly="True"/>
+
+                                            <!-- Price -->
+                                            <DataGridTextColumn Header="ราคาขาย" Binding="{Binding PriceFormatted, StringFormat='{}{0} บาท'}" Width="100" IsReadOnly="True"/>
+
+                                            <!-- Stock -->
+                                            <DataGridTextColumn Header="คงเหลือ" Binding="{Binding StockFormatted, StringFormat='{}{0} ชิ้น'}" Width="90" IsReadOnly="True"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <!--  ขั้นตอนที่ 4: เงื่อนไข (ฟอร์มเปลี่ยนตามประเภท)               -->
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <Border Background="#FFFFFF" CornerRadius="12" Padding="20" Margin="0,0,0,16" Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Border Width="26" Height="26" CornerRadius="13" Background="#0284C7" Margin="0,0,10,0">
+                                    <TextBlock Text="4" Foreground="White" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="กำหนดเงื่อนไขโปรโมชั่น" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- กรณี 1: แถม (Freebie) -->
+                            <StackPanel Visibility="{Binding IsFreebieStep, Converter={StaticResource BoolToVis}}">
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ซื้อ (ชิ้น) -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="ซื้อครบกี่ชิ้น" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.BuyQuantity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- แถม (ชิ้น) -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="แถมกี่ชิ้น" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.FreeQuantity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Dropdown เลือกสินค้าที่แถม -->
+                                <StackPanel Margin="0,0,0,14">
+                                    <TextBlock Text="สินค้าที่แถม" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <RadioButton Content="สินค้าชนิดเดียวกัน" IsChecked="{Binding IsSameProductFreebie}" FontSize="13" FontWeight="SemiBold" Margin="0,0,16,0" Cursor="Hand"/>
+                                        <RadioButton Content="เลือกสินค้าอื่นในสต็อก" IsChecked="{Binding IsSameProductFreebie, Converter={StaticResource InverseBoolConverter}}" FontSize="13" FontWeight="SemiBold" Cursor="Hand"/>
+                                    </StackPanel>
+
+                                    <Border Style="{StaticResource StandardInputBorderStyle}" Visibility="{Binding IsSameProductFreebie, Converter={StaticResource InverseBoolToVis}}" Padding="0">
+                                        <ComboBox ItemsSource="{Binding AvailableGiftProducts}"
+                                                  SelectedItem="{Binding SelectedGiftProduct}"
+                                                  DisplayMemberPath="Name"
+                                                  BorderThickness="0" Background="Transparent"
+                                                  Height="40" FontSize="14" VerticalContentAlignment="Center" Padding="8,0"/>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Checkbox CanRepeat -->
+                                <CheckBox IsChecked="{Binding Model.CanRepeat, Mode=TwoWay}"
+                                          Content="ทำซ้ำได้ เช่น ซื้อ 4 ชิ้น แถม 2 ชิ้น"
+                                          FontSize="14" FontWeight="SemiBold" Foreground="#0F172A" Margin="0,0,0,12" Cursor="Hand"/>
+
+                                <!-- Warning note -->
+                                <Border Background="#FEF3C7" BorderBrush="#FDE68A" BorderThickness="1" CornerRadius="8" Padding="12,10">
+                                    <TextBlock Text="⚠️ ของที่แถมจะถูกหักสต็อกและบันทึกในบิลเป็นราคา 0.00 บาท" FontSize="13" Foreground="#92400E" FontWeight="SemiBold"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- กรณี 2: ลด (Discount) -->
+                            <StackPanel Visibility="{Binding IsDiscountStep, Converter={StaticResource BoolToVis}}">
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- รูปแบบส่วนลด -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="รูปแบบส่วนลด" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}" Padding="0">
+                                            <ComboBox SelectedValue="{Binding Model.DiscountType, Mode=TwoWay}"
+                                                      SelectedValuePath="Tag"
+                                                      BorderThickness="0" Background="Transparent"
+                                                      Height="40" FontSize="14" VerticalContentAlignment="Center" Padding="8,0">
+                                                <ComboBoxItem Content="ลดเป็นบาท (เงินสด)" Tag="Cash"/>
+                                                <ComboBoxItem Content="ลดเป็นเปอร์เซ็นต์ (%)" Tag="Percentage"/>
+                                            </ComboBox>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- มูลค่าส่วนลด -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="มูลค่าส่วนลด (บาท หรือ %)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.DiscountAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ยอดซื้อขั้นต่ำ -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="ยอดซื้อขั้นต่ำ (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.MinSpend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- เพดานส่วนลดสูงสุด (กรณี %) -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="เพดานส่วนลดสูงสุด (กรณี %)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.MaxDiscountAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- กรณี 3: แลก (Redeem) -->
+                            <StackPanel Visibility="{Binding IsRedeemStep, Converter={StaticResource BoolToVis}}">
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- แต้มที่ต้องใช้ -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="แต้มที่ต้องใช้ (แต้ม)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.PointsRequired, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- แลกเป็นส่วนลดเงินสด (บาท) -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="แลกเป็นส่วนลด (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.DiscountAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <StackPanel Margin="0,0,0,10">
+                                    <TextBlock Text="ยอดซื้อขั้นต่ำ (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource StandardInputBorderStyle}">
+                                        <TextBox Text="{Binding Model.MinSpend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- กรณี 4: แจก (Gift) -->
+                            <StackPanel Visibility="{Binding IsGiftStep, Converter={StaticResource BoolToVis}}">
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ยอดซื้อขั้นต่ำ -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="ยอดซื้อขั้นต่ำ (บาท)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.MinSpend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- จำนวนโควตาสิทธิ์จำกัด -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="โควตาสิทธิ์ทั้งหมด (0 = ไม่จำกัด)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                        <Border Style="{StaticResource StandardInputBorderStyle}">
+                                            <TextBox Text="{Binding Model.TotalQuota, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- ของที่แจก -->
+                                <StackPanel Margin="0,0,0,10">
+                                    <TextBlock Text="ของที่แจก (เลือกสินค้าตัดสต็อก)" FontSize="14" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource StandardInputBorderStyle}" Padding="0">
+                                        <ComboBox ItemsSource="{Binding AvailableGiftProducts}"
+                                                  SelectedItem="{Binding SelectedGiftProduct}"
+                                                  DisplayMemberPath="Name"
+                                                  BorderThickness="0" Background="Transparent"
+                                                  Height="40" FontSize="14" VerticalContentAlignment="Center" Padding="8,0"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <!--  ขั้นตอนที่ 5: ข้อจำกัดและช่วงเวลา                         -->
+                    <!-- ══════════════════════════════════════════════════ -->
+                    <Border Background="#FFFFFF" CornerRadius="12" Padding="20" Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Border Width="26" Height="26" CornerRadius="13" Background="#0284C7" Margin="0,0,10,0">
+                                    <TextBlock Text="5" Foreground="White" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="ข้อจำกัดและช่วงเวลาใช้งาน" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Checkboxes -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <CheckBox IsChecked="{Binding Model.IsMemberOnly, Mode=TwoWay}"
+                                          Content="เฉพาะสมาชิกเท่านั้น"
+                                          FontSize="14" FontWeight="SemiBold" Foreground="#0F172A" Margin="0,0,24,0" Cursor="Hand"/>
+                                <CheckBox IsChecked="{Binding Model.CanCombine, Mode=TwoWay}"
+                                          Content="ใช้ร่วมกับโปรโมชั่นอื่นในบิลเดียวกันได้"
+                                          FontSize="14" FontWeight="SemiBold" Foreground="#0F172A" Cursor="Hand"/>
+                            </StackPanel>
+
+                            <!-- โควตาต่อคน & วันที่ -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- โควตาต่อคน -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="จำกัดสิทธิ์ (ครั้ง/คน)" FontSize="13" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource StandardInputBorderStyle}">
+                                        <TextBox Text="{Binding Model.MaxUsagePerCustomer, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
+                                    </Border>
+                                    <TextBlock Text="0 = ไม่จำกัด" FontSize="11" Foreground="#94A3B8" Margin="2,4,0,0"/>
+                                </StackPanel>
+
+                                <!-- วันที่เริ่มต้น -->
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="วันที่เริ่มต้น" FontSize="13" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <DatePicker SelectedDate="{Binding SelectedStartDate, Mode=TwoWay}" Height="42" FontSize="14" VerticalContentAlignment="Center"/>
+                                </StackPanel>
+
+                                <!-- วันที่สิ้นสุด -->
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Text="วันที่สิ้นสุด" FontSize="13" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                                    <DatePicker SelectedDate="{Binding SelectedEndDate, Mode=TwoWay}" Height="42" FontSize="14" VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- ────────────────────────────────────────────────────────── -->
+            <!--  RIGHT COLUMN: LIVE PREVIEW & ACTIONS (Width="340")        -->
+            <!-- ────────────────────────────────────────────────────────── -->
+            <Border Grid.Column="2" Background="#FFFFFF" CornerRadius="12" Padding="20" Effect="{StaticResource CardShadow}" VerticalAlignment="Top">
+                <StackPanel>
+                    <!-- Header -->
+                    <DockPanel LastChildFill="False" Margin="0,0,0,14">
+                        <StackPanel DockPanel.Dock="Left">
+                            <TextBlock Text="ตัวอย่างผลที่เคาน์เตอร์" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text="Live Preview คิดเงินอัตโนมัติ" FontSize="12" Foreground="#64748B" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <!-- Type Badge -->
+                        <Border DockPanel.Dock="Right" Background="{Binding Model.PromoTypeBadgeBg}" CornerRadius="12" Padding="10,4" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Model.PromoTypeBadgeText}" FontSize="12" FontWeight="Bold" Foreground="{Binding Model.PromoTypeBadgeFg}"/>
+                        </Border>
+                    </DockPanel>
+
+                    <Rectangle Fill="#E2E8F0" Height="1" Margin="0,0,0,14"/>
+
+                    <!-- Promo Name Title -->
+                    <TextBlock Text="{Binding Model.PromoName}" FontSize="16" FontWeight="Bold" Foreground="#0F172A" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+                    <!-- Example Billing Box -->
+                    <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8" Padding="14,12" Margin="0,0,0,14">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="🧾" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="ตัวอย่างการคิดเงิน:" FontSize="13" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding LivePreviewCalculationText}" FontSize="13" Foreground="#0F172A" TextWrapping="Wrap" LineHeight="18"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Store Cost Warning Box -->
+                    <Border Background="#FEF3C7" BorderBrush="#FDE68A" BorderThickness="1" CornerRadius="8" Padding="14,12" Margin="0,0,0,20">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="⚠️" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="เตือนต้นทุนร้านค้า:" FontSize="13" FontWeight="Bold" Foreground="#92400E" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding LivePreviewCostText}" FontSize="13" Foreground="#78350F" FontWeight="SemiBold" TextWrapping="Wrap" LineHeight="18"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Action Buttons -->
+                    <StackPanel>
+                        <!-- ปุ่ม [ บันทึกและเปิดใช้งาน ] -->
+                        <Button Style="{StaticResource PrimaryActionBtnStyle}" Command="{Binding SaveAndActivateCommand}" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🚀" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="บันทึกและเปิดใช้งาน" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- ปุ่ม [ บันทึกเป็นฉบับร่าง ] -->
+                        <Button Style="{StaticResource DraftBtnStyle}" Command="{Binding SaveAsDraftCommand}" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="📝" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="บันทึกเป็นฉบับร่าง" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- ปุ่ม [ ยกเลิก ] -->
+                        <Button Style="{StaticResource TextCancelBtnStyle}" Command="{Binding CancelCommand}" Content="ยกเลิก"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

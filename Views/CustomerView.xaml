@@ -1,0 +1,1518 @@
+<UserControl x:Class="Porjai20.Views.CustomerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Porjai20"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200"
+             FontFamily="Noto Sans Thai, Segoe UI, sans-serif"
+             FontWeight="Normal"
+             Background="#F4F7FB">
+
+    <UserControl.Resources>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  LOCAL COLOR PALETTE (High-Contrast Crimson Red Theme)    -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <SolidColorBrush x:Key="PosBg"          Color="#F4F7FB"/>
+        <SolidColorBrush x:Key="PosCard"        Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosInput"       Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PosBorder"      Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="PosBorderLight" Color="#CBD5E1"/>
+
+        <SolidColorBrush x:Key="RosePrimary"    Color="#00A3E0"/>
+        <SolidColorBrush x:Key="RoseHover"      Color="#0B2545"/>
+        <SolidColorBrush x:Key="RosePressed"    Color="#0082B3"/>
+        <SolidColorBrush x:Key="RoseSubtle"     Color="#E0F2FE"/>
+
+        <SolidColorBrush x:Key="TextPrimary"    Color="#0F172A"/>
+        <SolidColorBrush x:Key="TextSecondary"  Color="#475569"/>
+        <SolidColorBrush x:Key="TextMuted"      Color="#64748B"/>
+
+        <!-- Soft Shadow Effect -->
+        <DropShadowEffect x:Key="SoftShadow" BlurRadius="12" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.08"/>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  KPI CARD STYLE                                            -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="KpiCardStyle" TargetType="Border">
+            <Setter Property="Background"      Value="#FFFFFF"/>
+            <Setter Property="BorderBrush"     Value="#BAE6FD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="12"/>
+            <Setter Property="Padding"         Value="16,14"/>
+            <Setter Property="Effect"          Value="{StaticResource SoftShadow}"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  TEXTBOX STYLE                                             -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="LightTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"             Value="Transparent"/>
+            <Setter Property="Foreground"             Value="#2D3748"/>
+            <Setter Property="CaretBrush"             Value="#2D3748"/>
+            <Setter Property="BorderThickness"        Value="0"/>
+            <Setter Property="FontSize"               Value="16"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      BorderThickness="0" IsTabStop="False"
+                                      VerticalAlignment="Center"
+                                      HorizontalScrollBarVisibility="Disabled"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MultiLineTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontFamily"             Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"             Value="Transparent"/>
+            <Setter Property="Foreground"             Value="#2D3748"/>
+            <Setter Property="CaretBrush"             Value="#2D3748"/>
+            <Setter Property="BorderThickness"        Value="0"/>
+            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      BorderThickness="0" IsTabStop="False"
+                                      VerticalAlignment="Top"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  BUTTON STYLES                                             -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- Primary Action Button Style -->
+        <!-- Primary Action Button Style -->
+        <Style x:Key="PrimaryBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"      Value="#00A3E0"/>
+            <Setter Property="Foreground"      Value="#FFFFFF"/>
+            <Setter Property="FontSize"        Value="16"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0077B6"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoseBtnStyle" BasedOn="{StaticResource PrimaryBtnStyle}" TargetType="Button"/>
+
+        <!-- Add Customer Action Button Style (System Standard Blue) -->
+        <Style x:Key="AddCustomerBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Background"      Value="#0284C7"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="Bold"/>
+            <Setter Property="FontSize"        Value="15"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0369A1"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Danger Action Button Style -->
+        <Style x:Key="DangerBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"      Value="#DC2626"/>
+            <Setter Property="Foreground"      Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize"        Value="16"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#F87171"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#B91C1C"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#FEE2E2"/>
+                                <Setter Property="Foreground" Value="#FCA5A5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary Action Button Style -->
+        <Style x:Key="SecondaryBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"      Value="#E0F2FE"/>
+            <Setter Property="Foreground"      Value="#0B2545"/>
+            <Setter Property="BorderBrush"     Value="#BAE6FD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize"        Value="16"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#BAE6FD"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#7DD3FC"/>
+                                <Setter Property="Foreground" Value="#000000"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#7DD3FC"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="#000000"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#F3F4F6"/>
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="OutlineBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Background"      Value="#E0F2FE"/>
+            <Setter Property="Foreground"      Value="#0B2545"/>
+            <Setter Property="BorderBrush"     Value="#00A3E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#38BDF8"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0284C7"/>
+                                <Setter TargetName="BtnBorder" Property="BorderBrush" Value="#0284C7"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Circular Modal Close Button Style -->
+        <Style x:Key="ModalCloseButtonStyle" TargetType="Button">
+            <Setter Property="Width"               Value="32"/>
+            <Setter Property="Height"              Value="32"/>
+            <Setter Property="Background"          Value="#E0F2FE"/>
+            <Setter Property="Foreground"          Value="#0B2545"/>
+            <Setter Property="BorderThickness"     Value="0"/>
+            <Setter Property="Cursor"              Value="Hand"/>
+            <Setter Property="FontSize"            Value="15"/>
+            <Setter Property="FontWeight"          Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="16">
+                            <TextBlock x:Name="Txt"
+                                       Text="✕"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#00A3E0"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#0082B3"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!--  DATAGRID STYLES                                           -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="CustomerColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background"              Value="#F8FAFC"/>
+            <Setter Property="Foreground"              Value="#1E293B"/>
+            <Setter Property="FontWeight"              Value="Bold"/>
+            <Setter Property="FontSize"                Value="15"/>
+            <Setter Property="MinHeight"               Value="44"/>
+            <Setter Property="Height"                  Value="46"/>
+            <Setter Property="Padding"                 Value="12,0"/>
+            <Setter Property="BorderBrush"             Value="#E2E8F0"/>
+            <Setter Property="BorderThickness"         Value="0,0,0,1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CustomerRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <EventSetter Event="MouseLeftButtonUp" Handler="CustomerRow_MouseLeftButtonUp"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridRow">
+                        <Border x:Name="RowBorder"
+                                CornerRadius="8" Margin="4,2" Padding="4,0"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="1">
+                            <DataGridCellsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#F0F9FF"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#BAE6FD"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#E0F2FE"/>
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="#0F172A"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="CustomerCellStyle" TargetType="DataGridCell">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#0F172A"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Padding"         Value="8,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="#0F172A"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#0F172A"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="Foreground" Value="#0F172A"/>
+                </Trigger>
+            </Style.Triggers>
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#0F172A"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E0F2FE"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F172A"/>
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="ColCenter" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment"        Value="Center"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="Foreground"          Value="#000000"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ColCenterBold" TargetType="TextBlock" BasedOn="{StaticResource ColCenter}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#000000"/>
+        </Style>
+        <Style x:Key="ColLeftBold" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Leelawadee UI, Segoe UI"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="Foreground"          Value="#000000"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ColAmountStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="TextAlignment"        Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Padding"             Value="0,0,16,0"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ColRightBold" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="TextAlignment"        Value="Right"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+            <Setter Property="FontWeight"          Value="SemiBold"/>
+            <Setter Property="FontFamily"          Value="Noto Sans Thai, Segoe UI, sans-serif"/>
+            <Setter Property="Padding"             Value="0,0,16,0"/>
+            <Setter Property="Foreground"          Value="#0F172A"/>
+            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!--  OUTER ROOT GRID                                                -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <Grid Visibility="{Binding IsCustomerMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
+
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Row 0: Page Header -->
+                <RowDefinition Height="Auto"/>
+                <!-- Row 1: KPI Cards -->
+                <RowDefinition Height="Auto"/>
+                <!-- Row 2: Search & Filter Bar -->
+                <RowDefinition Height="*"/>
+                <!-- Row 3: DataGrid Table -->
+            </Grid.RowDefinitions>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 0 — Page Header                                       -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="5" CornerRadius="3" Margin="0,0,12,0" VerticalAlignment="Stretch">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00A3E0" Offset="0"/>
+                                <GradientStop Color="#F4A2B8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                    <StackPanel>
+                        <TextBlock Text="👥 ลูกค้า"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#2D3748"
+                                   Margin="0,0,0,2"/>
+                        <TextBlock Text="จัดการข้อมูลลูกค้า — ระบบจัดการร้าน พอใจ"
+                                   FontSize="15"
+                                   Foreground="#718096"
+                                   Margin="0"/>
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 1 — KPI Summary Cards (3 Cards Grid)                  -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="1" Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- KPI Card 1: Total Customers Count -->
+                <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#E0F2FE" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="#E0F2FE" Margin="0,0,10,0">
+                                <TextBlock Text="👥" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            </Border>
+                            <TextBlock Text="ลูกค้าทั้งหมด" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding TotalCustomersCount}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#0B2545"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="จำนวนสมาชิกทั้งหมดในระบบ"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
+                                   Margin="0"/>
+                    </Grid>
+                </Border>
+
+                <!-- KPI Card 2: New Customers This Month -->
+                <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#EBF8FF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#BEE3F8"/>
+                    </Border.BorderBrush>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#EBF8FF" Margin="0,0,10,0">
+                                <TextBlock Text="🆕" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            </Border>
+                            <TextBlock Text="ลูกค้าใหม่เดือนนี้" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding NewCustomersThisMonthCount}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#2B6CB0"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="สมาชิกใหม่ลงทะเบียนเดือนปัจจุบัน"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
+                                   Margin="0"/>
+                    </Grid>
+                </Border>
+
+                <!-- KPI Card 3: Total Cumulative Spent -->
+                <Border Grid.Column="4" Style="{StaticResource KpiCardStyle}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                            <GradientStop Color="#FEF3C7" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#FDE68A"/>
+                    </Border.BorderBrush>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#FEF3C7" Margin="0,0,10,0">
+                                <TextBlock Text="💎" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"/>
+                            </Border>
+                            <TextBlock Text="ยอดซื้อสะสมรวม" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#718096" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding TotalCumulativeSpent, StringFormat={}{0:N2}}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="#D69E2E"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Grid.Row="2"
+                                   Text="ยอดซื้อสะสมของสมาชิกทั้งหมดรวมกัน"
+                                   FontSize="13.5"
+                                   Foreground="#64748B"
+                                   Margin="0"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 2 — Search & Filter Bar                               -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="2"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="16"
+                    Margin="0,0,0,16"
+                    Effect="{StaticResource SoftShadow}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>     <!-- Search Input Box -->
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Search Button -->
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Clear Search Button -->
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="Auto"/>  <!-- Add Customer Action Button -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Search Input Box -->
+                    <Border Grid.Column="0"
+                            Background="#E0F2FE"
+                            BorderBrush="#BAE6FD"
+                            BorderThickness="1.5"
+                            CornerRadius="8">
+                        <Grid>
+                            <Path Data="{StaticResource IconSearch}"
+                                  Fill="#718096"
+                                  Width="18" Height="18"
+                                  HorizontalAlignment="Left"
+                                  Margin="12,0,0,0"
+                                  Stretch="Uniform"
+                                  VerticalAlignment="Center"/>
+                            <TextBox x:Name="CustomerSearchBox"
+                                     Text="{Binding CustomerSearchKeyword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                     Style="{StaticResource LightTextBoxStyle}"
+                                     Height="42"
+                                     Padding="38,0,12,0"
+                                     VerticalContentAlignment="Center"
+                                     FontSize="15"/>
+                            <TextBlock Text="ค้นหาด้วยรหัสลูกค้า หรือ ชื่อลูกค้า..."
+                                       Foreground="#A0AEC0"
+                                       FontSize="15"
+                                       VerticalAlignment="Center"
+                                       Margin="38,0,12,0"
+                                       IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=CustomerSearchBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+
+                    <!-- Search Button -->
+                    <Button Grid.Column="2" Content="ค้นหา" Command="{Binding SearchCustomerCommand}" Style="{StaticResource PrimaryBtnStyle}" Padding="22,0" Height="42"/>
+
+                    <!-- Clear Search Button (ล้าง) -->
+                    <Button Grid.Column="4"
+                            Content="ล้าง"
+                            Command="{Binding ClearCustomerFilterCommand}"
+                            Style="{StaticResource ClearBtnStyle}"
+                            Padding="16,0"
+                            Height="42"/>
+
+                    <!-- Add Customer Action Button (➕ เพิ่มข้อมูลลูกค้า) -->
+                    <Button Grid.Column="6"
+                            Content="➕ เพิ่มข้อมูลลูกค้า"
+                            Command="{Binding OpenAddCustomerModalCommand}"
+                            IsEnabled="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource AddCustomerBtnStyle}"
+                            Padding="20,0"
+                            Height="42"/>
+                </Grid>
+            </Border>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ROW 3 — Main DataGrid Table                               -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="3"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="16"
+                    Effect="{StaticResource SoftShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding Customers}"
+                              SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              IsHitTestVisible="{Binding IsCustomerDrawerOpen, Converter={StaticResource InverseBoolConverter}}"
+                              IsSynchronizedWithCurrentItem="True"
+                              SelectionMode="Single"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              CanUserSortColumns="True"
+                              HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              RowHeight="50"
+                              GridLinesVisibility="None"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              ColumnHeaderStyle="{StaticResource CustomerColumnHeaderStyle}"
+                              RowStyle="{StaticResource CustomerRowStyle}"
+                              CellStyle="{StaticResource CustomerCellStyle}">
+                        <DataGrid.Columns>
+
+                            <!-- #1: Customer Code / Member Code -->
+                            <DataGridTextColumn Header="รหัสลูกค้า"
+                                                Binding="{Binding Code}"
+                                                Width="110"
+                                                ElementStyle="{StaticResource ColCenterBold}"/>
+
+                            <!-- #2: Registration Date -->
+                            <DataGridTextColumn Header="วันที่สมัคร"
+                                                Binding="{Binding RegistrationDate, StringFormat=dd/MM/yyyy}"
+                                                Width="120"
+                                                ElementStyle="{StaticResource ColCenter}"/>
+
+                            <!-- #3: Customer Name -->
+                            <DataGridTextColumn Header="ชื่อ-สกุล"
+                                                Binding="{Binding Name}"
+                                                Width="180"
+                                                ElementStyle="{StaticResource ColLeftBold}"/>
+
+                            <!-- #4: Phone Number -->
+                            <DataGridTextColumn Header="เบอร์โทรศัพท์"
+                                                Binding="{Binding Phone}"
+                                                Width="130"
+                                                ElementStyle="{StaticResource ColCenterBold}"/>
+
+                            <!-- #5: Address -->
+                            <DataGridTextColumn Header="ที่อยู่"
+                                                Binding="{Binding Address}"
+                                                Width="*"
+                                                MinWidth="260"
+                                                ElementStyle="{StaticResource ColLeftBold}"/>
+
+                            <!-- #6: Points Badge (แต้มสะสม) -->
+                            <DataGridTemplateColumn Header="แต้มสะสม"
+                                                    SortMemberPath="TotalPoints"
+                                                    Width="110">
+                                <DataGridTemplateColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CustomerColumnHeaderStyle}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                        <Setter Property="Padding" Value="0,0,16,0"/>
+                                    </Style>
+                                </DataGridTemplateColumn.HeaderStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Background="#FEF3C7"
+                                                CornerRadius="12"
+                                                Padding="10,4"
+                                                Margin="0,0,12,0">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="★"
+                                                           FontSize="12"
+                                                           Foreground="#D97706"
+                                                           Margin="0,0,4,0"
+                                                           VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding TotalPoints, TargetNullValue=0, FallbackValue=0}"
+                                                           FontWeight="Bold"
+                                                           FontSize="13.5"
+                                                           Foreground="#92400E"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- #7: Total Purchases -->
+                            <DataGridTextColumn Header="รายการซื้อ"
+                                                Binding="{Binding TotalPurchases}"
+                                                Width="90"
+                                                ElementStyle="{StaticResource ColRightBold}"/>
+
+                            <!-- #8: Total Spent -->
+                            <DataGridTextColumn Header="ยอดซื้อสะสม"
+                                                Binding="{Binding TotalSpent, StringFormat={}{0:N2}}"
+                                                Width="120"
+                                                ElementStyle="{StaticResource ColAmountStyle}"/>
+
+                            <!-- #9: Details Drawer Trigger Action (Width="48") -->
+                            <DataGridTemplateColumn Width="48" CanUserSort="False" CanUserResize="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding DataContext.OpenCustomerDrawerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                AutomationProperties.Name="{Binding Name, StringFormat='ดูรายละเอียดลูกค้า {0}'}"
+                                                ToolTip="{Binding Name, StringFormat='ดูรายละเอียดลูกค้า {0}'}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                Width="32" Height="32"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="16"/>
+                                                </Style>
+                                            </Button.Resources>
+                                            <Border Background="#F1F5F9"
+                                                    CornerRadius="14"
+                                                    Width="28" Height="28">
+                                                <TextBlock Text="›"
+                                                           FontSize="20"
+                                                           FontWeight="Bold"
+                                                           Foreground="#64748B"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Margin="1,-2,0,0"/>
+                                            </Border>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Status Bar / Footer (bottom of DataGrid panel) -->
+                    <DockPanel Grid.Row="1"
+                               LastChildFill="False"
+                               Margin="0,12,0,0">
+                        <TextBlock Text="{Binding FilteredCustomers.Count, StringFormat='แสดงทั้งหมด {0} รายการ'}"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Left"
+                                   Margin="4,0,0,0"/>
+
+                        <TextBlock Text="💡 คลิกที่รายการเพื่อดูรายละเอียดประวัติการซื้อและแต้มสะสม"
+                                   Foreground="#64748B"
+                                   FontSize="13.5"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Right"
+                                   Margin="0,0,4,0"/>
+                    </DockPanel>
+                </Grid>
+            </Border>
+
+        </Grid>
+
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <!--  FLYOUT DRAWER OVERLAY (ฟีเจอร์ 2: ประวัติการซื้อ & แต้มสะสม)     -->
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <Grid Visibility="{Binding IsCustomerDrawerOpen, Converter={StaticResource BoolToVis}}"
+              Panel.ZIndex="1000">
+            <!-- Backdrop: Dark translucent background (#40000000), intercepts all clicks behind the drawer -->
+            <Border Background="#40000000"
+                    IsHitTestVisible="True"/>
+
+            <!-- Flyout Panel: Docked Right, Width 600, White, Drop Shadow -->
+            <Border HorizontalAlignment="Right"
+                    Width="600"
+                    Background="#FFFFFF"
+                    BorderBrush="#BAE6FD"
+                    BorderThickness="1,0,0,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="25" ShadowDepth="0" Direction="0" Color="#000000" Opacity="0.2"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Header -->
+                        <RowDefinition Height="*"/>    <!-- Scrollable Body -->
+                        <RowDefinition Height="Auto"/> <!-- Sticky Footer -->
+                    </Grid.RowDefinitions>
+
+                    <!-- 1. Header (หัวข้อและข้อมูลลูกค้า) -->
+                    <Border Grid.Row="0"
+                            Background="#FFFFFF"
+                            BorderBrush="#E2E8F0"
+                            BorderThickness="0,0,0,1"
+                            Padding="24,18">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/> <!-- Circle Avatar -->
+                                <ColumnDefinition Width="*"/>    <!-- Name & Sub-info -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Avatar Circle (48x48) -->
+                            <Border Grid.Column="0"
+                                    Width="48" Height="48"
+                                    CornerRadius="24"
+                                    Background="#E0F2FE"
+                                    Margin="0,0,14,0"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{Binding DrawerCustomerInitials}"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#0284C7"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Customer Name & Sub-info -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding DrawerCustomer.Name}"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="#0F172A"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding DrawerCustomerSubInfo}"
+                                           FontSize="13.5"
+                                           Foreground="#64748B"
+                                           Margin="0,3,0,0"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- 2. Scrollable Body -->
+                    <ScrollViewer x:Name="DrawerScrollViewer"
+                                  Grid.Row="1"
+                                  VerticalScrollBarVisibility="Hidden"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  CanContentScroll="True"
+                                  Padding="24,16"
+                                  RequestBringIntoView="DrawerScrollViewer_RequestBringIntoView">
+                        <StackPanel>
+
+                            <!-- 2.1 Points Card (การ์ดแต้มสะสม - พื้นเหลืองอ่อน #FFF8E1 ขอบ #F3DFA2) -->
+                            <Border Background="#FFF8E1"
+                                    BorderBrush="#F3DFA2"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="18,16"
+                                    Margin="0,0,0,16">
+                                <StackPanel>
+                                    <!-- Top Row: Points Label & Membership Badge -->
+                                    <DockPanel LastChildFill="False">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="★" FontSize="16" Foreground="#B45309" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="แต้มสะสมคงเหลือ" FontSize="15" FontWeight="Bold" Foreground="#92400E" VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <Border DockPanel.Dock="Right"
+                                                Background="#FEF3C7"
+                                                CornerRadius="12"
+                                                Padding="10,3"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="สมาชิก พอใจ 20 บาท"
+                                                       FontSize="12"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#B45309"/>
+                                        </Border>
+                                    </DockPanel>
+
+                                    <!-- Large Points Balance -->
+                                    <TextBlock Text="{Binding DrawerPointsBalance, StringFormat={}{0} แต้ม}"
+                                               FontSize="32"
+                                               FontWeight="Bold"
+                                               Foreground="#B45309"
+                                               Margin="0,8,0,12"/>
+
+                                    <!-- 2 Sub-summary Boxes (Earned / Redeemed) -->
+                                    <Grid Margin="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Left Box: Received All Time (+) -->
+                                        <Border Grid.Column="0"
+                                                Background="#DCFCE7"
+                                                CornerRadius="8"
+                                                MinHeight="75"
+                                                Padding="12,10"
+                                                Margin="0,0,5,0">
+                                            <Grid>
+                                                <TextBlock Text="ได้รับทั้งหมด (+)"
+                                                           FontSize="13"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#15803D"
+                                                           HorizontalAlignment="Left"
+                                                           VerticalAlignment="Top"/>
+                                                <TextBlock Text="{Binding TotalEarnedPointsText, FallbackValue='+0 แต้ม', TargetNullValue='0 แต้ม'}"
+                                                           FontSize="22"
+                                                           FontWeight="Bold"
+                                                           Foreground="#16A34A"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Bottom"/>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Right Box: Used All Time (−) -->
+                                        <Border Grid.Column="1"
+                                                Background="#FEE2E2"
+                                                CornerRadius="8"
+                                                MinHeight="75"
+                                                Padding="12,10"
+                                                Margin="5,0,0,0">
+                                            <Grid>
+                                                <TextBlock Text="ใช้ไปแล้ว (−)"
+                                                           FontSize="13"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#B91C1C"
+                                                           HorizontalAlignment="Left"
+                                                           VerticalAlignment="Top"/>
+                                                <TextBlock Text="{Binding TotalUsedPointsText, FallbackValue='0 แต้ม', TargetNullValue='0 แต้ม'}"
+                                                           FontSize="22"
+                                                           FontWeight="Bold"
+                                                           Foreground="#DC2626"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Bottom"/>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 2.2 Summary Metric Box (การ์ดสรุปภาพรวม 3 ช่อง) -->
+                            <Border Background="#FFFFFF"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14,12"
+                                    Margin="0,0,0,18">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Col 1: Total Bills -->
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="จำนวนบิลทั้งหมด" FontSize="12.5" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding DrawerTotalBills}"
+                                                   FontSize="16" FontWeight="Bold"
+                                                   Foreground="#0F172A"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,3,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Divider 1 -->
+                                    <Border Grid.Column="0" BorderBrush="#E2E8F0" BorderThickness="0,0,1,0" HorizontalAlignment="Right" Height="32"/>
+
+                                    <!-- Col 2: Total Spent (NO ฿ symbol) -->
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="ยอดซื้อสะสม" FontSize="12.5" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding DrawerTotalSpent}"
+                                                   FontSize="16" FontWeight="Bold"
+                                                   Foreground="#0284C7"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,3,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Divider 2 -->
+                                    <Border Grid.Column="1" BorderBrush="#E2E8F0" BorderThickness="0,0,1,0" HorizontalAlignment="Right" Height="32"/>
+
+                                    <!-- Col 3: Latest Purchase Date -->
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="ซื้อล่าสุด" FontSize="12.5" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding DrawerLatestPurchase}"
+                                                   FontSize="16" FontWeight="Bold"
+                                                   Foreground="#0F172A"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,3,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- 2.3 Purchase History Section (ประวัติการซื้อ) -->
+                            <Border Background="#F8FAFC"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14,14">
+                                <StackPanel>
+                                    <!-- History Header & Filter Chips -->
+                                    <DockPanel Margin="0,0,0,12" LastChildFill="False">
+                                        <!-- Left Title + Count Badge -->
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="🧾" FontSize="16" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="ประวัติการซื้อ" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                            <Border Background="#E0F2FE" CornerRadius="10" Padding="8,2" Margin="8,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DrawerTotalCount, StringFormat={}{0} บิล}"
+                                                           FontSize="12" FontWeight="Bold" Foreground="#0284C7"/>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!-- Right Filter Chips: [ ทั้งหมด ] | [ 30 วัน ] | [ 3 เดือน ] -->
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <!-- Chip 1: All -->
+                                            <Button Command="{Binding SetPurchaseFilterCommand}" CommandParameter="all"
+                                                    Padding="10,4" Margin="0,0,4,0" Cursor="Hand" BorderThickness="0"
+                                                    Focusable="False">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                                        <Setter Property="Foreground" Value="#64748B"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontSize" Value="12.5"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsFilterAll}" Value="True">
+                                                                <Setter Property="Background" Value="#0284C7"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                ทั้งหมด
+                                            </Button>
+
+                                            <!-- Chip 2: 1 Month -->
+                                            <Button Command="{Binding SetPurchaseFilterCommand}" CommandParameter="1month"
+                                                    Padding="10,4" Margin="0,0,4,0" Cursor="Hand" BorderThickness="0"
+                                                    Focusable="False">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                                        <Setter Property="Foreground" Value="#64748B"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontSize" Value="12.5"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsFilter1Month}" Value="True">
+                                                                <Setter Property="Background" Value="#0284C7"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                1 เดือน
+                                            </Button>
+
+                                            <!-- Chip 3: 3 Months -->
+                                            <Button Command="{Binding SetPurchaseFilterCommand}" CommandParameter="3months"
+                                                    Padding="10,4" Cursor="Hand" BorderThickness="0"
+                                                    Focusable="False">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                                        <Setter Property="Foreground" Value="#64748B"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontSize" Value="12.5"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsFilter3Months}" Value="True">
+                                                                <Setter Property="Background" Value="#0284C7"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                3 เดือน
+                                            </Button>
+                                        </StackPanel>
+                                    </DockPanel>
+
+                                    <!-- Table Header -->
+                                    <Border Background="#E2E8F0" CornerRadius="6" Padding="10,6" Margin="0,0,0,4">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="140"/> <!-- Date-Time -->
+                                                <ColumnDefinition Width="*"/>   <!-- Bill No -->
+                                                <ColumnDefinition Width="50"/>  <!-- Items -->
+                                                <ColumnDefinition Width="85"/>  <!-- Total -->
+                                                <ColumnDefinition Width="60"/>  <!-- Points -->
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="วันที่-เวลา" FontWeight="Bold" Foreground="#475569" FontSize="12.5"/>
+                                            <TextBlock Grid.Column="1" Text="เลขที่บิล" FontWeight="Bold" Foreground="#475569" FontSize="12.5"/>
+                                            <TextBlock Grid.Column="2" Text="ชิ้น" FontWeight="Bold" Foreground="#475569" FontSize="12.5" TextAlignment="Center"/>
+                                            <TextBlock Grid.Column="3" Text="ยอดรวม" FontWeight="Bold" Foreground="#475569" FontSize="12.5" TextAlignment="Right" Margin="0,0,10,0"/>
+                                            <TextBlock Grid.Column="4" Text="แต้ม" FontWeight="Bold" Foreground="#475569" FontSize="12.5" TextAlignment="Right" Margin="0,0,8,0"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Table Rows -->
+                                    <ItemsControl ItemsSource="{Binding DrawerPurchases}" Focusable="False">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="10,8">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="140"/> <!-- Date-Time -->
+                                                            <ColumnDefinition Width="*"/>   <!-- Bill No -->
+                                                            <ColumnDefinition Width="50"/>  <!-- Items -->
+                                                            <ColumnDefinition Width="85"/>  <!-- Total -->
+                                                            <ColumnDefinition Width="60"/>  <!-- Points -->
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <!-- Date-Time (B.E. HH:mm) -->
+                                                        <TextBlock Grid.Column="0" Text="{Binding FormattedDate}"
+                                                                   Foreground="#475569" FontSize="12.5" VerticalAlignment="Center"/>
+
+                                                        <!-- Bill No (Hyperlink clickable) + Used Points hint + Cancelled badge -->
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Button Command="{Binding DataContext.OpenReceiptDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Content="{Binding RefNo}"
+                                                                        Foreground="#0284C7"
+                                                                        FontWeight="Bold"
+                                                                        FontSize="12.5"
+                                                                        Background="Transparent"
+                                                                        BorderThickness="0"
+                                                                        Cursor="Hand"
+                                                                        Padding="0"
+                                                                        HorizontalAlignment="Left"
+                                                                        Focusable="False">
+                                                                    <Button.Template>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <TextBlock Text="{TemplateBinding Content}"
+                                                                                       Foreground="{TemplateBinding Foreground}"
+                                                                                       FontWeight="{TemplateBinding FontWeight}"
+                                                                                       TextDecorations="Underline"/>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+
+                                                                <!-- Cancelled Badge -->
+                                                                <Border Background="#FEE2E2" CornerRadius="4" Padding="4,1" Margin="6,0,0,0"
+                                                                        Visibility="{Binding IsCancelled, Converter={StaticResource BoolToVis}}">
+                                                                    <TextBlock Text="ยกเลิก" Foreground="#DC2626" FontSize="11" FontWeight="Bold"/>
+                                                                </Border>
+                                                            </StackPanel>
+
+                                                            <!-- Used Points Subtitle -->
+                                                            <TextBlock Text="ใช้แต้มแลกส่วนลด"
+                                                                       Foreground="#94A3B8"
+                                                                       FontSize="11"
+                                                                       Visibility="{Binding UsedPoints, Converter={StaticResource BoolToVis}}"
+                                                                       Margin="0,1,0,0"/>
+                                                        </StackPanel>
+
+                                                        <!-- Item Count -->
+                                                        <TextBlock Grid.Column="2" Text="{Binding ItemCount}"
+                                                                   Foreground="#475569" FontSize="13" TextAlignment="Center" VerticalAlignment="Center"/>
+
+                                                        <!-- Total Amount (NO ฿) -->
+                                                        <TextBlock Grid.Column="3" Text="{Binding FormattedTotal}"
+                                                                   FontWeight="SemiBold" Foreground="#0F172A" FontSize="13" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                                                        <!-- Points Badge -->
+                                                        <TextBlock Grid.Column="4" Text="{Binding PointsDisplay}"
+                                                                   Foreground="{Binding PointsColor}"
+                                                                   FontWeight="Bold" FontSize="13" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Empty State: Never Purchased -->
+                                    <Border Background="White" CornerRadius="8" Padding="24" Margin="0,4,0,0"
+                                            Visibility="{Binding HasDrawerPurchases, Converter={StaticResource InverseBoolToVis}}">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="🛒" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                            <TextBlock Text="ยังไม่เคยซื้อสินค้า" FontSize="14" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Pagination Footer -->
+                                    <DockPanel Margin="0,12,0,0" LastChildFill="False">
+                                        <!-- Page Info: แสดง X จาก N บิล -->
+                                        <TextBlock Text="{Binding DrawerPaginationInfo}"
+                                                   Foreground="#64748B"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center"
+                                                   DockPanel.Dock="Left"/>
+
+                                        <!-- Pagination Actions: Prev / Next -->
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Command="{Binding PrevPurchasePageCommand}"
+                                                    IsEnabled="{Binding CanPrevPage}"
+                                                    Background="#FFFFFF"
+                                                    BorderBrush="#CBD5E1"
+                                                    BorderThickness="1"
+                                                    Foreground="#334155"
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Padding="10,4"
+                                                    Margin="0,0,6,0"
+                                                    Cursor="Hand"
+                                                    Focusable="False">
+                                                <Button.Resources>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="CornerRadius" Value="6"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                                ◀ ก่อนหน้า
+                                            </Button>
+
+                                            <Button Command="{Binding NextPurchasePageCommand}"
+                                                    IsEnabled="{Binding CanNextPage}"
+                                                    Background="#FFFFFF"
+                                                    BorderBrush="#CBD5E1"
+                                                    BorderThickness="1"
+                                                    Foreground="#334155"
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Padding="10,4"
+                                                    Margin="0"
+                                                    Cursor="Hand"
+                                                    Focusable="False">
+                                                <Button.Resources>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="CornerRadius" Value="6"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                                ถัดไป ▶
+                                            </Button>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- 3. Sticky Footer Buttons -->
+                    <Border Grid.Row="2"
+                            Background="#FFFFFF"
+                            BorderBrush="#E2E8F0"
+                            BorderThickness="0,1,0,0"
+                            Padding="24,14">
+                        <DockPanel LastChildFill="False">
+                            <!-- Edit Customer Info Button (Primary Action - Blue) -->
+                            <Button DockPanel.Dock="Left"
+                                    Command="{Binding OpenEditCustomerFromDrawerCommand}"
+                                    Height="44"
+                                    Padding="20,0"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="#0284C7"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="FontSize" Value="15"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderThickness="0"
+                                                            CornerRadius="8"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#38BDF8"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#0369A1"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                ✏ แก้ไขข้อมูลลูกค้า
+                            </Button>
+
+                            <!-- Close Drawer Button (Secondary Action - Light Gray / White Border) -->
+                            <Button DockPanel.Dock="Right"
+                                    Command="{Binding CloseCustomerDrawerCommand}"
+                                    Height="44"
+                                    MinWidth="110"
+                                    Padding="20,0"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                        <Setter Property="Foreground" Value="#475569"/>
+                                        <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="FontSize" Value="15"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="8"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#E2E8F0"/>
+                                                            <Setter TargetName="border" Property="BorderBrush" Value="#94A3B8"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#CBD5E1"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                ปิด
+                            </Button>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+    </Grid>
+</UserControl>
