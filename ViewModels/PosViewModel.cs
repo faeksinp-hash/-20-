@@ -432,6 +432,7 @@ namespace Porjai20.ViewModels
                             IsManualMemberSearchMode = false;
                         }
                     }
+                    RecalculateAutoPromotion();
                 }
             }
         }
@@ -548,6 +549,7 @@ namespace Porjai20.ViewModels
                         OnPropertyChanged(nameof(IsLinkedMemberCardVisible));
                         OnPropertyChanged(nameof(IsMemberSearchBoxVisible));
                     }
+                    RecalculateAutoPromotion();
                 }
             }
         }
@@ -784,12 +786,101 @@ namespace Porjai20.ViewModels
             get => decimal.TryParse(_numpadInput, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal val) ? val.ToString("N0") : "0";
         }
 
+        private bool _hasAutoPromotion;
+        public bool HasAutoPromotion
+        {
+            get => _hasAutoPromotion;
+            set => SetProperty(ref _hasAutoPromotion, value);
+        }
+
+        private string _autoPromotionName = "";
+        public string AutoPromotionName
+        {
+            get => _autoPromotionName;
+            set => SetProperty(ref _autoPromotionName, value);
+        }
+
+        private decimal _promotionDiscountAmount;
+        public decimal PromotionDiscountAmount
+        {
+            get => _promotionDiscountAmount;
+            set
+            {
+                if (SetProperty(ref _promotionDiscountAmount, value))
+                {
+                    OnPropertyChanged(nameof(NetPayableAmount));
+                    OnPropertyChanged(nameof(CartTotal));
+                    OnPropertyChanged(nameof(CheckoutGrandTotal));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(Change));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                }
+            }
+        }
+
+        public string? AppliedPromoID { get; set; }
+        public PromotionModel? AppliedAutoPromotion { get; set; }
+
         public decimal ShippingFee => SelectedShippingMethod == "Delivery" ? CustomShippingFee : 0;
         public decimal TotalAmountBeforeDiscount => TotalAmount + ShippingFee;
-        public decimal CartTotal => Math.Max(0, TotalAmountBeforeDiscount - DiscountAmount);
-        public decimal CheckoutGrandTotal => CartTotal;
+        public decimal NetPayableAmount => Math.Max(0, TotalAmountBeforeDiscount - PromotionDiscountAmount - DiscountAmount);
+        public decimal CartTotal => NetPayableAmount;
+        public decimal CheckoutGrandTotal => NetPayableAmount;
 
-        public decimal ChangeAmount => Math.Max(0, CashAmountReceived - CheckoutGrandTotal);
+        public decimal ChangeAmount => Math.Max(0, CashAmountReceived - NetPayableAmount);
+
+        private List<PromotionModel>? _cachedPromotions;
+
+        public void RecalculateAutoPromotion()
+        {
+            bool isMember = SelectedCustomer != null;
+            decimal subtotal = TotalAmount;
+
+            if (_cachedPromotions != null)
+            {
+                var bestPromo = PromotionService.Instance.EvaluateBestAutoPromotion(CartItems, isMember, subtotal, _cachedPromotions);
+                ApplyAutoPromotionResult(bestPromo);
+            }
+            else
+            {
+                _ = RecalculateAutoPromotionAsync();
+            }
+        }
+
+        public async Task RecalculateAutoPromotionAsync()
+        {
+            bool isMember = SelectedCustomer != null;
+            decimal subtotal = TotalAmount;
+
+            try
+            {
+                _cachedPromotions = await PromotionService.Instance.GetAllPromotionsAsync();
+                var bestPromo = PromotionService.Instance.EvaluateBestAutoPromotion(CartItems, isMember, subtotal, _cachedPromotions);
+                ApplyAutoPromotionResult(bestPromo);
+            }
+            catch
+            {
+                ApplyAutoPromotionResult(null);
+            }
+        }
+
+        private void ApplyAutoPromotionResult(AutoPromotionResult? bestPromo)
+        {
+            HasAutoPromotion = bestPromo != null;
+            AutoPromotionName = bestPromo != null
+                ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
+                : "";
+            PromotionDiscountAmount = bestPromo?.DiscountAmount ?? 0m;
+            AppliedPromoID = bestPromo?.PromoID;
+            AppliedAutoPromotion = bestPromo?.Promotion;
+
+            OnPropertyChanged(nameof(NetPayableAmount));
+            OnPropertyChanged(nameof(CartTotal));
+            OnPropertyChanged(nameof(CheckoutGrandTotal));
+            OnPropertyChanged(nameof(ChangeAmount));
+            OnPropertyChanged(nameof(Change));
+            OnPropertyChanged(nameof(EarnedPoints));
+        }
 
         private string _customerName = "";
         public string CustomerName
@@ -1000,6 +1091,7 @@ namespace Porjai20.ViewModels
             ToggleCustomerDropDownCommand = new RelayCommand(_ => { IsCustomerDropDownOpen = !IsCustomerDropDownOpen; });
 
             _ = LoadCustomersAsync();
+            _ = RecalculateAutoPromotionAsync();
 
             // Checkout Commands
             CheckoutCommand = new RelayCommand(async _ => { 
@@ -1030,6 +1122,8 @@ namespace Porjai20.ViewModels
                             OnPropertyChanged(nameof(MemberSubtitleText));
                         }
                     }
+
+                    await RecalculateAutoPromotionAsync();
                 }
             });
             NumpadCommand = new RelayCommand(param => NumpadInput(param?.ToString()), _ => true);
@@ -1510,7 +1604,7 @@ namespace Porjai20.ViewModels
             }
             else if (key == "Exact")
             {
-                _numpadInput = CheckoutGrandTotal.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+                _numpadInput = NetPayableAmount.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
                 if (string.IsNullOrEmpty(_numpadInput) || _numpadInput == "0")
                 {
                     _numpadInput = "0";
@@ -1689,6 +1783,7 @@ namespace Porjai20.ViewModels
                     await InitializeMemberAsync();
                 }
                 CurrentStep = 2;
+                await RecalculateAutoPromotionAsync();
             }
             else if (CurrentStep == 2)
             {
@@ -1803,30 +1898,62 @@ namespace Porjai20.ViewModels
                             Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                             Cus_ID = customerId,
                             Emp_ID = (int?)null,
-                            Sales_Total = CheckoutGrandTotal,
-                            Sales_Cash = IsCashPayment ? CashAmountReceived : CheckoutGrandTotal,
+                            Sales_Total = NetPayableAmount,
+                            Sales_Cash = IsCashPayment ? CashAmountReceived : NetPayableAmount,
                             Sales_Change = IsCashPayment ? ChangeAmount : 0,
                             Sales_PaymentType = effectivePayment,
                             Sales_Status = "ชำระเงินแล้ว",
                             DiscountAmount = DiscountAmount,
                             PointsUsed = UsedPoints,
-                            PointsEarned = EarnedPoints
+                            PointsEarned = EarnedPoints,
+                            PromoID = AppliedPromoID,
+                            PromoDiscount = PromotionDiscountAmount,
+                            TotalAmount = TotalAmount,
+                            NetAmount = NetPayableAmount
                         };
 
                         int orderId;
                         try
                         {
-                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned)
-                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned);
+                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned, PromoID, PromoDiscount, TotalAmount, NetAmount)
+                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned, @PromoID, @PromoDiscount, @TotalAmount, @NetAmount);
                                                 SELECT last_insert_rowid();";
                             orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
                         }
                         catch
                         {
-                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
-                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
-                                                SELECT last_insert_rowid();";
-                            orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
+                            try
+                            {
+                                string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned)
+                                                    VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned);
+                                                    SELECT last_insert_rowid();";
+                                orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
+                            }
+                            catch
+                            {
+                                string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
+                                                    VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
+                                                    SELECT last_insert_rowid();";
+                                orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
+                            }
+                        }
+
+                        // อัปเดตยอดการใช้งานโปรโมชั่นใน tblPromotion
+                        if (!string.IsNullOrEmpty(AppliedPromoID))
+                        {
+                            string sqlUsage = @"
+                                UPDATE tblPromotion 
+                                SET CurrentUsage = CurrentUsage + 1,
+                                    UsageCount = COALESCE(UsageCount, 0) + 1 
+                                WHERE PromoID = @PromoID;";
+                            try
+                            {
+                                await conn.ExecuteAsync(sqlUsage, new { PromoID = AppliedPromoID }, trans);
+                            }
+                            catch
+                            {
+                                await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { PromoID = AppliedPromoID }, trans);
+                            }
                         }
 
                         if (SelectedShippingMethod == "Delivery")
@@ -2160,6 +2287,8 @@ namespace Porjai20.ViewModels
             {
                 UsedPoints = MaxRedeemablePoints;
             }
+            RecalculateAutoPromotion();
+            OnPropertyChanged(nameof(NetPayableAmount));
             OnPropertyChanged(nameof(CartTotal));
             OnPropertyChanged(nameof(CheckoutGrandTotal));
             OnPropertyChanged(nameof(ChangeAmount));

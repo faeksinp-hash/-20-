@@ -20,6 +20,7 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(CustomerName));
                     OnPropertyChanged(nameof(EarnedPoints));
                     ResetRedemption();
+                    RecalculateAutoPromotion();
                 }
             }
         }
@@ -119,7 +120,39 @@ namespace Porjai20.ViewModels
 
         public ICommand CancelDiscountCommand => CancelPointDiscountCommand;
 
-        public decimal NetPayableAmount => Math.Max(0, TotalAmountBeforeDiscount + ShippingFee - DiscountAmount);
+        private bool _hasAutoPromotion;
+        public bool HasAutoPromotion
+        {
+            get => _hasAutoPromotion;
+            set => SetProperty(ref _hasAutoPromotion, value);
+        }
+
+        private string _autoPromotionName = "";
+        public string AutoPromotionName
+        {
+            get => _autoPromotionName;
+            set => SetProperty(ref _autoPromotionName, value);
+        }
+
+        private decimal _promotionDiscountAmount;
+        public decimal PromotionDiscountAmount
+        {
+            get => _promotionDiscountAmount;
+            set
+            {
+                if (SetProperty(ref _promotionDiscountAmount, value))
+                {
+                    OnPropertyChanged(nameof(NetPayableAmount));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                }
+            }
+        }
+
+        public string? AppliedPromoID { get; set; }
+        public PromotionModel? AppliedAutoPromotion { get; set; }
+
+        public decimal NetPayableAmount => Math.Max(0, TotalAmountBeforeDiscount + ShippingFee - PromotionDiscountAmount - DiscountAmount);
 
         private decimal _cashReceived;
         public decimal CashReceived
@@ -225,6 +258,7 @@ namespace Porjai20.ViewModels
             ClosePointRedeemModalCommand = new RelayCommand(_ => { IsPointRedeemModalOpen = false; });
             ConfirmPointRedeemCommand = new RelayCommand(_ => ConfirmPointRedeem());
             CancelPointDiscountCommand = new RelayCommand(_ => ResetRedemption());
+            RecalculateAutoPromotion();
         }
 
         public void OpenPointRedeem()
@@ -318,6 +352,46 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(ChangeAmount));
             OnPropertyChanged(nameof(EarnedPoints));
             OnPropertyChanged(nameof(MaxRedeemablePoints));
+            RecalculateAutoPromotion();
+        }
+
+        public void RecalculateAutoPromotion()
+        {
+            _ = RecalculateAutoPromotionAsync();
+        }
+
+        public async Task RecalculateAutoPromotionAsync()
+        {
+            try
+            {
+                bool isMember = CurrentMember != null;
+                var allPromos = await Services.PromotionService.Instance.GetAllPromotionsAsync();
+                var bestPromo = Services.PromotionService.Instance.EvaluateBestAutoPromotion(
+                    new List<CartItem>(),
+                    isMember,
+                    TotalAmountBeforeDiscount,
+                    allPromos);
+
+                HasAutoPromotion = bestPromo != null;
+                AutoPromotionName = bestPromo != null 
+                    ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
+                    : "";
+                PromotionDiscountAmount = bestPromo?.DiscountAmount ?? 0m;
+                AppliedPromoID = bestPromo?.PromoID;
+                AppliedAutoPromotion = bestPromo?.Promotion;
+
+                OnPropertyChanged(nameof(NetPayableAmount));
+                OnPropertyChanged(nameof(ChangeAmount));
+                OnPropertyChanged(nameof(EarnedPoints));
+            }
+            catch
+            {
+                HasAutoPromotion = false;
+                AutoPromotionName = "";
+                PromotionDiscountAmount = 0;
+                AppliedPromoID = null;
+                AppliedAutoPromotion = null;
+            }
         }
     }
 }

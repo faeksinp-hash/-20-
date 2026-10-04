@@ -206,6 +206,10 @@ namespace Porjai20.Services
                         DiscountAmount REAL DEFAULT 0,
                         PointsUsed INTEGER DEFAULT 0,
                         PointsEarned INTEGER DEFAULT 0,
+                        PromoID TEXT,
+                        PromoDiscount REAL DEFAULT 0,
+                        TotalAmount REAL DEFAULT 0,
+                        NetAmount REAL DEFAULT 0,
                         FOREIGN KEY(Cus_ID) REFERENCES tblCustomer(Cus_ID),
                         FOREIGN KEY(Emp_ID) REFERENCES tblEmployee(Emp_ID)
                     );");
@@ -213,6 +217,10 @@ namespace Porjai20.Services
                 try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN DiscountAmount REAL DEFAULT 0;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN PointsUsed INTEGER DEFAULT 0;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN PointsEarned INTEGER DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN PromoID TEXT;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN PromoDiscount REAL DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN TotalAmount REAL DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSales_H ADD COLUMN NetAmount REAL DEFAULT 0;"); } catch { }
 
                 // 10) tblSalesDetail
                 connection.Execute(@"
@@ -310,6 +318,7 @@ namespace Porjai20.Services
                         MaxUsagePerCustomer INTEGER DEFAULT 0,
                         TotalQuota INTEGER DEFAULT 0,
                         CurrentUsage INTEGER DEFAULT 0,
+                        UsageCount INTEGER DEFAULT 0,
                         StartDate TEXT NOT NULL,
                         EndDate TEXT NOT NULL,
                         IsActive INTEGER DEFAULT 1,
@@ -331,6 +340,7 @@ namespace Porjai20.Services
                 try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN MaxUsagePerCustomer INTEGER DEFAULT 0;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN TotalQuota INTEGER DEFAULT 0;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN CurrentUsage INTEGER DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN UsageCount INTEGER DEFAULT 0;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN IsDraft INTEGER DEFAULT 0;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN CreatedAt TEXT DEFAULT '';"); } catch { }
                 try { connection.Execute("ALTER TABLE tblSalesDetail ADD COLUMN PromoID TEXT;"); } catch { }

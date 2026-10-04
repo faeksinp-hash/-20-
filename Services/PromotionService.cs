@@ -10,6 +10,17 @@ using Porjai20.Models;
 namespace Porjai20.Services
 {
     /// <summary>
+    /// ผลลัพธ์จากการประเมินโปรโมชั่นอัตโนมัติที่ดีที่สุด (Auto-Apply Promotion Engine)
+    /// </summary>
+    public class AutoPromotionResult
+    {
+        public string PromoID { get; set; } = string.Empty;
+        public string PromoName { get; set; } = string.Empty;
+        public decimal DiscountAmount { get; set; }
+        public PromotionModel? Promotion { get; set; }
+    }
+
+    /// <summary>
     /// ผลลัพธ์จากการประเมินโปรโมชั่นที่เคาน์เตอร์ POS
     /// </summary>
     public class PromotionEvaluationResult
@@ -379,12 +390,12 @@ namespace Porjai20.Services
             var activePromos = preloadedPromos ?? await GetAllPromotionsAsync();
             var today = DateTime.Today;
 
-            // กรองเฉพาะโปรโมชั่นที่เปิดใช้งาน ไม่ใช่ดราฟท์ และยังไม่หมดอายุ
+            // กรองเฉพาะโปรโมชั่นที่เปิดใช้งาน ไม่ใช่ดราฟท์ และยังไม่หมดอายุ (รองรับ พ.ศ. 2569)
             var candidates = activePromos.Where(p =>
                 p.IsActive &&
                 !p.IsDraft &&
                 !p.IsExpired &&
-                (DateTime.TryParse(p.StartDate, out var start) ? start.Date <= today : true)
+                IsPromotionDateValid(p.StartDate, p.EndDate, today)
             ).ToList();
 
             decimal cartTotal = itemsList.Sum(i => i.Total);
@@ -640,12 +651,293 @@ namespace Porjai20.Services
                 }
             }
 
-            // 2. อัปเดต CurrentUsage ใน tblPromotion
+            // 2. อัปเดต CurrentUsage และ UsageCount ใน tblPromotion
             foreach (var promo in evalResult.AppliedPromotions)
             {
-                string sqlUsage = "UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;";
-                await conn.ExecuteAsync(sqlUsage, new { promo.PromoID }, trans);
+                string sqlUsage = @"
+                    UPDATE tblPromotion 
+                    SET CurrentUsage = CurrentUsage + 1,
+                        UsageCount = COALESCE(UsageCount, 0) + 1 
+                    WHERE PromoID = @PromoID;";
+                try
+                {
+                    await conn.ExecuteAsync(sqlUsage, new { promo.PromoID }, trans);
+                }
+                catch
+                {
+                    await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { promo.PromoID }, trans);
+                }
             }
+        }
+
+        #endregion
+
+        #region Safe Date Normalization & Auto-Promotion Engine
+
+        /// <summary>
+        /// แปลงวันที่อย่างปลอดภัย รองรับทั้ง ค.ศ. (AD) และ พ.ศ. (BE)
+        /// หากปี > 2400 (พ.ศ.) ให้ลบ 543 ปี เพื่อเทียบกับ DateTime.Today ได้อย่างถูกต้อง
+        /// </summary>
+        public static DateTime? ParseDateSafe(string? dateStr)
+        {
+            return PromotionModel.ParseDateSafe(dateStr);
+        }
+
+        /// <summary>
+        /// ดึงช่วงเวลาเริ่มต้นและสิ้นสุดอย่างปลอดภัย รองรับทั้งแบบแยกฟิลด์และแบบช่วงในสตริงเดียว เช่น "05/10/2569 - 05/12/2569"
+        /// </summary>
+        public static (DateTime? start, DateTime? end) GetDateRangeSafe(string? startDateStr, string? endDateStr)
+        {
+            DateTime? start = null;
+            DateTime? end = null;
+
+            if (!string.IsNullOrWhiteSpace(startDateStr) && startDateStr.Contains(" - "))
+            {
+                var parts = startDateStr.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 2)
+                {
+                    start = ParseDateSafe(parts[0]);
+                    end = ParseDateSafe(parts[1]);
+                }
+                else if (parts.Length == 1)
+                {
+                    start = ParseDateSafe(parts[0]);
+                }
+            }
+            else
+            {
+                start = ParseDateSafe(startDateStr);
+            }
+
+            if (!end.HasValue && !string.IsNullOrWhiteSpace(endDateStr))
+            {
+                if (endDateStr.Contains(" - "))
+                {
+                    var parts = endDateStr.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                    end = ParseDateSafe(parts.Length >= 2 ? parts[1] : parts[0]);
+                }
+                else
+                {
+                    end = ParseDateSafe(endDateStr);
+                }
+            }
+
+            return (start, end);
+        }
+
+        /// <summary>
+        /// ตรวจสอบว่าเงื่อนไข StartDate <= checkDate && EndDate >= checkDate ถูกต้องหรือไม่ (เทียบกับ DateTime.Today ค.ศ. 2026)
+        /// </summary>
+        public static bool IsPromotionDateValid(string? startDateStr, string? endDateStr, DateTime? checkDate = null)
+        {
+            var today = (checkDate ?? DateTime.Today).Date;
+            var (start, end) = GetDateRangeSafe(startDateStr, endDateStr);
+
+            if (start.HasValue && start.Value.Date > today) return false;
+            if (end.HasValue && end.Value.Date < today) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// ดึงโปรโมชั่นทั้งหมดแบบ Synchronous
+        /// </summary>
+        public List<PromotionModel> GetAllPromotionsSync()
+        {
+            using (var conn = _db.GetConnection())
+            {
+                string sqlPromo = @"
+                    SELECT 
+                        PromoID, PromoCode, PromoName, PromoType, TargetScope,
+                        DiscountType, DiscountAmount, MaxDiscountAmount, MinSpend,
+                        PointsRequired, BuyQuantity, FreeQuantity, FreeProductID,
+                        CanRepeat, IsMemberOnly, CanCombine, MaxUsagePerCustomer,
+                        TotalQuota, CurrentUsage, StartDate, EndDate, IsActive,
+                        IsDraft, CreatedAt
+                    FROM tblPromotion
+                    ORDER BY IsDraft ASC, IsActive DESC, PromoID ASC;";
+
+                var promos = conn.Query<PromotionModel>(sqlPromo).ToList();
+
+                var promoProducts = conn.Query<(string PromoID, string ProductID)>(
+                    "SELECT PromoID, ProductID FROM tblPromotionProducts;").ToList();
+
+                var allProds = conn.Query<(int Pro_ID, string Pro_Name, decimal Pro_Price, decimal Pro_Cost)>(
+                    "SELECT Pro_ID, Pro_Name, Pro_Price, Pro_Cost FROM tblProduct;").ToList();
+
+                var prodDict = allProds.ToDictionary(p => p.Pro_ID.ToString(), p => p);
+
+                foreach (var p in promos)
+                {
+                    var linkedIds = promoProducts.Where(x => x.PromoID == p.PromoID).Select(x => x.ProductID).ToList();
+                    p.ProductIds = linkedIds;
+
+                    var names = new List<string>();
+                    foreach (var id in linkedIds)
+                    {
+                        if (prodDict.TryGetValue(id, out var prodInfo))
+                            names.Add(prodInfo.Pro_Name);
+                        else
+                            names.Add($"สินค้า #{id}");
+                    }
+                    p.ProductNames = names;
+
+                    if (!string.IsNullOrWhiteSpace(p.FreeProductID) && prodDict.TryGetValue(p.FreeProductID, out var freeProd))
+                    {
+                        p.FreeProductName = freeProd.Pro_Name;
+                        p.ItemCost = freeProd.Pro_Cost;
+                    }
+                    else if (p.ProductIds.Count > 0 && prodDict.TryGetValue(p.ProductIds[0], out var mainProd))
+                    {
+                        p.ItemCost = mainProd.Pro_Cost;
+                    }
+                }
+
+                return promos;
+            }
+        }
+
+        /// <summary>
+        /// Engine ประเมินและเลือกโปรโมชั่นอัตโนมัติที่ดีที่สุด (Auto-Promotion Engine):
+        /// - ดึงโปรโมชั่นที่ IsActive == 1, ไม่ใช่ดราฟท์, และอยู่ในช่วงเวลา (แปลง พ.ศ. 2569 เป็น ค.ศ. 2026 อย่างปลอดภัย)
+        /// - กรองเฉพาะโปรโมชั่นอัตโนมัติ (string.IsNullOrWhiteSpace(PromoCode))
+        /// - ตรวจสอบเงื่อนไขสมาชิก (IsMemberOnly): หากโปรระบุเฉพาะสมาชิก จะเข้าเกณฑ์ก็ต่อเมื่อ isMember == true
+        /// - ตรวจสอบสินค้าเฉพาะรายการ (TargetScope == SpecificProducts): ตรวจสอบว่าในตะกร้ามีสินค้าที่ระบุใน tblPromotionProducts หรือไม่
+        ///   รวมยอดเฉพาะสินค้าที่ร่วมรายการ แล้วนำไปเทียบกับ MinSpend
+        /// - คำนวณมูลค่าส่วนลด (Percentage มี MaxDiscountAmount หรือ Cash)
+        /// - กรณีมีหลายโปรโมชั่นผ่านเกณฑ์พร้อมกัน ให้เลือกรหัสโปรโมชั่นที่ให้ส่วนลดสูงที่สุดแก่ลูกค้า (Best Value) 1 รายการ
+        /// </summary>
+        public AutoPromotionResult? EvaluateBestAutoPromotion(
+            IEnumerable<CartItem> cartItems,
+            bool isMember,
+            decimal subtotal,
+            List<PromotionModel>? preloadedPromos = null)
+        {
+            var itemsList = cartItems?.ToList() ?? new List<CartItem>();
+            if (itemsList.Count == 0) return null;
+
+            var allPromos = preloadedPromos ?? GetAllPromotionsSync();
+            var today = DateTime.Today;
+
+            // กรองโปรโมชั่นที่เปิดใช้งาน ไม่ใช่ดราฟท์ ไม่มี PromoCode (ใช้อัตโนมัติ) และอยู่ในช่วงเวลา
+            var candidates = allPromos.Where(p =>
+                p.IsActive &&
+                !p.IsDraft &&
+                string.IsNullOrWhiteSpace(p.PromoCode) &&
+                IsPromotionDateValid(p.StartDate, p.EndDate, today) &&
+                (p.TotalQuota <= 0 || p.CurrentUsage < p.TotalQuota)
+            ).ToList();
+
+            var qualified = new List<AutoPromotionResult>();
+
+            foreach (var promo in candidates)
+            {
+                // 1. ตรวจสอบเงื่อนไขสมาชิก (IsMemberOnly)
+                if (promo.IsMemberOnly && !isMember)
+                {
+                    continue;
+                }
+
+                // 2. คำนวณยอดซื้อสินค้าที่ร่วมรายการตาม TargetScope
+                decimal eligibleAmount = 0m;
+
+                if (promo.TargetScope == "SpecificProducts")
+                {
+                    if (promo.ProductIds == null || promo.ProductIds.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    var matchingItems = itemsList.Where(item =>
+                        promo.ProductIds.Contains(item.Product.Id.ToString())
+                    ).ToList();
+
+                    if (matchingItems.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    eligibleAmount = matchingItems.Sum(item => item.Total);
+
+                    // เทียบกับ MinSpend ของสินค้าเฉพาะรายการที่ร่วมโปร
+                    if (promo.MinSpend > 0 && eligibleAmount < promo.MinSpend)
+                    {
+                        continue;
+                    }
+                }
+                else if (promo.TargetScope == "AllStore")
+                {
+                    eligibleAmount = subtotal > 0 ? subtotal : itemsList.Sum(i => i.Total);
+
+                    // เทียบกับ MinSpend ทั้งบิล
+                    if (promo.MinSpend > 0 && eligibleAmount < promo.MinSpend)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    // TargetScope อื่นๆ เช่น DeliveryFee ไม่นำมาลดราคาสินค้า
+                    continue;
+                }
+
+                if (eligibleAmount <= 0) continue;
+
+                // 3. คำนวณมูลค่าส่วนลด
+                decimal discount = 0m;
+                if (promo.PromoType == "Discount")
+                {
+                    if (promo.DiscountType == "Percentage")
+                    {
+                        decimal calc = eligibleAmount * (promo.DiscountAmount / 100m);
+                        if (promo.MaxDiscountAmount.HasValue && promo.MaxDiscountAmount.Value > 0)
+                        {
+                            calc = Math.Min(calc, promo.MaxDiscountAmount.Value);
+                        }
+                        discount = Math.Round(calc, 2);
+                    }
+                    else // Cash
+                    {
+                        discount = Math.Min(promo.DiscountAmount, eligibleAmount);
+                    }
+                }
+                else if (promo.PromoType == "Redeem" && promo.PointsRequired == 0)
+                {
+                    discount = Math.Min(promo.DiscountAmount, eligibleAmount);
+                }
+
+                if (discount > 0)
+                {
+                    qualified.Add(new AutoPromotionResult
+                    {
+                        PromoID = promo.PromoID,
+                        PromoName = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : promo.ConditionDescription,
+                        DiscountAmount = discount,
+                        Promotion = promo
+                    });
+                }
+            }
+
+            if (qualified.Count == 0) return null;
+
+            // เลือกรหัสโปรโมชั่นที่ให้ส่วนลดสูงที่สุดแก่ลูกค้า (Best Value) เพียง 1 รายการ
+            var best = qualified
+                .OrderByDescending(q => q.DiscountAmount)
+                .ThenBy(q => q.PromoID)
+                .First();
+
+            return best;
+        }
+
+        /// <summary>
+        /// ประเมินโปรโมชั่นอัตโนมัติที่ดีที่สุดแบบ Asynchronous
+        /// </summary>
+        public async Task<AutoPromotionResult?> EvaluateBestAutoPromotionAsync(
+            IEnumerable<CartItem> cartItems,
+            bool isMember,
+            decimal subtotal)
+        {
+            var allPromos = await GetAllPromotionsAsync();
+            return EvaluateBestAutoPromotion(cartItems, isMember, subtotal, allPromos);
         }
 
         #endregion

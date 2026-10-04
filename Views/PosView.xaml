@@ -823,6 +823,12 @@
                                                 <TextBlock Text="{Binding ShippingFee, StringFormat={}{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Right"/>
                                             </Grid>
 
+                                            <!-- ส่วนลดโปรโมชั่นอัตโนมัติ (แสดงเฉพาะเมื่อ HasAutoPromotion == true) -->
+                                            <DockPanel LastChildFill="False" Margin="0,6,0,6" Visibility="{Binding HasAutoPromotion, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock DockPanel.Dock="Left" FontSize="15" FontWeight="SemiBold" Foreground="#E11D48" Text="{Binding AutoPromotionName, StringFormat='ส่วนลดโปรโมชั่น ({0})'}"/>
+                                                <TextBlock DockPanel.Dock="Right" FontSize="15" FontWeight="Bold" Foreground="#E11D48" Text="{Binding PromotionDiscountAmount, StringFormat='-{0:N2}'}"/>
+                                            </DockPanel>
+
                                             <Grid Margin="0,0,0,8" Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}">
                                                 <TextBlock Text="ส่วนลดจากแต้มสะสม" FontSize="15" FontWeight="SemiBold" Foreground="#E11D48"/>
                                                 <TextBlock Text="{Binding DiscountAmount, StringFormat=-{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#E11D48" HorizontalAlignment="Right"/>
@@ -834,7 +840,7 @@
                                             <Border Background="#F1F5F9" BorderBrush="#00A3E0" BorderThickness="2" CornerRadius="12" Padding="18,12">
                                                 <Grid>
                                                     <TextBlock Text="ยอดที่ต้องชำระ" FontSize="18" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="{Binding CheckoutGrandTotal, StringFormat={}{0:N2}}" FontSize="38" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding NetPayableAmount, StringFormat={}{0:N2}}" FontSize="38" FontWeight="ExtraBold" Foreground="#002288" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>

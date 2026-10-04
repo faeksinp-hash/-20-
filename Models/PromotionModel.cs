@@ -422,17 +422,28 @@ namespace Porjai20.Models
 
         #region Computed Display Properties (No ฿ Allowed)
 
+        /// <summary>จำนวนครั้งที่ใช้ไปแล้ว (UsageCount สำหรับระบบขายหน้าร้าน)</summary>
+        public int UsageCount
+        {
+            get => _currentUsage;
+            set
+            {
+                if (SetProperty(ref _currentUsage, value))
+                {
+                    OnPropertyChanged(nameof(CurrentUsage));
+                    OnPropertyChanged(nameof(TargetScopeDisplay));
+                }
+            }
+        }
+
         public bool IsExpired
         {
             get
             {
-                if (DateTime.TryParse(EndDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var end))
+                var end = ParseDateSafe(EndDate);
+                if (end.HasValue)
                 {
-                    return end.Date < DateTime.Today;
-                }
-                if (DateTime.TryParse(EndDate, out var fallbackEnd))
-                {
-                    return fallbackEnd.Date < DateTime.Today;
+                    return end.Value.Date < DateTime.Today;
                 }
                 return false;
             }
@@ -644,16 +655,80 @@ namespace Porjai20.Models
         public string MinSpendFormatted => $"{MinSpend:N0}";
         public string DiscountAmountFormatted => $"{DiscountAmount:N0}";
 
+        /// <summary>
+        /// แปลงสตริงวันที่เป็น DateTime อย่างปลอดภัย รองรับทั้ง ค.ศ. (AD) และ พ.ศ. (BE)
+        /// หากปีในฐานข้อมูล > 2400 (เป็น พ.ศ.): ให้ลบ 543 ปี เพื่อเทียบกับ DateTime.Today (ค.ศ. 2026) ได้อย่างถูกต้อง
+        /// </summary>
+        public static DateTime? ParseDateSafe(string? dateStr)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr)) return null;
+
+            dateStr = dateStr.Trim();
+
+            // รองรับกรณีที่สตริงมาเป็นช่วงเวลา "05/10/2569 - 05/12/2569"
+            if (dateStr.Contains(" - "))
+            {
+                var parts = dateStr.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 0)
+                {
+                    dateStr = parts[0].Trim();
+                }
+            }
+
+            string[] formats = new[]
+            {
+                "yyyy-MM-dd",
+                "yyyy-MM-dd HH:mm:ss",
+                "dd/MM/yyyy",
+                "dd/MM/yyyy HH:mm:ss",
+                "d/M/yyyy",
+                "d/M/yyyy HH:mm:ss",
+                "yyyy/MM/dd",
+                "yyyy/MM/dd HH:mm:ss",
+                "dd-MM-yyyy",
+                "dd-MM-yyyy HH:mm:ss"
+            };
+
+            DateTime dt;
+            bool success = DateTime.TryParseExact(dateStr, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
+            if (!success)
+            {
+                success = DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
+            }
+            if (!success)
+            {
+                success = DateTime.TryParse(dateStr, out dt);
+            }
+
+            if (success)
+            {
+                // หากปีในฐานข้อมูล > 2400 (เป็น พ.ศ.): ให้ลบ 543 ปี เพื่อเทียบกับ DateTime.Today (ค.ศ. 2026) ได้อย่างถูกต้อง
+                if (dt.Year > 2400)
+                {
+                    try
+                    {
+                        dt = dt.AddYears(-543);
+                    }
+                    catch
+                    {
+                        int newYear = dt.Year - 543;
+                        int maxDay = DateTime.DaysInMonth(newYear, dt.Month);
+                        dt = new DateTime(newYear, dt.Month, Math.Min(dt.Day, maxDay), dt.Hour, dt.Minute, dt.Second);
+                    }
+                }
+                return dt;
+            }
+
+            return null;
+        }
+
         private static string FormatDateThai(string? ymd)
         {
             if (string.IsNullOrWhiteSpace(ymd)) return "-";
-            if (DateTime.TryParse(ymd, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+            var dt = ParseDateSafe(ymd);
+            if (dt.HasValue)
             {
-                return dt.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-            }
-            if (DateTime.TryParse(ymd, out var fallbackDt))
-            {
-                return fallbackDt.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                return dt.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
             }
             return ymd;
         }
