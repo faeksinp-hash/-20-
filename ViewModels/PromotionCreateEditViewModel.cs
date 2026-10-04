@@ -91,6 +91,8 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(IsRedeemStep));
                     OnPropertyChanged(nameof(IsGiftStep));
                     OnPropertyChanged(nameof(IsFreebieStep));
+                    OnPropertyChanged(nameof(DiscountPlaceholderText));
+                    ValidateDiscountValue(isStrict: false);
                     UpdateLivePreview();
                 }
             });
@@ -153,30 +155,147 @@ namespace Porjai20.ViewModels
                     {
                         _model.PropertyChanged += OnModelPropertyChanged;
                     }
+                    OnPropertyChanged(nameof(DiscountPlaceholderText));
+                    ValidateDiscountValue(isStrict: false);
+                }
+            }
+        }
+
+        private string _discountValue = string.Empty;
+        public string DiscountValue
+        {
+            get => _discountValue;
+            set
+            {
+                if (SetProperty(ref _discountValue, value))
+                {
+                    if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var d) ||
+                        decimal.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out d))
+                    {
+                        Model.DiscountAmount = d;
+                    }
+                    else
+                    {
+                        Model.DiscountAmount = 0;
+                    }
+
+                    ValidateDiscountValue(isStrict: false);
+                    UpdateLivePreview();
+                }
+            }
+        }
+
+        private bool _hasDiscountValueError;
+        public bool HasDiscountValueError
+        {
+            get => _hasDiscountValueError;
+            set
+            {
+                if (SetProperty(ref _hasDiscountValueError, value))
+                {
                     OnPropertyChanged(nameof(IsInvalidPercentageDiscount));
                 }
             }
         }
 
-        public bool IsInvalidPercentageDiscount =>
-            Model != null &&
-            Model.PromoType == "Discount" &&
-            Model.DiscountType == "Percentage" &&
-            Model.DiscountAmount < 1;
+        private string _discountErrorMessage = string.Empty;
+        public string DiscountErrorMessage
+        {
+            get => _discountErrorMessage;
+            set => SetProperty(ref _discountErrorMessage, value);
+        }
+
+        public string DiscountPlaceholderText =>
+            Model?.DiscountType == "Percentage" ? "เช่น 10" : "เช่น 20";
+
+        public bool IsInvalidPercentageDiscount => HasDiscountValueError;
+
+        public bool ValidateDiscountValue(bool isStrict = false)
+        {
+            if (Model == null || Model.PromoType != "Discount")
+            {
+                HasDiscountValueError = false;
+                DiscountErrorMessage = string.Empty;
+                return true;
+            }
+
+            // ถ้าค่ายังเป็นค่าว่าง:
+            if (string.IsNullOrWhiteSpace(DiscountValue))
+            {
+                if (isStrict)
+                {
+                    HasDiscountValueError = true;
+                    DiscountErrorMessage = "⚠️ กรุณาระบุมูลค่าส่วนลด";
+                    return false;
+                }
+
+                // ขณะพิมพ์หรือสลับประเภท หากยังเป็นค่าว่าง ให้มองเป็นสถานะรอกรอก ไม่แสดงเตือนสีแดง
+                HasDiscountValueError = false;
+                DiscountErrorMessage = string.Empty;
+                return true;
+            }
+
+            // เมื่อมีการพิมพ์ตัวเลขเข้ามา ตรวจสอบว่าแปลงเป็นตัวเลขได้หรือไม่
+            if (!decimal.TryParse(DiscountValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) &&
+                !decimal.TryParse(DiscountValue, NumberStyles.Any, CultureInfo.CurrentCulture, out val))
+            {
+                HasDiscountValueError = true;
+                DiscountErrorMessage = "⚠️ กรุณาระบุมูลค่าส่วนลดเป็นตัวเลขที่ถูกต้อง";
+                return false;
+            }
+
+            if (Model.DiscountType == "Percentage")
+            {
+                if (val < 1)
+                {
+                    HasDiscountValueError = true;
+                    DiscountErrorMessage = "⚠️ กรณีเลือกเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่ต่ำกว่า 1%";
+                    return false;
+                }
+                if (val > 100)
+                {
+                    HasDiscountValueError = true;
+                    DiscountErrorMessage = "⚠️ มูลค่าส่วนลดต้องไม่เกิน 100%";
+                    return false;
+                }
+            }
+            else // Cash
+            {
+                if (val <= 0)
+                {
+                    HasDiscountValueError = true;
+                    DiscountErrorMessage = "⚠️ มูลค่าส่วนลดต้องมากกว่า 0 บาท";
+                    return false;
+                }
+            }
+
+            HasDiscountValueError = false;
+            DiscountErrorMessage = string.Empty;
+            return true;
+        }
 
         private void OnModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(PromotionModel.DiscountType) ||
-                e.PropertyName == nameof(PromotionModel.DiscountAmount) ||
+            if (e.PropertyName == nameof(PromotionModel.DiscountType))
+            {
+                OnPropertyChanged(nameof(DiscountPlaceholderText));
+                ValidateDiscountValue(isStrict: false);
+                UpdateLivePreview();
+            }
+            else if (e.PropertyName == nameof(PromotionModel.PromoType))
+            {
+                OnPropertyChanged(nameof(DiscountPlaceholderText));
+                ValidateDiscountValue(isStrict: false);
+                UpdateLivePreview();
+            }
+            else if (e.PropertyName == nameof(PromotionModel.DiscountAmount) ||
                 e.PropertyName == nameof(PromotionModel.MaxDiscountAmount) ||
                 e.PropertyName == nameof(PromotionModel.MinSpend) ||
                 e.PropertyName == nameof(PromotionModel.BuyQuantity) ||
                 e.PropertyName == nameof(PromotionModel.FreeQuantity) ||
                 e.PropertyName == nameof(PromotionModel.PointsRequired) ||
-                e.PropertyName == nameof(PromotionModel.PromoType) ||
                 e.PropertyName == nameof(PromotionModel.PromoName))
             {
-                OnPropertyChanged(nameof(IsInvalidPercentageDiscount));
                 UpdateLivePreview();
             }
         }
@@ -409,6 +528,10 @@ namespace Porjai20.ViewModels
                 item.IsSelected = false;
             }
 
+            DiscountValue = string.Empty;
+            HasDiscountValueError = false;
+            DiscountErrorMessage = string.Empty;
+
             NotifyAllStepChanges();
             UpdateLivePreview();
         }
@@ -458,6 +581,17 @@ namespace Porjai20.ViewModels
                 IsSameProductFreebie = true;
                 SelectedGiftProduct = null;
             }
+
+            if (Model.PromoType == "Discount" && Model.DiscountAmount > 0)
+            {
+                DiscountValue = Model.DiscountAmount.ToString("0.##", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                DiscountValue = string.Empty;
+            }
+            HasDiscountValueError = false;
+            DiscountErrorMessage = string.Empty;
 
             NotifyAllStepChanges();
             UpdateLivePreview();
@@ -612,6 +746,7 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(IsFreebieStep));
             OnPropertyChanged(nameof(IsAllStoreScope));
             OnPropertyChanged(nameof(IsSpecificProductsScope));
+            OnPropertyChanged(nameof(DiscountPlaceholderText));
         }
 
         public async Task SaveAsync(bool isActive, bool isDraft)
@@ -634,24 +769,24 @@ namespace Porjai20.ViewModels
                 return;
             }
 
-            if (Model.PromoType == "Discount" && Model.DiscountType == "Percentage")
+            if (Model.PromoType == "Discount")
             {
-                if (Model.DiscountAmount < 1)
+                if (string.IsNullOrWhiteSpace(DiscountValue))
                 {
-                    _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่ต่ำกว่า 1% จึงจะสามารถบันทึกและเปิดใช้งานได้");
+                    HasDiscountValueError = true;
+                    DiscountErrorMessage = "⚠️ กรุณาระบุมูลค่าส่วนลด";
+                    _dialog.ShowWarning("ข้อมูลไม่ครบถ้วน", "กรุณาระบุมูลค่าส่วนลดก่อนทำการบันทึก");
                     return;
                 }
-                if (Model.DiscountAmount > 100)
-                {
-                    _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่เกิน 100%");
-                    return;
-                }
-            }
 
-            if (Model.PromoType == "Discount" && Model.DiscountType == "Cash" && Model.DiscountAmount <= 0)
-            {
-                _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นบาท (เงินสด) มูลค่าส่วนลดต้องมากกว่า 0 บาท");
-                return;
+                if (!ValidateDiscountValue(isStrict: true))
+                {
+                    string cleanMsg = DiscountErrorMessage.StartsWith("⚠️ ")
+                        ? DiscountErrorMessage.Substring(3)
+                        : DiscountErrorMessage;
+                    _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", cleanMsg);
+                    return;
+                }
             }
 
             if (Model.PromoType == "Freebie" && (Model.BuyQuantity <= 0 || Model.FreeQuantity <= 0))
