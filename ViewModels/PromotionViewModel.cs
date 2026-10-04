@@ -398,6 +398,13 @@ namespace Porjai20.ViewModels
                 return;
             }
 
+            if (promo.IsActive && promo.PromoType == "Discount" && promo.DiscountType == "Percentage" && promo.DiscountAmount < 1)
+            {
+                _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่ต่ำกว่า 1% จึงจะสามารถเปิดใช้งานได้");
+                promo.IsActive = false;
+                return;
+            }
+
             if (promo.IsDraft)
             {
                 // ถ้าเป็นฉบับร่าง การเปิดใช้งานจะปลดสถานะฉบับร่าง

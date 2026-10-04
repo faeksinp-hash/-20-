@@ -132,6 +132,7 @@ namespace Porjai20.ViewModels
             SaveAsDraftCommand = new RelayCommand(async _ => await SaveAsync(isActive: false, isDraft: true));
             CancelCommand = new RelayCommand(_ => Cancelled?.Invoke());
 
+            _model.PropertyChanged += OnModelPropertyChanged;
             _ = InitializeProductsAsync();
         }
 
@@ -140,7 +141,44 @@ namespace Porjai20.ViewModels
         public PromotionModel Model
         {
             get => _model;
-            set => SetProperty(ref _model, value);
+            set
+            {
+                if (_model != null)
+                {
+                    _model.PropertyChanged -= OnModelPropertyChanged;
+                }
+                if (SetProperty(ref _model, value))
+                {
+                    if (_model != null)
+                    {
+                        _model.PropertyChanged += OnModelPropertyChanged;
+                    }
+                    OnPropertyChanged(nameof(IsInvalidPercentageDiscount));
+                }
+            }
+        }
+
+        public bool IsInvalidPercentageDiscount =>
+            Model != null &&
+            Model.PromoType == "Discount" &&
+            Model.DiscountType == "Percentage" &&
+            Model.DiscountAmount < 1;
+
+        private void OnModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(PromotionModel.DiscountType) ||
+                e.PropertyName == nameof(PromotionModel.DiscountAmount) ||
+                e.PropertyName == nameof(PromotionModel.MaxDiscountAmount) ||
+                e.PropertyName == nameof(PromotionModel.MinSpend) ||
+                e.PropertyName == nameof(PromotionModel.BuyQuantity) ||
+                e.PropertyName == nameof(PromotionModel.FreeQuantity) ||
+                e.PropertyName == nameof(PromotionModel.PointsRequired) ||
+                e.PropertyName == nameof(PromotionModel.PromoType) ||
+                e.PropertyName == nameof(PromotionModel.PromoName))
+            {
+                OnPropertyChanged(nameof(IsInvalidPercentageDiscount));
+                UpdateLivePreview();
+            }
         }
 
         public bool IsEditMode
@@ -593,6 +631,26 @@ namespace Porjai20.ViewModels
             if (Model.TargetScope == "SpecificProducts" && SelectedProducts.Count == 0)
             {
                 _dialog.ShowWarning("ข้อมูลไม่ครบถ้วน", "กรณีเลือก 'เลือกสินค้าเอง' กรุณาเลือกสินค้าเข้าร่วมอย่างน้อย 1 ชิ้น");
+                return;
+            }
+
+            if (Model.PromoType == "Discount" && Model.DiscountType == "Percentage")
+            {
+                if (Model.DiscountAmount < 1)
+                {
+                    _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่ต่ำกว่า 1% จึงจะสามารถบันทึกและเปิดใช้งานได้");
+                    return;
+                }
+                if (Model.DiscountAmount > 100)
+                {
+                    _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่เกิน 100%");
+                    return;
+                }
+            }
+
+            if (Model.PromoType == "Discount" && Model.DiscountType == "Cash" && Model.DiscountAmount <= 0)
+            {
+                _dialog.ShowWarning("ข้อมูลไม่ถูกต้อง", "สำหรับส่วนลดเป็นบาท (เงินสด) มูลค่าส่วนลดต้องมากกว่า 0 บาท");
                 return;
             }
 

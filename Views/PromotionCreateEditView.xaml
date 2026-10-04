@@ -584,6 +584,10 @@
                                         <Border Style="{StaticResource StandardInputBorderStyle}">
                                             <TextBox Text="{Binding Model.DiscountAmount, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CleanTextBoxStyle}"/>
                                         </Border>
+                                        <!-- แจ้งเตือนกรณีเลือก % แต่มูลค่าต่ำกว่า 1% -->
+                                        <TextBlock Text="⚠️ กรณีเลือกเปอร์เซ็นต์ มูลค่าส่วนลดต้องไม่ต่ำกว่า 1%" 
+                                                   FontSize="12" FontWeight="SemiBold" Foreground="#DC2626" Margin="0,4,0,0"
+                                                   Visibility="{Binding IsInvalidPercentageDiscount, Converter={StaticResource BoolToVis}}"/>
                                     </StackPanel>
                                 </Grid>
 
