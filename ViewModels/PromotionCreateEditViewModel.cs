@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Porjai20.Common;
 using Porjai20.Models;
 using Porjai20.Services;
 
@@ -537,7 +538,7 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _selectedStartDate, value) && value.HasValue)
                 {
-                    Model.StartDate = value.Value.ToString("yyyy-MM-dd");
+                    Model.StartDate = ThaiDateHelper.FormatToDbStorage(value.Value);
                     UpdateLivePreview();
                 }
             }
@@ -550,7 +551,7 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _selectedEndDate, value) && value.HasValue)
                 {
-                    Model.EndDate = value.Value.ToString("yyyy-MM-dd");
+                    Model.EndDate = ThaiDateHelper.FormatToDbStorage(value.Value);
                     UpdateLivePreview();
                 }
             }
@@ -721,11 +722,11 @@ namespace Porjai20.ViewModels
                 CanCombine = false,
                 MaxUsagePerCustomer = 0,
                 TotalQuota = 0,
-                StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
-                EndDate = DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd"),
+                StartDate = ThaiDateHelper.FormatToDbStorage(DateTime.Today),
+                EndDate = ThaiDateHelper.FormatToDbStorage(DateTime.Today.AddMonths(1)),
                 IsActive = true,
                 IsDraft = false,
-                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
             };
 
             SelectedStartDate = DateTime.Today;
@@ -763,19 +764,8 @@ namespace Porjai20.ViewModels
 
             Model = source.Clone();
 
-            if (DateTime.TryParse(Model.StartDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var s))
-                SelectedStartDate = s;
-            else if (DateTime.TryParse(Model.StartDate, out var sf))
-                SelectedStartDate = sf;
-            else
-                SelectedStartDate = DateTime.Today;
-
-            if (DateTime.TryParse(Model.EndDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var e))
-                SelectedEndDate = e;
-            else if (DateTime.TryParse(Model.EndDate, out var ef))
-                SelectedEndDate = ef;
-            else
-                SelectedEndDate = DateTime.Today.AddMonths(1);
+            SelectedStartDate = ThaiDateHelper.ParseToUniversalDate(Model.StartDate);
+            SelectedEndDate = ThaiDateHelper.ParseToUniversalDate(Model.EndDate);
 
             // Re-sync products selection
             SelectedProducts.Clear();
@@ -1043,9 +1033,9 @@ namespace Porjai20.ViewModels
 
             // Sync dates
             if (SelectedStartDate.HasValue)
-                Model.StartDate = SelectedStartDate.Value.ToString("yyyy-MM-dd");
+                Model.StartDate = ThaiDateHelper.FormatToDbStorage(SelectedStartDate.Value);
             if (SelectedEndDate.HasValue)
-                Model.EndDate = SelectedEndDate.Value.ToString("yyyy-MM-dd");
+                Model.EndDate = ThaiDateHelper.FormatToDbStorage(SelectedEndDate.Value);
 
             Model.IsActive = isActive;
             Model.IsDraft = isDraft;

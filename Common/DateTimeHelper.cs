@@ -136,4 +136,109 @@ namespace Porjai20.Common
             return (sCe, eCe, sBe, eBe);
         }
     }
+
+    /// <summary>
+    /// Helper สำหรับจัดการวันที่และปี พ.ศ. (Thai Buddhist Era)
+    /// ป้องกันและแก้ไขบั๊กการบวก +543 ซ้ำซ้อน (Thai Buddhist Era +543 Compounding Bug)
+    /// </summary>
+    public static class ThaiDateHelper
+    {
+        private static readonly string[] RecognizedFormats = {
+            "yyyy-MM-dd",
+            "yyyy-MM-dd HH:mm:ss",
+            "dd/MM/yyyy",
+            "dd/MM/yyyy HH:mm:ss",
+            "d/M/yyyy",
+            "d/M/yyyy HH:mm:ss",
+            "yyyy/MM/dd",
+            "yyyy/MM/dd HH:mm:ss",
+            "dd-MM-yyyy",
+            "dd-MM-yyyy HH:mm:ss"
+        };
+
+        /// <summary>
+        /// แปลงจากข้อความใน DB เป็น DateTime สากล (ค.ศ.) สำหรับ DatePicker ของ WPF
+        /// ป้องกันปัญหา DatePicker นำปี พ.ศ. หรือปีหลุดโลก (3655, 4198) ไปบวก 543 ซ้ำซ้อน
+        /// </summary>
+        public static DateTime ParseToUniversalDate(string? dateStr)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr)) return DateTime.Today;
+
+            dateStr = dateStr.Trim();
+            if (dateStr.Contains(" - "))
+            {
+                var parts = dateStr.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 0)
+                {
+                    dateStr = parts[0].Trim();
+                }
+            }
+
+            DateTime dt;
+            // ลอง Parse ทั้ง Invariant, Formats, th-TH, en-US
+            if (!DateTime.TryParseExact(dateStr, RecognizedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt) &&
+                !DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt) &&
+                !DateTime.TryParse(dateStr, new CultureInfo("th-TH"), DateTimeStyles.None, out dt) &&
+                !DateTime.TryParse(dateStr, new CultureInfo("en-US"), DateTimeStyles.None, out dt) &&
+                !DateTime.TryParse(dateStr, out dt))
+            {
+                return DateTime.Today;
+            }
+
+            // ตรวจจับและลดทอนปีที่ถูกบวก 543 ซ้ำซ้อน (เช่น 2569, 3112, 3655, 4198) ให้กลับมาอยู่ในช่วง ค.ศ. 2000 - 2099
+            while (dt.Year > 2400)
+            {
+                try { dt = dt.AddYears(-543); }
+                catch { dt = new DateTime(dt.Year - 543, dt.Month, Math.Min(dt.Day, 28), dt.Hour, dt.Minute, dt.Second); }
+            }
+
+            while (dt.Year < 1800 && dt.Year > 1000)
+            {
+                try { dt = dt.AddYears(543); }
+                catch { dt = new DateTime(dt.Year + 543, dt.Month, Math.Min(dt.Day, 28), dt.Hour, dt.Minute, dt.Second); }
+            }
+
+            return dt;
+        }
+
+        /// <summary>
+        /// จัดฟอร์แมตแสดงผลเป็น พ.ศ. สำหรับข้อความบน UI (เช่น "05/10/2569")
+        /// </summary>
+        public static string FormatToThaiBuddhistDisplay(DateTime date)
+        {
+            int thaiYear = date.Year > 2400 ? date.Year : date.Year + 543;
+            while (thaiYear > 3000)
+            {
+                thaiYear -= 543;
+            }
+            return $"{date.Day:D2}/{date.Month:D2}/{thaiYear}";
+        }
+
+        /// <summary>
+        /// จัดฟอร์แมตแสดงผลเป็น พ.ศ. สำหรับข้อความบน UI (เช่น "05/10/2569") จากสตริงวันที่ใดๆ
+        /// </summary>
+        public static string FormatToThaiBuddhistDisplay(string? dateStr)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr)) return "-";
+            var dt = ParseToUniversalDate(dateStr);
+            return FormatToThaiBuddhistDisplay(dt);
+        }
+
+        /// <summary>
+        /// ฟอร์แมตมาตรฐานสำหรับบันทึกลง SQLite (เก็บเป็น YYYY-MM-DD แบบ ค.ศ. สากล)
+        /// </summary>
+        public static string FormatToDbStorage(DateTime date)
+        {
+            int ceYear = date.Year > 2400 ? date.Year - 543 : date.Year;
+            while (ceYear > 2400)
+            {
+                ceYear -= 543;
+            }
+            while (ceYear < 1800 && ceYear > 1000)
+            {
+                ceYear += 543;
+            }
+            return $"{ceYear:D4}-{date.Month:D2}-{date.Day:D2}";
+        }
+    }
 }

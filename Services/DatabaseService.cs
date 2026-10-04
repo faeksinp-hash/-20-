@@ -363,6 +363,25 @@ namespace Porjai20.Services
                     connection.Execute("UPDATE tblPromotion SET PromoType = 'Discount', TargetScope = 'DeliveryFee' WHERE PromoType = 'FreeDelivery';");
                     connection.Execute("UPDATE tblPromotion SET TargetScope = 'AllStore' WHERE TargetScope IS NULL OR TRIM(TargetScope) = '';");
                     connection.Execute("UPDATE tblPromotion SET CreatedAt = StartDate || ' 00:00:00' WHERE CreatedAt IS NULL OR TRIM(CreatedAt) = '';");
+
+                    // Auto-fix any tblPromotion rows where StartDate or EndDate had compounding years (> 2400)
+                    var corruptedPromos = connection.Query<(string PromoID, string StartDate, string EndDate)>(
+                        "SELECT PromoID, StartDate, EndDate FROM tblPromotion;").ToList();
+
+                    foreach (var cp in corruptedPromos)
+                    {
+                        var parsedStart = ThaiDateHelper.ParseToUniversalDate(cp.StartDate);
+                        var parsedEnd = ThaiDateHelper.ParseToUniversalDate(cp.EndDate);
+                        var cleanStart = ThaiDateHelper.FormatToDbStorage(parsedStart);
+                        var cleanEnd = ThaiDateHelper.FormatToDbStorage(parsedEnd);
+
+                        if (cleanStart != cp.StartDate || cleanEnd != cp.EndDate)
+                        {
+                            connection.Execute(
+                                "UPDATE tblPromotion SET StartDate = @StartDate, EndDate = @EndDate WHERE PromoID = @PromoID;",
+                                new { StartDate = cleanStart, EndDate = cleanEnd, PromoID = cp.PromoID });
+                        }
+                    }
                 }
                 catch { }
 

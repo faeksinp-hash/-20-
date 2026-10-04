@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Porjai20.Models;
 
@@ -151,6 +153,31 @@ namespace Porjai20.ViewModels
 
         public string? AppliedPromoID { get; set; }
         public PromotionModel? AppliedAutoPromotion { get; set; }
+        public List<PromotionModel> AppliedPromotions { get; set; } = new();
+
+        private IEnumerable<CartItem>? _cartItems;
+        public IEnumerable<CartItem>? CartItems
+        {
+            get => _cartItems;
+            set
+            {
+                _cartItems = value;
+                RecalculateAutoPromotion();
+            }
+        }
+
+        private bool _isMemberChecked;
+        public bool IsMemberChecked
+        {
+            get => _isMemberChecked;
+            set
+            {
+                if (SetProperty(ref _isMemberChecked, value))
+                {
+                    RecalculateAutoPromotion();
+                }
+            }
+        }
 
         public decimal NetPayableAmount => Math.Max(0, TotalAmountBeforeDiscount + ShippingFee - PromotionDiscountAmount - DiscountAmount);
 
@@ -355,6 +382,21 @@ namespace Porjai20.ViewModels
             RecalculateAutoPromotion();
         }
 
+        public void Initialize()
+        {
+            RecalculateAutoPromotion();
+        }
+
+        public void PaymentView_Loaded(object? sender = null, EventArgs? e = null)
+        {
+            RecalculateAutoPromotion();
+        }
+
+        public void OnLoaded()
+        {
+            RecalculateAutoPromotion();
+        }
+
         public void RecalculateAutoPromotion()
         {
             _ = RecalculateAutoPromotionAsync();
@@ -364,22 +406,25 @@ namespace Porjai20.ViewModels
         {
             try
             {
-                bool isMember = CurrentMember != null;
+                bool isMember = CurrentMember != null || IsMemberChecked;
                 var allPromos = await Services.PromotionService.Instance.GetAllPromotionsAsync();
-                var bestPromo = Services.PromotionService.Instance.EvaluateBestAutoPromotion(
-                    new List<CartItem>(),
+                var bestPromo = Services.PromotionService.Instance.EvaluateAutoPromotions(
+                    CartItems ?? new List<CartItem>(),
                     isMember,
                     TotalAmountBeforeDiscount,
                     allPromos);
 
-                HasAutoPromotion = bestPromo != null;
+                HasAutoPromotion = bestPromo != null && bestPromo.DiscountAmount > 0;
                 AutoPromotionName = bestPromo != null 
                     ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
                     : "";
                 PromotionDiscountAmount = bestPromo?.DiscountAmount ?? 0m;
                 AppliedPromoID = bestPromo?.PromoID;
                 AppliedAutoPromotion = bestPromo?.Promotion;
+                AppliedPromotions = bestPromo?.AppliedPromotions ?? new List<PromotionModel>();
 
+                OnPropertyChanged(nameof(AppliedPromotions));
+                OnPropertyChanged(nameof(PromotionDiscountAmount));
                 OnPropertyChanged(nameof(NetPayableAmount));
                 OnPropertyChanged(nameof(ChangeAmount));
                 OnPropertyChanged(nameof(EarnedPoints));
@@ -391,6 +436,13 @@ namespace Porjai20.ViewModels
                 PromotionDiscountAmount = 0;
                 AppliedPromoID = null;
                 AppliedAutoPromotion = null;
+                AppliedPromotions = new List<PromotionModel>();
+
+                OnPropertyChanged(nameof(AppliedPromotions));
+                OnPropertyChanged(nameof(PromotionDiscountAmount));
+                OnPropertyChanged(nameof(NetPayableAmount));
+                OnPropertyChanged(nameof(ChangeAmount));
+                OnPropertyChanged(nameof(EarnedPoints));
             }
         }
     }

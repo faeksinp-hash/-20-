@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Porjai20.Common;
 using Porjai20.ViewModels;
 
 namespace Porjai20.Models
@@ -34,11 +35,11 @@ namespace Porjai20.Models
         private int _maxUsagePerCustomer;
         private int _totalQuota;
         private int _currentUsage;
-        private string _startDate = DateTime.Today.ToString("yyyy-MM-dd");
-        private string _endDate = DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd");
+        private string _startDate = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        private string _endDate = DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         private bool _isActive = true;
         private bool _isDraft;
-        private string _createdAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        private string _createdAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
         private bool _isSelected;
         private List<string> _productIds = new();
@@ -648,89 +649,39 @@ namespace Porjai20.Models
         public string CanCombineText => CanCombine ? "ได้" : "ไม่ได้";
         public string MaxUsagePerCustomerText => MaxUsagePerCustomer > 0 ? $"{MaxUsagePerCustomer} ครั้ง/คน" : "ไม่จำกัด";
 
-        public string StartDateFormatted => FormatDateThai(StartDate);
-        public string EndDateFormatted => FormatDateThai(EndDate);
+        public string StartDateFormatted => ThaiDateHelper.FormatToThaiBuddhistDisplay(StartDate);
+        public string EndDateFormatted => ThaiDateHelper.FormatToThaiBuddhistDisplay(EndDate);
         public string DateRangeDisplay => $"{StartDateFormatted} - {EndDateFormatted}";
 
         public string MinSpendFormatted => $"{MinSpend:N0}";
         public string DiscountAmountFormatted => $"{DiscountAmount:N0}";
 
         /// <summary>
+        /// แปลงสตริงวันที่เป็น DateTime อย่างปลอดภัย รองรับทั้ง ค.ศ. (2026) และ พ.ศ. (2569)
+        /// ตรวจจับและลดทอนปีที่ถูกบวก 543 ซ้ำซ้อน (เช่น 3655, 4198) ให้กลับมาเป็นปี ค.ศ. สากล (2026)
+        /// </summary>
+        public static bool SafeParseDate(string? dateStr, out DateTime date)
+        {
+            date = DateTime.MinValue;
+            if (string.IsNullOrWhiteSpace(dateStr)) return false;
+
+            date = ThaiDateHelper.ParseToUniversalDate(dateStr);
+            return true;
+        }
+
+        /// <summary>
         /// แปลงสตริงวันที่เป็น DateTime อย่างปลอดภัย รองรับทั้ง ค.ศ. (AD) และ พ.ศ. (BE)
-        /// หากปีในฐานข้อมูล > 2400 (เป็น พ.ศ.): ให้ลบ 543 ปี เพื่อเทียบกับ DateTime.Today (ค.ศ. 2026) ได้อย่างถูกต้อง
+        /// คืนค่าเป็น DateTime ค.ศ. สากล (CE) สำหรับเปรียบเทียบตรรกะและส่งเข้า DatePicker
         /// </summary>
         public static DateTime? ParseDateSafe(string? dateStr)
         {
             if (string.IsNullOrWhiteSpace(dateStr)) return null;
-
-            dateStr = dateStr.Trim();
-
-            // รองรับกรณีที่สตริงมาเป็นช่วงเวลา "05/10/2569 - 05/12/2569"
-            if (dateStr.Contains(" - "))
-            {
-                var parts = dateStr.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length > 0)
-                {
-                    dateStr = parts[0].Trim();
-                }
-            }
-
-            string[] formats = new[]
-            {
-                "yyyy-MM-dd",
-                "yyyy-MM-dd HH:mm:ss",
-                "dd/MM/yyyy",
-                "dd/MM/yyyy HH:mm:ss",
-                "d/M/yyyy",
-                "d/M/yyyy HH:mm:ss",
-                "yyyy/MM/dd",
-                "yyyy/MM/dd HH:mm:ss",
-                "dd-MM-yyyy",
-                "dd-MM-yyyy HH:mm:ss"
-            };
-
-            DateTime dt;
-            bool success = DateTime.TryParseExact(dateStr, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
-            if (!success)
-            {
-                success = DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
-            }
-            if (!success)
-            {
-                success = DateTime.TryParse(dateStr, out dt);
-            }
-
-            if (success)
-            {
-                // หากปีในฐานข้อมูล > 2400 (เป็น พ.ศ.): ให้ลบ 543 ปี เพื่อเทียบกับ DateTime.Today (ค.ศ. 2026) ได้อย่างถูกต้อง
-                if (dt.Year > 2400)
-                {
-                    try
-                    {
-                        dt = dt.AddYears(-543);
-                    }
-                    catch
-                    {
-                        int newYear = dt.Year - 543;
-                        int maxDay = DateTime.DaysInMonth(newYear, dt.Month);
-                        dt = new DateTime(newYear, dt.Month, Math.Min(dt.Day, maxDay), dt.Hour, dt.Minute, dt.Second);
-                    }
-                }
-                return dt;
-            }
-
-            return null;
+            return ThaiDateHelper.ParseToUniversalDate(dateStr);
         }
 
         private static string FormatDateThai(string? ymd)
         {
-            if (string.IsNullOrWhiteSpace(ymd)) return "-";
-            var dt = ParseDateSafe(ymd);
-            if (dt.HasValue)
-            {
-                return dt.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-            }
-            return ymd;
+            return ThaiDateHelper.FormatToThaiBuddhistDisplay(ymd);
         }
 
         private void NotifyTypeChange()

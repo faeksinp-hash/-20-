@@ -24,6 +24,7 @@ namespace Porjai20.Views
                 {
                     vm.LoadProductsCommand.Execute(null);
                 }
+                vm.RecalculateAutoPromotion();
             }
             else if (DataContext is not PosViewModel)
             {
@@ -31,6 +32,7 @@ namespace Porjai20.Views
                 newVm.IsDeliveryModalOpen = false;
                 newVm.IsAddNewAddressMode = false;
                 this.DataContext = newVm;
+                newVm.RecalculateAutoPromotion();
             }
         }
 

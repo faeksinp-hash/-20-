@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Porjai20.Common;
 using Porjai20.Models;
 
 namespace Porjai20.Services
@@ -18,6 +19,7 @@ namespace Porjai20.Services
         public string PromoName { get; set; } = string.Empty;
         public decimal DiscountAmount { get; set; }
         public PromotionModel? Promotion { get; set; }
+        public List<PromotionModel> AppliedPromotions { get; set; } = new();
     }
 
     /// <summary>
@@ -87,7 +89,45 @@ namespace Porjai20.Services
                     FROM tblPromotion
                     ORDER BY IsDraft ASC, IsActive DESC, PromoID ASC;";
 
-                var promos = (await conn.QueryAsync<PromotionModel>(sqlPromo)).ToList();
+                var promos = new List<PromotionModel>();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = sqlPromo;
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var p = new PromotionModel
+                            {
+                                PromoID = reader["PromoID"] != DBNull.Value ? reader["PromoID"].ToString()! : "",
+                                PromoCode = reader["PromoCode"] != DBNull.Value ? reader["PromoCode"].ToString() : null,
+                                PromoName = reader["PromoName"] != DBNull.Value ? reader["PromoName"].ToString()! : "",
+                                PromoType = reader["PromoType"] != DBNull.Value ? reader["PromoType"].ToString()! : "Discount",
+                                TargetScope = reader["TargetScope"] != DBNull.Value ? reader["TargetScope"].ToString()! : "AllStore",
+                                DiscountType = reader["DiscountType"] != DBNull.Value ? reader["DiscountType"].ToString()! : "Cash",
+                                DiscountAmount = reader["DiscountAmount"] != DBNull.Value ? Convert.ToDecimal(reader["DiscountAmount"]) : 0m,
+                                MaxDiscountAmount = reader["MaxDiscountAmount"] != DBNull.Value ? Convert.ToDecimal(reader["MaxDiscountAmount"]) : null,
+                                MinSpend = reader["MinSpend"] != DBNull.Value ? Convert.ToDecimal(reader["MinSpend"]) : 0m,
+                                PointsRequired = reader["PointsRequired"] != DBNull.Value ? Convert.ToInt32(reader["PointsRequired"]) : 0,
+                                BuyQuantity = reader["BuyQuantity"] != DBNull.Value ? Convert.ToInt32(reader["BuyQuantity"]) : 0,
+                                FreeQuantity = reader["FreeQuantity"] != DBNull.Value ? Convert.ToInt32(reader["FreeQuantity"]) : 0,
+                                FreeProductID = reader["FreeProductID"] != DBNull.Value ? reader["FreeProductID"].ToString() : null,
+                                CanRepeat = reader["CanRepeat"] != DBNull.Value && Convert.ToInt32(reader["CanRepeat"]) == 1,
+                                IsMemberOnly = reader["IsMemberOnly"] != DBNull.Value && Convert.ToInt32(reader["IsMemberOnly"]) == 1,
+                                CanCombine = reader["CanCombine"] != DBNull.Value && Convert.ToInt32(reader["CanCombine"]) == 1,
+                                MaxUsagePerCustomer = reader["MaxUsagePerCustomer"] != DBNull.Value ? Convert.ToInt32(reader["MaxUsagePerCustomer"]) : 0,
+                                TotalQuota = reader["TotalQuota"] != DBNull.Value ? Convert.ToInt32(reader["TotalQuota"]) : 0,
+                                CurrentUsage = reader["CurrentUsage"] != DBNull.Value ? Convert.ToInt32(reader["CurrentUsage"]) : 0,
+                                StartDate = reader["StartDate"] != DBNull.Value ? reader["StartDate"].ToString()! : "",
+                                EndDate = reader["EndDate"] != DBNull.Value ? reader["EndDate"].ToString()! : "",
+                                IsActive = reader["IsActive"] != DBNull.Value && Convert.ToInt32(reader["IsActive"]) == 1,
+                                IsDraft = reader["IsDraft"] != DBNull.Value && Convert.ToInt32(reader["IsDraft"]) == 1,
+                                CreatedAt = reader["CreatedAt"] != DBNull.Value ? reader["CreatedAt"].ToString()! : ""
+                            };
+                            promos.Add(p);
+                        }
+                    }
+                }
 
                 // ดึงสินค้าที่ผูกทั้งหมด
                 var promoProducts = (await conn.QueryAsync<(string PromoID, string ProductID)>(
@@ -98,8 +138,6 @@ namespace Porjai20.Services
                     "SELECT Pro_ID, Pro_Name, Pro_Price, Pro_Cost FROM tblProduct;")).ToList();
 
                 var prodDict = allProds.ToDictionary(p => p.Pro_ID.ToString(), p => p);
-
-                string todayStr = DateTime.Today.ToString("yyyy-MM-dd");
 
                 foreach (var p in promos)
                 {
@@ -132,8 +170,19 @@ namespace Porjai20.Services
                         p.ItemCost = mainProd.Pro_Cost;
                     }
 
-                    // Auto-Expire Rule: หาก EndDate < Today ให้ล็อกและถือว่าหมดอายุ
-                    if (p.IsExpired && p.IsActive)
+                    // Database Cleanup: ตรวจสอบและแก้ไขวันที่ปีเพี้ยน (> 2600 หรือ +543 ทบยอด) ให้กลับสู่มาตรฐาน ค.ศ.
+                    var cleanStart = ThaiDateHelper.FormatToDbStorage(ThaiDateHelper.ParseToUniversalDate(p.StartDate));
+                    var cleanEnd = ThaiDateHelper.FormatToDbStorage(ThaiDateHelper.ParseToUniversalDate(p.EndDate));
+                    if (cleanStart != p.StartDate || cleanEnd != p.EndDate)
+                    {
+                        await conn.ExecuteAsync("UPDATE tblPromotion SET StartDate = @StartDate, EndDate = @EndDate WHERE PromoID = @PromoID;",
+                            new { StartDate = cleanStart, EndDate = cleanEnd, PromoID = p.PromoID });
+                        p.StartDate = cleanStart;
+                        p.EndDate = cleanEnd;
+                    }
+
+                    // Auto-Expire Rule: ตรวจสอบเฉพาะโปรโมชั่นที่ระบุวันสิ้นสุดแล้ว และหมดอายุตามวันจริงเท่านั้น
+                    if (p.IsActive && SafeParseDate(p.EndDate, out DateTime endDt) && endDt.Date < DateTime.Today)
                     {
                         // อัปเดตใน DB ให้สอดคล้องกันแบบเงียบๆ
                         await conn.ExecuteAsync("UPDATE tblPromotion SET IsActive = 0 WHERE PromoID = @PromoID;", new { p.PromoID });
@@ -159,6 +208,9 @@ namespace Porjai20.Services
         /// </summary>
         public async Task<bool> SavePromotionAsync(PromotionModel promo, IEnumerable<string>? productIds = null)
         {
+            promo.StartDate = ThaiDateHelper.FormatToDbStorage(ThaiDateHelper.ParseToUniversalDate(promo.StartDate));
+            promo.EndDate = ThaiDateHelper.FormatToDbStorage(ThaiDateHelper.ParseToUniversalDate(promo.EndDate));
+
             using (var conn = _db.GetConnection())
             using (var trans = conn.BeginTransaction())
             {
@@ -675,8 +727,16 @@ namespace Porjai20.Services
         #region Safe Date Normalization & Auto-Promotion Engine
 
         /// <summary>
-        /// แปลงวันที่อย่างปลอดภัย รองรับทั้ง ค.ศ. (AD) และ พ.ศ. (BE)
-        /// หากปี > 2400 (พ.ศ.) ให้ลบ 543 ปี เพื่อเทียบกับ DateTime.Today ได้อย่างถูกต้อง
+        /// แปลงสตริงวันที่เป็น DateTime อย่างปลอดภัย รองรับทั้ง ค.ศ. (2026) และ พ.ศ. (2569)
+        /// หากปี > 3000 ให้ทำการ Normalize กลับเป็นปีปัจจุบัน ห้ามโยน Exception ทิ้ง
+        /// </summary>
+        public static bool SafeParseDate(string? dateStr, out DateTime date)
+        {
+            return PromotionModel.SafeParseDate(dateStr, out date);
+        }
+
+        /// <summary>
+        /// แปลงสตริงวันที่เป็น DateTime อย่างปลอดภัย (Nullable)
         /// </summary>
         public static DateTime? ParseDateSafe(string? dateStr)
         {
@@ -726,16 +786,25 @@ namespace Porjai20.Services
         }
 
         /// <summary>
+        /// ตรวจสอบว่าวันที่โปรโมชั่นเปิดใช้งานอยู่หรือไม่ (ปลอดภัยต่อทั้งปี ค.ศ. และ พ.ศ.)
+        /// </summary>
+        public static bool IsDateActive(string? startDateStr, string? endDateStr)
+        {
+            DateTime today = DateTime.Today;
+            if (!SafeParseDate(startDateStr, out DateTime start)) return false;
+            if (!SafeParseDate(endDateStr, out DateTime end)) return false;
+            return today >= start.Date && today <= end.Date;
+        }
+
+        /// <summary>
         /// ตรวจสอบว่าเงื่อนไข StartDate <= checkDate && EndDate >= checkDate ถูกต้องหรือไม่ (เทียบกับ DateTime.Today ค.ศ. 2026)
         /// </summary>
         public static bool IsPromotionDateValid(string? startDateStr, string? endDateStr, DateTime? checkDate = null)
         {
-            var today = (checkDate ?? DateTime.Today).Date;
-            var (start, end) = GetDateRangeSafe(startDateStr, endDateStr);
-
-            if (start.HasValue && start.Value.Date > today) return false;
-            if (end.HasValue && end.Value.Date < today) return false;
-            return true;
+            DateTime check = (checkDate ?? DateTime.Today).Date;
+            if (!SafeParseDate(startDateStr, out DateTime start)) return false;
+            if (!SafeParseDate(endDateStr, out DateTime end)) return false;
+            return check >= start.Date && check <= end.Date;
         }
 
         /// <summary>
@@ -756,7 +825,45 @@ namespace Porjai20.Services
                     FROM tblPromotion
                     ORDER BY IsDraft ASC, IsActive DESC, PromoID ASC;";
 
-                var promos = conn.Query<PromotionModel>(sqlPromo).ToList();
+                var promos = new List<PromotionModel>();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = sqlPromo;
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var p = new PromotionModel
+                            {
+                                PromoID = reader["PromoID"] != DBNull.Value ? reader["PromoID"].ToString()! : "",
+                                PromoCode = reader["PromoCode"] != DBNull.Value ? reader["PromoCode"].ToString() : null,
+                                PromoName = reader["PromoName"] != DBNull.Value ? reader["PromoName"].ToString()! : "",
+                                PromoType = reader["PromoType"] != DBNull.Value ? reader["PromoType"].ToString()! : "Discount",
+                                TargetScope = reader["TargetScope"] != DBNull.Value ? reader["TargetScope"].ToString()! : "AllStore",
+                                DiscountType = reader["DiscountType"] != DBNull.Value ? reader["DiscountType"].ToString()! : "Cash",
+                                DiscountAmount = reader["DiscountAmount"] != DBNull.Value ? Convert.ToDecimal(reader["DiscountAmount"]) : 0m,
+                                MaxDiscountAmount = reader["MaxDiscountAmount"] != DBNull.Value ? Convert.ToDecimal(reader["MaxDiscountAmount"]) : null,
+                                MinSpend = reader["MinSpend"] != DBNull.Value ? Convert.ToDecimal(reader["MinSpend"]) : 0m,
+                                PointsRequired = reader["PointsRequired"] != DBNull.Value ? Convert.ToInt32(reader["PointsRequired"]) : 0,
+                                BuyQuantity = reader["BuyQuantity"] != DBNull.Value ? Convert.ToInt32(reader["BuyQuantity"]) : 0,
+                                FreeQuantity = reader["FreeQuantity"] != DBNull.Value ? Convert.ToInt32(reader["FreeQuantity"]) : 0,
+                                FreeProductID = reader["FreeProductID"] != DBNull.Value ? reader["FreeProductID"].ToString() : null,
+                                CanRepeat = reader["CanRepeat"] != DBNull.Value && Convert.ToInt32(reader["CanRepeat"]) == 1,
+                                IsMemberOnly = reader["IsMemberOnly"] != DBNull.Value && Convert.ToInt32(reader["IsMemberOnly"]) == 1,
+                                CanCombine = reader["CanCombine"] != DBNull.Value && Convert.ToInt32(reader["CanCombine"]) == 1,
+                                MaxUsagePerCustomer = reader["MaxUsagePerCustomer"] != DBNull.Value ? Convert.ToInt32(reader["MaxUsagePerCustomer"]) : 0,
+                                TotalQuota = reader["TotalQuota"] != DBNull.Value ? Convert.ToInt32(reader["TotalQuota"]) : 0,
+                                CurrentUsage = reader["CurrentUsage"] != DBNull.Value ? Convert.ToInt32(reader["CurrentUsage"]) : 0,
+                                StartDate = reader["StartDate"] != DBNull.Value ? reader["StartDate"].ToString()! : "",
+                                EndDate = reader["EndDate"] != DBNull.Value ? reader["EndDate"].ToString()! : "",
+                                IsActive = reader["IsActive"] != DBNull.Value && Convert.ToInt32(reader["IsActive"]) == 1,
+                                IsDraft = reader["IsDraft"] != DBNull.Value && Convert.ToInt32(reader["IsDraft"]) == 1,
+                                CreatedAt = reader["CreatedAt"] != DBNull.Value ? reader["CreatedAt"].ToString()! : ""
+                            };
+                            promos.Add(p);
+                        }
+                    }
+                }
 
                 var promoProducts = conn.Query<(string PromoID, string ProductID)>(
                     "SELECT PromoID, ProductID FROM tblPromotionProducts;").ToList();
@@ -790,6 +897,24 @@ namespace Porjai20.Services
                     {
                         p.ItemCost = mainProd.Pro_Cost;
                     }
+
+                    // Database Cleanup: ตรวจสอบและแก้ไขวันที่ปีเพี้ยน (> 2600 หรือ +543 ทบยอด) ให้กลับสู่มาตรฐาน ค.ศ.
+                    var cleanStartSync = ThaiDateHelper.FormatToDbStorage(ThaiDateHelper.ParseToUniversalDate(p.StartDate));
+                    var cleanEndSync = ThaiDateHelper.FormatToDbStorage(ThaiDateHelper.ParseToUniversalDate(p.EndDate));
+                    if (cleanStartSync != p.StartDate || cleanEndSync != p.EndDate)
+                    {
+                        conn.Execute("UPDATE tblPromotion SET StartDate = @StartDate, EndDate = @EndDate WHERE PromoID = @PromoID;",
+                            new { StartDate = cleanStartSync, EndDate = cleanEndSync, PromoID = p.PromoID });
+                        p.StartDate = cleanStartSync;
+                        p.EndDate = cleanEndSync;
+                    }
+
+                    // Auto-Expire Rule: ตรวจสอบเฉพาะโปรโมชั่นที่ระบุวันสิ้นสุดแล้ว และหมดอายุตามวันจริงเท่านั้น
+                    if (p.IsActive && SafeParseDate(p.EndDate, out DateTime endDt) && endDt.Date < DateTime.Today)
+                    {
+                        conn.Execute("UPDATE tblPromotion SET IsActive = 0 WHERE PromoID = @PromoID;", new { p.PromoID });
+                        p.IsActive = false;
+                    }
                 }
 
                 return promos;
@@ -797,52 +922,59 @@ namespace Porjai20.Services
         }
 
         /// <summary>
-        /// Engine ประเมินและเลือกโปรโมชั่นอัตโนมัติที่ดีที่สุด (Auto-Promotion Engine):
-        /// - ดึงโปรโมชั่นที่ IsActive == 1, ไม่ใช่ดราฟท์, และอยู่ในช่วงเวลา (แปลง พ.ศ. 2569 เป็น ค.ศ. 2026 อย่างปลอดภัย)
-        /// - กรองเฉพาะโปรโมชั่นอัตโนมัติ (string.IsNullOrWhiteSpace(PromoCode))
-        /// - ตรวจสอบเงื่อนไขสมาชิก (IsMemberOnly): หากโปรระบุเฉพาะสมาชิก จะเข้าเกณฑ์ก็ต่อเมื่อ isMember == true
-        /// - ตรวจสอบสินค้าเฉพาะรายการ (TargetScope == SpecificProducts): ตรวจสอบว่าในตะกร้ามีสินค้าที่ระบุใน tblPromotionProducts หรือไม่
-        ///   รวมยอดเฉพาะสินค้าที่ร่วมรายการ แล้วนำไปเทียบกับ MinSpend
-        /// - คำนวณมูลค่าส่วนลด (Percentage มี MaxDiscountAmount หรือ Cash)
-        /// - กรณีมีหลายโปรโมชั่นผ่านเกณฑ์พร้อมกัน ให้เลือกรหัสโปรโมชั่นที่ให้ส่วนลดสูงที่สุดแก่ลูกค้า (Best Value) 1 รายการ
+        /// Engine ประเมินโปรโมชั่นอัตโนมัติ (Auto-Apply Promotion Engine):
+        /// ขั้นที่ 1: คัดกรองโปรโมชั่นที่ผ่านเกณฑ์จริง (Eligible Promotions)
+        /// - IsActive == 1, IsDraft == 0
+        /// - ไม่มี PromoCode (เป็นโปรโมชั่นคำนวณอัตโนมัติ)
+        /// - Safe Date Evaluation: ตรวจสอบทั้ง ค.ศ. (2026) และ พ.ศ. (2569) ป้องกันบั๊กปี > 3000
+        /// - ตรวจสอบยอดซื้อขั้นต่ำ (MinSpend), สินค้าที่ร่วมรายการ (tblPromotionProducts), และสถานะสมาชิก (IsMemberOnly)
+        /// 
+        /// ขั้นที่ 2: ตรรกะ CanCombine ที่ถูกต้อง (ห้ามทิ้งโปรเดี่ยว)
+        /// - แยกโปรโมชั่นที่ผ่านเกณฑ์เป็น:
+        ///   * stackableList: โปรโมชั่นที่ CanCombine == true
+        ///   * singleList: โปรโมชั่นที่ CanCombine == false
+        /// - กฎเหล็ก: แม้ใน stackableList จะมีโปรโมชั่นผ่านเกณฑ์เพียงรายการเดียว (Count == 1) ก็ต้องนำมาคำนวณส่วนลดให้ลูกค้าตามปกติ
+        /// - คำนวณเปรียบเทียบผลประโยชน์:
+        ///   * ยอดลดรวมของ stackableList ทั้งหมด (ผลรวมส่วนลดของทุกโปรที่รวมกันได้)
+        ///   * ยอดลดของโปรโมชั่นเดี่ยวที่ดีที่สุดใน singleList (Best Single Discount)
+        ///   * เลือกระบบที่ลูกค้าได้ส่วนลดมากที่สุด (Best Benefit for Customer)
         /// </summary>
-        public AutoPromotionResult? EvaluateBestAutoPromotion(
-            IEnumerable<CartItem> cartItems,
+        public AutoPromotionResult? EvaluateAutoPromotions(
+            IEnumerable<CartItem>? cartItems,
             bool isMember,
             decimal subtotal,
             List<PromotionModel>? preloadedPromos = null)
         {
             var itemsList = cartItems?.ToList() ?? new List<CartItem>();
-            if (itemsList.Count == 0) return null;
+            if (itemsList.Count == 0 && subtotal <= 0) return null;
 
             var allPromos = preloadedPromos ?? GetAllPromotionsSync();
-            var today = DateTime.Today;
 
-            // กรองโปรโมชั่นที่เปิดใช้งาน ไม่ใช่ดราฟท์ ไม่มี PromoCode (ใช้อัตโนมัติ) และอยู่ในช่วงเวลา
-            var candidates = allPromos.Where(p =>
+            // ขั้นที่ 1: คัดกรองโปรโมชั่นที่ผ่านเกณฑ์จริง
+            var eligiblePromotions = allPromos.Where(p =>
                 p.IsActive &&
                 !p.IsDraft &&
                 string.IsNullOrWhiteSpace(p.PromoCode) &&
-                IsPromotionDateValid(p.StartDate, p.EndDate, today) &&
+                IsDateActive(p.StartDate, p.EndDate) &&
                 (p.TotalQuota <= 0 || p.CurrentUsage < p.TotalQuota)
             ).ToList();
 
-            var qualified = new List<AutoPromotionResult>();
+            var evaluatedList = new List<(PromotionModel promo, decimal discount)>();
 
-            foreach (var promo in candidates)
+            foreach (var promo in eligiblePromotions)
             {
-                // 1. ตรวจสอบเงื่อนไขสมาชิก (IsMemberOnly)
+                // ตรวจสอบสมาชิก
                 if (promo.IsMemberOnly && !isMember)
                 {
                     continue;
                 }
 
-                // 2. คำนวณยอดซื้อสินค้าที่ร่วมรายการตาม TargetScope
+                // คำนวณยอดซื้อสินค้าที่ร่วมรายการตาม TargetScope
                 decimal eligibleAmount = 0m;
 
                 if (promo.TargetScope == "SpecificProducts")
                 {
-                    if (promo.ProductIds == null || promo.ProductIds.Count == 0)
+                    if (promo.ProductIds == null || promo.ProductIds.Count == 0 || itemsList.Count == 0)
                     {
                         continue;
                     }
@@ -858,7 +990,6 @@ namespace Porjai20.Services
 
                     eligibleAmount = matchingItems.Sum(item => item.Total);
 
-                    // เทียบกับ MinSpend ของสินค้าเฉพาะรายการที่ร่วมโปร
                     if (promo.MinSpend > 0 && eligibleAmount < promo.MinSpend)
                     {
                         continue;
@@ -868,7 +999,6 @@ namespace Porjai20.Services
                 {
                     eligibleAmount = subtotal > 0 ? subtotal : itemsList.Sum(i => i.Total);
 
-                    // เทียบกับ MinSpend ทั้งบิล
                     if (promo.MinSpend > 0 && eligibleAmount < promo.MinSpend)
                     {
                         continue;
@@ -876,13 +1006,12 @@ namespace Porjai20.Services
                 }
                 else
                 {
-                    // TargetScope อื่นๆ เช่น DeliveryFee ไม่นำมาลดราคาสินค้า
                     continue;
                 }
 
                 if (eligibleAmount <= 0) continue;
 
-                // 3. คำนวณมูลค่าส่วนลด
+                // คำนวณมูลค่าส่วนลด
                 decimal discount = 0m;
                 if (promo.PromoType == "Discount")
                 {
@@ -907,37 +1036,101 @@ namespace Porjai20.Services
 
                 if (discount > 0)
                 {
-                    qualified.Add(new AutoPromotionResult
-                    {
-                        PromoID = promo.PromoID,
-                        PromoName = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : promo.ConditionDescription,
-                        DiscountAmount = discount,
-                        Promotion = promo
-                    });
+                    evaluatedList.Add((promo, discount));
                 }
             }
 
-            if (qualified.Count == 0) return null;
+            if (evaluatedList.Count == 0) return null;
 
-            // เลือกรหัสโปรโมชั่นที่ให้ส่วนลดสูงที่สุดแก่ลูกค้า (Best Value) เพียง 1 รายการ
-            var best = qualified
-                .OrderByDescending(q => q.DiscountAmount)
-                .ThenBy(q => q.PromoID)
-                .First();
+            // ขั้นที่ 2: ตรรกะ CanCombine ที่ถูกต้อง (ห้ามทิ้งโปรเดี่ยว)
+            var stackableList = evaluatedList.Where(x => x.promo.CanCombine).ToList();
+            var singleList = evaluatedList.Where(x => !x.promo.CanCombine).ToList();
 
-            return best;
+            decimal billMax = subtotal > 0 ? subtotal : itemsList.Sum(i => i.Total);
+
+            // ยอดลดรวมของ stackableList ทั้งหมด (กฎเหล็ก: แม้มี Count == 1 ก็นำมาคำนวณตามปกติ)
+            decimal stackableTotalDiscount = stackableList.Sum(x => x.discount);
+            if (billMax > 0)
+            {
+                stackableTotalDiscount = Math.Min(stackableTotalDiscount, billMax);
+            }
+
+            // ยอดลดของโปรโมชั่นเดี่ยวที่ดีที่สุดใน singleList
+            var bestSingle = singleList
+                .OrderByDescending(x => x.discount)
+                .ThenBy(x => x.promo.PromoID)
+                .FirstOrDefault();
+
+            decimal bestSingleDiscount = bestSingle.promo != null ? bestSingle.discount : 0m;
+
+            // เลือกระบบที่ลูกค้าได้ส่วนลดมากที่สุด (Best Benefit for Customer):
+            // หากชุด stackableList ให้ส่วนลดรวมมากกว่า หรือเท่ากับ -> นำโปรโมชั่นใน stackableList ทั้งหมดไปใช้งาน
+            // หากมีโปรเดี่ยวใน singleList ที่ลดได้มากกว่า -> เลือกเฉพาะโปรเดี่ยวนั้นเพียงตัวเดียว
+            if (stackableList.Count > 0 && stackableTotalDiscount >= bestSingleDiscount)
+            {
+                var appliedPromos = stackableList.Select(x => x.promo).ToList();
+                string promoId = string.Join(", ", appliedPromos.Select(p => p.PromoID));
+                string promoName = appliedPromos.Count == 1
+                    ? (!string.IsNullOrWhiteSpace(appliedPromos[0].PromoName) ? appliedPromos[0].PromoName : appliedPromos[0].ConditionDescription)
+                    : string.Join(" + ", appliedPromos.Select(p => !string.IsNullOrWhiteSpace(p.PromoName) ? p.PromoName : p.ConditionDescription));
+
+                return new AutoPromotionResult
+                {
+                    PromoID = promoId,
+                    PromoName = promoName,
+                    DiscountAmount = stackableTotalDiscount,
+                    Promotion = appliedPromos.FirstOrDefault(),
+                    AppliedPromotions = appliedPromos
+                };
+            }
+            else if (bestSingle.promo != null && bestSingleDiscount > 0)
+            {
+                return new AutoPromotionResult
+                {
+                    PromoID = bestSingle.promo.PromoID,
+                    PromoName = !string.IsNullOrWhiteSpace(bestSingle.promo.PromoName) ? bestSingle.promo.PromoName : bestSingle.promo.ConditionDescription,
+                    DiscountAmount = bestSingle.discount,
+                    Promotion = bestSingle.promo,
+                    AppliedPromotions = new List<PromotionModel> { bestSingle.promo }
+                };
+            }
+
+            return null;
         }
 
         /// <summary>
-        /// ประเมินโปรโมชั่นอัตโนมัติที่ดีที่สุดแบบ Asynchronous
+        /// Alias รองรับการเรียกชื่อเดิม EvaluateBestAutoPromotion
         /// </summary>
-        public async Task<AutoPromotionResult?> EvaluateBestAutoPromotionAsync(
-            IEnumerable<CartItem> cartItems,
+        public AutoPromotionResult? EvaluateBestAutoPromotion(
+            IEnumerable<CartItem>? cartItems,
+            bool isMember,
+            decimal subtotal,
+            List<PromotionModel>? preloadedPromos = null)
+        {
+            return EvaluateAutoPromotions(cartItems, isMember, subtotal, preloadedPromos);
+        }
+
+        /// <summary>
+        /// ประเมินโปรโมชั่นอัตโนมัติแบบ Asynchronous
+        /// </summary>
+        public async Task<AutoPromotionResult?> EvaluateAutoPromotionsAsync(
+            IEnumerable<CartItem>? cartItems,
             bool isMember,
             decimal subtotal)
         {
             var allPromos = await GetAllPromotionsAsync();
-            return EvaluateBestAutoPromotion(cartItems, isMember, subtotal, allPromos);
+            return EvaluateAutoPromotions(cartItems, isMember, subtotal, allPromos);
+        }
+
+        /// <summary>
+        /// Alias รองรับการเรียกชื่อเดิม EvaluateBestAutoPromotionAsync
+        /// </summary>
+        public async Task<AutoPromotionResult?> EvaluateBestAutoPromotionAsync(
+            IEnumerable<CartItem>? cartItems,
+            bool isMember,
+            decimal subtotal)
+        {
+            return await EvaluateAutoPromotionsAsync(cartItems, isMember, subtotal);
         }
 
         #endregion

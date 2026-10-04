@@ -820,6 +820,7 @@ namespace Porjai20.ViewModels
 
         public string? AppliedPromoID { get; set; }
         public PromotionModel? AppliedAutoPromotion { get; set; }
+        public List<PromotionModel> AppliedPromotions { get; set; } = new();
 
         public decimal ShippingFee => SelectedShippingMethod == "Delivery" ? CustomShippingFee : 0;
         public decimal TotalAmountBeforeDiscount => TotalAmount + ShippingFee;
@@ -833,12 +834,12 @@ namespace Porjai20.ViewModels
 
         public void RecalculateAutoPromotion()
         {
-            bool isMember = SelectedCustomer != null;
+            bool isMember = SelectedCustomer != null || IsMemberSelected;
             decimal subtotal = TotalAmount;
 
             if (_cachedPromotions != null)
             {
-                var bestPromo = PromotionService.Instance.EvaluateBestAutoPromotion(CartItems, isMember, subtotal, _cachedPromotions);
+                var bestPromo = PromotionService.Instance.EvaluateAutoPromotions(CartItems, isMember, subtotal, _cachedPromotions);
                 ApplyAutoPromotionResult(bestPromo);
             }
             else
@@ -849,13 +850,13 @@ namespace Porjai20.ViewModels
 
         public async Task RecalculateAutoPromotionAsync()
         {
-            bool isMember = SelectedCustomer != null;
+            bool isMember = SelectedCustomer != null || IsMemberSelected;
             decimal subtotal = TotalAmount;
 
             try
             {
                 _cachedPromotions = await PromotionService.Instance.GetAllPromotionsAsync();
-                var bestPromo = PromotionService.Instance.EvaluateBestAutoPromotion(CartItems, isMember, subtotal, _cachedPromotions);
+                var bestPromo = PromotionService.Instance.EvaluateAutoPromotions(CartItems, isMember, subtotal, _cachedPromotions);
                 ApplyAutoPromotionResult(bestPromo);
             }
             catch
@@ -866,14 +867,19 @@ namespace Porjai20.ViewModels
 
         private void ApplyAutoPromotionResult(AutoPromotionResult? bestPromo)
         {
-            HasAutoPromotion = bestPromo != null;
+            HasAutoPromotion = bestPromo != null && bestPromo.DiscountAmount > 0;
             AutoPromotionName = bestPromo != null
                 ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
                 : "";
             PromotionDiscountAmount = bestPromo?.DiscountAmount ?? 0m;
             AppliedPromoID = bestPromo?.PromoID;
             AppliedAutoPromotion = bestPromo?.Promotion;
+            AppliedPromotions = bestPromo?.AppliedPromotions ?? new List<PromotionModel>();
 
+            OnPropertyChanged(nameof(HasAutoPromotion));
+            OnPropertyChanged(nameof(AutoPromotionName));
+            OnPropertyChanged(nameof(PromotionDiscountAmount));
+            OnPropertyChanged(nameof(AppliedPromotions));
             OnPropertyChanged(nameof(NetPayableAmount));
             OnPropertyChanged(nameof(CartTotal));
             OnPropertyChanged(nameof(CheckoutGrandTotal));
@@ -1939,7 +1945,26 @@ namespace Porjai20.ViewModels
                         }
 
                         // อัปเดตยอดการใช้งานโปรโมชั่นใน tblPromotion
-                        if (!string.IsNullOrEmpty(AppliedPromoID))
+                        if (AppliedPromotions != null && AppliedPromotions.Count > 0)
+                        {
+                            foreach (var p in AppliedPromotions)
+                            {
+                                string sqlUsage = @"
+                                    UPDATE tblPromotion 
+                                    SET CurrentUsage = CurrentUsage + 1,
+                                        UsageCount = COALESCE(UsageCount, 0) + 1 
+                                    WHERE PromoID = @PromoID;";
+                                try
+                                {
+                                    await conn.ExecuteAsync(sqlUsage, new { p.PromoID }, trans);
+                                }
+                                catch
+                                {
+                                    await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { p.PromoID }, trans);
+                                }
+                            }
+                        }
+                        else if (!string.IsNullOrEmpty(AppliedPromoID))
                         {
                             string sqlUsage = @"
                                 UPDATE tblPromotion 
