@@ -191,7 +191,45 @@ namespace Porjai20.ViewModels
             }
         }
 
-        public string DiscountText => $"ใช้ส่วนลด: -{DiscountAmount:N2} บาท (-{UsedPoints} แต้ม)";
+        private string? _discountText;
+        public string DiscountText
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_discountText)) return _discountText;
+                if (SelectedRedeemPromo != null)
+                {
+                    return $"ใช้สิทธิ์แลกแต้ม: {SelectedRedeemPromo.PromoName} (-{DiscountAmount:N2} บาท)";
+                }
+                return $"ใช้ส่วนลด: -{DiscountAmount:N2} บาท (-{UsedPoints} แต้ม)";
+            }
+            set => SetProperty(ref _discountText, value);
+        }
+
+        private PromotionModel? _selectedRedeemPromo;
+        public PromotionModel? SelectedRedeemPromo
+        {
+            get => _selectedRedeemPromo;
+            set
+            {
+                if (SetProperty(ref _selectedRedeemPromo, value))
+                {
+                    OnPropertyChanged(nameof(PointDiscountLabel));
+                    OnPropertyChanged(nameof(DiscountText));
+                }
+            }
+        }
+
+        public string PointDiscountLabel => SelectedRedeemPromo != null
+            ? "ส่วนลดโปรโมชั่น (แลกแต้ม)"
+            : "ส่วนลดจากแต้มสะสม";
+
+        private PointRedeemViewModel? _pointRedeemVM;
+        public PointRedeemViewModel? PointRedeemVM
+        {
+            get => _pointRedeemVM;
+            set => SetProperty(ref _pointRedeemVM, value);
+        }
 
         public ICommand CancelDiscountCommand => CancelPointDiscountCommand;
 
@@ -414,10 +452,12 @@ namespace Porjai20.ViewModels
         public void OpenPointRedeem()
         {
             RedeemValidationMessage = "";
-            int initial = UsedPoints > 0 ? UsedPoints : Math.Min(CurrentPoints, MaxRedeemablePoints);
-            RedeemPoints = initial;
-            InputRedeemPointsText = initial > 0 ? initial.ToString() : "";
-            UpdateCalculatedDiscount();
+            PointRedeemVM = new PointRedeemViewModel(
+                CurrentMember,
+                CartItems,
+                DisplaySubtotal,
+                SelectedRedeemPromo?.PromoID,
+                UsedPoints);
             IsPointRedeemModalOpen = true;
         }
 
@@ -460,6 +500,38 @@ namespace Porjai20.ViewModels
 
         public void ConfirmPointRedeem()
         {
+            if (PointRedeemVM != null)
+            {
+                if (!PointRedeemVM.CanConfirmRedeem)
+                {
+                    RedeemValidationMessage = !string.IsNullOrEmpty(PointRedeemVM.ValidationMessage)
+                        ? PointRedeemVM.ValidationMessage
+                        : "กรุณาเลือกโปรโมชั่นแลกแต้มที่ต้องการใช้";
+                    return;
+                }
+
+                SelectedRedeemPromo = PointRedeemVM.SelectedPromo;
+                UsedPoints = PointRedeemVM.SelectedPointsToUse;
+                DiscountAmount = PointRedeemVM.SelectedDiscount;
+                IsDiscountApplied = true;
+
+                if (SelectedRedeemPromo != null)
+                {
+                    _discountText = $"ใช้สิทธิ์แลกแต้ม: {SelectedRedeemPromo.PromoName} (-{DiscountAmount:N2} บาท)";
+                }
+                else
+                {
+                    _discountText = $"ใช้สิทธิ์แลกแต้ม: ลดทั่วไป (-{DiscountAmount:N2} บาท)";
+                }
+
+                OnPropertyChanged(nameof(IsDiscountApplied));
+                OnPropertyChanged(nameof(DiscountText));
+                OnPropertyChanged(nameof(PointDiscountLabel));
+                Recalculate();
+                IsPointRedeemModalOpen = false;
+                return;
+            }
+
             if (!int.TryParse(InputRedeemPointsText?.Trim(), out int points) || points <= 0)
             {
                 RedeemValidationMessage = "กรุณากรอกจำนวนแต้มที่ถูกต้อง (> 0)";
@@ -478,22 +550,29 @@ namespace Porjai20.ViewModels
             UsedPoints = points;
             DiscountAmount = points * 1.00m;
             IsDiscountApplied = true;
+            _discountText = $"ใช้ส่วนลด: -{DiscountAmount:N2} บาท (-{UsedPoints} แต้ม)";
             OnPropertyChanged(nameof(IsDiscountApplied));
             OnPropertyChanged(nameof(DiscountText));
+            OnPropertyChanged(nameof(PointDiscountLabel));
+            Recalculate();
             IsPointRedeemModalOpen = false;
         }
 
         public void ResetRedemption()
         {
+            SelectedRedeemPromo = null;
             UsedPoints = 0;
             DiscountAmount = 0;
             RedeemPoints = 0;
             InputRedeemPointsText = "";
             CalculatedDiscount = 0;
             RedeemValidationMessage = "";
+            _discountText = null;
             IsDiscountApplied = false;
             OnPropertyChanged(nameof(IsDiscountApplied));
             OnPropertyChanged(nameof(DiscountText));
+            OnPropertyChanged(nameof(PointDiscountLabel));
+            Recalculate();
         }
 
         private void Recalculate()

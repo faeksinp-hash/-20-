@@ -836,7 +836,7 @@
                                             </ItemsControl>
 
                                             <Grid Margin="0,0,0,8" Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="ส่วนลดจากแต้มสะสม" FontSize="15" FontWeight="SemiBold" Foreground="#E11D48"/>
+                                                <TextBlock Text="{Binding PointDiscountLabel, FallbackValue='ส่วนลดโปรโมชั่น (แลกแต้ม)'}" FontSize="15" FontWeight="SemiBold" Foreground="#E11D48"/>
                                                 <TextBlock Text="{Binding DiscountAmount, StringFormat=-{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#E11D48" HorizontalAlignment="Right"/>
                                             </Grid>
 
@@ -1326,8 +1326,8 @@
                                                                     Visibility="{Binding IsDiscountApplied, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                 <DockPanel LastChildFill="False">
                                                                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                                                                        <TextBlock FontSize="15" Text="🏷 " VerticalAlignment="Center"/>
-                                                                        <TextBlock FontSize="14" FontWeight="Bold" Foreground="#E11D48" Text="{Binding DiscountText, FallbackValue='ใช้ส่วนลด: -10.00 บาท (-10 แต้ม)'}" VerticalAlignment="Center"/>
+                                                                        <TextBlock FontSize="15" Text="🏷️ " VerticalAlignment="Center"/>
+                                                                        <TextBlock FontSize="14" FontWeight="Bold" Foreground="#E11D48" Text="{Binding DiscountText, FallbackValue='ใช้สิทธิ์แลกแต้ม: (-10.00 บาท)'}" VerticalAlignment="Center"/>
                                                                     </StackPanel>
                                                                     <Button Background="#FFE4E6" BorderThickness="0" Command="{Binding CancelDiscountCommand}" Content="✕ ยกเลิก" Cursor="Hand" DockPanel.Dock="Right" FontSize="13" FontWeight="Bold" Foreground="#E11D48" Padding="10,4">
                                                                         <Button.Resources>
@@ -2199,23 +2199,25 @@
         <!-- 4. POP-UP MODAL: แลกแต้มสะสม (POINT REDEEM DIALOG) -->
         <Grid Background="#800B2545" Panel.ZIndex="360"
               Visibility="{Binding IsPointRedeemModalOpen, Converter={StaticResource BoolToVis}}">
-            <Border Background="White" Width="520" VerticalAlignment="Center" HorizontalAlignment="Center"
-                    CornerRadius="16" Padding="28,24" Effect="{StaticResource CardShadow}" ClipToBounds="False">
+            <Border Background="White" Width="540" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    CornerRadius="16" Padding="24" Effect="{StaticResource CardShadow}" ClipToBounds="False">
                 <Grid ClipToBounds="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Header -->
-                    <Grid Grid.Row="0" Margin="0,0,0,18">
-                        <TextBlock Text="แลกแต้มสะสม" FontSize="22" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
+                    <!-- Row 0: Header with Title and Close (✕) button -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <TextBlock Text="แลกแต้มสะสม" FontSize="22" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
                         <Button HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Command="{Binding ClosePointRedeemModalCommand}"
                                 Content="✕" Width="36" Height="36" Background="#F1F5F9" Foreground="#64748B"
-                                FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+                                FontSize="15" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="18"/>
@@ -2224,62 +2226,211 @@
                         </Button>
                     </Grid>
 
-                    <!-- Member Points Info -->
-                    <Border Grid.Row="1" Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="12" Padding="16,14" Margin="0,0,0,18">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="&#xE945;" FontFamily="Segoe MDL2 Assets, Segoe UI Emoji" FontSize="20" Foreground="#F59E0B" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="แต้มคงเหลือของ คุณ " FontSize="16" FontWeight="SemiBold" Foreground="#0369A1" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding CurrentMember.CustomerName, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
-                                <TextBlock Text=" : " FontSize="16" FontWeight="SemiBold" Foreground="#0369A1" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding CurrentPoints, Mode=OneWay, StringFormat='{}{0:N0}'}" FontSize="16" FontWeight="Bold" Foreground="#0B2545" VerticalAlignment="Center"/>
-                                <TextBlock Text=" แต้ม" FontSize="16" FontWeight="SemiBold" Foreground="#0369A1" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <TextBlock Text="อัตราแลกเปลี่ยน: 1 แต้ม = 1 บาท" Foreground="#64748B" FontSize="14" Margin="28,4,0,0"/>
+                    <!-- Row 1: Amber Member Points Info Banner -->
+                    <Border Grid.Row="1" Background="#FEF3C7" BorderBrush="#FDE68A" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="★ " FontSize="18" FontWeight="Bold" Foreground="#D97706" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" FontSize="16" FontWeight="Bold" Foreground="#92400E" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                <Run Text="แต้มคงเหลือของ คุณ "/><Run Text="{Binding CurrentMember.CustomerName, Mode=OneWay}"/><Run Text=": "/><Run Text="{Binding CurrentPoints, Mode=OneWay, StringFormat='{}{0:N0}'}"/><Run Text=" แต้ม"/>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+
+                    <!-- Row 2: List Section Header -->
+                    <TextBlock Grid.Row="2" Text="เลือกโปรโมชั่นแลกแต้มที่ต้องการใช้:" FontSize="15" FontWeight="SemiBold" Foreground="#334155" Margin="0,4,0,8"/>
+
+                    <!-- Row 3: Scrollable Redeem Promotion Cards List -->
+                    <ScrollViewer Grid.Row="3" MaxHeight="300" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,14">
+                        <ItemsControl ItemsSource="{Binding PointRedeemVM.PromoCards}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.PointRedeemVM.SelectCardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Margin="0,0,0,8"
+                                            IsEnabled="{Binding IsEligible}"
+                                            HorizontalContentAlignment="Stretch"
+                                            Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="8" Padding="12" Margin="0,2"
+                                                        Background="{Binding CardBackground}"
+                                                        BorderBrush="{Binding CardBorderBrush}"
+                                                        BorderThickness="{Binding CardBorderThickness}">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsEligible}" Value="False">
+                                                                    <Setter Property="Opacity" Value="0.6"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <!-- Main Row: Icon + Promo Info + Discount Badge & Radio -->
+                                                        <Grid Grid.Row="0">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!-- Icon -->
+                                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#EFF6FF" Margin="0,0,10,0" VerticalAlignment="Center">
+                                                                <TextBlock Text="🎁" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+
+                                                            <!-- Center Info -->
+                                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding PromoName}" FontSize="15" FontWeight="Bold" Foreground="#0F172A" TextWrapping="Wrap"/>
+                                                                
+                                                                <!-- Min Spend Condition -->
+                                                                <TextBlock Text="{Binding DisplayMinSpend}" FontSize="13" Foreground="#64748B" Margin="0,2,0,0"/>
+
+                                                                <!-- Target Products (if specific) -->
+                                                                <TextBlock Text="{Binding TargetProductNames}" FontSize="12.5" Foreground="#0284C7" FontWeight="SemiBold"
+                                                                           Margin="0,2,0,0" TextWrapping="Wrap">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                            <Style.Triggers>
+                                                                                <Trigger Property="Text" Value="">
+                                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                </Trigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </StackPanel>
+
+                                                            <!-- Right Side: Red Discount & Radio Indicator -->
+                                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                                                                <TextBlock Text="{Binding DisplayDiscount}" FontSize="16" FontWeight="Bold" Foreground="#E11D48" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                                                                <!-- Radio Circle Indicator -->
+                                                                <Border Width="22" Height="22" CornerRadius="11" BorderThickness="2" VerticalAlignment="Center"
+                                                                        BorderBrush="{Binding IsSelected, Converter={x:Null}}"
+                                                                        Background="{Binding IsSelected, Converter={x:Null}}">
+                                                                    <Border.Style>
+                                                                        <Style TargetType="Border">
+                                                                            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                                                                            <Setter Property="Background" Value="White"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                                    <Setter Property="BorderBrush" Value="#0284C7"/>
+                                                                                    <Setter Property="Background" Value="#0284C7"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Border.Style>
+                                                                    <TextBlock Text="✓" Foreground="White" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Grid>
+
+                                                        <!-- Ineligible Warning Badge -->
+                                                        <Border Grid.Row="1" Margin="46,6,0,0" Padding="8,4" Background="#FEF2F2" BorderBrush="#FECACA" BorderThickness="1" CornerRadius="6" HorizontalAlignment="Left">
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsEligible}" Value="False">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
+                                                            <TextBlock Text="{Binding IneligibleReason}" FontSize="12" FontWeight="SemiBold" Foreground="#DC2626"/>
+                                                        </Border>
+
+                                                        <!-- Inline Input for Standard 1:1 Redemption when Selected -->
+                                                        <Border Grid.Row="1" Margin="46,8,0,0" Padding="10,8" Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8">
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <Condition Binding="{Binding IsStandardRedeem}" Value="True"/>
+                                                                                <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </MultiDataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="100"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0" Text="ระบุแต้มที่ต้องการใช้:" FontSize="13.5" FontWeight="SemiBold" Foreground="#0369A1" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                                <TextBox Grid.Column="1" Text="{Binding CustomPointsText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                         FontSize="15" FontWeight="Bold" Foreground="#0B2545" TextAlignment="Center" VerticalContentAlignment="Center"
+                                                                         Height="32" Background="White" BorderBrush="#38BDF8" BorderThickness="1.5"/>
+                                                                <TextBlock Grid.Column="2" Text=" แต้ม" FontSize="13.5" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center" Margin="6,0,8,0"/>
+                                                                <TextBlock Grid.Column="3" Text="{Binding MaxCustomPoints, StringFormat='(สูงสุด {0} แต้ม)'}" FontSize="12.5" Foreground="#64748B" VerticalAlignment="Center"/>
+                                                            </Grid>
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- Row 4: Summary Box (Visible when a card is selected) -->
+                    <Border Grid.Row="4" Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,16"
+                            Visibility="{Binding PointRedeemVM.HasSelection, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="ใช้แต้ม: " FontSize="15" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding PointRedeemVM.SelectedPointsToUse}" FontSize="16" FontWeight="ExtraBold" Foreground="#0369A1" VerticalAlignment="Center"/>
+                            <TextBlock Text=" แต้ม ➔ ได้รับส่วนลด: " FontSize="15" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding PointRedeemVM.SelectedDiscount, StringFormat={}{0:N2}}" FontSize="17" FontWeight="ExtraBold" Foreground="#E11D48" VerticalAlignment="Center"/>
+                            <TextBlock Text=" บาท" FontSize="15" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Input Section -->
-                    <StackPanel Grid.Row="2" Margin="0,0,0,20">
-                        <TextBlock Text="ระบุจำนวนแต้มที่ต้องการใช้:" FontSize="16" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,2"/>
-                        <Border CornerRadius="8" BorderBrush="#38BDF8" BorderThickness="1.5" Background="#FFFFFF" Height="50" Margin="0,6,0,16">
-                            <Grid>
-                                <TextBox Text="{Binding RedeemPoints, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         FontSize="22" FontWeight="Bold" Foreground="#0B2545"
-                                         TextAlignment="Center" VerticalContentAlignment="Center"
-                                         Background="Transparent" BorderThickness="0"
-                                         Padding="30,0,60,0"/>
-                                <TextBlock Text="แต้ม" FontSize="16" FontWeight="SemiBold" Foreground="#64748B"
-                                           HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0" IsHitTestVisible="False"/>
-                            </Grid>
-                        </Border>
+                    <!-- Validation Message -->
+                    <TextBlock Grid.Row="4" Text="{Binding RedeemValidationMessage}" FontSize="13.5" Foreground="#E11D48"
+                               FontWeight="SemiBold" Margin="4,0,0,12" TextWrapping="Wrap" HorizontalAlignment="Center"
+                               Visibility="{Binding HasRedeemValidationMessage, Converter={StaticResource BoolToVis}}"/>
 
-                        <!-- Real-time calculation -->
-                        <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="8" Padding="14,10" Margin="0,0,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <TextBlock Text="มูลค่าส่วนลดที่จะได้รับ: " FontSize="18" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
-                                <TextBlock Text="&#xE945; " FontFamily="Segoe MDL2 Assets, Segoe UI Emoji" FontSize="18" Foreground="#F59E0B" VerticalAlignment="Center" Margin="0,0,2,0"/>
-                                <TextBlock Text="{Binding CalculatedDiscount, StringFormat='{}{0:N2}'}" FontSize="18" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
-                                <TextBlock Text=" บาท" FontSize="18" FontWeight="Bold" Foreground="#0284C7" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Validation Message -->
-                        <TextBlock Text="{Binding RedeemValidationMessage}" FontSize="14" Foreground="#E11D48"
-                                   FontWeight="SemiBold" Margin="4,8,0,0" TextWrapping="Wrap"
-                                   Visibility="{Binding HasRedeemValidationMessage, Converter={StaticResource BoolToVis}}"/>
-                    </StackPanel>
-
-                    <!-- Buttons -->
-                    <Grid Grid.Row="3">
+                    <!-- Row 5: Action Buttons (Cancel and Confirm) -->
+                    <Grid Grid.Row="5" Margin="0,2,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="14"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Column="0" Command="{Binding ClosePointRedeemModalCommand}" Content="ยกเลิก" Height="46"
-                                Background="#F1F5F9" Foreground="#475569" FontSize="16" FontWeight="Bold" BorderThickness="0"
+                        <Button Grid.Column="0" Command="{Binding ClosePointRedeemModalCommand}" Content="ยกเลิก" Height="44"
+                                Background="#F1F5F9" Foreground="#475569" FontSize="15" FontWeight="Bold" BorderThickness="0"
                                 MinWidth="110" Cursor="Hand">
                             <Button.Resources>
                                 <Style TargetType="Border">
@@ -2288,8 +2439,9 @@
                             </Button.Resources>
                         </Button>
 
-                        <Button Grid.Column="2" Command="{Binding ConfirmPointRedeemCommand}" Content="ยืนยันการแลกแต้ม" Height="46"
-                                Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0" MinWidth="160" Cursor="Hand">
+                        <Button Grid.Column="2" Command="{Binding ConfirmPointRedeemCommand}" Content="ยืนยันการแลกแต้ม" Height="44"
+                                Foreground="White" FontSize="15" FontWeight="Bold" BorderThickness="0" MinWidth="160" Cursor="Hand"
+                                IsEnabled="{Binding PointRedeemVM.CanConfirmRedeem}">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="8"/>
@@ -2301,6 +2453,9 @@
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="#38BDF8"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" Value="#94A3B8"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>

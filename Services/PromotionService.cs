@@ -1005,6 +1005,38 @@ namespace Porjai20.Services
         }
 
         /// <summary>
+        /// ดึงรายการโปรโมชั่นประเภท 'Redeem' (แลกแต้ม) ที่เปิดใช้งานอยู่ (แบบ Synchronous)
+        /// </summary>
+        public List<PromotionModel> GetActiveRedeemPromotionsSync()
+        {
+            var all = GetAllPromotionsSync();
+            return all.Where(p =>
+                p.PromoType == "Redeem" &&
+                p.IsActive &&
+                !p.IsDraft &&
+                !p.IsExpired &&
+                IsDateActive(p.StartDate, p.EndDate) &&
+                (p.TotalQuota <= 0 || p.CurrentUsage < p.TotalQuota)
+            ).OrderBy(p => p.PointsRequired).ToList();
+        }
+
+        /// <summary>
+        /// ดึงรายการโปรโมชั่นประเภท 'Redeem' (แลกแต้ม) ที่เปิดใช้งานอยู่ (แบบ Asynchronous)
+        /// </summary>
+        public async Task<List<PromotionModel>> GetActiveRedeemPromotionsAsync()
+        {
+            var all = await GetAllPromotionsAsync();
+            return all.Where(p =>
+                p.PromoType == "Redeem" &&
+                p.IsActive &&
+                !p.IsDraft &&
+                !p.IsExpired &&
+                IsDateActive(p.StartDate, p.EndDate) &&
+                (p.TotalQuota <= 0 || p.CurrentUsage < p.TotalQuota)
+            ).OrderBy(p => p.PointsRequired).ToList();
+        }
+
+        /// <summary>
         /// Engine ประเมินโปรโมชั่นอัตโนมัติ (Auto-Apply Promotion Engine):
         /// ขั้นที่ 1: คัดกรองโปรโมชั่นที่ผ่านเกณฑ์จริง (Eligible Promotions)
         /// - IsActive == 1, IsDraft == 0

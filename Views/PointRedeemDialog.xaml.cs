@@ -1,103 +1,75 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
+using Porjai20.Models;
+using Porjai20.ViewModels;
 
 namespace Porjai20.Views
 {
     public partial class PointRedeemDialog : Window
     {
-        public int CurrentPoints { get; set; }
-        public int MaxAllowedPoints { get; set; }
-        public int RedeemedPoints { get; private set; }
-        public decimal DiscountValue => RedeemedPoints * 1.00m;
+        public PointRedeemViewModel ViewModel { get; }
 
-        public PointRedeemDialog(string customerName = "", int currentPoints = 0, int maxAllowedPoints = 0, int initialPoints = 0)
+        public int CurrentPoints => ViewModel.CurrentPoints;
+        public int RedeemedPoints => ViewModel.SelectedPointsToUse;
+        public decimal DiscountValue => ViewModel.SelectedDiscount;
+        public PromotionModel? SelectedPromotion => ViewModel.SelectedPromo;
+
+        public PointRedeemDialog(PointRedeemViewModel viewModel)
         {
             InitializeComponent();
-            CurrentPoints = currentPoints;
-            MaxAllowedPoints = Math.Max(0, Math.Min(currentPoints, maxAllowedPoints));
+            ViewModel = viewModel;
+            DataContext = viewModel;
 
-            runCustomerName.Text = string.IsNullOrWhiteSpace(customerName) ? "สมาชิก" : customerName;
-            runCurrentPoints.Text = currentPoints.ToString("N0");
+            ViewModel.Confirmed += vm =>
+            {
+                DialogResult = true;
+                Close();
+            };
 
-            int startPoints = initialPoints > 0 ? Math.Min(initialPoints, MaxAllowedPoints) : 0;
-            txtInputPoints.Text = startPoints > 0 ? startPoints.ToString() : "";
-            UpdateCalculation();
+            ViewModel.Cancelled += () =>
+            {
+                DialogResult = false;
+                Close();
+            };
         }
 
-        private void TxtInputPoints_TextChanged(object sender, TextChangedEventArgs e)
+        public PointRedeemDialog(
+            Customer? member = null,
+            IEnumerable<CartItem>? cartItems = null,
+            decimal subtotal = 0m,
+            string? initialPromoId = null,
+            int initialPoints = 0)
+            : this(new PointRedeemViewModel(member, cartItems, subtotal, initialPromoId, initialPoints))
         {
-            UpdateCalculation();
         }
 
-        private void UpdateCalculation()
+        public PointRedeemDialog(
+            string customerName = "",
+            int currentPoints = 0,
+            int maxAllowedPoints = 0,
+            int initialPoints = 0)
+            : this(
+                new Customer
+                {
+                    Name = string.IsNullOrWhiteSpace(customerName) ? "สมาชิก" : customerName,
+                    CustomerName = string.IsNullOrWhiteSpace(customerName) ? "สมาชิก" : customerName,
+                    Points = currentPoints
+                },
+                null,
+                maxAllowedPoints > 0 ? (decimal)maxAllowedPoints : 0m,
+                null,
+                initialPoints)
         {
-            if (txtValidationMessage == null || txtCalculatedDiscount == null) return;
-
-            txtValidationMessage.Visibility = Visibility.Collapsed;
-            txtValidationMessage.Text = "";
-
-            string text = txtInputPoints.Text.Trim();
-            if (string.IsNullOrEmpty(text))
-            {
-                txtCalculatedDiscount.Text = "0.00";
-                return;
-            }
-
-            if (!int.TryParse(text, out int points))
-            {
-                txtValidationMessage.Text = "กรุณากรอกตัวเลขจำนวนเต็ม";
-                txtValidationMessage.Visibility = Visibility.Visible;
-                txtCalculatedDiscount.Text = "0.00";
-                return;
-            }
-
-            if (points < 0)
-            {
-                txtValidationMessage.Text = "จำนวนแต้มต้องมากกว่า 0";
-                txtValidationMessage.Visibility = Visibility.Visible;
-                txtCalculatedDiscount.Text = "0.00";
-                return;
-            }
-
-            if (points > MaxAllowedPoints)
-            {
-                points = MaxAllowedPoints;
-                txtInputPoints.Text = points.ToString();
-                txtInputPoints.CaretIndex = txtInputPoints.Text.Length;
-                txtValidationMessage.Text = $"ปรับเป็นแต้มสูงสุดที่ใช้ได้ ({MaxAllowedPoints} แต้ม) อัตโนมัติ";
-                txtValidationMessage.Visibility = Visibility.Visible;
-            }
-
-            decimal discount = points * 1.00m;
-            txtCalculatedDiscount.Text = discount.ToString("N2");
         }
 
         private void BtnConfirm_Click(object sender, RoutedEventArgs e)
         {
-            string text = txtInputPoints.Text.Trim();
-            if (!int.TryParse(text, out int points) || points <= 0)
+            if (ViewModel.CanConfirmRedeem)
             {
-                txtValidationMessage.Text = "กรุณากรอกจำนวนแต้มที่ถูกต้อง (> 0)";
-                txtValidationMessage.Visibility = Visibility.Visible;
-                return;
+                DialogResult = true;
+                Close();
             }
-
-            if (points > MaxAllowedPoints)
-            {
-                points = MaxAllowedPoints;
-            }
-
-            if (points <= 0)
-            {
-                txtValidationMessage.Text = "ไม่สามารถใช้แต้มได้ในบิลนี้";
-                txtValidationMessage.Visibility = Visibility.Visible;
-                return;
-            }
-
-            RedeemedPoints = points;
-            DialogResult = true;
-            Close();
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)

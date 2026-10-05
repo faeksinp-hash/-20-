@@ -96,7 +96,7 @@
 
                         <!-- ส่วนลดแต้มสะสม -->
                         <Grid Margin="0,0,0,6" Visibility="{Binding HasPointDiscount, Converter={StaticResource BoolToVis}}">
-                            <TextBlock Text="ส่วนลดจากแต้มสะสม" FontSize="15" FontWeight="SemiBold" Foreground="#E11D48"/>
+                            <TextBlock Text="{Binding PointDiscountLabel, FallbackValue='ส่วนลดโปรโมชั่น (แลกแต้ม)'}" FontSize="15" FontWeight="SemiBold" Foreground="#E11D48"/>
                             <TextBlock Text="{Binding DiscountAmount, StringFormat=-{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#E11D48" HorizontalAlignment="Right"/>
                         </Grid>
 
