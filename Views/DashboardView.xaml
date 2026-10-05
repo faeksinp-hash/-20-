@@ -319,32 +319,33 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Left: Title, Dynamic Thai Date, Status Badge -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="สรุปวันนี้" 
-                                   FontSize="24" 
-                                   FontWeight="Bold" 
-                                   Foreground="#0F172A"/>
+                <!-- Left: Title, Status Badge & Dynamic Thai Date with Rose Accent Gradient Bar -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- แถบสี Gradient สไตล์หน้าเคลมสินค้า -->
+                    <Border CornerRadius="3" Margin="0,0,12,0" VerticalAlignment="Stretch" Width="5">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                <GradientStop Color="#00A3E0" Offset="0"/>
+                                <GradientStop Color="#F4A2B8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
 
-                        <!-- Store Open Status Badge -->
-                        <Border Background="#DCFCE7" 
-                                CornerRadius="12" 
-                                Padding="10,4" 
-                                Margin="14,0,0,0" 
-                                VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Ellipse Width="8" Height="8" Fill="#16A34A" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="ร้านเปิดอยู่" FontSize="13" FontWeight="Bold" Foreground="#16A34A" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
+                    <!-- บล็อกข้อความสรุปวันนี้และวันที่ -->
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontSize="24" FontWeight="Bold" Foreground="#0F172A" Text="สรุปวันนี้" VerticalAlignment="Center"/>
+                            <!-- ป้ายสถานะร้านเปิดอยู่ -->
+                            <Border Background="#DCFCE7" CornerRadius="12" Margin="12,0,0,0" Padding="10,4" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Fill="#16A34A" Height="8" Margin="0,0,6,0" VerticalAlignment="Center" Width="8"/>
+                                    <TextBlock FontSize="13" FontWeight="Bold" Foreground="#16A34A" Text="ร้านเปิดอยู่" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <!-- วันที่ภาษาไทยปัจจุบัน -->
+                        <TextBlock FontSize="14" Foreground="#64748B" Margin="0,4,0,0" Text="{Binding CurrentDateThai, FallbackValue='จันทร์ 5 ต.ค. 2569'}"/>
                     </StackPanel>
-
-                    <!-- Dynamic Current Thai Date -->
-                    <TextBlock Text="{Binding CurrentDateThai}" 
-                               FontSize="14" 
-                               Foreground="#64748B" 
-                               Margin="0,4,0,0"/>
                 </StackPanel>
 
                 <!-- Right: Shortcut Button [ ไปหน้าขาย ] (No Cart Icon, Height 40, CornerRadius 8) -->

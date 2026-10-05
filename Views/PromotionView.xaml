@@ -214,15 +214,27 @@
             <!--  1. HEADER SECTION (หัวข้อหน้าจอ + BADGES สรุปสถานะ 3 แคปซูล)    -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <DockPanel Grid.Row="0" LastChildFill="False">
-                <!-- Left: Title & Subtitle -->
-                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border Width="34" Height="34" CornerRadius="8" Background="#E0F2FE" Margin="0,0,10,0">
-                            <TextBlock Text="🏷️" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="จัดการโปรโมชั่น" FontSize="22" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                <!-- Left: Title & Subtitle with Rose Accent Gradient Bar -->
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- แถบสี Gradient สไตล์หน้าเคลมสินค้า -->
+                    <Border CornerRadius="3" Margin="0,0,12,0" VerticalAlignment="Stretch" Width="5">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                <GradientStop Color="#00A3E0" Offset="0"/>
+                                <GradientStop Color="#F4A2B8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- บล็อกข้อความหัวข้อและคำอธิบายย่อย -->
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- ไอคอนป้ายแท็ก -->
+                            <TextBlock FontSize="18" Margin="0,0,8,0" Text="🏷️" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="22" FontWeight="Bold" Foreground="#0F172A" Text="จัดการโปรโมชั่น" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock FontSize="13" Foreground="#64748B" Margin="0,4,0,0" Text="สร้าง แก้ไข และกำหนดเงื่อนไขส่วนลดของร้านพอใจ"/>
                     </StackPanel>
-                    <TextBlock Text="สร้าง แก้ไข และกำหนดเงื่อนไขส่วนลดของร้านพอใจ" FontSize="14" Foreground="#64748B" Margin="44,2,0,0"/>
                 </StackPanel>
 
                 <!-- Right: Status Summary Badges (3 แคปซูลมน) -->

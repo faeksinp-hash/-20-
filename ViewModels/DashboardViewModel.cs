@@ -28,8 +28,15 @@ namespace Porjai20.ViewModels
         public string CurrentDateThai
         {
             get => _currentDateThai;
-            set => SetProperty(ref _currentDateThai, value);
+            set
+            {
+                if (SetProperty(ref _currentDateThai, value))
+                {
+                    OnPropertyChanged(nameof(CurrentThaiDateText));
+                }
+            }
         }
+        public string CurrentThaiDateText => CurrentDateThai;
 
         // ═══════════════════════════════════════════════════════════════
         // ROW 1: KPI CARDS
