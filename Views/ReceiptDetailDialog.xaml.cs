@@ -70,9 +70,18 @@ namespace Porjai20.Views
         public decimal SubtotalAmount { get; set; }
         public bool HasDiscount { get; set; }
         public decimal DiscountAmount { get; set; }
+        public string? PromoID { get; set; }
+        public string? PromoName { get; set; }
+        public string PromoDescription { get; set; } = "ส่วนลดโปรโมชั่น";
+        public bool HasPromotion { get; set; }
         public bool HasPointsUsed { get; set; }
         public int PointsUsed { get; set; }
         public decimal Sales_Total { get; set; }
+        public decimal NetAmount { get; set; }
+        public decimal ReceivedAmount { get; set; }
+        public decimal ChangeAmount { get; set; }
+        public decimal CashReceived { get; set; }
+        public decimal Change { get; set; }
         public string Sales_PaymentType { get; set; } = string.Empty;
         public bool HasPointsEarned { get; set; }
         public int PointsEarned { get; set; }
@@ -92,12 +101,37 @@ namespace Porjai20.Views
             StatusFg = isCancelled ? "#DC2626" : "#16A34A";
 
             Items = items != null ? items.ToList() : new List<SalesOrderItem>();
-            SubtotalAmount = Items.Sum(i => i.Total);
+            decimal itemsSum = Items.Sum(i => i.Total);
+
             DiscountAmount = order.DiscountAmount;
+            if (DiscountAmount <= 0 && itemsSum > order.TotalAmount && order.TotalAmount > 0)
+            {
+                DiscountAmount = itemsSum - order.TotalAmount;
+            }
+
+            SubtotalAmount = order.SubtotalAmount > 0 
+                ? order.SubtotalAmount 
+                : (itemsSum > 0 ? itemsSum : (order.TotalAmount + DiscountAmount));
+
             HasDiscount = DiscountAmount > 0;
+            PromoID = order.PromoID;
+            PromoName = order.PromoName;
+            PromoDescription = !string.IsNullOrWhiteSpace(order.PromoDescription) 
+                ? order.PromoDescription 
+                : (!string.IsNullOrWhiteSpace(order.PromoName) ? order.PromoName : "ส่วนลดโปรโมชั่น");
+            HasPromotion = order.HasPromotion || HasDiscount;
+
             PointsUsed = order.PointsUsed;
             HasPointsUsed = PointsUsed > 0;
-            Sales_Total = order.Sales_Total;
+            NetAmount = order.TotalAmount > 0 ? order.TotalAmount : (order.Sales_Total > 0 ? order.Sales_Total : order.NetAmount);
+            Sales_Total = NetAmount;
+
+            ReceivedAmount = order.CashReceived > 0 ? order.CashReceived : NetAmount;
+            CashReceived = ReceivedAmount;
+            ChangeAmount = order.Change >= 0 ? order.Change : (ReceivedAmount - NetAmount);
+            if (ChangeAmount < 0) ChangeAmount = 0;
+            Change = ChangeAmount;
+
             Sales_PaymentType = string.IsNullOrWhiteSpace(order.Sales_PaymentType) ? "เงินสด" : order.Sales_PaymentType;
             PointsEarned = order.PointsEarned;
             HasPointsEarned = PointsEarned > 0;

@@ -431,10 +431,21 @@ namespace Porjai20.ViewModels
                                 s.Sales_Date,
                                 s.Cus_ID,
                                 s.Sales_Total AS TotalAmount,
+                                s.Sales_Total AS NetAmount,
+                                s.Sales_Total AS Sales_Total,
+                                COALESCE(NULLIF(s.TotalAmount, 0), (s.Sales_Total + COALESCE(s.DiscountAmount, 0))) AS SubtotalAmount,
+                                COALESCE(s.DiscountAmount, 0) AS DiscountAmount,
                                 s.Sales_Cash AS CashReceived,
                                 s.Sales_Change AS Change,
                                 COALESCE(s.Sales_PaymentType, 'เงินสด') AS PaymentMethod,
                                 COALESCE(s.Sales_Status, 'ชำระเงินแล้ว') AS Status,
+                                s.PointsUsed,
+                                s.PointsEarned,
+                                s.PromoID,
+                                COALESCE(p.PromoName, 
+                                    (SELECT p2.PromoName FROM tblSalesDetail d2 JOIN tblPromotion p2 ON d2.PromoID = p2.PromoID WHERE d2.Sales_ID = s.Sales_ID LIMIT 1), 
+                                    s.PromoID, 
+                                    '') AS PromoName,
                                 COUNT(i.Detail_ID) AS ItemCount,
                                 c.Cus_ID AS SplitCusId,
                                 c.Cus_ID AS Cus_ID,
@@ -448,6 +459,7 @@ namespace Porjai20.ViewModels
                             FROM tblSales_H s
                             LEFT JOIN tblSalesDetail i ON i.Sales_ID = s.Sales_ID
                             LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                            LEFT JOIN tblPromotion p ON s.PromoID = p.PromoID
                             WHERE 1=1";
 
                 var parameters = new DynamicParameters();
@@ -610,6 +622,20 @@ namespace Porjai20.ViewModels
                 var items = await conn.QueryAsync<SalesOrderItem>(sql, new { Id = orderId });
                 foreach (var item in items)
                     SelectedOrderItems.Add(item);
+
+                // Auto-sync subtotal and discount if item totals exceed total amount (e.g. promotional freebies or discounts)
+                if (_selectedOrder != null && _selectedOrder.Id == orderId)
+                {
+                    decimal itemsSum = SelectedOrderItems.Sum(i => i.Total);
+                    if (_selectedOrder.SubtotalAmount <= 0 || _selectedOrder.SubtotalAmount < itemsSum)
+                    {
+                        _selectedOrder.SubtotalAmount = itemsSum;
+                    }
+                    if (_selectedOrder.DiscountAmount <= 0 && itemsSum > _selectedOrder.TotalAmount && _selectedOrder.TotalAmount > 0)
+                    {
+                        _selectedOrder.DiscountAmount = itemsSum - _selectedOrder.TotalAmount;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -753,6 +779,10 @@ namespace Porjai20.ViewModels
                     Sales_Date = SelectedOrder.Sales_Date,
                     CustomerName = !string.IsNullOrWhiteSpace(SelectedOrder.CustomerDisplayName) ? SelectedOrder.CustomerDisplayName : "ลูกค้าทั่วไป",
                     TotalAmount = SelectedOrder.TotalAmount,
+                    SubtotalAmount = SelectedOrder.SubtotalAmount > 0 ? SelectedOrder.SubtotalAmount : SelectedOrderItems.Sum(i => i.Total),
+                    DiscountAmount = SelectedOrder.DiscountAmount,
+                    PromoID = SelectedOrder.PromoID,
+                    PromoName = SelectedOrder.PromoName,
                     CashReceived = effectiveCash,
                     Change = effectiveChange,
                     PaymentMethod = !string.IsNullOrWhiteSpace(SelectedOrder.PaymentMethod) ? SelectedOrder.PaymentMethod : "เงินสด",

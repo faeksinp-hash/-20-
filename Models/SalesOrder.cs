@@ -113,7 +113,102 @@ namespace Porjai20.Models
             set => Sales_Status = value;
         }
 
-        public decimal DiscountAmount { get; set; } = 0;
+        private decimal _discountAmount;
+        public decimal DiscountAmount
+        {
+            get => _discountAmount;
+            set
+            {
+                if (_discountAmount != value)
+                {
+                    _discountAmount = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasDiscount));
+                    OnPropertyChanged(nameof(SubtotalAmount));
+                }
+            }
+        }
+
+        private decimal _subtotalAmount;
+        public decimal SubtotalAmount
+        {
+            get => _subtotalAmount > 0 ? _subtotalAmount : (TotalAmount + DiscountAmount);
+            set
+            {
+                if (_subtotalAmount != value)
+                {
+                    _subtotalAmount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool HasDiscount => DiscountAmount > 0;
+
+        private string? _promoId;
+        public string? PromoID
+        {
+            get => _promoId;
+            set
+            {
+                if (_promoId != value)
+                {
+                    _promoId = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PromoDescription));
+                    OnPropertyChanged(nameof(HasPromotion));
+                }
+            }
+        }
+
+        private string? _promoName;
+        public string? PromoName
+        {
+            get => _promoName;
+            set
+            {
+                if (_promoName != value)
+                {
+                    _promoName = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PromoDescription));
+                    OnPropertyChanged(nameof(HasPromotion));
+                }
+            }
+        }
+
+        public bool HasPromotion => !string.IsNullOrWhiteSpace(PromoName) || !string.IsNullOrWhiteSpace(PromoID) || HasDiscount;
+
+        public string PromoDescription
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(PromoName))
+                    return PromoName;
+                if (!string.IsNullOrWhiteSpace(PromoID))
+                    return $"ส่วนลดโปรโมชั่น ({PromoID})";
+                return "ส่วนลดโปรโมชั่น";
+            }
+        }
+
+        public decimal NetAmount
+        {
+            get => Sales_Total;
+            set => Sales_Total = value;
+        }
+
+        public decimal ReceivedAmount
+        {
+            get => CashReceived;
+            set => CashReceived = value;
+        }
+
+        public decimal ChangeAmount
+        {
+            get => Change;
+            set => Change = value;
+        }
+
         public int PointsUsed { get; set; } = 0;
         public int PointsEarned { get; set; } = 0;
 

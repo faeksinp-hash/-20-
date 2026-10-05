@@ -656,7 +656,8 @@ namespace Porjai20.ViewModels
             }
         }
 
-        public bool HasDiscount => DiscountAmount > 0;
+        public bool HasDiscount => (FinalTotalDiscount > 0) || (DiscountAmount > 0) || (PromotionDiscountAmount > 0);
+        public decimal TotalDiscount => FinalTotalDiscount > 0 ? FinalTotalDiscount : (PromotionDiscountAmount + DiscountAmount);
         public bool HasPointDiscount => UsedPoints > 0;
 
         private bool _isDiscountApplied;
@@ -1065,6 +1066,30 @@ namespace Porjai20.ViewModels
             get => _finalGrandTotal;
             set => SetProperty(ref _finalGrandTotal, value);
         }
+
+        private decimal _finalSubtotal;
+        public decimal FinalSubtotal
+        {
+            get => _finalSubtotal;
+            set => SetProperty(ref _finalSubtotal, value);
+        }
+
+        private decimal _finalTotalDiscount;
+        public decimal FinalTotalDiscount
+        {
+            get => _finalTotalDiscount;
+            set
+            {
+                if (SetProperty(ref _finalTotalDiscount, value))
+                {
+                    OnPropertyChanged(nameof(HasFinalDiscount));
+                    OnPropertyChanged(nameof(HasDiscount));
+                    OnPropertyChanged(nameof(TotalDiscount));
+                }
+            }
+        }
+
+        public bool HasFinalDiscount => FinalTotalDiscount > 0;
 
         private string _finalPaymentMethod = "เงินสด";
         public string FinalPaymentMethod
@@ -2359,6 +2384,13 @@ namespace Porjai20.ViewModels
                 FinalCashReceived = cashReceived;
                 FinalChange = change;
                 FinalGrandTotal = grandTotal;
+                FinalSubtotal = subtotal;
+                FinalTotalDiscount = discountAmount;
+                OnPropertyChanged(nameof(FinalSubtotal));
+                OnPropertyChanged(nameof(FinalTotalDiscount));
+                OnPropertyChanged(nameof(TotalDiscount));
+                OnPropertyChanged(nameof(HasDiscount));
+                OnPropertyChanged(nameof(HasFinalDiscount));
                 if (IsTransferPayment)
                 {
                     FinalPaymentMethod = "สแกน QR / โอนเงิน";
@@ -2401,12 +2433,17 @@ namespace Porjai20.ViewModels
         {
             try
             {
+                decimal subtotal = FinalSubtotal > 0 ? FinalSubtotal : (DisplaySubtotal > 0 ? DisplaySubtotal : (FinalGrandTotal + (PromotionDiscountAmount + DiscountAmount)));
+                decimal discount = FinalTotalDiscount > 0 ? FinalTotalDiscount : (PromotionDiscountAmount + DiscountAmount);
+
                 var order = new SalesOrder
                 {
                     RefNo = string.IsNullOrWhiteSpace(LastRefNo) ? "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture) : LastRefNo,
                     Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                     CustomerName = !string.IsNullOrWhiteSpace(CustomerName) ? CustomerName : (SelectedCustomer?.Name ?? "ลูกค้าทั่วไป"),
                     TotalAmount = FinalGrandTotal,
+                    SubtotalAmount = subtotal,
+                    DiscountAmount = discount,
                     CashReceived = FinalCashReceived,
                     Change = FinalChange,
                     PaymentMethod = !string.IsNullOrWhiteSpace(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด",
@@ -2422,20 +2459,22 @@ namespace Porjai20.ViewModels
                     Total = item.Total
                 }).ToList();
 
-                // รวมรายการของแถม/แจกฟรีลงในรายการใบเสร็จด้วย (ราคา 0.00 บาท)
+                // รวมรายการของแถม/แจกฟรี (Auto-Included) โดยมีราคาต่อหน่วยเดิมตามหน้าขาย (เช่น ดินสอ 1 ชิ้น = 10.00 บาท)
                 if (AppliedPromotionDetails != null)
                 {
                     foreach (var gift in AppliedPromotionDetails.Where(x => x.IsAutoIncluded))
                     {
                         int gId = gift.GiftProductId ?? 0;
                         string gName = !string.IsNullOrWhiteSpace(gift.GiftProductName) ? gift.GiftProductName : (gift.PromoName ?? "ของแจกฟรี");
+                        decimal uPrice = gift.UnitPrice > 0 ? gift.UnitPrice : 10.00m;
+                        int qty = gift.GiftQuantity > 0 ? gift.GiftQuantity : 1;
                         items.Add(new SalesOrderItem
                         {
                             Pro_ID = gId,
-                            ProductName = $"[ของแจกฟรี] {gName}",
-                            UnitPrice = 0m,
-                            Quantity = gift.GiftQuantity > 0 ? gift.GiftQuantity : 1,
-                            Total = 0m
+                            ProductName = gName,
+                            UnitPrice = uPrice,
+                            Quantity = qty,
+                            Total = uPrice * qty
                         });
                     }
                 }
@@ -2473,6 +2512,13 @@ namespace Porjai20.ViewModels
             IsMemberSelected = false;
             IsManualMemberSearchMode = false;
             CashAmountReceived = 0;
+            FinalSubtotal = 0;
+            FinalTotalDiscount = 0;
+            OnPropertyChanged(nameof(FinalSubtotal));
+            OnPropertyChanged(nameof(FinalTotalDiscount));
+            OnPropertyChanged(nameof(TotalDiscount));
+            OnPropertyChanged(nameof(HasDiscount));
+            OnPropertyChanged(nameof(HasFinalDiscount));
             _numpadInput = "0";
             _isNewInput = true;
             SelectedPaymentMethod = null;

@@ -1707,11 +1707,25 @@
                                             <TextBlock Text="{Binding FinalBank}" FontSize="17" FontWeight="Bold" Foreground="#0284C7" HorizontalAlignment="Right"/>
                                         </Grid>
 
+                                        <!-- 3) ยอดรวมสินค้า (ถ้ามีส่วนลด ให้แสดงยอดก่อนลด) -->
+                                        <Grid Margin="0,0,0,10" Visibility="{Binding HasDiscount, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <TextBlock Text="ยอดรวมสินค้า" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding FinalSubtotal, StringFormat={}{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
+                                        </Grid>
+
+                                        <!-- 4) ส่วนลดโปรโมชั่น (สีแดง -35.00 เมื่อ HasDiscount == true) -->
+                                        <DockPanel LastChildFill="False" Margin="0,0,0,10" Visibility="{Binding HasDiscount, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <TextBlock DockPanel.Dock="Left" FontSize="16" FontWeight="SemiBold" Foreground="#E11D48" Text="ส่วนลดโปรโมชั่น" VerticalAlignment="Center"/>
+                                            <TextBlock DockPanel.Dock="Right" FontSize="17" FontWeight="Bold" Foreground="#E11D48" Text="{Binding TotalDiscount, StringFormat='-{0:N2}'}" VerticalAlignment="Center"/>
+                                        </DockPanel>
+
+                                        <!-- 5) รับเงินสดมา (100.00) -->
                                         <Grid Margin="0,0,0,10" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
                                             <TextBlock Text="รับเงินสดมา" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
                                             <TextBlock Text="{Binding FinalCashReceived, StringFormat={}{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Right"/>
                                         </Grid>
 
+                                        <!-- 6) เงินทอนลูกค้า (75.00) -->
                                         <Grid Margin="0,0,0,10" Visibility="{Binding IsCashPayment, Converter={StaticResource BoolToVis}}">
                                             <TextBlock Text="เงินทอนลูกค้า" FontSize="16" FontWeight="SemiBold" Foreground="#475569"/>
                                             <TextBlock Text="{Binding FinalChange, StringFormat={}{0:N2}}" FontSize="17" FontWeight="Bold" Foreground="#166534" HorizontalAlignment="Right"/>

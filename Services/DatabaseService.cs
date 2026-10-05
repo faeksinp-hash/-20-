@@ -1221,9 +1221,14 @@ namespace Porjai20.Services
             {
                 string sql = @"
                     SELECT s.*, 
+                           COALESCE(NULLIF(s.TotalAmount, 0), (s.Sales_Total + COALESCE(s.DiscountAmount, 0))) AS SubtotalAmount,
+                           COALESCE(p.PromoName, 
+                               (SELECT p2.PromoName FROM tblSalesDetail d2 JOIN tblPromotion p2 ON d2.PromoID = p2.PromoID WHERE d2.Sales_ID = s.Sales_ID LIMIT 1), 
+                               s.PromoID, '') AS PromoName,
                            c.Cus_ID, c.Cus_Code, c.Cus_Name, c.Cus_Address, c.Cus_Tel, c.Cus_Points
                     FROM tblSales_H s
                     LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                    LEFT JOIN tblPromotion p ON s.PromoID = p.PromoID
                     WHERE s.Sales_ID = @SalesId;";
 
                 var list = connection.Query<Models.SalesOrder, Models.Customer, Models.SalesOrder>(
@@ -1234,6 +1239,10 @@ namespace Porjai20.Services
                         {
                             order.Customer = cust;
                             order.CustomerName = cust.Name;
+                        }
+                        if (order.SubtotalAmount <= 0)
+                        {
+                            order.SubtotalAmount = order.TotalAmount + order.DiscountAmount;
                         }
                         return order;
                     },
@@ -1251,9 +1260,14 @@ namespace Porjai20.Services
             {
                 string sql = @"
                     SELECT s.*, 
+                           COALESCE(NULLIF(s.TotalAmount, 0), (s.Sales_Total + COALESCE(s.DiscountAmount, 0))) AS SubtotalAmount,
+                           COALESCE(p.PromoName, 
+                               (SELECT p2.PromoName FROM tblSalesDetail d2 JOIN tblPromotion p2 ON d2.PromoID = p2.PromoID WHERE d2.Sales_ID = s.Sales_ID LIMIT 1), 
+                               s.PromoID, '') AS PromoName,
                            c.Cus_ID, c.Cus_Code, c.Cus_Name, c.Cus_Address, c.Cus_Tel, c.Cus_Points
                     FROM tblSales_H s
                     LEFT JOIN tblCustomer c ON s.Cus_ID = c.Cus_ID
+                    LEFT JOIN tblPromotion p ON s.PromoID = p.PromoID
                     WHERE s.RefNo = @RefNo;";
 
                 var list = connection.Query<Models.SalesOrder, Models.Customer, Models.SalesOrder>(
@@ -1264,6 +1278,10 @@ namespace Porjai20.Services
                         {
                             order.Customer = cust;
                             order.CustomerName = cust.Name;
+                        }
+                        if (order.SubtotalAmount <= 0)
+                        {
+                            order.SubtotalAmount = order.TotalAmount + order.DiscountAmount;
                         }
                         return order;
                     },
