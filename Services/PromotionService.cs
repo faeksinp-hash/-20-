@@ -44,6 +44,9 @@ namespace Porjai20.Services
         public int? GiftProductId { get; set; }
         public string? GiftProductName { get; set; }
         public int GiftQuantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public bool IsAutoIncluded { get; set; }
+        public decimal AutoIncludedAmount { get; set; }
         public PromotionModel? Promotion { get; set; }
     }
 
@@ -55,6 +58,7 @@ namespace Porjai20.Services
         public string PromoID { get; set; } = string.Empty;
         public string PromoName { get; set; } = string.Empty;
         public decimal DiscountAmount { get; set; }
+        public decimal AutoIncludedAmount => AppliedItems?.Where(x => x.IsAutoIncluded).Sum(x => x.AutoIncludedAmount) ?? 0m;
         public PromotionModel? Promotion { get; set; }
         public List<PromotionModel> AppliedPromotions { get; set; } = new();
         public List<AppliedPromotionResult> AppliedItems { get; set; } = new();
@@ -171,9 +175,9 @@ namespace Porjai20.Services
                 var promoProducts = (await conn.QueryAsync<(string PromoID, string ProductID)>(
                     "SELECT PromoID, ProductID FROM tblPromotionProducts;")).ToList();
 
-                // ดึงข้อมูลสินค้าทั้งหมดจาก tblProduct เพื่อนำชื่อและต้นทุนมาแสดงผล
-                var allProds = (await conn.QueryAsync<(int Pro_ID, string Pro_Name, decimal Pro_Price, decimal Pro_Cost)>(
-                    "SELECT Pro_ID, Pro_Name, Pro_Price, Pro_Cost FROM tblProduct;")).ToList();
+                // ดึงข้อมูลสินค้าทั้งหมดจาก tblProduct เพื่อนำชื่อ, ราคา และต้นทุนมาแสดงผล
+                var allProds = (await conn.QueryAsync<(int Pro_ID, string Pro_Barcode, string Pro_Name, decimal Pro_Price, decimal Pro_Cost)>(
+                    "SELECT Pro_ID, COALESCE(Pro_Barcode, '') AS Pro_Barcode, Pro_Name, Pro_Price, Pro_Cost FROM tblProduct;")).ToList();
 
                 var prodDict = allProds.ToDictionary(p => p.Pro_ID.ToString(), p => p);
 
@@ -197,11 +201,31 @@ namespace Porjai20.Services
                     }
                     p.ProductNames = names;
 
-                    // Map Free Product Name & Cost
-                    if (!string.IsNullOrWhiteSpace(p.FreeProductID) && prodDict.TryGetValue(p.FreeProductID, out var freeProd))
+                    // Map Free Product Name, Price & Cost
+                    if (!string.IsNullOrWhiteSpace(p.FreeProductID))
                     {
-                        p.FreeProductName = freeProd.Pro_Name;
-                        p.ItemCost = freeProd.Pro_Cost;
+                        var freeProd = allProds.FirstOrDefault(x =>
+                            x.Pro_ID.ToString() == p.FreeProductID ||
+                            (!string.IsNullOrEmpty(x.Pro_Barcode) && x.Pro_Barcode.Equals(p.FreeProductID, StringComparison.OrdinalIgnoreCase)) ||
+                            $"P-{x.Pro_ID:D4}".Equals(p.FreeProductID, StringComparison.OrdinalIgnoreCase));
+
+                        if (freeProd.Pro_ID > 0)
+                        {
+                            p.FreeProductName = freeProd.Pro_Name;
+                            p.FreeProductPrice = freeProd.Pro_Price;
+                            p.ItemCost = freeProd.Pro_Cost;
+                        }
+                    }
+                    else if (!string.IsNullOrWhiteSpace(p.FreeProductName))
+                    {
+                        var freeProd = allProds.FirstOrDefault(x =>
+                            string.Equals(x.Pro_Name.Trim(), p.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase));
+                        if (freeProd.Pro_ID > 0)
+                        {
+                            p.FreeProductID = freeProd.Pro_ID.ToString();
+                            p.FreeProductPrice = freeProd.Pro_Price;
+                            p.ItemCost = freeProd.Pro_Cost;
+                        }
                     }
                     else if (p.ProductIds.Count > 0 && prodDict.TryGetValue(p.ProductIds[0], out var mainProd))
                     {
@@ -906,8 +930,8 @@ namespace Porjai20.Services
                 var promoProducts = conn.Query<(string PromoID, string ProductID)>(
                     "SELECT PromoID, ProductID FROM tblPromotionProducts;").ToList();
 
-                var allProds = conn.Query<(int Pro_ID, string Pro_Name, decimal Pro_Price, decimal Pro_Cost)>(
-                    "SELECT Pro_ID, Pro_Name, Pro_Price, Pro_Cost FROM tblProduct;").ToList();
+                var allProds = conn.Query<(int Pro_ID, string Pro_Barcode, string Pro_Name, decimal Pro_Price, decimal Pro_Cost)>(
+                    "SELECT Pro_ID, COALESCE(Pro_Barcode, '') AS Pro_Barcode, Pro_Name, Pro_Price, Pro_Cost FROM tblProduct;").ToList();
 
                 var prodDict = allProds.ToDictionary(p => p.Pro_ID.ToString(), p => p);
 
@@ -926,10 +950,30 @@ namespace Porjai20.Services
                     }
                     p.ProductNames = names;
 
-                    if (!string.IsNullOrWhiteSpace(p.FreeProductID) && prodDict.TryGetValue(p.FreeProductID, out var freeProd))
+                    if (!string.IsNullOrWhiteSpace(p.FreeProductID))
                     {
-                        p.FreeProductName = freeProd.Pro_Name;
-                        p.ItemCost = freeProd.Pro_Cost;
+                        var freeProd = allProds.FirstOrDefault(x =>
+                            x.Pro_ID.ToString() == p.FreeProductID ||
+                            (!string.IsNullOrEmpty(x.Pro_Barcode) && x.Pro_Barcode.Equals(p.FreeProductID, StringComparison.OrdinalIgnoreCase)) ||
+                            $"P-{x.Pro_ID:D4}".Equals(p.FreeProductID, StringComparison.OrdinalIgnoreCase));
+
+                        if (freeProd.Pro_ID > 0)
+                        {
+                            p.FreeProductName = freeProd.Pro_Name;
+                            p.FreeProductPrice = freeProd.Pro_Price;
+                            p.ItemCost = freeProd.Pro_Cost;
+                        }
+                    }
+                    else if (!string.IsNullOrWhiteSpace(p.FreeProductName))
+                    {
+                        var freeProd = allProds.FirstOrDefault(x =>
+                            string.Equals(x.Pro_Name.Trim(), p.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase));
+                        if (freeProd.Pro_ID > 0)
+                        {
+                            p.FreeProductID = freeProd.Pro_ID.ToString();
+                            p.FreeProductPrice = freeProd.Pro_Price;
+                            p.ItemCost = freeProd.Pro_Cost;
+                        }
                     }
                     else if (p.ProductIds.Count > 0 && prodDict.TryGetValue(p.ProductIds[0], out var mainProd))
                     {
@@ -1018,36 +1062,47 @@ namespace Porjai20.Services
                 {
                     case "Gift": // แจก (ซื้อครบ แจกของฟรี)
                         {
-                            if (billTotal >= promo.MinSpend && promo.FreeQuantity > 0)
+                            decimal qualifyingSpend = billTotal;
+                            if (promo.TargetScope == "SpecificProducts" && promo.ProductIds != null && promo.ProductIds.Count > 0)
+                            {
+                                var matching = itemsList.Where(i =>
+                                    promo.ProductIds.Contains(i.Product.Id.ToString()) ||
+                                    (!string.IsNullOrEmpty(i.Product.Code) && promo.ProductIds.Contains(i.Product.Code)) ||
+                                    promo.ProductIds.Contains($"P-{i.Product.Id:D4}")
+                                ).ToList();
+                                qualifyingSpend = matching.Sum(i => i.Total);
+                            }
+
+                            if ((promo.MinSpend <= 0 || qualifyingSpend >= promo.MinSpend) && promo.FreeQuantity > 0)
                             {
                                 // ค้นหาสินค้าของแจกในตะกร้า
                                 CartItem? giftCartItem = null;
                                 if (!string.IsNullOrWhiteSpace(promo.FreeProductID))
                                 {
-                                    giftCartItem = itemsList.FirstOrDefault(i => i.Product.Id.ToString() == promo.FreeProductID);
+                                    giftCartItem = itemsList.FirstOrDefault(i =>
+                                        i.Product.Id.ToString() == promo.FreeProductID ||
+                                        (!string.IsNullOrEmpty(i.Product.Code) && i.Product.Code.Equals(promo.FreeProductID, StringComparison.OrdinalIgnoreCase)) ||
+                                        $"P-{i.Product.Id:D4}".Equals(promo.FreeProductID, StringComparison.OrdinalIgnoreCase));
                                 }
                                 if (giftCartItem == null && !string.IsNullOrWhiteSpace(promo.FreeProductName))
                                 {
                                     giftCartItem = itemsList.FirstOrDefault(i =>
-                                        string.Equals(i.Product.Name.Trim(), promo.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                                        i.Product.Name.Contains(promo.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                                        promo.FreeProductName.Trim().Contains(i.Product.Name.Trim(), StringComparison.OrdinalIgnoreCase));
+                                        string.Equals(i.Product.Name.Trim(), promo.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase));
                                 }
-                                if (giftCartItem == null && promo.ProductIds != null && promo.ProductIds.Count > 0)
-                                {
-                                    giftCartItem = itemsList.FirstOrDefault(i => promo.ProductIds.Contains(i.Product.Id.ToString()));
-                                }
+
+                                int freeQty = promo.FreeQuantity > 0 ? promo.FreeQuantity : 1;
+                                string giftLabel = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : "แจก";
 
                                 if (giftCartItem != null)
                                 {
-                                    int freeQty = promo.FreeQuantity > 0 ? promo.FreeQuantity : 1;
-                                    freeQty = Math.Min(freeQty, giftCartItem.Quantity);
-                                    discount = freeQty * giftCartItem.Product.Price;
+                                    // กรณีที่ 1: ในตะกร้ามีสินค้าของแจกอยู่แล้ว
+                                    int appliedQty = Math.Min(freeQty, giftCartItem.Quantity);
+                                    decimal unitPrice = giftCartItem.Product.Price;
+                                    discount = appliedQty * unitPrice;
+                                    string giftName = giftCartItem.Product.Name;
 
                                     if (discount > 0)
                                     {
-                                        string giftName = giftCartItem.Product.Name;
-                                        string giftLabel = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : "แจก";
                                         appliedItem = new AppliedPromotionResult
                                         {
                                             PromoID = promo.PromoID,
@@ -1056,7 +1111,46 @@ namespace Porjai20.Services
                                             DiscountAmount = discount,
                                             GiftProductId = giftCartItem.Product.Id,
                                             GiftProductName = giftName,
+                                            GiftQuantity = appliedQty,
+                                            UnitPrice = unitPrice,
+                                            IsAutoIncluded = false,
+                                            AutoIncludedAmount = 0m,
+                                            DisplayText = $"ของแจกฟรี ({giftLabel} - {giftName} {appliedQty} ชิ้น):",
+                                            TextColor = "#16A34A",
+                                            Promotion = promo
+                                        };
+                                    }
+                                }
+                                else
+                                {
+                                    // กรณีที่ 2: ในตะกร้ายังไม่มีสินค้าของแจก (Auto-Inclusion of Free Item)
+                                    string giftName = !string.IsNullOrWhiteSpace(promo.FreeProductName) ? promo.FreeProductName : "ของแจกฟรี";
+                                    decimal unitPrice = promo.FreeProductPrice > 0 ? promo.FreeProductPrice : 10.00m;
+                                    int giftProdId = 0;
+                                    if (!string.IsNullOrWhiteSpace(promo.FreeProductID))
+                                    {
+                                        if (int.TryParse(promo.FreeProductID, out int pId))
+                                            giftProdId = pId;
+                                        else if (promo.FreeProductID.StartsWith("P-", StringComparison.OrdinalIgnoreCase) &&
+                                                 int.TryParse(promo.FreeProductID.Substring(2), out int pId2))
+                                            giftProdId = pId2;
+                                    }
+
+                                    discount = freeQty * unitPrice;
+                                    if (discount > 0)
+                                    {
+                                        appliedItem = new AppliedPromotionResult
+                                        {
+                                            PromoID = promo.PromoID,
+                                            PromoName = promo.PromoName,
+                                            PromoType = "Gift",
+                                            DiscountAmount = discount,
+                                            GiftProductId = giftProdId,
+                                            GiftProductName = giftName,
                                             GiftQuantity = freeQty,
+                                            UnitPrice = unitPrice,
+                                            IsAutoIncluded = true,
+                                            AutoIncludedAmount = discount,
                                             DisplayText = $"ของแจกฟรี ({giftLabel} - {giftName} {freeQty} ชิ้น):",
                                             TextColor = "#16A34A",
                                             Promotion = promo
@@ -1070,7 +1164,8 @@ namespace Porjai20.Services
                     case "Freebie": // แถม (ซื้อ N แถม M)
                         {
                             var matchingFreebieItems = itemsList.Where(item =>
-                                promo.ProductIds == null || promo.ProductIds.Count == 0 || promo.ProductIds.Contains(item.Product.Id.ToString())
+                                promo.ProductIds == null || promo.ProductIds.Count == 0 || promo.ProductIds.Contains(item.Product.Id.ToString()) ||
+                                (!string.IsNullOrEmpty(item.Product.Code) && promo.ProductIds.Contains(item.Product.Code))
                             ).ToList();
 
                             int totalMatchingQty = matchingFreebieItems.Sum(x => x.Quantity);
@@ -1086,17 +1181,23 @@ namespace Porjai20.Services
                                 CartItem? freebieCartItem = null;
                                 if (!string.IsNullOrWhiteSpace(promo.FreeProductID))
                                 {
-                                    freebieCartItem = itemsList.FirstOrDefault(i => i.Product.Id.ToString() == promo.FreeProductID);
+                                    freebieCartItem = itemsList.FirstOrDefault(i =>
+                                        i.Product.Id.ToString() == promo.FreeProductID ||
+                                        (!string.IsNullOrEmpty(i.Product.Code) && i.Product.Code.Equals(promo.FreeProductID, StringComparison.OrdinalIgnoreCase)) ||
+                                        $"P-{i.Product.Id:D4}".Equals(promo.FreeProductID, StringComparison.OrdinalIgnoreCase));
                                 }
                                 else if (matchingFreebieItems.Count > 0)
                                 {
                                     freebieCartItem = matchingFreebieItems[0];
                                 }
 
+                                string freeLabel = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : "แถม";
+
                                 if (freebieCartItem != null)
                                 {
                                     actualFreeQty = Math.Min(actualFreeQty, freebieCartItem.Quantity);
-                                    discount = actualFreeQty * freebieCartItem.Product.Price;
+                                    decimal unitPrice = freebieCartItem.Product.Price;
+                                    discount = actualFreeQty * unitPrice;
                                     if (discount > 0)
                                     {
                                         string freeName = freebieCartItem.Product.Name;
@@ -1109,7 +1210,41 @@ namespace Porjai20.Services
                                             GiftProductId = freebieCartItem.Product.Id,
                                             GiftProductName = freeName,
                                             GiftQuantity = actualFreeQty,
-                                            DisplayText = $"สินค้าแถมฟรี (แถม - {freeName} {actualFreeQty} ชิ้น):",
+                                            UnitPrice = unitPrice,
+                                            IsAutoIncluded = false,
+                                            AutoIncludedAmount = 0m,
+                                            DisplayText = $"สินค้าแถมฟรี ({freeLabel} - {freeName} {actualFreeQty} ชิ้น):",
+                                            TextColor = "#9333EA",
+                                            Promotion = promo
+                                        };
+                                    }
+                                }
+                                else
+                                {
+                                    string freeName = !string.IsNullOrWhiteSpace(promo.FreeProductName) ? promo.FreeProductName : "สินค้าแถม";
+                                    decimal unitPrice = promo.FreeProductPrice > 0 ? promo.FreeProductPrice : 10.00m;
+                                    int freeProdId = 0;
+                                    if (!string.IsNullOrWhiteSpace(promo.FreeProductID))
+                                    {
+                                        if (int.TryParse(promo.FreeProductID, out int pId))
+                                            freeProdId = pId;
+                                    }
+                                    discount = actualFreeQty * unitPrice;
+                                    if (discount > 0)
+                                    {
+                                        appliedItem = new AppliedPromotionResult
+                                        {
+                                            PromoID = promo.PromoID,
+                                            PromoName = promo.PromoName,
+                                            PromoType = "Freebie",
+                                            DiscountAmount = discount,
+                                            GiftProductId = freeProdId,
+                                            GiftProductName = freeName,
+                                            GiftQuantity = actualFreeQty,
+                                            UnitPrice = unitPrice,
+                                            IsAutoIncluded = true,
+                                            AutoIncludedAmount = discount,
+                                            DisplayText = $"สินค้าแถมฟรี ({freeLabel} - {freeName} {actualFreeQty} ชิ้น):",
                                             TextColor = "#9333EA",
                                             Promotion = promo
                                         };
@@ -1230,9 +1365,11 @@ namespace Porjai20.Services
 
             // ยอดลดรวมของกลุ่ม B (โปรที่ CanCombine ทั้งหมดรวมกัน)
             decimal stackableTotalDiscount = stackableList.Sum(x => x.discount);
-            if (billTotal > 0)
+            decimal autoIncludedInStack = stackableList.Sum(x => x.item.AutoIncludedAmount);
+            decimal effectiveBillTotal = billTotal + autoIncludedInStack;
+            if (effectiveBillTotal > 0)
             {
-                stackableTotalDiscount = Math.Min(stackableTotalDiscount, billTotal);
+                stackableTotalDiscount = Math.Min(stackableTotalDiscount, effectiveBillTotal);
             }
 
             // ส่วนลดของโปรโมชั่นเดี่ยวที่ดีที่สุดในกลุ่ม A
@@ -1242,6 +1379,12 @@ namespace Porjai20.Services
                 .FirstOrDefault();
 
             decimal bestSingleDiscount = bestSingle.promo != null ? bestSingle.discount : 0m;
+            decimal autoIncludedInSingle = bestSingle.promo != null ? bestSingle.item.AutoIncludedAmount : 0m;
+            decimal singleEffectiveTotal = billTotal + autoIncludedInSingle;
+            if (singleEffectiveTotal > 0)
+            {
+                bestSingleDiscount = Math.Min(bestSingleDiscount, singleEffectiveTotal);
+            }
 
             // เลือกระบบที่ลูกค้าได้ประโยชน์สูงสุด (Best Benefit for Customer):
             // หากกลุ่ม B ได้ลดรวมมากกว่าหรือเท่ากับกลุ่ม A (และกลุ่ม B มีโปรอย่างน้อย 1 ตัว) ให้ใช้ชุดกลุ่ม B ทั้งหมด

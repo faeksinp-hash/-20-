@@ -815,7 +815,7 @@
                                         <StackPanel>
                                             <Grid Margin="0,0,0,6">
                                                 <TextBlock Text="ยอดรวมสินค้า" FontSize="15" FontWeight="SemiBold" Foreground="#64748B"/>
-                                                <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding DisplaySubtotal, StringFormat={}{0:N2}}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Right"/>
                                             </Grid>
 
                                             <Grid Margin="0,0,0,6" Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVis}}">

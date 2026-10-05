@@ -51,10 +51,30 @@ namespace Porjai20.ViewModels
             {
                 if (SetProperty(ref _totalAmountBeforeDiscount, value))
                 {
+                    OnPropertyChanged(nameof(DisplaySubtotal));
                     Recalculate();
                 }
             }
         }
+
+        private decimal _autoIncludedGiftAmount;
+        public decimal AutoIncludedGiftAmount
+        {
+            get => _autoIncludedGiftAmount;
+            set
+            {
+                if (SetProperty(ref _autoIncludedGiftAmount, value))
+                {
+                    OnPropertyChanged(nameof(DisplaySubtotal));
+                    OnPropertyChanged(nameof(NetPayableAmount));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                    OnPropertyChanged(nameof(MaxRedeemablePoints));
+                }
+            }
+        }
+
+        public decimal DisplaySubtotal => TotalAmountBeforeDiscount + AutoIncludedGiftAmount;
 
         private decimal _shippingFee;
         public decimal ShippingFee
@@ -181,7 +201,7 @@ namespace Porjai20.ViewModels
             }
         }
 
-        public decimal NetPayableAmount => Math.Max(0, TotalAmountBeforeDiscount + ShippingFee - PromotionDiscountAmount - DiscountAmount);
+        public decimal NetPayableAmount => Math.Max(0, DisplaySubtotal + ShippingFee - PromotionDiscountAmount - DiscountAmount);
 
         private decimal _cashReceived;
         public decimal CashReceived
@@ -205,7 +225,7 @@ namespace Porjai20.ViewModels
             get
             {
                 int available = CurrentPoints;
-                int maxByBill = (int)Math.Floor(TotalAmountBeforeDiscount + ShippingFee);
+                int maxByBill = (int)Math.Floor(DisplaySubtotal + ShippingFee);
                 return Math.Max(0, Math.Min(available, maxByBill));
             }
         }
@@ -416,6 +436,7 @@ namespace Porjai20.ViewModels
                     TotalAmountBeforeDiscount,
                     allPromos);
 
+                AutoIncludedGiftAmount = bestPromo?.AutoIncludedAmount ?? 0m;
                 HasAutoPromotion = bestPromo != null && bestPromo.DiscountAmount > 0;
                 AutoPromotionName = bestPromo != null 
                     ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
@@ -448,12 +469,14 @@ namespace Porjai20.ViewModels
                 OnPropertyChanged(nameof(AppliedPromotionDetails));
                 OnPropertyChanged(nameof(AppliedPromotions));
                 OnPropertyChanged(nameof(PromotionDiscountAmount));
+                OnPropertyChanged(nameof(DisplaySubtotal));
                 OnPropertyChanged(nameof(NetPayableAmount));
                 OnPropertyChanged(nameof(ChangeAmount));
                 OnPropertyChanged(nameof(EarnedPoints));
             }
             catch
             {
+                AutoIncludedGiftAmount = 0m;
                 HasAutoPromotion = false;
                 AutoPromotionName = "";
                 PromotionDiscountAmount = 0;
@@ -465,6 +488,7 @@ namespace Porjai20.ViewModels
                 OnPropertyChanged(nameof(AppliedPromotionDetails));
                 OnPropertyChanged(nameof(AppliedPromotions));
                 OnPropertyChanged(nameof(PromotionDiscountAmount));
+                OnPropertyChanged(nameof(DisplaySubtotal));
                 OnPropertyChanged(nameof(NetPayableAmount));
                 OnPropertyChanged(nameof(ChangeAmount));
                 OnPropertyChanged(nameof(EarnedPoints));

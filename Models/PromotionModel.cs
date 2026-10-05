@@ -233,6 +233,14 @@ namespace Porjai20.Models
             }
         }
 
+        private decimal _freeProductPrice;
+        /// <summary>ราคาสินค้าของแถม</summary>
+        public decimal FreeProductPrice
+        {
+            get => _freeProductPrice;
+            set => SetProperty(ref _freeProductPrice, value);
+        }
+
         /// <summary>ซื้อเบิ้ลได้ไหม เช่น ซื้อ 4 แถม 2 (1 = ได้, 0 = ครั้งเดียวต่อบิล)</summary>
         public bool CanRepeat
         {
@@ -739,6 +747,7 @@ namespace Porjai20.Models
                 FreeQuantity = this.FreeQuantity,
                 FreeProductID = this.FreeProductID,
                 FreeProductName = this.FreeProductName,
+                FreeProductPrice = this.FreeProductPrice,
                 CanRepeat = this.CanRepeat,
                 IsMemberOnly = this.IsMemberOnly,
                 CanCombine = this.CanCombine,

@@ -823,8 +823,28 @@ namespace Porjai20.ViewModels
         public List<PromotionModel> AppliedPromotions { get; set; } = new();
         public ObservableCollection<AppliedPromotionResult> AppliedPromotionDetails { get; } = new();
 
+        private decimal _autoIncludedGiftAmount;
+        public decimal AutoIncludedGiftAmount
+        {
+            get => _autoIncludedGiftAmount;
+            set
+            {
+                if (SetProperty(ref _autoIncludedGiftAmount, value))
+                {
+                    OnPropertyChanged(nameof(DisplaySubtotal));
+                    OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                    OnPropertyChanged(nameof(NetPayableAmount));
+                    OnPropertyChanged(nameof(CartTotal));
+                    OnPropertyChanged(nameof(CheckoutGrandTotal));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(Change));
+                }
+            }
+        }
+
+        public decimal DisplaySubtotal => TotalAmount + AutoIncludedGiftAmount;
         public decimal ShippingFee => SelectedShippingMethod == "Delivery" ? CustomShippingFee : 0;
-        public decimal TotalAmountBeforeDiscount => TotalAmount + ShippingFee;
+        public decimal TotalAmountBeforeDiscount => DisplaySubtotal + ShippingFee;
         public decimal NetPayableAmount => Math.Max(0, TotalAmountBeforeDiscount - PromotionDiscountAmount - DiscountAmount);
         public decimal CartTotal => NetPayableAmount;
         public decimal CheckoutGrandTotal => NetPayableAmount;
@@ -873,6 +893,7 @@ namespace Porjai20.ViewModels
                 ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
                 : "";
             PromotionDiscountAmount = bestPromo?.DiscountAmount ?? 0m;
+            AutoIncludedGiftAmount = bestPromo?.AutoIncludedAmount ?? 0m;
             AppliedPromoID = bestPromo?.PromoID;
             AppliedAutoPromotion = bestPromo?.Promotion;
             AppliedPromotions = bestPromo?.AppliedPromotions ?? new List<PromotionModel>();
@@ -1936,7 +1957,7 @@ namespace Porjai20.ViewModels
                             PointsEarned = EarnedPoints,
                             PromoID = AppliedPromoID,
                             PromoDiscount = PromotionDiscountAmount,
-                            TotalAmount = TotalAmount,
+                            TotalAmount = DisplaySubtotal,
                             NetAmount = NetPayableAmount
                         };
 
@@ -2150,10 +2171,81 @@ namespace Porjai20.ViewModels
                             }
                         }
 
-                        // Record promotion freebies/gifts in tblSalesDetail and deduct stock (เฉพาะของแถมที่ยังไม่อยู่ในตะกร้าสินค้า)
+                        // Record auto-included gifts/freebies in tblSalesDetail and deduct stock
+                        var autoIncludedGifts = AppliedPromotionDetails.Where(x => x.IsAutoIncluded).ToList();
+                        foreach (var gift in autoIncludedGifts)
+                        {
+                            int giftProdId = gift.GiftProductId ?? 0;
+                            if (giftProdId <= 0 && gift.Promotion != null)
+                            {
+                                if (int.TryParse(gift.Promotion.FreeProductID, out int pId))
+                                    giftProdId = pId;
+                                else if (!string.IsNullOrEmpty(gift.Promotion.FreeProductID) &&
+                                         gift.Promotion.FreeProductID.StartsWith("P-", StringComparison.OrdinalIgnoreCase) &&
+                                         int.TryParse(gift.Promotion.FreeProductID.Substring(2), out int pId2))
+                                    giftProdId = pId2;
+                            }
+
+                            if (giftProdId <= 0 && !string.IsNullOrWhiteSpace(gift.GiftProductName))
+                            {
+                                var matchProd = _allProducts.FirstOrDefault(p =>
+                                    string.Equals(p.Name.Trim(), gift.GiftProductName.Trim(), StringComparison.OrdinalIgnoreCase));
+                                if (matchProd != null) giftProdId = matchProd.Id;
+                            }
+
+                            if (giftProdId > 0 && gift.GiftQuantity > 0)
+                            {
+                                // 1. Deduct Stock for Free Gift in tblProduct
+                                string sqlDeduct = "UPDATE tblProduct SET Pro_Qty = MAX(0, Pro_Qty - @Qty) WHERE Pro_ID = @Id;";
+                                await conn.ExecuteAsync(sqlDeduct, new { Qty = gift.GiftQuantity, Id = giftProdId }, trans);
+
+                                // 2. Insert into tblSalesDetail
+                                decimal giftSubtotal = gift.GiftQuantity * gift.UnitPrice;
+                                try
+                                {
+                                    string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, UnitPrice, Sales_Qty, Discount, Sales_Subtotal, NetAmount, PromoID)
+                                                         VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @UnitPrice, @Sales_Qty, @Discount, @Sales_Subtotal, @NetAmount, @PromoID);";
+                                    await conn.ExecuteAsync(sqlDetail, new 
+                                    { 
+                                        Sales_ID = orderId, 
+                                        Pro_ID = giftProdId, 
+                                        Pro_Price = gift.UnitPrice, 
+                                        UnitPrice = gift.UnitPrice,
+                                        Sales_Qty = gift.GiftQuantity, 
+                                        Discount = gift.DiscountAmount,
+                                        Sales_Subtotal = giftSubtotal,
+                                        NetAmount = 0.00m,
+                                        PromoID = gift.PromoID
+                                    }, trans);
+                                }
+                                catch
+                                {
+                                    string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
+                                                         VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal);";
+                                    await conn.ExecuteAsync(sqlDetail, new 
+                                    { 
+                                        Sales_ID = orderId, 
+                                        Pro_ID = giftProdId, 
+                                        Pro_Price = gift.UnitPrice, 
+                                        Sales_Qty = gift.GiftQuantity, 
+                                        Sales_Subtotal = 0.00m 
+                                    }, trans);
+                                }
+
+                                // 3. Update local product instance
+                                var existingGift = _allProducts.FirstOrDefault(p => p.Id == giftProdId);
+                                if (existingGift != null)
+                                {
+                                    existingGift.Stock -= gift.GiftQuantity;
+                                }
+                            }
+                        }
+
+                        // Record promotion freebies/gifts from evaluate in tblSalesDetail and deduct stock (เฉพาะของแถมที่ยังไม่อยู่ในตะกร้าสินค้าและไม่ได้ถูก auto-included)
                         var promoEval = await PromotionService.Instance.EvaluateCartPromotionsAsync(CartItems, SelectedCustomer);
                         promoEval.FreebiesToAdd = promoEval.FreebiesToAdd
-                            .Where(f => !CartItems.Any(c => c.Product.Id == f.ProductId))
+                            .Where(f => !CartItems.Any(c => c.Product.Id == f.ProductId) &&
+                                        !autoIncludedGifts.Any(g => g.GiftProductId == f.ProductId))
                             .ToList();
 
                         if (AppliedPromotions != null && AppliedPromotions.Count > 0)
