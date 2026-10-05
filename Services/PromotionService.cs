@@ -47,6 +47,7 @@ namespace Porjai20.Services
         public decimal UnitPrice { get; set; }
         public bool IsAutoIncluded { get; set; }
         public decimal AutoIncludedAmount { get; set; }
+        public decimal GiftItemValue => AutoIncludedAmount > 0 ? AutoIncludedAmount : ((UnitPrice > 0 ? UnitPrice : (GiftQuantity > 0 ? (DiscountAmount / GiftQuantity) : DiscountAmount)) * (GiftQuantity > 0 ? GiftQuantity : 1));
         public PromotionModel? Promotion { get; set; }
     }
 

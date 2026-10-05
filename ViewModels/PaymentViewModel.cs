@@ -43,14 +43,51 @@ namespace Porjai20.ViewModels
             }
         }
 
+        private decimal _totalAmount;
+        public decimal TotalAmount
+        {
+            get => _totalAmount;
+            set
+            {
+                if (SetProperty(ref _totalAmount, value))
+                {
+                    OnPropertyChanged(nameof(SubtotalAmount));
+                    OnPropertyChanged(nameof(DisplaySubtotal));
+                    OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                    OnPropertyChanged(nameof(NetPayableAmount));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                    OnPropertyChanged(nameof(MaxRedeemablePoints));
+                }
+            }
+        }
+
+        public decimal SubtotalAmount
+        {
+            get => TotalAmount;
+            set => TotalAmount = value;
+        }
+
+        public decimal DisplaySubtotal
+        {
+            get => TotalAmount;
+            set => TotalAmount = value;
+        }
+
         private decimal _totalAmountBeforeDiscount;
         public decimal TotalAmountBeforeDiscount
         {
-            get => _totalAmountBeforeDiscount;
+            get => _totalAmountBeforeDiscount > 0 ? _totalAmountBeforeDiscount : _totalAmount;
             set
             {
                 if (SetProperty(ref _totalAmountBeforeDiscount, value))
                 {
+                    if (_totalAmount <= 0)
+                    {
+                        _totalAmount = value + AutoIncludedGiftAmount;
+                        OnPropertyChanged(nameof(TotalAmount));
+                        OnPropertyChanged(nameof(SubtotalAmount));
+                    }
                     OnPropertyChanged(nameof(DisplaySubtotal));
                     Recalculate();
                 }
@@ -66,6 +103,8 @@ namespace Porjai20.ViewModels
                 if (SetProperty(ref _autoIncludedGiftAmount, value))
                 {
                     OnPropertyChanged(nameof(DisplaySubtotal));
+                    OnPropertyChanged(nameof(SubtotalAmount));
+                    OnPropertyChanged(nameof(TotalAmount));
                     OnPropertyChanged(nameof(NetPayableAmount));
                     OnPropertyChanged(nameof(ChangeAmount));
                     OnPropertyChanged(nameof(EarnedPoints));
@@ -74,7 +113,20 @@ namespace Porjai20.ViewModels
             }
         }
 
-        public decimal DisplaySubtotal => TotalAmountBeforeDiscount + AutoIncludedGiftAmount;
+        private decimal _totalDiscount;
+        public decimal TotalDiscount
+        {
+            get => _totalDiscount > 0 ? _totalDiscount : (PromotionDiscountAmount + DiscountAmount);
+            set
+            {
+                if (SetProperty(ref _totalDiscount, value))
+                {
+                    OnPropertyChanged(nameof(NetPayableAmount));
+                    OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(EarnedPoints));
+                }
+            }
+        }
 
         private decimal _shippingFee;
         public decimal ShippingFee
@@ -177,6 +229,13 @@ namespace Porjai20.ViewModels
         public List<PromotionModel> AppliedPromotions { get; set; } = new();
         public ObservableCollection<Services.AppliedPromotionResult> AppliedPromotionDetails { get; } = new();
 
+        private bool _isProcessing;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            set => SetProperty(ref _isProcessing, value);
+        }
+
         private IEnumerable<CartItem>? _cartItems;
         public IEnumerable<CartItem>? CartItems
         {
@@ -184,6 +243,19 @@ namespace Porjai20.ViewModels
             set
             {
                 _cartItems = value;
+                if (_cartItems != null)
+                {
+                    decimal itemsSum = _cartItems.Sum(x => x.Total);
+                    if (itemsSum > 0)
+                    {
+                        _totalAmountBeforeDiscount = itemsSum;
+                        _totalAmount = itemsSum + _autoIncludedGiftAmount;
+                        OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                        OnPropertyChanged(nameof(TotalAmount));
+                        OnPropertyChanged(nameof(SubtotalAmount));
+                        OnPropertyChanged(nameof(DisplaySubtotal));
+                    }
+                }
                 RecalculateAutoPromotion();
             }
         }
@@ -201,7 +273,7 @@ namespace Porjai20.ViewModels
             }
         }
 
-        public decimal NetPayableAmount => Math.Max(0, DisplaySubtotal + ShippingFee - PromotionDiscountAmount - DiscountAmount);
+        public decimal NetPayableAmount => Math.Max(0, (TotalAmount > 0 ? TotalAmount : (DisplaySubtotal + ShippingFee)) - (TotalDiscount > 0 ? TotalDiscount : (PromotionDiscountAmount + DiscountAmount)));
 
         private decimal _cashReceived;
         public decimal CashReceived
@@ -225,7 +297,8 @@ namespace Porjai20.ViewModels
             get
             {
                 int available = CurrentPoints;
-                int maxByBill = (int)Math.Floor(DisplaySubtotal + ShippingFee);
+                decimal baseAmount = TotalAmount > 0 ? TotalAmount : (DisplaySubtotal + ShippingFee);
+                int maxByBill = (int)Math.Floor(baseAmount);
                 return Math.Max(0, Math.Min(available, maxByBill));
             }
         }
@@ -308,6 +381,34 @@ namespace Porjai20.ViewModels
             ConfirmPointRedeemCommand = new RelayCommand(_ => ConfirmPointRedeem());
             CancelPointDiscountCommand = new RelayCommand(_ => ResetRedemption());
             RecalculateAutoPromotion();
+        }
+
+        public PaymentViewModel(IEnumerable<CartItem>? cartItems, decimal subtotal = 0m, Customer? member = null) : this()
+        {
+            if (member != null)
+            {
+                CurrentMember = member;
+            }
+            if (cartItems != null)
+            {
+                _cartItems = cartItems;
+                decimal itemsSum = cartItems.Sum(x => x.Total);
+                if (subtotal <= 0) subtotal = itemsSum;
+            }
+            if (subtotal > 0)
+            {
+                _totalAmountBeforeDiscount = subtotal;
+                _totalAmount = subtotal;
+                OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged(nameof(SubtotalAmount));
+                OnPropertyChanged(nameof(DisplaySubtotal));
+            }
+            RecalculateAutoPromotion();
+        }
+
+        public PaymentViewModel(IEnumerable<CartItem>? cartItems, Customer? member) : this(cartItems, 0m, member)
+        {
         }
 
         public void OpenPointRedeem()
@@ -430,13 +531,25 @@ namespace Porjai20.ViewModels
             {
                 bool isMember = CurrentMember != null || IsMemberChecked;
                 var allPromos = await Services.PromotionService.Instance.GetAllPromotionsAsync();
+
+                // 1. รวมยอดสินค้าเดิมจากตะกร้า (สมุด 5 เล่ม x 10 = 50.00)
+                decimal cartTotal = CartItems?.Sum(x => x.TotalPrice) ?? 0m;
+                if (cartTotal <= 0 && _totalAmountBeforeDiscount > 0)
+                {
+                    cartTotal = _totalAmountBeforeDiscount;
+                }
+                else if (cartTotal > 0 && _totalAmountBeforeDiscount <= 0)
+                {
+                    _totalAmountBeforeDiscount = cartTotal;
+                    OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                }
+
                 var bestPromo = Services.PromotionService.Instance.EvaluateAutoPromotions(
                     CartItems ?? new List<CartItem>(),
                     isMember,
-                    TotalAmountBeforeDiscount,
+                    cartTotal,
                     allPromos);
 
-                AutoIncludedGiftAmount = bestPromo?.AutoIncludedAmount ?? 0m;
                 HasAutoPromotion = bestPromo != null && bestPromo.DiscountAmount > 0;
                 AutoPromotionName = bestPromo != null 
                     ? (!string.IsNullOrWhiteSpace(bestPromo.PromoName) ? bestPromo.PromoName : (bestPromo.Promotion?.ConditionDescription ?? ""))
@@ -445,6 +558,31 @@ namespace Porjai20.ViewModels
                 AppliedPromoID = bestPromo?.PromoID;
                 AppliedAutoPromotion = bestPromo?.Promotion;
                 AppliedPromotions = bestPromo?.AppliedPromotions ?? new List<PromotionModel>();
+
+                // 2. รวมมูลค่าสินค้าของแจก/แถมที่ระบบเพิ่มให้ (ดินสอ 1 แท่ง = 10.00)
+                decimal freeGiftTotal = bestPromo?.AutoIncludedAmount ?? 0m;
+                if (freeGiftTotal <= 0 && AppliedPromotions != null && AppliedPromotions.Count > 0)
+                {
+                    freeGiftTotal = AppliedPromotions
+                        .Where(p => p.PromoType == "Gift" || p.PromoType == "Freebie")
+                        .Sum(p => p.GiftItemValue);
+                }
+                if (freeGiftTotal <= 0 && bestPromo?.AppliedItems != null)
+                {
+                    freeGiftTotal = bestPromo.AppliedItems
+                        .Where(p => p.IsAutoIncluded || p.PromoType == "Gift" || p.PromoType == "Freebie")
+                        .Sum(p => p.AutoIncludedAmount > 0 ? p.AutoIncludedAmount : (p.IsAutoIncluded ? p.DiscountAmount : 0m));
+                }
+
+                AutoIncludedGiftAmount = freeGiftTotal;
+
+                // 3. กำหนดค่ายอดรวมสินค้าก่อนลด (50.00 + 10.00 = 60.00)
+                TotalAmount = cartTotal + freeGiftTotal;
+
+                // 4. คำนวณส่วนลดรวมทั้งหมด (25.00 + 10.00 = 35.00)
+                TotalDiscount = (AppliedPromotions != null && AppliedPromotions.Count > 0 
+                    ? AppliedPromotions.Sum(p => p.DiscountAmount) 
+                    : PromotionDiscountAmount) + DiscountAmount;
 
                 AppliedPromotionDetails.Clear();
                 if (bestPromo?.AppliedItems != null && bestPromo.AppliedItems.Count > 0)
@@ -466,16 +604,25 @@ namespace Porjai20.ViewModels
                     });
                 }
 
+                // 5. คำนวณยอดสุทธิที่ต้องชำระ (60.00 - 35.00 = 25.00)
+                OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged(nameof(SubtotalAmount));
+                OnPropertyChanged(nameof(DisplaySubtotal));
+                OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                OnPropertyChanged(nameof(TotalDiscount));
                 OnPropertyChanged(nameof(AppliedPromotionDetails));
                 OnPropertyChanged(nameof(AppliedPromotions));
                 OnPropertyChanged(nameof(PromotionDiscountAmount));
-                OnPropertyChanged(nameof(DisplaySubtotal));
                 OnPropertyChanged(nameof(NetPayableAmount));
                 OnPropertyChanged(nameof(ChangeAmount));
                 OnPropertyChanged(nameof(EarnedPoints));
             }
             catch
             {
+                decimal fallbackCart = CartItems?.Sum(x => x.TotalPrice) ?? 0m;
+                if (fallbackCart <= 0 && _totalAmountBeforeDiscount > 0) fallbackCart = _totalAmountBeforeDiscount;
+                TotalAmount = fallbackCart;
+                TotalDiscount = DiscountAmount;
                 AutoIncludedGiftAmount = 0m;
                 HasAutoPromotion = false;
                 AutoPromotionName = "";
@@ -485,10 +632,14 @@ namespace Porjai20.ViewModels
                 AppliedPromotions = new List<PromotionModel>();
                 AppliedPromotionDetails.Clear();
 
+                OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged(nameof(SubtotalAmount));
+                OnPropertyChanged(nameof(DisplaySubtotal));
+                OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                OnPropertyChanged(nameof(TotalDiscount));
                 OnPropertyChanged(nameof(AppliedPromotionDetails));
                 OnPropertyChanged(nameof(AppliedPromotions));
                 OnPropertyChanged(nameof(PromotionDiscountAmount));
-                OnPropertyChanged(nameof(DisplaySubtotal));
                 OnPropertyChanged(nameof(NetPayableAmount));
                 OnPropertyChanged(nameof(ChangeAmount));
                 OnPropertyChanged(nameof(EarnedPoints));

@@ -238,8 +238,17 @@ namespace Porjai20.Models
         public decimal FreeProductPrice
         {
             get => _freeProductPrice;
-            set => SetProperty(ref _freeProductPrice, value);
+            set
+            {
+                if (SetProperty(ref _freeProductPrice, value))
+                {
+                    OnPropertyChanged(nameof(GiftItemValue));
+                }
+            }
         }
+
+        /// <summary>มูลค่ารวมของสินค้าของแถม (ราคาต่อหน่วย x จำนวนของแถม)</summary>
+        public decimal GiftItemValue => (FreeProductPrice > 0 ? FreeProductPrice : (ItemCost > 0 ? ItemCost : 0m)) * (FreeQuantity > 0 ? FreeQuantity : 1);
 
         /// <summary>ซื้อเบิ้ลได้ไหม เช่น ซื้อ 4 แถม 2 (1 = ได้, 0 = ครั้งเดียวต่อบิล)</summary>
         public bool CanRepeat

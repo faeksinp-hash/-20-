@@ -72,9 +72,41 @@ namespace Porjai20.ViewModels
                     OnPropertyChanged(nameof(CartTotal));
                     OnPropertyChanged(nameof(CheckoutGrandTotal));
                     OnPropertyChanged(nameof(ChangeAmount));
+                    OnPropertyChanged(nameof(DisplaySubtotal));
+                    OnPropertyChanged(nameof(Subtotal));
+                    OnPropertyChanged(nameof(SubtotalAmount));
+                    OnPropertyChanged(nameof(TotalBeforeDiscount));
+                    OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
+                    OnPropertyChanged(nameof(NetPayableAmount));
                 }
             }
         }
+
+        public decimal Subtotal => DisplaySubtotal;
+        public decimal SubtotalAmount => DisplaySubtotal;
+        public decimal TotalBeforeDiscount => DisplaySubtotal;
+
+        private PaymentViewModel? _paymentVM;
+        public PaymentViewModel? PaymentVM
+        {
+            get => _paymentVM;
+            set => SetProperty(ref _paymentVM, value);
+        }
+
+        private bool _isProcessing;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            set
+            {
+                if (SetProperty(ref _isProcessing, value))
+                {
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        public ICommand ConfirmPaymentCommand => NextStepCommand;
 
         // Error Modal Overlay Properties
         private bool _isErrorModalOpen;
@@ -918,6 +950,12 @@ namespace Porjai20.ViewModels
                 });
             }
 
+            OnPropertyChanged(nameof(TotalAmount));
+            OnPropertyChanged(nameof(DisplaySubtotal));
+            OnPropertyChanged(nameof(Subtotal));
+            OnPropertyChanged(nameof(SubtotalAmount));
+            OnPropertyChanged(nameof(TotalBeforeDiscount));
+            OnPropertyChanged(nameof(TotalAmountBeforeDiscount));
             OnPropertyChanged(nameof(AppliedPromotionDetails));
             OnPropertyChanged(nameof(HasAutoPromotion));
             OnPropertyChanged(nameof(AutoPromotionName));
@@ -929,6 +967,7 @@ namespace Porjai20.ViewModels
             OnPropertyChanged(nameof(ChangeAmount));
             OnPropertyChanged(nameof(Change));
             OnPropertyChanged(nameof(EarnedPoints));
+            OnPropertyChanged(nameof(PaymentVM));
         }
 
         private string _customerName = "";
@@ -1172,13 +1211,14 @@ namespace Porjai20.ViewModels
                         }
                     }
 
+                    PaymentVM = new PaymentViewModel(CartItems, TotalAmount, SelectedCustomer);
                     await RecalculateAutoPromotionAsync();
                 }
             });
             NumpadCommand = new RelayCommand(param => NumpadInput(param?.ToString()), _ => true);
-            NextStepCommand = new RelayCommand(async _ => await NextStep());
-            PrevStepCommand = new RelayCommand(_ => PrevStep());
-            ConfirmOrderCommand = new RelayCommand(async _ => await ConfirmOrder());
+            NextStepCommand = new RelayCommand(async _ => await NextStep(), _ => !IsProcessing);
+            PrevStepCommand = new RelayCommand(_ => PrevStep(), _ => !IsProcessing);
+            ConfirmOrderCommand = new RelayCommand(async _ => await ConfirmOrder(), _ => !IsProcessing);
             // Delivery Modal Commands
             OpenDeliveryModalCommand = new RelayCommand(_ => OpenDeliveryModal());
             CloseDeliveryModalCommand = new RelayCommand(_ => { 
@@ -1816,6 +1856,8 @@ namespace Porjai20.ViewModels
 
         private async Task NextStep()
         {
+            if (IsProcessing) return;
+
             if (CurrentStep == 1)
             {
                 if (IsDeliverySelected)
@@ -1832,6 +1874,7 @@ namespace Porjai20.ViewModels
                     await InitializeMemberAsync();
                 }
                 CurrentStep = 2;
+                PaymentVM = new PaymentViewModel(CartItems, TotalAmount, SelectedCustomer);
                 await RecalculateAutoPromotionAsync();
             }
             else if (CurrentStep == 2)
@@ -1862,6 +1905,7 @@ namespace Porjai20.ViewModels
 
         private async Task ConfirmOrder()
         {
+            if (IsProcessing) return;
             if (CartItems.Count == 0) return;
 
             // 1. Stock Check
@@ -1875,480 +1919,482 @@ namespace Porjai20.ViewModels
                 }
             }
 
-            // 2. Transaction DB Save
-            using (var conn = _databaseService.GetConnection())
+            IsProcessing = true;
+            try
             {
-                conn.Open();
-                using (var trans = conn.BeginTransaction())
+                // Snapshot data from UI thread to ensure thread safety
+                var cartSnapshot = CartItems.ToList();
+                var autoIncludedGifts = AppliedPromotionDetails.Where(x => x.IsAutoIncluded).ToList();
+                var appliedPromos = AppliedPromotions?.ToList() ?? new List<PromotionModel>();
+                var appliedPromoDetails = AppliedPromotionDetails.ToList();
+
+                var orderRef = "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+                LastRefNo = orderRef;
+                var effectivePayment = !string.IsNullOrWhiteSpace(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด";
+
+                int? customerId = null;
+                if (SelectedCustomer != null && SelectedCustomer.Id > 0)
                 {
-                    try
+                    customerId = SelectedCustomer.Id;
+                }
+                else if (SelectedDeliveryCustomer != null && SelectedDeliveryCustomer.Id > 0)
+                {
+                    customerId = SelectedDeliveryCustomer.Id;
+                }
+
+                string rawCustPhone = CustomerPhone ?? "";
+                string rawCustName = CustomerName ?? "";
+                string rawCustAddress = CustomerAddress ?? "";
+                string rawDelivCustName = DeliveryCustomerName ?? "";
+                string rawDelivCustPhone = DeliveryCustomerPhone ?? "";
+                string rawDelivCustAddress = DeliveryCustomerAddress ?? "";
+                string shippingMethod = SelectedShippingMethod ?? "";
+                bool isDelivery = shippingMethod == "Delivery";
+
+                decimal netPayable = NetPayableAmount;
+                decimal subtotal = DisplaySubtotal;
+                decimal discountAmount = PromotionDiscountAmount + DiscountAmount;
+                int pointsUsed = UsedPoints;
+                int pointsToEarn = EarnedPoints > 0 ? EarnedPoints : PointsService.Instance.CalculateEarnedPoints(CheckoutGrandTotal);
+                string? appliedPromoId = AppliedPromoID;
+                decimal promoDiscount = PromotionDiscountAmount;
+                bool isCash = IsCashPayment;
+                decimal cashReceived = isCash ? CashAmountReceived : netPayable;
+                decimal change = isCash ? ChangeAmount : 0;
+                decimal grandTotal = CheckoutGrandTotal;
+
+                // 2. Transaction DB Save in Background Thread (Eliminating UI Thread Deadlock)
+                await Task.Run(async () =>
+                {
+                    using (var conn = _databaseService.GetConnection())
                     {
-                        var orderRef = "SALE-" + System.DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
-                        LastRefNo = orderRef;
-                        var effectivePayment = !string.IsNullOrWhiteSpace(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด";
-
-                        int? customerId = null;
-                        if (SelectedCustomer != null && SelectedCustomer.Id > 0)
-                        {
-                            customerId = SelectedCustomer.Id;
-                        }
-                        else if (SelectedDeliveryCustomer != null && SelectedDeliveryCustomer.Id > 0)
-                        {
-                            customerId = SelectedDeliveryCustomer.Id;
-                        }
-                        else if (!string.IsNullOrWhiteSpace(CustomerPhone) || !string.IsNullOrWhiteSpace(CustomerName))
-                        {
-                            string cleanP = (CustomerPhone ?? "").Replace("-", "").Replace(" ", "").Trim();
-                            string rawN = (CustomerName ?? "").Trim();
-                            var matched = _allCustomers.FirstOrDefault(c => 
-                                (!string.IsNullOrEmpty(c.Phone) && !string.IsNullOrEmpty(cleanP) && c.Phone.Replace("-", "").Replace(" ", "").Trim() == cleanP)
-                                || (!string.IsNullOrEmpty(c.Name) && !string.IsNullOrEmpty(rawN) && c.Name.Trim().Equals(rawN, StringComparison.OrdinalIgnoreCase)));
-                            
-                            if (matched == null && (!string.IsNullOrEmpty(cleanP) || !string.IsNullOrEmpty(rawN)))
-                            {
-                                try
-                                {
-                                    string sqlFind = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
-                                                       FROM tblCustomer 
-                                                       WHERE (REPLACE(REPLACE(Cus_Tel, '-', ''), ' ', '') = @cleanP AND @cleanP <> '') 
-                                                          OR (Cus_Name = @rawN AND @rawN <> '') 
-                                                       LIMIT 1";
-                                    matched = await conn.QueryFirstOrDefaultAsync<Customer>(sqlFind, new { cleanP, rawN }, trans);
-                                }
-                                catch { }
-                            }
-
-                            if (matched != null && matched.Id > 0)
-                            {
-                                customerId = matched.Id;
-                                if (SelectedCustomer == null) SelectedCustomer = matched;
-                            }
-                        }
-
-                        var salesOrder = new SalesOrder
-                        {
-                            RefNo = orderRef,
-                            TotalAmount = CartTotal,
-                            CashReceived = IsCashPayment ? CashAmountReceived : CartTotal,
-                            Change = IsCashPayment ? ChangeAmount : 0,
-                            PaymentMethod = effectivePayment,
-                            Timestamp = System.DateTime.Now,
-                            IsDelivery = SelectedShippingMethod == "Delivery",
-                            CustomerName = SelectedShippingMethod == "Delivery" ? CustomerName : (SelectedCustomer?.Name ?? null),
-                            CustomerPhone = SelectedShippingMethod == "Delivery" ? CustomerPhone : (SelectedCustomer?.Phone ?? null),
-                            CustomerAddress = SelectedShippingMethod == "Delivery" ? CustomerAddress : (SelectedCustomer?.Address ?? null),
-                            DeliveryStatus = SelectedShippingMethod == "Delivery" ? "รอจัดส่ง" : null,
-                            Cus_ID = customerId ?? 0
-                        };
-
-                        var salesOrderParam = new
-                        {
-                            RefNo = orderRef,
-                            Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
-                            Cus_ID = customerId,
-                            Emp_ID = (int?)null,
-                            Sales_Total = NetPayableAmount,
-                            Sales_Cash = IsCashPayment ? CashAmountReceived : NetPayableAmount,
-                            Sales_Change = IsCashPayment ? ChangeAmount : 0,
-                            Sales_PaymentType = effectivePayment,
-                            Sales_Status = "ชำระเงินแล้ว",
-                            DiscountAmount = PromotionDiscountAmount + DiscountAmount,
-                            PointsUsed = UsedPoints,
-                            PointsEarned = EarnedPoints,
-                            PromoID = AppliedPromoID,
-                            PromoDiscount = PromotionDiscountAmount,
-                            TotalAmount = DisplaySubtotal,
-                            NetAmount = NetPayableAmount
-                        };
-
-                        int orderId;
-                        try
-                        {
-                            string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned, PromoID, PromoDiscount, TotalAmount, NetAmount)
-                                                VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned, @PromoID, @PromoDiscount, @TotalAmount, @NetAmount);
-                                                SELECT last_insert_rowid();";
-                            orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
-                        }
-                        catch
+                        using (var trans = conn.BeginTransaction())
                         {
                             try
                             {
-                                string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned)
-                                                    VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned);
-                                                    SELECT last_insert_rowid();";
-                                orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
-                            }
-                            catch
-                            {
-                                string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
-                                                    VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
-                                                    SELECT last_insert_rowid();";
-                                orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
-                            }
-                        }
+                                if (!customerId.HasValue && (!string.IsNullOrWhiteSpace(rawCustPhone) || !string.IsNullOrWhiteSpace(rawCustName)))
+                                {
+                                    string cleanP = rawCustPhone.Replace("-", "").Replace(" ", "").Trim();
+                                    string rawN = rawCustName.Trim();
+                                    try
+                                    {
+                                        string sqlFind = @"SELECT Cus_ID as Id, Cus_Code as Code, Cus_Name as Name, Cus_Address as Address, Cus_Tel as Phone, Cus_Points as Points 
+                                                           FROM tblCustomer 
+                                                           WHERE (REPLACE(REPLACE(Cus_Tel, '-', ''), ' ', '') = @cleanP AND @cleanP <> '') 
+                                                              OR (Cus_Name = @rawN AND @rawN <> '') 
+                                                           LIMIT 1";
+                                        var matched = await conn.QueryFirstOrDefaultAsync<Customer>(sqlFind, new { cleanP, rawN }, trans);
+                                        if (matched != null && matched.Id > 0)
+                                        {
+                                            customerId = matched.Id;
+                                        }
+                                    }
+                                    catch { }
+                                }
 
-                        // อัปเดตยอดการใช้งานโปรโมชั่นใน tblPromotion
-                        if (AppliedPromotions != null && AppliedPromotions.Count > 0)
-                        {
-                            foreach (var p in AppliedPromotions)
-                            {
-                                string sqlUsage = @"
-                                    UPDATE tblPromotion 
-                                    SET CurrentUsage = CurrentUsage + 1,
-                                        UsageCount = COALESCE(UsageCount, 0) + 1 
-                                    WHERE PromoID = @PromoID;";
+                                var salesOrderParam = new
+                                {
+                                    RefNo = orderRef,
+                                    Sales_Date = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
+                                    Cus_ID = customerId,
+                                    Emp_ID = (int?)null,
+                                    Sales_Total = netPayable,
+                                    Sales_Cash = cashReceived,
+                                    Sales_Change = change,
+                                    Sales_PaymentType = effectivePayment,
+                                    Sales_Status = "ชำระเงินแล้ว",
+                                    DiscountAmount = discountAmount,
+                                    PointsUsed = pointsUsed,
+                                    PointsEarned = pointsToEarn,
+                                    PromoID = appliedPromoId,
+                                    PromoDiscount = promoDiscount,
+                                    TotalAmount = subtotal,
+                                    NetAmount = netPayable
+                                };
+
+                                int orderId;
                                 try
                                 {
-                                    await conn.ExecuteAsync(sqlUsage, new { p.PromoID }, trans);
+                                    string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned, PromoID, PromoDiscount, TotalAmount, NetAmount)
+                                                        VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned, @PromoID, @PromoDiscount, @TotalAmount, @NetAmount);
+                                                        SELECT last_insert_rowid();";
+                                    orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
                                 }
                                 catch
                                 {
-                                    await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { p.PromoID }, trans);
-                                }
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(AppliedPromoID))
-                        {
-                            string sqlUsage = @"
-                                UPDATE tblPromotion 
-                                SET CurrentUsage = CurrentUsage + 1,
-                                    UsageCount = COALESCE(UsageCount, 0) + 1 
-                                WHERE PromoID = @PromoID;";
-                            try
-                            {
-                                await conn.ExecuteAsync(sqlUsage, new { PromoID = AppliedPromoID }, trans);
-                            }
-                            catch
-                            {
-                                await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { PromoID = AppliedPromoID }, trans);
-                            }
-                        }
-
-                        if (SelectedShippingMethod == "Delivery")
-                        {
-                            string recipientName = !string.IsNullOrWhiteSpace(CustomerName) 
-                                ? CustomerName.Trim() 
-                                : (!string.IsNullOrWhiteSpace(DeliveryCustomerName) ? DeliveryCustomerName.Trim() : (SelectedCustomer?.Name?.Trim() ?? "ลูกค้าทั่วไป"));
-
-                            string recipientTel = !string.IsNullOrWhiteSpace(CustomerPhone) 
-                                ? CustomerPhone.Trim() 
-                                : (!string.IsNullOrWhiteSpace(DeliveryCustomerPhone) ? DeliveryCustomerPhone.Trim() : (SelectedCustomer?.Phone?.Trim() ?? "-"));
-
-                            string recipientAddress = !string.IsNullOrWhiteSpace(CustomerAddress) 
-                                ? CustomerAddress.Trim() 
-                                : (!string.IsNullOrWhiteSpace(DeliveryCustomerAddress) ? DeliveryCustomerAddress.Trim() : (SelectedCustomer?.Address?.Trim() ?? "ไม่ระบุที่อยู่"));
-
-                            string sqlDeliv = @"INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Tracking_No, Delivery_Status)
-                                                VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, @Tracking_No, @Delivery_Status);";
-                            await conn.ExecuteAsync(sqlDeliv, new 
-                            { 
-                                Sales_ID = orderId, 
-                                Recipient_Name = recipientName, 
-                                Recipient_Tel = recipientTel, 
-                                Recipient_Address = recipientAddress,
-                                Tracking_No = (string?)null,
-                                Delivery_Status = "รอจัดส่ง"
-                            }, trans);
-                        }
-
-                        // คำนวณส่วนลดและ PromoID รายสินค้าตามโปรโมชั่นที่ถูกนำไปใช้
-                        var itemDiscounts = new Dictionary<int, (decimal Discount, string? PromoId)>();
-                        foreach (var item in CartItems)
-                        {
-                            decimal itemDiscount = 0m;
-                            var promoIdsForItem = new List<string>();
-
-                            foreach (var promoResult in AppliedPromotionDetails)
-                            {
-                                if ((promoResult.PromoType == "Gift" || promoResult.PromoType == "Freebie") &&
-                                    promoResult.GiftProductId == item.Product.Id)
-                                {
-                                    itemDiscount += promoResult.DiscountAmount;
-                                    if (!string.IsNullOrEmpty(promoResult.PromoID))
-                                        promoIdsForItem.Add(promoResult.PromoID);
-                                }
-                                else if (promoResult.PromoType == "Discount")
-                                {
-                                    var p = promoResult.Promotion;
-                                    bool isTarget = false;
-                                    if (p != null && p.TargetScope == "SpecificProducts" && p.ProductIds != null)
+                                    try
                                     {
-                                        isTarget = p.ProductIds.Contains(item.Product.Id.ToString());
+                                        string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status, DiscountAmount, PointsUsed, PointsEarned)
+                                                            VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status, @DiscountAmount, @PointsUsed, @PointsEarned);
+                                                            SELECT last_insert_rowid();";
+                                        orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
                                     }
-                                    else if (promoResult.TargetProductId.HasValue)
+                                    catch
                                     {
-                                        isTarget = promoResult.TargetProductId.Value == item.Product.Id;
+                                        string sqlOrderH = @"INSERT INTO tblSales_H (RefNo, Sales_Date, Cus_ID, Emp_ID, Sales_Total, Sales_Cash, Sales_Change, Sales_PaymentType, Sales_Status)
+                                                            VALUES (@RefNo, @Sales_Date, @Cus_ID, @Emp_ID, @Sales_Total, @Sales_Cash, @Sales_Change, @Sales_PaymentType, @Sales_Status);
+                                                            SELECT last_insert_rowid();";
+                                        orderId = await conn.ExecuteScalarAsync<int>(sqlOrderH, salesOrderParam, trans);
                                     }
-                                    else if (p == null || p.TargetScope == "AllStore")
+                                }
+
+                                // 1. อัปเดตยอดการใช้งานโปรโมชั่นใน tblPromotion (Single Connection & Transaction)
+                                if (appliedPromos != null && appliedPromos.Count > 0)
+                                {
+                                    foreach (var p in appliedPromos)
                                     {
-                                        var eligibleItems = CartItems.Where(ci => 
-                                            !AppliedPromotionDetails.Any(ap => (ap.PromoType == "Gift" || ap.PromoType == "Freebie") && ap.GiftProductId == ci.Product.Id)
-                                        ).ToList();
-                                        if (eligibleItems.Count == 1 && eligibleItems[0].Product.Id == item.Product.Id)
+                                        string sqlUsage = @"
+                                            UPDATE tblPromotion 
+                                            SET CurrentUsage = CurrentUsage + 1,
+                                                UsageCount = COALESCE(UsageCount, 0) + 1 
+                                            WHERE PromoID = @PromoID;";
+                                        try
                                         {
-                                            isTarget = true;
+                                            await conn.ExecuteAsync(sqlUsage, new { p.PromoID }, trans);
                                         }
-                                        else if (eligibleItems.Count > 1)
+                                        catch
                                         {
-                                            decimal eligibleSum = eligibleItems.Sum(ei => ei.Total);
-                                            if (eligibleSum > 0 && eligibleItems.Any(ei => ei.Product.Id == item.Product.Id))
+                                            await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { p.PromoID }, trans);
+                                        }
+                                    }
+                                }
+                                else if (!string.IsNullOrEmpty(appliedPromoId))
+                                {
+                                    string sqlUsage = @"
+                                        UPDATE tblPromotion 
+                                        SET CurrentUsage = CurrentUsage + 1,
+                                            UsageCount = COALESCE(UsageCount, 0) + 1 
+                                        WHERE PromoID = @PromoID;";
+                                    try
+                                    {
+                                        await conn.ExecuteAsync(sqlUsage, new { PromoID = appliedPromoId }, trans);
+                                    }
+                                    catch
+                                    {
+                                        await conn.ExecuteAsync("UPDATE tblPromotion SET CurrentUsage = CurrentUsage + 1 WHERE PromoID = @PromoID;", new { PromoID = appliedPromoId }, trans);
+                                    }
+                                }
+
+                                // 2. บันทึกข้อมูลจัดส่งถ้าเป็น Delivery
+                                if (isDelivery)
+                                {
+                                    string recipientName = !string.IsNullOrWhiteSpace(rawCustName) 
+                                        ? rawCustName.Trim() 
+                                        : (!string.IsNullOrWhiteSpace(rawDelivCustName) ? rawDelivCustName.Trim() : "ลูกค้าทั่วไป");
+
+                                    string recipientTel = !string.IsNullOrWhiteSpace(rawCustPhone) 
+                                        ? rawCustPhone.Trim() 
+                                        : (!string.IsNullOrWhiteSpace(rawDelivCustPhone) ? rawDelivCustPhone.Trim() : "-");
+
+                                    string recipientAddress = !string.IsNullOrWhiteSpace(rawCustAddress) 
+                                        ? rawCustAddress.Trim() 
+                                        : (!string.IsNullOrWhiteSpace(rawDelivCustAddress) ? rawDelivCustAddress.Trim() : "ไม่ระบุที่อยู่");
+
+                                    string sqlDeliv = @"INSERT INTO tblDelivery (Sales_ID, Recipient_Name, Recipient_Tel, Recipient_Address, Tracking_No, Delivery_Status)
+                                                        VALUES (@Sales_ID, @Recipient_Name, @Recipient_Tel, @Recipient_Address, @Tracking_No, @Delivery_Status);";
+                                    await conn.ExecuteAsync(sqlDeliv, new 
+                                    { 
+                                        Sales_ID = orderId, 
+                                        Recipient_Name = recipientName, 
+                                        Recipient_Tel = recipientTel, 
+                                        Recipient_Address = recipientAddress, 
+                                        Tracking_No = (string?)null, 
+                                        Delivery_Status = "รอจัดส่ง" 
+                                    }, trans);
+                                }
+
+                                // 3. คำนวณส่วนลดและ PromoID รายสินค้าตามโปรโมชั่นที่ถูกนำไปใช้
+                                var itemDiscounts = new Dictionary<int, (decimal Discount, string? PromoId)>();
+                                foreach (var item in cartSnapshot)
+                                {
+                                    decimal itemDiscount = 0m;
+                                    var promoIdsForItem = new List<string>();
+
+                                    foreach (var promoResult in appliedPromoDetails)
+                                    {
+                                        if ((promoResult.PromoType == "Gift" || promoResult.PromoType == "Freebie") &&
+                                            promoResult.GiftProductId == item.Product.Id)
+                                        {
+                                            itemDiscount += promoResult.DiscountAmount;
+                                            if (!string.IsNullOrEmpty(promoResult.PromoID))
+                                                promoIdsForItem.Add(promoResult.PromoID);
+                                        }
+                                        else if (promoResult.PromoType == "Discount")
+                                        {
+                                            var p = promoResult.Promotion;
+                                            bool isTarget = false;
+                                            if (p != null && p.TargetScope == "SpecificProducts" && p.ProductIds != null)
                                             {
-                                                decimal share = Math.Round(promoResult.DiscountAmount * (item.Total / eligibleSum), 2);
-                                                itemDiscount += share;
+                                                isTarget = p.ProductIds.Contains(item.Product.Id.ToString());
+                                            }
+                                            else if (promoResult.TargetProductId.HasValue)
+                                            {
+                                                isTarget = promoResult.TargetProductId.Value == item.Product.Id;
+                                            }
+                                            else if (p == null || p.TargetScope == "AllStore")
+                                            {
+                                                var eligibleItems = cartSnapshot.Where(ci => 
+                                                    !appliedPromoDetails.Any(ap => (ap.PromoType == "Gift" || ap.PromoType == "Freebie") && ap.GiftProductId == ci.Product.Id)
+                                                ).ToList();
+                                                if (eligibleItems.Count == 1 && eligibleItems[0].Product.Id == item.Product.Id)
+                                                {
+                                                    isTarget = true;
+                                                }
+                                                else if (eligibleItems.Count > 1)
+                                                {
+                                                    decimal eligibleSum = eligibleItems.Sum(ei => ei.Total);
+                                                    if (eligibleSum > 0 && eligibleItems.Any(ei => ei.Product.Id == item.Product.Id))
+                                                    {
+                                                        decimal share = Math.Round(promoResult.DiscountAmount * (item.Total / eligibleSum), 2);
+                                                        itemDiscount += share;
+                                                        if (!string.IsNullOrEmpty(promoResult.PromoID))
+                                                            promoIdsForItem.Add(promoResult.PromoID);
+                                                    }
+                                                }
+                                            }
+
+                                            if (isTarget)
+                                            {
+                                                itemDiscount += promoResult.DiscountAmount;
                                                 if (!string.IsNullOrEmpty(promoResult.PromoID))
                                                     promoIdsForItem.Add(promoResult.PromoID);
                                             }
                                         }
                                     }
 
-                                    if (isTarget)
+                                    itemDiscount = Math.Min(itemDiscount, item.Total);
+                                    string? combinedPromoId = promoIdsForItem.Count > 0 ? string.Join(", ", promoIdsForItem.Distinct()) : null;
+                                    itemDiscounts[item.Product.Id] = (itemDiscount, combinedPromoId);
+                                }
+
+                                // 4. บันทึก tblSalesDetail และตัดสต็อกสินค้าใน tblProduct
+                                foreach (var item in cartSnapshot)
+                                {
+                                    string sqlUpdate = "UPDATE tblProduct SET Pro_Qty = Pro_Qty - @Qty WHERE Pro_ID = @Id";
+                                    await conn.ExecuteAsync(sqlUpdate, new { Qty = item.Quantity, Id = item.Product.Id }, trans);
+
+                                    decimal allocatedDiscount = 0m;
+                                    string? itemPromoId = null;
+                                    if (itemDiscounts.TryGetValue(item.Product.Id, out var discInfo))
                                     {
-                                        itemDiscount += promoResult.DiscountAmount;
-                                        if (!string.IsNullOrEmpty(promoResult.PromoID))
-                                            promoIdsForItem.Add(promoResult.PromoID);
+                                        allocatedDiscount = discInfo.Discount;
+                                        itemPromoId = discInfo.PromoId;
+                                    }
+                                    decimal itemNetAmount = Math.Max(0m, item.Total - allocatedDiscount);
+
+                                    try
+                                    {
+                                        string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, UnitPrice, Sales_Qty, Discount, Sales_Subtotal, NetAmount, PromoID)
+                                                             VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @UnitPrice, @Sales_Qty, @Discount, @Sales_Subtotal, @NetAmount, @PromoID);";
+                                        await conn.ExecuteAsync(sqlDetail, new 
+                                        { 
+                                            Sales_ID = orderId, 
+                                            Pro_ID = item.Product.Id, 
+                                            Pro_Price = item.Product.Price, 
+                                            UnitPrice = item.Product.Price,
+                                            Sales_Qty = item.Quantity, 
+                                            Discount = allocatedDiscount,
+                                            Sales_Subtotal = item.Total,
+                                            NetAmount = itemNetAmount,
+                                            PromoID = itemPromoId
+                                        }, trans);
+                                    }
+                                    catch
+                                    {
+                                        string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
+                                                             VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal);";
+                                        await conn.ExecuteAsync(sqlDetail, new 
+                                        { 
+                                            Sales_ID = orderId, 
+                                            Pro_ID = item.Product.Id, 
+                                            Pro_Price = item.Product.Price, 
+                                            Sales_Qty = item.Quantity, 
+                                            Sales_Subtotal = item.Total 
+                                        }, trans);
                                     }
                                 }
-                            }
 
-                            itemDiscount = Math.Min(itemDiscount, item.Total);
-                            string? combinedPromoId = promoIdsForItem.Count > 0 ? string.Join(", ", promoIdsForItem.Distinct()) : null;
-                            itemDiscounts[item.Product.Id] = (itemDiscount, combinedPromoId);
-                        }
+                                // 5. บันทึกสินค้าของแจก/ของแถมฟรี (Auto-Included) และตัดสต็อกใน tblProduct
+                                foreach (var gift in autoIncludedGifts)
+                                {
+                                    int giftProdId = gift.GiftProductId ?? 0;
+                                    if (giftProdId <= 0 && gift.Promotion != null)
+                                    {
+                                        if (int.TryParse(gift.Promotion.FreeProductID, out int pId))
+                                            giftProdId = pId;
+                                        else if (!string.IsNullOrEmpty(gift.Promotion.FreeProductID) &&
+                                                 gift.Promotion.FreeProductID.StartsWith("P-", StringComparison.OrdinalIgnoreCase) &&
+                                                 int.TryParse(gift.Promotion.FreeProductID.Substring(2), out int pId2))
+                                            giftProdId = pId2;
+                                    }
 
-                        foreach (var item in CartItems)
-                        {
-                            // Deduct Stock from tblProduct
-                            string sqlUpdate = "UPDATE tblProduct SET Pro_Qty = Pro_Qty - @Qty WHERE Pro_ID = @Id";
-                            await conn.ExecuteAsync(sqlUpdate, new { Qty = item.Quantity, Id = item.Product.Id }, trans);
+                                    if (giftProdId <= 0 && !string.IsNullOrWhiteSpace(gift.GiftProductName))
+                                    {
+                                        var matchProd = _allProducts.FirstOrDefault(p =>
+                                            string.Equals(p.Name.Trim(), gift.GiftProductName.Trim(), StringComparison.OrdinalIgnoreCase));
+                                        if (matchProd != null) giftProdId = matchProd.Id;
+                                    }
 
-                            decimal allocatedDiscount = 0m;
-                            string? itemPromoId = null;
-                            if (itemDiscounts.TryGetValue(item.Product.Id, out var discInfo))
-                            {
-                                allocatedDiscount = discInfo.Discount;
-                                itemPromoId = discInfo.PromoId;
-                            }
-                            decimal itemNetAmount = Math.Max(0m, item.Total - allocatedDiscount);
+                                    if (giftProdId > 0 && gift.GiftQuantity > 0)
+                                    {
+                                        string sqlDeduct = "UPDATE tblProduct SET Pro_Qty = MAX(0, Pro_Qty - @Qty) WHERE Pro_ID = @Id;";
+                                        await conn.ExecuteAsync(sqlDeduct, new { Qty = gift.GiftQuantity, Id = giftProdId }, trans);
 
-                            // Record Sales Detail
-                            try
-                            {
-                                string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, UnitPrice, Sales_Qty, Discount, Sales_Subtotal, NetAmount, PromoID)
-                                                     VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @UnitPrice, @Sales_Qty, @Discount, @Sales_Subtotal, @NetAmount, @PromoID);";
-                                await conn.ExecuteAsync(sqlDetail, new 
-                                { 
-                                    Sales_ID = orderId, 
-                                    Pro_ID = item.Product.Id, 
-                                    Pro_Price = item.Product.Price, 
-                                    UnitPrice = item.Product.Price,
-                                    Sales_Qty = item.Quantity, 
-                                    Discount = allocatedDiscount,
-                                    Sales_Subtotal = item.Total,
-                                    NetAmount = itemNetAmount,
-                                    PromoID = itemPromoId
-                                }, trans);
+                                        decimal giftSubtotal = gift.GiftQuantity * gift.UnitPrice;
+                                        try
+                                        {
+                                            string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, UnitPrice, Sales_Qty, Discount, Sales_Subtotal, NetAmount, PromoID)
+                                                                 VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @UnitPrice, @Sales_Qty, @Discount, @Sales_Subtotal, @NetAmount, @PromoID);";
+                                            await conn.ExecuteAsync(sqlDetail, new 
+                                            { 
+                                                Sales_ID = orderId, 
+                                                Pro_ID = giftProdId, 
+                                                Pro_Price = gift.UnitPrice, 
+                                                UnitPrice = gift.UnitPrice,
+                                                Sales_Qty = gift.GiftQuantity, 
+                                                Discount = gift.DiscountAmount,
+                                                Sales_Subtotal = giftSubtotal,
+                                                NetAmount = 0.00m,
+                                                PromoID = gift.PromoID
+                                            }, trans);
+                                        }
+                                        catch
+                                        {
+                                            string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
+                                                                 VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal);";
+                                            await conn.ExecuteAsync(sqlDetail, new 
+                                            { 
+                                                Sales_ID = orderId, 
+                                                Pro_ID = giftProdId, 
+                                                Pro_Price = gift.UnitPrice, 
+                                                Sales_Qty = gift.GiftQuantity, 
+                                                Sales_Subtotal = 0.00m 
+                                            }, trans);
+                                        }
+                                    }
+                                }
+
+                                // 6. จัดการแต้มลูกค้า (Redeem / Earn / Sync)
+                                if (customerId.HasValue && customerId.Value > 0)
+                                {
+                                    string cusIdStr = customerId.Value.ToString();
+
+                                    if (pointsUsed > 0)
+                                    {
+                                        string redeemNote = $"ใช้ {pointsUsed} แต้ม แลกส่วนลด {discountAmount:N2} บาท";
+                                        PointsService.Instance.RecordRedeem(cusIdStr, orderRef, pointsUsed, redeemNote, conn, trans);
+                                    }
+
+                                    if (pointsToEarn > 0)
+                                    {
+                                        PointsService.Instance.RecordEarn(cusIdStr, orderRef, pointsToEarn, $"ได้รับแต้มจากการซื้อบิล {orderRef}", conn, trans);
+                                    }
+
+                                    PointsService.Instance.SyncCustomerPoints(cusIdStr, conn, trans);
+
+                                    try
+                                    {
+                                        string sqlSpend = "UPDATE tblCustomer SET Cus_TotalSpent = COALESCE(Cus_TotalSpent, 0) + @Spent, Cus_TotalPurchases = COALESCE(Cus_TotalPurchases, 0) + 1 WHERE Cus_ID = @Id";
+                                        await conn.ExecuteAsync(sqlSpend, new { Spent = grandTotal, Id = customerId.Value }, trans);
+                                    }
+                                    catch { }
+                                }
+
+                                trans.Commit();
                             }
                             catch
                             {
-                                string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
-                                                     VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal);";
-                                await conn.ExecuteAsync(sqlDetail, new 
-                                { 
-                                    Sales_ID = orderId, 
-                                    Pro_ID = item.Product.Id, 
-                                    Pro_Price = item.Product.Price, 
-                                    Sales_Qty = item.Quantity, 
-                                    Sales_Subtotal = item.Total 
-                                }, trans);
-                            }
-
-                            // Update Local Product Instance
-                            item.Product.Stock -= item.Quantity;
-                            var existing = _allProducts.FirstOrDefault(p => p.Id == item.Product.Id);
-                            if (existing != null)
-                            {
-                                existing.Stock = item.Product.Stock;
+                                trans.Rollback();
+                                throw;
                             }
                         }
-
-                        // Record auto-included gifts/freebies in tblSalesDetail and deduct stock
-                        var autoIncludedGifts = AppliedPromotionDetails.Where(x => x.IsAutoIncluded).ToList();
-                        foreach (var gift in autoIncludedGifts)
-                        {
-                            int giftProdId = gift.GiftProductId ?? 0;
-                            if (giftProdId <= 0 && gift.Promotion != null)
-                            {
-                                if (int.TryParse(gift.Promotion.FreeProductID, out int pId))
-                                    giftProdId = pId;
-                                else if (!string.IsNullOrEmpty(gift.Promotion.FreeProductID) &&
-                                         gift.Promotion.FreeProductID.StartsWith("P-", StringComparison.OrdinalIgnoreCase) &&
-                                         int.TryParse(gift.Promotion.FreeProductID.Substring(2), out int pId2))
-                                    giftProdId = pId2;
-                            }
-
-                            if (giftProdId <= 0 && !string.IsNullOrWhiteSpace(gift.GiftProductName))
-                            {
-                                var matchProd = _allProducts.FirstOrDefault(p =>
-                                    string.Equals(p.Name.Trim(), gift.GiftProductName.Trim(), StringComparison.OrdinalIgnoreCase));
-                                if (matchProd != null) giftProdId = matchProd.Id;
-                            }
-
-                            if (giftProdId > 0 && gift.GiftQuantity > 0)
-                            {
-                                // 1. Deduct Stock for Free Gift in tblProduct
-                                string sqlDeduct = "UPDATE tblProduct SET Pro_Qty = MAX(0, Pro_Qty - @Qty) WHERE Pro_ID = @Id;";
-                                await conn.ExecuteAsync(sqlDeduct, new { Qty = gift.GiftQuantity, Id = giftProdId }, trans);
-
-                                // 2. Insert into tblSalesDetail
-                                decimal giftSubtotal = gift.GiftQuantity * gift.UnitPrice;
-                                try
-                                {
-                                    string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, UnitPrice, Sales_Qty, Discount, Sales_Subtotal, NetAmount, PromoID)
-                                                         VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @UnitPrice, @Sales_Qty, @Discount, @Sales_Subtotal, @NetAmount, @PromoID);";
-                                    await conn.ExecuteAsync(sqlDetail, new 
-                                    { 
-                                        Sales_ID = orderId, 
-                                        Pro_ID = giftProdId, 
-                                        Pro_Price = gift.UnitPrice, 
-                                        UnitPrice = gift.UnitPrice,
-                                        Sales_Qty = gift.GiftQuantity, 
-                                        Discount = gift.DiscountAmount,
-                                        Sales_Subtotal = giftSubtotal,
-                                        NetAmount = 0.00m,
-                                        PromoID = gift.PromoID
-                                    }, trans);
-                                }
-                                catch
-                                {
-                                    string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
-                                                         VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal);";
-                                    await conn.ExecuteAsync(sqlDetail, new 
-                                    { 
-                                        Sales_ID = orderId, 
-                                        Pro_ID = giftProdId, 
-                                        Pro_Price = gift.UnitPrice, 
-                                        Sales_Qty = gift.GiftQuantity, 
-                                        Sales_Subtotal = 0.00m 
-                                    }, trans);
-                                }
-
-                                // 3. Update local product instance
-                                var existingGift = _allProducts.FirstOrDefault(p => p.Id == giftProdId);
-                                if (existingGift != null)
-                                {
-                                    existingGift.Stock -= gift.GiftQuantity;
-                                }
-                            }
-                        }
-
-                        // Record promotion freebies/gifts from evaluate in tblSalesDetail and deduct stock (เฉพาะของแถมที่ยังไม่อยู่ในตะกร้าสินค้าและไม่ได้ถูก auto-included)
-                        var promoEval = await PromotionService.Instance.EvaluateCartPromotionsAsync(CartItems, SelectedCustomer);
-                        promoEval.FreebiesToAdd = promoEval.FreebiesToAdd
-                            .Where(f => !CartItems.Any(c => c.Product.Id == f.ProductId) &&
-                                        !autoIncludedGifts.Any(g => g.GiftProductId == f.ProductId))
-                            .ToList();
-
-                        if (AppliedPromotions != null && AppliedPromotions.Count > 0)
-                        {
-                            var appliedIds = new HashSet<string>(AppliedPromotions.Select(p => p.PromoID));
-                            promoEval.AppliedPromotions = promoEval.AppliedPromotions
-                                .Where(p => !appliedIds.Contains(p.PromoID))
-                                .ToList();
-                        }
-
-                        if (promoEval.FreebiesToAdd.Count > 0 || promoEval.AppliedPromotions.Count > 0)
-                        {
-                            await PromotionService.Instance.ApplyPromotionToSaleAsync(conn, trans, orderId, promoEval);
-                        }
-
-                        // Accumulate Member Points and Deduct Used Points if Customer is Selected
-                        if (customerId.HasValue && customerId.Value > 0)
-                        {
-                            string cusIdStr = customerId.Value.ToString();
-                            int pointsToEarn = EarnedPoints > 0 ? EarnedPoints : PointsService.Instance.CalculateEarnedPoints(CheckoutGrandTotal);
-
-                            // 1. Record 'redeem' if customer used points
-                            if (UsedPoints > 0)
-                            {
-                                string redeemNote = $"ใช้ {UsedPoints} แต้ม แลกส่วนลด {DiscountAmount:N2} บาท";
-                                PointsService.Instance.RecordRedeem(cusIdStr, orderRef, UsedPoints, redeemNote, conn, trans);
-                            }
-
-                            // 2. Record 'earn' from net total
-                            if (pointsToEarn > 0)
-                            {
-                                PointsService.Instance.RecordEarn(cusIdStr, orderRef, pointsToEarn, $"ได้รับแต้มจากการซื้อบิล {orderRef}", conn, trans);
-                            }
-
-                            // 3. Synchronize customer points balance
-                            PointsService.Instance.SyncCustomerPoints(cusIdStr, conn, trans);
-
-                            int netPointChange = pointsToEarn - UsedPoints;
-                            int newBalance = PointsService.Instance.GetCustomerPoints(cusIdStr, conn, trans);
-
-                            try
-                            {
-                                string sqlSpend = "UPDATE tblCustomer SET Cus_TotalSpent = COALESCE(Cus_TotalSpent, 0) + @Spent, Cus_TotalPurchases = COALESCE(Cus_TotalPurchases, 0) + 1 WHERE Cus_ID = @Id";
-                                await conn.ExecuteAsync(sqlSpend, new { Spent = CheckoutGrandTotal, Id = customerId.Value }, trans);
-                            }
-                            catch { }
-
-                            if (SelectedCustomer != null)
-                            {
-                                SelectedCustomer.Points = Math.Max(0, SelectedCustomer.Points + netPointChange);
-                                SelectedCustomer.TotalSpent += (double)CheckoutGrandTotal;
-                                SelectedCustomer.TotalPurchases += 1;
-                                CurrentPoints = SelectedCustomer.Points;
-                            }
-
-                            var inMem = _allCustomers.FirstOrDefault(c => c.Id == customerId.Value);
-                            if (inMem != null)
-                            {
-                                inMem.Points = Math.Max(0, inMem.Points + netPointChange);
-                                inMem.TotalSpent += (double)CheckoutGrandTotal;
-                                inMem.TotalPurchases += 1;
-                            }
-                        }
-
-                        trans.Commit();
                     }
-                    catch (Exception ex)
+                });
+
+                // 3. UI Thread Updates & Local In-Memory Sync
+                foreach (var item in cartSnapshot)
+                {
+                    item.Product.Stock -= item.Quantity;
+                    var existing = _allProducts.FirstOrDefault(p => p.Id == item.Product.Id);
+                    if (existing != null)
                     {
-                        trans.Rollback();
-                        ErrorModalMessage = $"เกิดข้อผิดพลาดในการทำรายการ: {ex.Message}";
-                        IsErrorModalOpen = true;
-                        return;
+                        existing.Stock = item.Product.Stock;
                     }
                 }
-            }
 
-            // Capture snapshot for Step 4 Receipt Card
-            FinalCashReceived = IsCashPayment ? CashAmountReceived : CheckoutGrandTotal;
-            FinalChange = IsCashPayment ? ChangeAmount : 0;
-            FinalGrandTotal = CheckoutGrandTotal;
-            if (IsTransferPayment)
-            {
-                FinalPaymentMethod = "สแกน QR / โอนเงิน";
-                FinalBank = SelectedBank switch
+                foreach (var gift in autoIncludedGifts)
                 {
-                    "KBANK" => "กสิกรไทย (KBANK)",
-                    "GSB" => "ออมสิน (GSB)",
-                    "SCB" => "ไทยพาณิชย์ (SCB)",
-                    "BBL" => "กรุงเทพ (BBL)",
-                    "KTB" => "กรุงไทย (KTB)",
-                    _ => SelectedBank
-                };
-            }
-            else
-            {
-                FinalPaymentMethod = !string.IsNullOrEmpty(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด";
-                FinalBank = "";
-            }
-            OnPropertyChanged(nameof(HasFinalBank));
+                    int giftProdId = gift.GiftProductId ?? 0;
+                    if (giftProdId > 0 && gift.GiftQuantity > 0)
+                    {
+                        var existingGift = _allProducts.FirstOrDefault(p => p.Id == giftProdId);
+                        if (existingGift != null)
+                        {
+                            existingGift.Stock -= gift.GiftQuantity;
+                        }
+                    }
+                }
 
-            // Move to success page
-            CurrentStep = 4;
-            FilterProducts();
+                if (customerId.HasValue && customerId.Value > 0)
+                {
+                    int netPointChange = pointsToEarn - pointsUsed;
+                    if (SelectedCustomer != null)
+                    {
+                        SelectedCustomer.Points = Math.Max(0, SelectedCustomer.Points + netPointChange);
+                        SelectedCustomer.TotalSpent += (double)grandTotal;
+                        SelectedCustomer.TotalPurchases += 1;
+                        CurrentPoints = SelectedCustomer.Points;
+                    }
+
+                    var inMem = _allCustomers.FirstOrDefault(c => c.Id == customerId.Value);
+                    if (inMem != null)
+                    {
+                        inMem.Points = Math.Max(0, inMem.Points + netPointChange);
+                        inMem.TotalSpent += (double)grandTotal;
+                        inMem.TotalPurchases += 1;
+                    }
+                }
+
+                // 4. Capture snapshot for Step 4 Receipt Card
+                FinalCashReceived = cashReceived;
+                FinalChange = change;
+                FinalGrandTotal = grandTotal;
+                if (IsTransferPayment)
+                {
+                    FinalPaymentMethod = "สแกน QR / โอนเงิน";
+                    FinalBank = SelectedBank switch
+                    {
+                        "KBANK" => "กสิกรไทย (KBANK)",
+                        "GSB" => "ออมสิน (GSB)",
+                        "SCB" => "ไทยพาณิชย์ (SCB)",
+                        "BBL" => "กรุงเทพ (BBL)",
+                        "KTB" => "กรุงไทย (KTB)",
+                        _ => SelectedBank
+                    };
+                }
+                else
+                {
+                    FinalPaymentMethod = !string.IsNullOrEmpty(SelectedPaymentMethod) ? SelectedPaymentMethod : "เงินสด";
+                    FinalBank = "";
+                }
+                OnPropertyChanged(nameof(HasFinalBank));
+
+                // 5. Move to success step
+                CurrentStep = 4;
+                FilterProducts();
+
+                // 6. Open Receipt Dialog on UI Thread
+                PrintCurrentReceipt();
+            }
+            catch (Exception ex)
+            {
+                ErrorModalMessage = $"เกิดข้อผิดพลาดในการทำรายการ: {ex.Message}";
+                IsErrorModalOpen = true;
+            }
+            finally
+            {
+                IsProcessing = false;
+            }
         }
 
         private void PrintCurrentReceipt()
@@ -2376,9 +2422,34 @@ namespace Porjai20.ViewModels
                     Total = item.Total
                 }).ToList();
 
+                // รวมรายการของแถม/แจกฟรีลงในรายการใบเสร็จด้วย (ราคา 0.00 บาท)
+                if (AppliedPromotionDetails != null)
+                {
+                    foreach (var gift in AppliedPromotionDetails.Where(x => x.IsAutoIncluded))
+                    {
+                        int gId = gift.GiftProductId ?? 0;
+                        string gName = !string.IsNullOrWhiteSpace(gift.GiftProductName) ? gift.GiftProductName : (gift.PromoName ?? "ของแจกฟรี");
+                        items.Add(new SalesOrderItem
+                        {
+                            Pro_ID = gId,
+                            ProductName = $"[ของแจกฟรี] {gName}",
+                            UnitPrice = 0m,
+                            Quantity = gift.GiftQuantity > 0 ? gift.GiftQuantity : 1,
+                            Total = 0m
+                        });
+                    }
+                }
+
                 Porjai20.Views.ReceiptWindow receiptWindow = new Porjai20.Views.ReceiptWindow(order, items);
-                receiptWindow.Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
-                                     ?? Application.Current?.MainWindow;
+                var activeWindow = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive && w.IsLoaded);
+                if (activeWindow != null)
+                {
+                    receiptWindow.Owner = activeWindow;
+                }
+                else if (Application.Current?.MainWindow != null && Application.Current.MainWindow.IsLoaded)
+                {
+                    receiptWindow.Owner = Application.Current.MainWindow;
+                }
                 receiptWindow.ShowDialog();
             }
             catch (Exception ex)

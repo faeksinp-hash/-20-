@@ -25,6 +25,7 @@ namespace Porjai20.Models
         }
 
         public decimal Total => Product.Price * Quantity;
+        public decimal TotalPrice => Total;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

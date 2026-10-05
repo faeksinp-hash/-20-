@@ -42,7 +42,7 @@ namespace Porjai20.Services
             connection.Open();
             using (var cmd = connection.CreateCommand())
             {
-                cmd.CommandText = "PRAGMA foreign_keys = ON;";
+                cmd.CommandText = "PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;";
                 cmd.ExecuteNonQuery();
             }
             return connection;
