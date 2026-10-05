@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="850" d:DesignWidth="1280"
              FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, sans-serif"
-             Background="#F4F7FB">
+             Background="#E0F2FE">
 
     <UserControl.Resources>
         <!-- Soft Shadow for Cards -->
@@ -194,7 +194,8 @@
         <!--  SCREEN 2: CREATE / EDIT SUBVIEW (เมื่อ IsCreateEditMode == true) -->
         <!-- ══════════════════════════════════════════════════════════════ -->
         <views:PromotionCreateEditView DataContext="{Binding CreateEditVM}"
-                                       Visibility="{Binding DataContext.IsCreateEditMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVis}}"/>
+                                       Visibility="{Binding DataContext.IsCreateEditMode, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVis}}" 
+                                       Background="#E0F2FE"/>
 
         <!-- ══════════════════════════════════════════════════════════════ -->
         <!--  SCREEN 1: PROMOTION CATALOG & DETAILS (เมื่อ IsCatalogMode == true) -->

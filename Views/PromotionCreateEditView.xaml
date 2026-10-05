@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1280"
              FontFamily="Noto Sans Thai, Noto Sans Thai Light, Segoe UI, sans-serif"
-             Background="#F4F7FB">
+             Background="#E0F2FE">
 
     <UserControl.Resources>
         <!-- Soft Shadow for Cards -->

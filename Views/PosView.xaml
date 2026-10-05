@@ -2211,19 +2211,9 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Row 0: Header with Title and Close (✕) button -->
+                    <!-- Row 0: Header with Title -->
                     <Grid Grid.Row="0" Margin="0,0,0,16">
                         <TextBlock Text="แลกแต้มสะสม" FontSize="22" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Center"
-                                Command="{Binding ClosePointRedeemModalCommand}"
-                                Content="✕" Width="36" Height="36" Background="#F1F5F9" Foreground="#64748B"
-                                FontSize="15" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="18"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
                     </Grid>
 
                     <!-- Row 1: Amber Member Points Info Banner -->
@@ -2244,14 +2234,19 @@
                     <TextBlock Grid.Row="2" Text="เลือกโปรโมชั่นแลกแต้มที่ต้องการใช้:" FontSize="15" FontWeight="SemiBold" Foreground="#334155" Margin="0,4,0,8"/>
 
                     <!-- Row 3: Scrollable Redeem Promotion Cards List -->
-                    <ScrollViewer Grid.Row="3" MaxHeight="300" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,14">
-                        <ItemsControl ItemsSource="{Binding PointRedeemVM.PromoCards}">
+                    <ScrollViewer Grid.Row="3" MaxHeight="300"
+                                  VerticalScrollBarVisibility="Hidden"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  CanContentScroll="True"
+                                  Margin="0,0,0,14">
+                        <ItemsControl ItemsSource="{Binding PointRedeemVM.PromoCards}" HorizontalAlignment="Stretch">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Command="{Binding DataContext.PointRedeemVM.SelectCardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"
                                             Margin="0,0,0,8"
                                             IsEnabled="{Binding IsEligible}"
+                                            HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Stretch"
                                             Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand">
                                         <Button.Template>

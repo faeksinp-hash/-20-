@@ -536,7 +536,7 @@
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!--  OUTER ROOT GRID: Full 100% canvas for main page and modals     -->
     <!-- ════════════════════════════════════════════════════════════════ -->
-    <Grid Visibility="{Binding IsManagementMode, Converter={StaticResource BoolToVis}}" Background="#F4F7FB">
+    <Grid Visibility="{Binding IsManagementMode, Converter={StaticResource BoolToVis}}" Background="#E0F2FE">
 
         <!-- ════════════════════════════════════════════════════════════ -->
         <!--  MAIN PAGE CONTENT CONTAINER (16px margin inside container)  -->

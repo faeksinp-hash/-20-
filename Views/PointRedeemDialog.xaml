@@ -28,26 +28,9 @@
             </Border.Effect>
 
             <StackPanel>
-                <!-- 1. Header: Title and Close (✕) button -->
+                <!-- 1. Header: Title -->
                 <Grid Margin="0,0,0,16">
                     <TextBlock Text="แลกแต้มสะสม" FontSize="22" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
-                    
-                    <Button Click="BtnClose_Click" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Background="#F1F5F9" BorderThickness="0" Cursor="Hand" Width="36" Height="36">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="xBorder" Background="{TemplateBinding Background}" CornerRadius="18">
-                                    <TextBlock Text="✕" Foreground="#64748B" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="xBorder" Property="Background" Value="#FEE2E2"/>
-                                        <Setter Property="Foreground" Value="#EF4444"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
                 </Grid>
 
                 <!-- 2. Customer Points Banner (Amber Card) -->
@@ -68,14 +51,19 @@
                 <TextBlock Text="เลือกโปรโมชั่นแลกแต้มที่ต้องการใช้:" FontSize="15" FontWeight="SemiBold" Foreground="#334155" Margin="0,4,0,8"/>
 
                 <!-- Cards Scroll Viewer -->
-                <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,14">
-                    <ItemsControl ItemsSource="{Binding PromoCards}">
+                <ScrollViewer MaxHeight="300"
+                              VerticalScrollBarVisibility="Hidden"
+                              HorizontalScrollBarVisibility="Disabled"
+                              CanContentScroll="True"
+                              Margin="0,0,0,14">
+                    <ItemsControl ItemsSource="{Binding PromoCards}" HorizontalAlignment="Stretch">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button Command="{Binding DataContext.SelectCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
                                         Margin="0,0,0,8" Cursor="{Binding IsEligible, Converter={x:Null}}"
                                         IsEnabled="{Binding IsEligible}"
+                                        HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Background="Transparent" BorderThickness="0" Padding="0">
                                     <Button.Template>
@@ -256,6 +244,7 @@
 
                     <!-- Cancel Button -->
                     <Button Grid.Column="0" Command="{Binding CancelCommand}" Click="BtnCancel_Click"
+                            IsCancel="True"
                             Height="44" MinWidth="110" Cursor="Hand">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
