@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -154,6 +155,7 @@ namespace Porjai20.ViewModels
         public string? AppliedPromoID { get; set; }
         public PromotionModel? AppliedAutoPromotion { get; set; }
         public List<PromotionModel> AppliedPromotions { get; set; } = new();
+        public ObservableCollection<Services.AppliedPromotionResult> AppliedPromotionDetails { get; } = new();
 
         private IEnumerable<CartItem>? _cartItems;
         public IEnumerable<CartItem>? CartItems
@@ -423,6 +425,27 @@ namespace Porjai20.ViewModels
                 AppliedAutoPromotion = bestPromo?.Promotion;
                 AppliedPromotions = bestPromo?.AppliedPromotions ?? new List<PromotionModel>();
 
+                AppliedPromotionDetails.Clear();
+                if (bestPromo?.AppliedItems != null && bestPromo.AppliedItems.Count > 0)
+                {
+                    foreach (var item in bestPromo.AppliedItems)
+                    {
+                        AppliedPromotionDetails.Add(item);
+                    }
+                }
+                else if (bestPromo != null && bestPromo.DiscountAmount > 0)
+                {
+                    AppliedPromotionDetails.Add(new Services.AppliedPromotionResult
+                    {
+                        PromoID = bestPromo.PromoID,
+                        PromoName = bestPromo.PromoName,
+                        DiscountAmount = bestPromo.DiscountAmount,
+                        DisplayText = !string.IsNullOrWhiteSpace(bestPromo.PromoName) ? $"ส่วนลดโปรโมชั่น ({bestPromo.PromoName}):" : "ส่วนลดโปรโมชั่น:",
+                        TextColor = "#E11D48"
+                    });
+                }
+
+                OnPropertyChanged(nameof(AppliedPromotionDetails));
                 OnPropertyChanged(nameof(AppliedPromotions));
                 OnPropertyChanged(nameof(PromotionDiscountAmount));
                 OnPropertyChanged(nameof(NetPayableAmount));
@@ -437,7 +460,9 @@ namespace Porjai20.ViewModels
                 AppliedPromoID = null;
                 AppliedAutoPromotion = null;
                 AppliedPromotions = new List<PromotionModel>();
+                AppliedPromotionDetails.Clear();
 
+                OnPropertyChanged(nameof(AppliedPromotionDetails));
                 OnPropertyChanged(nameof(AppliedPromotions));
                 OnPropertyChanged(nameof(PromotionDiscountAmount));
                 OnPropertyChanged(nameof(NetPayableAmount));

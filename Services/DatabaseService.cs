@@ -345,6 +345,8 @@ namespace Porjai20.Services
                 try { connection.Execute("ALTER TABLE tblPromotion ADD COLUMN CreatedAt TEXT DEFAULT '';"); } catch { }
                 try { connection.Execute("ALTER TABLE tblSalesDetail ADD COLUMN PromoID TEXT;"); } catch { }
                 try { connection.Execute("ALTER TABLE tblSalesDetail ADD COLUMN Discount REAL DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSalesDetail ADD COLUMN UnitPrice REAL DEFAULT 0;"); } catch { }
+                try { connection.Execute("ALTER TABLE tblSalesDetail ADD COLUMN NetAmount REAL DEFAULT 0;"); } catch { }
 
                 // ตารางผูกสินค้าที่เข้าร่วมโปรโมชั่น
                 connection.Execute(@"

@@ -11,6 +11,43 @@ using Porjai20.Models;
 namespace Porjai20.Services
 {
     /// <summary>
+    /// ข้อมูลรายละเอียดโปรโมชั่นแต่ละรายการที่ถูกนำไปใช้ในบิล (สำหรับแสดงรายการแยกแถวในหน้าชำระเงินและบันทึก tblSalesDetail)
+    /// </summary>
+    public class AppliedPromotionResult
+    {
+        public string PromoID { get; set; } = string.Empty;
+        public string PromoName { get; set; } = string.Empty;
+        public string PromoType { get; set; } = "Discount"; // Discount, Gift, Freebie, Redeem
+        public decimal DiscountAmount { get; set; }
+        public string DisplayText { get; set; } = string.Empty;
+        public string DisplayDiscount => $"-{DiscountAmount:N2}";
+        public string TextColor { get; set; } = "#E11D48";
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Windows.Media.Brush TextBrush
+        {
+            get
+            {
+                try
+                {
+                    return (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(TextColor);
+                }
+                catch
+                {
+                    return System.Windows.Media.Brushes.Crimson;
+                }
+            }
+        }
+
+        public int? TargetProductId { get; set; }
+        public string? TargetProductName { get; set; }
+        public int? GiftProductId { get; set; }
+        public string? GiftProductName { get; set; }
+        public int GiftQuantity { get; set; }
+        public PromotionModel? Promotion { get; set; }
+    }
+
+    /// <summary>
     /// ผลลัพธ์จากการประเมินโปรโมชั่นอัตโนมัติที่ดีที่สุด (Auto-Apply Promotion Engine)
     /// </summary>
     public class AutoPromotionResult
@@ -20,6 +57,7 @@ namespace Porjai20.Services
         public decimal DiscountAmount { get; set; }
         public PromotionModel? Promotion { get; set; }
         public List<PromotionModel> AppliedPromotions { get; set; } = new();
+        public List<AppliedPromotionResult> AppliedItems { get; set; } = new();
     }
 
     /// <summary>
@@ -949,17 +987,20 @@ namespace Porjai20.Services
             if (itemsList.Count == 0 && subtotal <= 0) return null;
 
             var allPromos = preloadedPromos ?? GetAllPromotionsSync();
+            var today = DateTime.Today;
 
             // ขั้นที่ 1: คัดกรองโปรโมชั่นที่ผ่านเกณฑ์จริง
             var eligiblePromotions = allPromos.Where(p =>
                 p.IsActive &&
                 !p.IsDraft &&
+                !p.IsExpired &&
                 string.IsNullOrWhiteSpace(p.PromoCode) &&
                 IsDateActive(p.StartDate, p.EndDate) &&
                 (p.TotalQuota <= 0 || p.CurrentUsage < p.TotalQuota)
             ).ToList();
 
-            var evaluatedList = new List<(PromotionModel promo, decimal discount)>();
+            decimal billTotal = subtotal > 0 ? subtotal : itemsList.Sum(i => i.Total);
+            var evaluatedList = new List<(PromotionModel promo, decimal discount, AppliedPromotionResult item)>();
 
             foreach (var promo in eligiblePromotions)
             {
@@ -969,93 +1010,232 @@ namespace Porjai20.Services
                     continue;
                 }
 
-                // คำนวณยอดซื้อสินค้าที่ร่วมรายการตาม TargetScope
-                decimal eligibleAmount = 0m;
-
-                if (promo.TargetScope == "SpecificProducts")
-                {
-                    if (promo.ProductIds == null || promo.ProductIds.Count == 0 || itemsList.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    var matchingItems = itemsList.Where(item =>
-                        promo.ProductIds.Contains(item.Product.Id.ToString())
-                    ).ToList();
-
-                    if (matchingItems.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    eligibleAmount = matchingItems.Sum(item => item.Total);
-
-                    if (promo.MinSpend > 0 && eligibleAmount < promo.MinSpend)
-                    {
-                        continue;
-                    }
-                }
-                else if (promo.TargetScope == "AllStore")
-                {
-                    eligibleAmount = subtotal > 0 ? subtotal : itemsList.Sum(i => i.Total);
-
-                    if (promo.MinSpend > 0 && eligibleAmount < promo.MinSpend)
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (eligibleAmount <= 0) continue;
-
-                // คำนวณมูลค่าส่วนลด
+                // ตรวจสอบยอดซื้อขั้นต่ำและคำนวณส่วนลดตามประเภทโปรโมชั่น
                 decimal discount = 0m;
-                if (promo.PromoType == "Discount")
+                AppliedPromotionResult? appliedItem = null;
+
+                switch (promo.PromoType)
                 {
-                    if (promo.DiscountType == "Percentage")
-                    {
-                        decimal calc = eligibleAmount * (promo.DiscountAmount / 100m);
-                        if (promo.MaxDiscountAmount.HasValue && promo.MaxDiscountAmount.Value > 0)
+                    case "Gift": // แจก (ซื้อครบ แจกของฟรี)
                         {
-                            calc = Math.Min(calc, promo.MaxDiscountAmount.Value);
+                            if (billTotal >= promo.MinSpend && promo.FreeQuantity > 0)
+                            {
+                                // ค้นหาสินค้าของแจกในตะกร้า
+                                CartItem? giftCartItem = null;
+                                if (!string.IsNullOrWhiteSpace(promo.FreeProductID))
+                                {
+                                    giftCartItem = itemsList.FirstOrDefault(i => i.Product.Id.ToString() == promo.FreeProductID);
+                                }
+                                if (giftCartItem == null && !string.IsNullOrWhiteSpace(promo.FreeProductName))
+                                {
+                                    giftCartItem = itemsList.FirstOrDefault(i =>
+                                        string.Equals(i.Product.Name.Trim(), promo.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                                        i.Product.Name.Contains(promo.FreeProductName.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                                        promo.FreeProductName.Trim().Contains(i.Product.Name.Trim(), StringComparison.OrdinalIgnoreCase));
+                                }
+                                if (giftCartItem == null && promo.ProductIds != null && promo.ProductIds.Count > 0)
+                                {
+                                    giftCartItem = itemsList.FirstOrDefault(i => promo.ProductIds.Contains(i.Product.Id.ToString()));
+                                }
+
+                                if (giftCartItem != null)
+                                {
+                                    int freeQty = promo.FreeQuantity > 0 ? promo.FreeQuantity : 1;
+                                    freeQty = Math.Min(freeQty, giftCartItem.Quantity);
+                                    discount = freeQty * giftCartItem.Product.Price;
+
+                                    if (discount > 0)
+                                    {
+                                        string giftName = giftCartItem.Product.Name;
+                                        string giftLabel = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : "แจก";
+                                        appliedItem = new AppliedPromotionResult
+                                        {
+                                            PromoID = promo.PromoID,
+                                            PromoName = promo.PromoName,
+                                            PromoType = "Gift",
+                                            DiscountAmount = discount,
+                                            GiftProductId = giftCartItem.Product.Id,
+                                            GiftProductName = giftName,
+                                            GiftQuantity = freeQty,
+                                            DisplayText = $"ของแจกฟรี ({giftLabel} - {giftName} {freeQty} ชิ้น):",
+                                            TextColor = "#16A34A",
+                                            Promotion = promo
+                                        };
+                                    }
+                                }
+                            }
                         }
-                        discount = Math.Round(calc, 2);
-                    }
-                    else // Cash
-                    {
-                        discount = Math.Min(promo.DiscountAmount, eligibleAmount);
-                    }
-                }
-                else if (promo.PromoType == "Redeem" && promo.PointsRequired == 0)
-                {
-                    discount = Math.Min(promo.DiscountAmount, eligibleAmount);
+                        break;
+
+                    case "Freebie": // แถม (ซื้อ N แถม M)
+                        {
+                            var matchingFreebieItems = itemsList.Where(item =>
+                                promo.ProductIds == null || promo.ProductIds.Count == 0 || promo.ProductIds.Contains(item.Product.Id.ToString())
+                            ).ToList();
+
+                            int totalMatchingQty = matchingFreebieItems.Sum(x => x.Quantity);
+                            int buyQ = promo.BuyQuantity > 0 ? promo.BuyQuantity : 1;
+                            int freeQ = promo.FreeQuantity > 0 ? promo.FreeQuantity : 1;
+
+                            if (totalMatchingQty >= buyQ)
+                            {
+                                int times = promo.CanRepeat ? (totalMatchingQty / (buyQ + freeQ > 0 ? (buyQ + freeQ) : buyQ)) : 1;
+                                if (times <= 0) times = 1;
+                                int actualFreeQty = times * freeQ;
+
+                                CartItem? freebieCartItem = null;
+                                if (!string.IsNullOrWhiteSpace(promo.FreeProductID))
+                                {
+                                    freebieCartItem = itemsList.FirstOrDefault(i => i.Product.Id.ToString() == promo.FreeProductID);
+                                }
+                                else if (matchingFreebieItems.Count > 0)
+                                {
+                                    freebieCartItem = matchingFreebieItems[0];
+                                }
+
+                                if (freebieCartItem != null)
+                                {
+                                    actualFreeQty = Math.Min(actualFreeQty, freebieCartItem.Quantity);
+                                    discount = actualFreeQty * freebieCartItem.Product.Price;
+                                    if (discount > 0)
+                                    {
+                                        string freeName = freebieCartItem.Product.Name;
+                                        appliedItem = new AppliedPromotionResult
+                                        {
+                                            PromoID = promo.PromoID,
+                                            PromoName = promo.PromoName,
+                                            PromoType = "Freebie",
+                                            DiscountAmount = discount,
+                                            GiftProductId = freebieCartItem.Product.Id,
+                                            GiftProductName = freeName,
+                                            GiftQuantity = actualFreeQty,
+                                            DisplayText = $"สินค้าแถมฟรี (แถม - {freeName} {actualFreeQty} ชิ้น):",
+                                            TextColor = "#9333EA",
+                                            Promotion = promo
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case "Redeem": // แลกแต้ม
+                        {
+                            if (promo.PointsRequired == 0 && promo.DiscountAmount > 0)
+                            {
+                                decimal eligibleAmount = billTotal;
+                                if (promo.MinSpend <= 0 || eligibleAmount >= promo.MinSpend)
+                                {
+                                    discount = Math.Min(promo.DiscountAmount, eligibleAmount);
+                                    if (discount > 0)
+                                    {
+                                        appliedItem = new AppliedPromotionResult
+                                        {
+                                            PromoID = promo.PromoID,
+                                            PromoName = promo.PromoName,
+                                            PromoType = "Redeem",
+                                            DiscountAmount = discount,
+                                            DisplayText = "สิทธิ์แลกแต้ม (แลก):",
+                                            TextColor = "#D97706",
+                                            Promotion = promo
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case "Discount": // ลด (เงินสด หรือ %)
+                    default:
+                        {
+                            decimal eligibleAmount = 0m;
+                            if (promo.TargetScope == "SpecificProducts")
+                            {
+                                if (promo.ProductIds != null && promo.ProductIds.Count > 0 && itemsList.Count > 0)
+                                {
+                                    var matchingItems = itemsList.Where(item =>
+                                        promo.ProductIds.Contains(item.Product.Id.ToString())
+                                    ).ToList();
+
+                                    if (matchingItems.Count > 0)
+                                    {
+                                        eligibleAmount = matchingItems.Sum(item => item.Total);
+                                    }
+                                }
+                            }
+                            else // AllStore
+                            {
+                                eligibleAmount = billTotal;
+                            }
+
+                            if (eligibleAmount > 0 && (promo.MinSpend <= 0 || eligibleAmount >= promo.MinSpend))
+                            {
+                                if (promo.DiscountType == "Percentage")
+                                {
+                                    decimal calc = eligibleAmount * (promo.DiscountAmount / 100m);
+                                    if (promo.MaxDiscountAmount.HasValue && promo.MaxDiscountAmount.Value > 0)
+                                    {
+                                        calc = Math.Min(calc, promo.MaxDiscountAmount.Value);
+                                    }
+                                    discount = Math.Round(calc, 2);
+                                }
+                                else // Cash
+                                {
+                                    discount = Math.Min(promo.DiscountAmount, eligibleAmount);
+                                }
+
+                                if (discount > 0)
+                                {
+                                    string discountLabel = !string.IsNullOrWhiteSpace(promo.PromoName) ? promo.PromoName : "ลด";
+                                    int? targetId = null;
+                                    string? targetName = null;
+                                    if (promo.ProductIds != null && promo.ProductIds.Count == 1 && int.TryParse(promo.ProductIds[0], out int parsedTId))
+                                    {
+                                        targetId = parsedTId;
+                                        targetName = promo.ProductNames.FirstOrDefault();
+                                    }
+
+                                    appliedItem = new AppliedPromotionResult
+                                    {
+                                        PromoID = promo.PromoID,
+                                        PromoName = promo.PromoName,
+                                        PromoType = "Discount",
+                                        DiscountAmount = discount,
+                                        TargetProductId = targetId,
+                                        TargetProductName = targetName,
+                                        DisplayText = $"ส่วนลดโปรโมชั่น ({discountLabel}):",
+                                        TextColor = "#E11D48",
+                                        Promotion = promo
+                                    };
+                                }
+                            }
+                        }
+                        break;
                 }
 
-                if (discount > 0)
+                if (discount > 0 && appliedItem != null)
                 {
-                    evaluatedList.Add((promo, discount));
+                    evaluatedList.Add((promo, discount, appliedItem));
                 }
             }
 
             if (evaluatedList.Count == 0) return null;
 
-            // ขั้นที่ 2: ตรรกะ CanCombine ที่ถูกต้อง (ห้ามทิ้งโปรเดี่ยว)
+            // ขั้นที่ 2: ตรรกะการตรวจสอบสิทธิ์ใช้ร่วมกัน (CanCombine Logic)
+            // กลุ่ม B (โปรโมชั่นใช้ร่วมกันได้ - CanCombine == true): สามารถนำมารวมกันได้ทั้งหมด
             var stackableList = evaluatedList.Where(x => x.promo.CanCombine).ToList();
+
+            // กลุ่ม A (โปรโมชั่นเดี่ยว - CanCombine == false): หากเลือกใช้ จะใช้ได้เพียงโปรโมชั่นเดียว (เลือกตัวที่คุ้มค่าที่สุด)
             var singleList = evaluatedList.Where(x => !x.promo.CanCombine).ToList();
 
-            decimal billMax = subtotal > 0 ? subtotal : itemsList.Sum(i => i.Total);
-
-            // ยอดลดรวมของ stackableList ทั้งหมด (กฎเหล็ก: แม้มี Count == 1 ก็นำมาคำนวณตามปกติ)
+            // ยอดลดรวมของกลุ่ม B (โปรที่ CanCombine ทั้งหมดรวมกัน)
             decimal stackableTotalDiscount = stackableList.Sum(x => x.discount);
-            if (billMax > 0)
+            if (billTotal > 0)
             {
-                stackableTotalDiscount = Math.Min(stackableTotalDiscount, billMax);
+                stackableTotalDiscount = Math.Min(stackableTotalDiscount, billTotal);
             }
 
-            // ยอดลดของโปรโมชั่นเดี่ยวที่ดีที่สุดใน singleList
+            // ส่วนลดของโปรโมชั่นเดี่ยวที่ดีที่สุดในกลุ่ม A
             var bestSingle = singleList
                 .OrderByDescending(x => x.discount)
                 .ThenBy(x => x.promo.PromoID)
@@ -1063,12 +1243,12 @@ namespace Porjai20.Services
 
             decimal bestSingleDiscount = bestSingle.promo != null ? bestSingle.discount : 0m;
 
-            // เลือกระบบที่ลูกค้าได้ส่วนลดมากที่สุด (Best Benefit for Customer):
-            // หากชุด stackableList ให้ส่วนลดรวมมากกว่า หรือเท่ากับ -> นำโปรโมชั่นใน stackableList ทั้งหมดไปใช้งาน
-            // หากมีโปรเดี่ยวใน singleList ที่ลดได้มากกว่า -> เลือกเฉพาะโปรเดี่ยวนั้นเพียงตัวเดียว
+            // เลือกระบบที่ลูกค้าได้ประโยชน์สูงสุด (Best Benefit for Customer):
+            // หากกลุ่ม B ได้ลดรวมมากกว่าหรือเท่ากับกลุ่ม A (และกลุ่ม B มีโปรอย่างน้อย 1 ตัว) ให้ใช้ชุดกลุ่ม B ทั้งหมด
             if (stackableList.Count > 0 && stackableTotalDiscount >= bestSingleDiscount)
             {
                 var appliedPromos = stackableList.Select(x => x.promo).ToList();
+                var appliedItems = stackableList.Select(x => x.item).ToList();
                 string promoId = string.Join(", ", appliedPromos.Select(p => p.PromoID));
                 string promoName = appliedPromos.Count == 1
                     ? (!string.IsNullOrWhiteSpace(appliedPromos[0].PromoName) ? appliedPromos[0].PromoName : appliedPromos[0].ConditionDescription)
@@ -1079,8 +1259,9 @@ namespace Porjai20.Services
                     PromoID = promoId,
                     PromoName = promoName,
                     DiscountAmount = stackableTotalDiscount,
-                    Promotion = appliedPromos.FirstOrDefault(),
-                    AppliedPromotions = appliedPromos
+                    Promotion = appliedPromos[0],
+                    AppliedPromotions = appliedPromos,
+                    AppliedItems = appliedItems
                 };
             }
             else if (bestSingle.promo != null && bestSingleDiscount > 0)
@@ -1091,7 +1272,8 @@ namespace Porjai20.Services
                     PromoName = !string.IsNullOrWhiteSpace(bestSingle.promo.PromoName) ? bestSingle.promo.PromoName : bestSingle.promo.ConditionDescription,
                     DiscountAmount = bestSingle.discount,
                     Promotion = bestSingle.promo,
-                    AppliedPromotions = new List<PromotionModel> { bestSingle.promo }
+                    AppliedPromotions = new List<PromotionModel> { bestSingle.promo },
+                    AppliedItems = new List<AppliedPromotionResult> { bestSingle.item }
                 };
             }
 

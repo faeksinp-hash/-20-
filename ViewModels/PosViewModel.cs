@@ -821,6 +821,7 @@ namespace Porjai20.ViewModels
         public string? AppliedPromoID { get; set; }
         public PromotionModel? AppliedAutoPromotion { get; set; }
         public List<PromotionModel> AppliedPromotions { get; set; } = new();
+        public ObservableCollection<AppliedPromotionResult> AppliedPromotionDetails { get; } = new();
 
         public decimal ShippingFee => SelectedShippingMethod == "Delivery" ? CustomShippingFee : 0;
         public decimal TotalAmountBeforeDiscount => TotalAmount + ShippingFee;
@@ -876,6 +877,27 @@ namespace Porjai20.ViewModels
             AppliedAutoPromotion = bestPromo?.Promotion;
             AppliedPromotions = bestPromo?.AppliedPromotions ?? new List<PromotionModel>();
 
+            AppliedPromotionDetails.Clear();
+            if (bestPromo?.AppliedItems != null && bestPromo.AppliedItems.Count > 0)
+            {
+                foreach (var item in bestPromo.AppliedItems)
+                {
+                    AppliedPromotionDetails.Add(item);
+                }
+            }
+            else if (bestPromo != null && bestPromo.DiscountAmount > 0)
+            {
+                AppliedPromotionDetails.Add(new AppliedPromotionResult
+                {
+                    PromoID = bestPromo.PromoID,
+                    PromoName = bestPromo.PromoName,
+                    DiscountAmount = bestPromo.DiscountAmount,
+                    DisplayText = !string.IsNullOrWhiteSpace(bestPromo.PromoName) ? $"ส่วนลดโปรโมชั่น ({bestPromo.PromoName}):" : "ส่วนลดโปรโมชั่น:",
+                    TextColor = "#E11D48"
+                });
+            }
+
+            OnPropertyChanged(nameof(AppliedPromotionDetails));
             OnPropertyChanged(nameof(HasAutoPromotion));
             OnPropertyChanged(nameof(AutoPromotionName));
             OnPropertyChanged(nameof(PromotionDiscountAmount));
@@ -1909,7 +1931,7 @@ namespace Porjai20.ViewModels
                             Sales_Change = IsCashPayment ? ChangeAmount : 0,
                             Sales_PaymentType = effectivePayment,
                             Sales_Status = "ชำระเงินแล้ว",
-                            DiscountAmount = DiscountAmount,
+                            DiscountAmount = PromotionDiscountAmount + DiscountAmount,
                             PointsUsed = UsedPoints,
                             PointsEarned = EarnedPoints,
                             PromoID = AppliedPromoID,
@@ -2008,23 +2030,116 @@ namespace Porjai20.ViewModels
                             }, trans);
                         }
 
+                        // คำนวณส่วนลดและ PromoID รายสินค้าตามโปรโมชั่นที่ถูกนำไปใช้
+                        var itemDiscounts = new Dictionary<int, (decimal Discount, string? PromoId)>();
+                        foreach (var item in CartItems)
+                        {
+                            decimal itemDiscount = 0m;
+                            var promoIdsForItem = new List<string>();
+
+                            foreach (var promoResult in AppliedPromotionDetails)
+                            {
+                                if ((promoResult.PromoType == "Gift" || promoResult.PromoType == "Freebie") &&
+                                    promoResult.GiftProductId == item.Product.Id)
+                                {
+                                    itemDiscount += promoResult.DiscountAmount;
+                                    if (!string.IsNullOrEmpty(promoResult.PromoID))
+                                        promoIdsForItem.Add(promoResult.PromoID);
+                                }
+                                else if (promoResult.PromoType == "Discount")
+                                {
+                                    var p = promoResult.Promotion;
+                                    bool isTarget = false;
+                                    if (p != null && p.TargetScope == "SpecificProducts" && p.ProductIds != null)
+                                    {
+                                        isTarget = p.ProductIds.Contains(item.Product.Id.ToString());
+                                    }
+                                    else if (promoResult.TargetProductId.HasValue)
+                                    {
+                                        isTarget = promoResult.TargetProductId.Value == item.Product.Id;
+                                    }
+                                    else if (p == null || p.TargetScope == "AllStore")
+                                    {
+                                        var eligibleItems = CartItems.Where(ci => 
+                                            !AppliedPromotionDetails.Any(ap => (ap.PromoType == "Gift" || ap.PromoType == "Freebie") && ap.GiftProductId == ci.Product.Id)
+                                        ).ToList();
+                                        if (eligibleItems.Count == 1 && eligibleItems[0].Product.Id == item.Product.Id)
+                                        {
+                                            isTarget = true;
+                                        }
+                                        else if (eligibleItems.Count > 1)
+                                        {
+                                            decimal eligibleSum = eligibleItems.Sum(ei => ei.Total);
+                                            if (eligibleSum > 0 && eligibleItems.Any(ei => ei.Product.Id == item.Product.Id))
+                                            {
+                                                decimal share = Math.Round(promoResult.DiscountAmount * (item.Total / eligibleSum), 2);
+                                                itemDiscount += share;
+                                                if (!string.IsNullOrEmpty(promoResult.PromoID))
+                                                    promoIdsForItem.Add(promoResult.PromoID);
+                                            }
+                                        }
+                                    }
+
+                                    if (isTarget)
+                                    {
+                                        itemDiscount += promoResult.DiscountAmount;
+                                        if (!string.IsNullOrEmpty(promoResult.PromoID))
+                                            promoIdsForItem.Add(promoResult.PromoID);
+                                    }
+                                }
+                            }
+
+                            itemDiscount = Math.Min(itemDiscount, item.Total);
+                            string? combinedPromoId = promoIdsForItem.Count > 0 ? string.Join(", ", promoIdsForItem.Distinct()) : null;
+                            itemDiscounts[item.Product.Id] = (itemDiscount, combinedPromoId);
+                        }
+
                         foreach (var item in CartItems)
                         {
                             // Deduct Stock from tblProduct
                             string sqlUpdate = "UPDATE tblProduct SET Pro_Qty = Pro_Qty - @Qty WHERE Pro_ID = @Id";
                             await conn.ExecuteAsync(sqlUpdate, new { Qty = item.Quantity, Id = item.Product.Id }, trans);
 
+                            decimal allocatedDiscount = 0m;
+                            string? itemPromoId = null;
+                            if (itemDiscounts.TryGetValue(item.Product.Id, out var discInfo))
+                            {
+                                allocatedDiscount = discInfo.Discount;
+                                itemPromoId = discInfo.PromoId;
+                            }
+                            decimal itemNetAmount = Math.Max(0m, item.Total - allocatedDiscount);
+
                             // Record Sales Detail
-                            string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
-                                                 VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal)";
-                            await conn.ExecuteAsync(sqlDetail, new 
-                            { 
-                                Sales_ID = orderId, 
-                                Pro_ID = item.Product.Id, 
-                                Pro_Price = item.Product.Price, 
-                                Sales_Qty = item.Quantity, 
-                                Sales_Subtotal = item.Total 
-                            }, trans);
+                            try
+                            {
+                                string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, UnitPrice, Sales_Qty, Discount, Sales_Subtotal, NetAmount, PromoID)
+                                                     VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @UnitPrice, @Sales_Qty, @Discount, @Sales_Subtotal, @NetAmount, @PromoID);";
+                                await conn.ExecuteAsync(sqlDetail, new 
+                                { 
+                                    Sales_ID = orderId, 
+                                    Pro_ID = item.Product.Id, 
+                                    Pro_Price = item.Product.Price, 
+                                    UnitPrice = item.Product.Price,
+                                    Sales_Qty = item.Quantity, 
+                                    Discount = allocatedDiscount,
+                                    Sales_Subtotal = item.Total,
+                                    NetAmount = itemNetAmount,
+                                    PromoID = itemPromoId
+                                }, trans);
+                            }
+                            catch
+                            {
+                                string sqlDetail = @"INSERT INTO tblSalesDetail (Sales_ID, Pro_ID, Pro_Price, Sales_Qty, Sales_Subtotal)
+                                                     VALUES (@Sales_ID, @Pro_ID, @Pro_Price, @Sales_Qty, @Sales_Subtotal);";
+                                await conn.ExecuteAsync(sqlDetail, new 
+                                { 
+                                    Sales_ID = orderId, 
+                                    Pro_ID = item.Product.Id, 
+                                    Pro_Price = item.Product.Price, 
+                                    Sales_Qty = item.Quantity, 
+                                    Sales_Subtotal = item.Total 
+                                }, trans);
+                            }
 
                             // Update Local Product Instance
                             item.Product.Stock -= item.Quantity;
@@ -2035,8 +2150,20 @@ namespace Porjai20.ViewModels
                             }
                         }
 
-                        // Record promotion freebies/gifts in tblSalesDetail and deduct stock (PART 4: Rule 2)
+                        // Record promotion freebies/gifts in tblSalesDetail and deduct stock (เฉพาะของแถมที่ยังไม่อยู่ในตะกร้าสินค้า)
                         var promoEval = await PromotionService.Instance.EvaluateCartPromotionsAsync(CartItems, SelectedCustomer);
+                        promoEval.FreebiesToAdd = promoEval.FreebiesToAdd
+                            .Where(f => !CartItems.Any(c => c.Product.Id == f.ProductId))
+                            .ToList();
+
+                        if (AppliedPromotions != null && AppliedPromotions.Count > 0)
+                        {
+                            var appliedIds = new HashSet<string>(AppliedPromotions.Select(p => p.PromoID));
+                            promoEval.AppliedPromotions = promoEval.AppliedPromotions
+                                .Where(p => !appliedIds.Contains(p.PromoID))
+                                .ToList();
+                        }
+
                         if (promoEval.FreebiesToAdd.Count > 0 || promoEval.AppliedPromotions.Count > 0)
                         {
                             await PromotionService.Instance.ApplyPromotionToSaleAsync(conn, trans, orderId, promoEval);
